@@ -12,9 +12,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Maïa</title>
       </Head>
-      <header>
-        <TopBar />
-      </header>
+      <header>{/* <TopBar /> */}</header>
       <main>
         <nav>Navigation</nav>
         <Component {...pageProps} />
