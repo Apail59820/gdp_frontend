@@ -2,7 +2,7 @@ import '../../../styles/globals.css';
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import { TopBar } from '@projex/ui';
+// import { TopBar } from '@projex/ui';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -14,12 +14,12 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>Maïa</title>
       </Head>
       <header id="header">
-        <TopBar
+        {/* <TopBar
           items={[
             { label: 'Gestion de projet', href: '/href', active: true },
             { label: 'Catalogue des solutions alternatives', href: '/href', active: false },
           ]}
-        />
+        /> */}
       </header>
       <main>
         {/* <aside>SideBar</aside> */}
