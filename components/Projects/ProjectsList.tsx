@@ -16,7 +16,6 @@ export default function ProjectsList() {
             console.log('value :', value);
             for(let e of Object.values(value)) {
                 console.log('Manager projet', e.project_manager);
-                return e.project_manager
             }
           });
     }
