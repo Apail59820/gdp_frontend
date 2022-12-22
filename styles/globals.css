@@ -23,8 +23,16 @@ body {
   display: flex;
 }
 
-#main > #aside > #nav {
+#main > #aside {
+  position: relative;
   height: 100%;
+  width: 4rem;
+}
+
+#main > #aside > #nav {
+  position: absolute;
+  top: 0;
+  bottom: 0;
 }
 
 #main > #content {
