@@ -1,6 +1,7 @@
 body {
   width: 100vw;
   height: 100vh;
+  background-color: white;
   overflow: hidden;
 }
 
@@ -31,6 +32,7 @@ body {
 
 #main > #aside > #nav {
   position: absolute;
+  z-index: 999;
   top: 0;
   bottom: 0;
 }
