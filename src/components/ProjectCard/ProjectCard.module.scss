@@ -38,10 +38,13 @@
     }
 
     .logoContainer {
-      height: 2rem;
+      width: 8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       > .logo {
-        height: 100%;
+        width: 100%;
       }
     }
   }
