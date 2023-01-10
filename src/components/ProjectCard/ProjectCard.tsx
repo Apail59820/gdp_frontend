@@ -1,6 +1,6 @@
 import React from 'react';
-import { ShadowCard } from '@projex/ui';
 import styles from './ProjectCard.module.scss';
+import { ShadowCard } from '@projex/ui';
 
 type Props = {
   project: {
