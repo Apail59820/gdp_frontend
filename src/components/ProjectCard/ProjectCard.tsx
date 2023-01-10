@@ -12,14 +12,12 @@ import logoProjex from '../../../public/logo-projex.svg';
 
 type Props = {
   project: ProjectModel;
-  affairsCount: number;
   projectManagerName: string;
-  company?: 'amexia' | 'diagobat' | 'imperium' | 'probim' | 'projex';
 };
 
-const ProjectCard = ({ project, projectManagerName, affairsCount, company }: Props) => {
+const ProjectCard = ({ project, projectManagerName }: Props) => {
   const getImageSrc = () => {
-    switch (company) {
+    switch (project.company_entity) {
       case 'amexia':
         return logoAmexia.src;
       case 'diagobat':
@@ -47,7 +45,11 @@ const ProjectCard = ({ project, projectManagerName, affairsCount, company }: Pro
           <h4 className={styles.title}>{project.name}</h4>
           <span>{project.client_company_name}</span>
           <span>{projectManagerName}</span>
-          <span>{affairsCount} affaires</span>
+          {project.affairs?.length ? (
+            <span>
+              {project.affairs?.length} affaire{project.affairs.length > 1 ? 's' : ''}
+            </span>
+          ) : null}
           <div className={styles.logoContainer}>
             <img className={styles.logo} src={getImageSrc()} alt="Logo" />
           </div>

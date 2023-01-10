@@ -1,3 +1,5 @@
+import { AffairModel } from './AffairModel';
+
 export type ProjectModel = {
   id?: string;
   name?: string;
@@ -10,5 +12,14 @@ export type ProjectModel = {
   image?: string;
   status?: string;
   project_type?: string;
-  company_entity?: string;
+  company_entity?: CompanyEntity;
+  affairs?: AffairModel[];
 };
+
+export enum CompanyEntity {
+  AMEXIA = 'amexia',
+  DIAGOBAT = 'diagobat',
+  IMPERIUM = 'imperium',
+  PROBIM = 'probim',
+  PROJEX = 'projex',
+}
