@@ -4,9 +4,9 @@ import { SatisfactionModel } from './SatisfactionModel';
 import { PythagoreAffaireModel } from './PythagoreAffaireModel';
 
 export enum AffairStatusEnum {
-  Active = 'active',
-  Archived = 'archived',
-  Deleted = 'deleted',
+  ACTIVE = 'active',
+  ARCHIVED = 'archived',
+  DELETED = 'deleted',
 }
 
 export type AffairModel = {
