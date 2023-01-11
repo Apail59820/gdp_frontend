@@ -9,7 +9,6 @@ import logoDiagobat from '../../../public/logo-diagobat.svg';
 import logoImperium from '../../../public/logo-imperium.svg';
 import logoProbim from '../../../public/logo-probim.svg';
 import logoProjex from '../../../public/logo-projex.svg';
-import { Percentage } from '@projex/ui/dist/components/atoms/ProgressBar/ProgressBar';
 
 type Props = {
   affair: AffairModel;
@@ -20,7 +19,7 @@ const AffairCard = ({ affair }: Props) => {
   const STEPS = [{ status: 'DONE' }, { status: 'DONE' }, { status: 'IN_PROGRESS' }];
   const STEPS_COUNT = STEPS.length;
   const FINISHED_STEPS_COUNT = STEPS.filter((step) => step.status === 'DONE').length;
-  const FINISHED_STEPS_COUNT_PERCENTAGE: Percentage = Math.floor((FINISHED_STEPS_COUNT / STEPS_COUNT) * 100);
+  const FINISHED_STEPS_COUNT_PERCENTAGE = Math.floor((FINISHED_STEPS_COUNT / STEPS_COUNT) * 100);
 
   const getImageSrc = () => {
     switch (affair.internal_company) {
