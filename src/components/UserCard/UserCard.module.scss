@@ -1,0 +1,85 @@
+@import '../../../../../styles/app';
+
+.userCard {
+  background-color: #FFFFFF;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+
+  display: flex;
+  gap: 2rem;
+
+  position: relative;
+
+  .imageContainer {
+    background-color: $neutral-light;
+    min-width: 4rem;
+    max-width: 4rem;
+    min-height: 4rem;
+    max-height: 4rem;
+    border-radius: 50%;
+    overflow: hidden;
+
+    > img {
+      min-width: 100%;
+      max-width: 100%;
+      min-height: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
+  .content {
+    flex-grow: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+
+    h4, span, a {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .name {
+      text-transform: uppercase;
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+      font-style: normal;
+      font-weight: 700;
+      font-size: .875rem;
+      line-height: 1.2em;
+      letter-spacing: 0.04em;
+    }
+    .job {
+      font-weight: 700;
+      line-height: 1.2em;
+
+      &.green {
+        color: $green;
+      }
+    }
+    .informations {
+      display: flex;
+      flex-direction: column;
+      color: $text;
+    }
+  }
+
+  .kebabButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    padding: .5rem .625rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
