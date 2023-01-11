@@ -3,8 +3,8 @@ import styles from './FilesCard.module.scss';
 import { ShadowCard } from '@projex/ui';
 import { AssetModel } from '../../../models/AssetModel';
 import { AffairModel } from '../../../models/AffairModel';
-import folderIcon from './folder.svg';
-import fileIcon from './file.svg';
+import folderIcon from '../../../public/folder.svg';
+import fileIcon from '../../../public/file.svg';
 
 type Props = {
   asset?: AssetModel;
