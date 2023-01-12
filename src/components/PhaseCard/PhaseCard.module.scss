@@ -1,0 +1,51 @@
+@import '../../../../../styles/app';
+
+.phaseCard {
+  background-color: #ffffff;
+  width: 100%;
+  height: 100%;
+  padding: 1rem 2rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  position: relative;
+
+  .content {
+    color: $text;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .title, .description, span {
+      line-height: 1.2em;
+    }
+
+    .title {
+      margin: 0;
+      color: $primary;
+      font-family: 'Open Sans', sans-serif;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 1.25rem;
+
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .description {
+      margin: 0;
+
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* number of lines to show */
+              line-clamp: 2; 
+      -webkit-box-orient: vertical;
+    }
+  }
+}

@@ -5,12 +5,14 @@ import { UserModel } from '../../../models/UserModels';
 import kebabMenu from '../../../public/ellipsis-vertical.svg';
 import CollaboratorInformations from '../CollaboratorInformations/CollaboratorInformations';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
+import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 
 type Props = {
   user: UserModel;
+  onKebabMenuClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const CollaboratorCard = ({ user }: Props) => {
+const CollaboratorCard = ({ user, onKebabMenuClick }: Props) => {
   // TODO Handle profile picture
   const PROFILE_PICTURE = undefined;
 
@@ -24,10 +26,7 @@ const CollaboratorCard = ({ user }: Props) => {
           alt={`Photo de ${user.first_name} ${user.last_name}`}
         />
         <CollaboratorInformations user={user} />
-        {/* TODO Handle button */}
-        <button className={styles.kebabButton}>
-          <img src={kebabMenu.src} alt={`Kebab menu for `} />
-        </button>
+        <KebabMenuForCards onClick={onKebabMenuClick} />
       </div>
     </ShadowCard>
   );
