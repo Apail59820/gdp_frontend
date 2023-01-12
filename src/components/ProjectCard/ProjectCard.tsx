@@ -3,7 +3,7 @@ import styles from './ProjectCard.module.scss';
 import { ShadowCard } from '@projex/ui';
 import type { ProjectModel } from '../../../models/ProjectModel';
 import { capitalize } from '../../../utils/capitalize';
-import img from '../../../public/project-image.png';
+import defaultImage from '../../../public/default-affair-image.png';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 
 type Props = {
@@ -19,7 +19,7 @@ const ProjectCard = ({ project, projectManagerName }: Props) => {
       <div className={styles.projectCard}>
         <img
           className={styles.image}
-          src={project.image || img.src}
+          src={project.image || defaultImage.src}
           alt={`Image illustrant le projet ${project.name}`}
         />
         <section className={styles.content}>
