@@ -1,5 +1,6 @@
 import React from 'react';
 import { UserModel } from '../../../models/UserModels';
+import { capitalize } from '../../../utils/capitalize';
 import styles from './CollaboratorInformations.module.scss';
 
 type Props = {
@@ -22,12 +23,12 @@ const CollaboratorInformations = ({ user }: Props) => {
   return (
     <div className={styles.collaboratorInformations}>
       <h4 className={styles.name}>
-        {first_name} {last_name}
+        {first_name ? capitalize(first_name) : ''} {last_name ? capitalize(last_name) : ''}
       </h4>
       <span className={`${styles.job} ${getColorByCompany()}`}>
-        {role}
+        {role ? capitalize(role) : ''}
         {role && company ? ' — ' : ''}
-        {company}
+        {company ? capitalize(company) : ''}
       </span>
       <div className={styles.informations}>
         {/* TODO Add tel */}

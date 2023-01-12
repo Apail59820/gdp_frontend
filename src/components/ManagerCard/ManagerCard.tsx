@@ -1,9 +1,9 @@
 import React from 'react';
 import styles from './ManagerCard.module.scss';
-import { ShadowCard } from '@projex/ui';
-import { UserModel } from '../../../models/UserModels';
-import CollaboratorInformations from '../CollaboratorInformations/CollaboratorInformations';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
+import { UserModel } from '../../../models/UserModels';
+import { ShadowCard } from '@projex/ui';
+import CollaboratorInformations from '../CollaboratorInformations/CollaboratorInformations';
 
 type Props = {
   user: UserModel;

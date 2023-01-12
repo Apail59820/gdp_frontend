@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './PhaseCard.module.scss';
 import { ShadowCard } from '@projex/ui';
 import { PhaseModel } from '../../../models/PhaseModel';
+import { capitalize } from '../../../utils/capitalize';
 import ProgressStatusMessage from '../ProgressStatusMessage/ProgressStatusMessage';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 
@@ -20,8 +21,8 @@ const PhaseCard = ({ phase, onKebabMenuClick }: Props) => {
     <ShadowCard>
       <div className={styles.phaseCard}>
         <div className={styles.content}>
-          <h4 className={styles.title}>{name}</h4>
-          <p className={styles.description}>{description}</p>
+          <h4 className={styles.title}>{name ? capitalize(name) : '/'}</h4>
+          <p className={styles.description}>{description ? capitalize(description) : '/'}</p>
           {/* TODO Handle files display */}
           <span>
             {NUMBER_OF_FILES} fichier{NUMBER_OF_FILES > 1 ? 's' : ''} associé{NUMBER_OF_FILES > 1 ? 's' : ''}

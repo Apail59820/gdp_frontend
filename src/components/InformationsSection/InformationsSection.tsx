@@ -2,6 +2,7 @@ import React, { ImgHTMLAttributes, ReactNode } from 'react';
 import styles from './InformationsSection.module.scss';
 import defaultImage from '../../../public/default-project-image.png';
 import { CompanyEnum } from '../../../models/CompanyEnum';
+import { capitalize } from '../../../utils/capitalize';
 
 type Props = {
   // TODO revoir les props
@@ -40,11 +41,11 @@ const InformationsSection = ({ informations, onButtonClick }: Props) => {
           {[
             {
               label: 'Client',
-              data: informations.clientName || '/',
+              data: capitalize(informations.clientName) || '/',
             },
             {
               label: 'Chef de projet',
-              data: informations.projetManager || '/',
+              data: capitalize(informations.projetManager) || '/',
             },
             !IS_AN_AFFAIR
               ? {

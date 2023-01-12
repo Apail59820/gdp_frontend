@@ -19,7 +19,7 @@ import pictoProjex from '../public/picto-projex.svg';
 import defaultPicture from '../public/default-profile-picture.png';
 import { CompanyEnum } from '../models/CompanyEnum';
 
-export const getImagesByCompany = (company?: string): { logo?: string; picto?: string } => {
+export const getImagesByCompany = (company?: string): { logo: string; picto: string } => {
   switch (company?.toLowerCase()) {
     case CompanyEnum.GROUPE_PROJEX:
       return {

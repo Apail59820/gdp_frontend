@@ -12,17 +12,17 @@ type Props = {
 const ProgressStatusMessage = ({ status }: Props) => {
   const getInformationsByStatus = (): { text: string; icon: string } => {
     switch (status) {
-      case PhaseStatusEnum.Completed:
+      case PhaseStatusEnum.COMPLETED:
         return {
           text: 'Terminée',
           icon: completedIcon.src,
         };
-      case PhaseStatusEnum.Ongoing:
+      case PhaseStatusEnum.ONGOING:
         return {
           text: 'En cours',
           icon: ongoingIcon.src,
         };
-      case PhaseStatusEnum.Pending:
+      case PhaseStatusEnum.PENDING:
         return {
           text: 'En attente',
           icon: pendingIcon.src,

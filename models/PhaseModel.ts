@@ -2,9 +2,9 @@ import { AffairModel } from './AffairModel';
 import { UserModel } from './UserModels';
 
 export enum PhaseStatusEnum {
-  Pending = 'pending',
-  Ongoing = 'ongoing',
-  Completed = 'completed',
+  PENDING = 'pending',
+  ONGOING = 'ongoing',
+  COMPLETED = 'completed',
 }
 
 export type PhaseModel = {
