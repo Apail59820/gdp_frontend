@@ -1,10 +1,9 @@
 import React from 'react';
 import styles from './CollaboratorCard.module.scss';
-import { ShadowCard } from '@projex/ui';
 import { UserModel } from '../../../models/UserModels';
-import kebabMenu from '../../../public/ellipsis-vertical.svg';
-import CollaboratorInformations from '../CollaboratorInformations/CollaboratorInformations';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
+import { ShadowCard } from '@projex/ui';
+import CollaboratorInformations from '../CollaboratorInformations/CollaboratorInformations';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 
 type Props = {
