@@ -22,7 +22,7 @@ const CollaboratorCard = ({ user, onKebabMenuClick }: Props) => {
         {/* TODO Render user profile picture */}
         <img
           className={styles.image}
-          src={getImagesByCompany(user.company?.toLowerCase()).picto}
+          src={getImagesByCompany(user.company).picto}
           alt={`Photo de ${user.first_name} ${user.last_name}`}
         />
         <CollaboratorInformations user={user} />

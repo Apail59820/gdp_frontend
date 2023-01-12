@@ -1,12 +1,14 @@
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 import { PageHeaderBanner } from '@projex/ui';
+import InformationsSection from '../src/components/InformationsSection';
+import { CompanyEnum } from '../models/CompanyEnum';
 
 export default function Home() {
   return (
     <>
       <PageHeaderBanner title="Bonjour, Edgar Cresson" />
-      {/* <div
+      <div
         style={{
           height: '100%',
           width: '100%',
@@ -16,17 +18,16 @@ export default function Home() {
           alignItems: 'center',
         }}
       >
-        <div style={{ width: '416px', height: '172px', marginBottom: '50px' }}>
-          <PhaseCard
-            phase={{
-              name: 'Nom de l’étape',
-              description: "Mini description de l'étape",
-              status: PhaseStatusEnum.Completed,
-            }}
-            onKebabMenuClick={() => console.log('click 2')}
-          />
-        </div>
-      </div> */}
+        <InformationsSection
+          informations={{
+            image: undefined,
+            clientName: '',
+            projetManager: '',
+            numberOfAffairs: undefined,
+            company: CompanyEnum.GROUPE_PROJEX,
+          }}
+        />
+      </div>
     </>
   );
 }

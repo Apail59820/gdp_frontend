@@ -16,7 +16,7 @@ const ManagerCard = ({ user }: Props) => {
         <img
           className={styles.image}
           // TODO Si user a une photo de profil, la mettre en src, sinon utiliser getInformationsByCompany()
-          src={getImagesByCompany(user.company?.toLowerCase()).logo}
+          src={getImagesByCompany(user.company).logo}
           alt={`Photo de ${user.first_name} ${user.last_name}`}
         />
         <div className={styles.content}>
