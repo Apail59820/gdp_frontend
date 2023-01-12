@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <>
       <PageHeaderBanner title="Bonjour, Edgar Cresson" />
-      <div
+      {/* <div
         style={{
           height: '100%',
           width: '100%',
@@ -16,10 +16,17 @@ export default function Home() {
           alignItems: 'center',
         }}
       >
-        {/* <div style={{ width: '640px', height: '192px', marginBottom: '50px' }}>
-          <ManagerCard user={USER} />
-        </div> */}
-      </div>
+        <div style={{ width: '416px', height: '172px', marginBottom: '50px' }}>
+          <PhaseCard
+            phase={{
+              name: 'Nom de l’étape',
+              description: "Mini description de l'étape",
+              status: PhaseStatusEnum.Completed,
+            }}
+            onKebabMenuClick={() => console.log('click 2')}
+          />
+        </div>
+      </div> */}
     </>
   );
 }

@@ -9,12 +9,14 @@ import logoDiagobat from '../../../public/logo-diagobat.svg';
 import logoImperium from '../../../public/logo-imperium.svg';
 import logoProbim from '../../../public/logo-probim.svg';
 import logoProjex from '../../../public/logo-projex.svg';
+import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 
 type Props = {
   affair: AffairModel;
+  onKebabMenuClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const AffairCard = ({ affair }: Props) => {
+const AffairCard = ({ affair, onKebabMenuClick }: Props) => {
   // TODO
   const STEPS = [{ status: 'DONE' }, { status: 'DONE' }, { status: 'IN_PROGRESS' }];
   const STEPS_COUNT = STEPS.length;
@@ -55,9 +57,7 @@ const AffairCard = ({ affair }: Props) => {
           </span>
           <ProgressBar percentage={FINISHED_STEPS_COUNT_PERCENTAGE} tiny />
         </div>
-        <button className={styles.kebabButton}>
-          <img src={kebabMenu.src} alt={`Kebab menu for ${affair.name}`} />
-        </button>
+        <KebabMenuForCards onClick={onKebabMenuClick} />
       </div>
     </ShadowCard>
   );
