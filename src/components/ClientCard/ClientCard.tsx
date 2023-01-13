@@ -26,80 +26,17 @@ type Props = {
     iconsToShow: number;
 };
 
-
 const ClientCard = ({ client, contacts, iconsToShow }: Props) => {
-      // let slider = {
-    //     display : 'flex',
-    //     flexDirection: 'row',
-    //     alignItems: 'flex-start',
-    //     padding: '0px',
-    //     flex: 'none',
-    //     order: '0',
-    //     alignSelf: 'stretch',
-    //     flexGrow: '0',
-    //     marginLeft: '2em',
-    //     marginTop: '1em',
-    //     border: '3px solid red',
-    //     width: '16em',
-    //     height: '102px',
-    //     overflow: 'hidden',
-    //     animationName: 'slider',
-    //     animationDuration: '10s',
-    // }
-
-    // let sliderContent = `
-    //     &:active {
-    //         border: 1px solid blue;
-    //         width: 16em;
-    //         height: 102px;
-    //         position: relative;
-    //         animation-name: ${slider};
-    //         animation-duration: 1s;
-    // }`;
     const [current, setCurrent] = useState(0);
-    
-    const [isShowOthers, setIsShowOthers] = useState(true);
-    
-    const box = useRef<HTMLDivElement>(null);
-    let slider = `${styles.slider}`
-    let sliderContent = `${styles.sliderContent}`
-
-    const [stateSlider, setStateSliderContent] = useState(slider)
+    const [nextCurrent, setNextCurrent] = useState<number | undefined>(undefined);
 
     const nextPerson= (key: number) => {
-        slideAnime()
-        setCurrent(key);
+        key === 0 ? [setCurrent(key), setNextCurrent(undefined)] : setNextCurrent(key);
+        setTimeout(() => {
+            setCurrent(key);
+            setNextCurrent(undefined)
+        }, 300);
       };
-
-    const totalOthers = () => {
-        const totalPerson = contacts.length;
-        const totalToShow = totalPerson - iconsToShow;
-        if (totalToShow === 0) {
-            setIsShowOthers(false)
-        }
-        return totalToShow;
-    }
-  
-
-    const slideAnime = () => {
-        
-        
-        console.log('ref', box);
-        const test = box.current?.style;
-        if (test) {
-            console.log(test);
-            setStateSliderContent(`
-            @keyframes ${slider} {
-                0% {
-                    left: 0px;
-                  }
-                  100% {
-                    left: -16em;
-                  }
-              }`)
-        }
-        
-    };
 
     
     return (
@@ -115,9 +52,10 @@ const ClientCard = ({ client, contacts, iconsToShow }: Props) => {
                         <div className={styles.adress}>{client.city}</div>
                         <div className={styles.adress}>{client.country}</div>
                     </div>
-                    <div>
-                    <div className={`${stateSlider}`} ref={box}>
-                        <div className={`${sliderContent}`}>
+                    <div >
+                    <div className={styles.slider}>
+                        <div className={`${styles.sliderContent} ${nextCurrent !== undefined ? styles.slideAnime : ''}`}>
+                      
                             <div className={styles.container}>
                                 <div className={styles.boxImg}>
                                     <img src={contacts[current]?.image ? contacts[current].image?.src  : Img.src} alt={contacts[current]?.image ? '' : 'image contact'} className={styles.contactImg}/>
@@ -130,17 +68,19 @@ const ClientCard = ({ client, contacts, iconsToShow }: Props) => {
                                 </div>
 
                             </div>
+                            {nextCurrent && (                            
                             <div className={styles.container}>
                                 <div className={styles.boxImg}>
-                                    <img src={contacts[current +1]?.image ? contacts[current].image?.src  : Img.src} alt={contacts[current +1]?.image ? '' : 'image contact'} className={styles.contactImg}/>
+                                    <img src={contacts[nextCurrent]?.image ? contacts[nextCurrent].image?.src  : Img.src} alt={contacts[nextCurrent]?.image ? '' : 'image contact'} className={styles.contactImg}/>
                                 </div>
                                 <div>
-                                    <div >{contacts[current +1]?.contactName}</div>
-                                    <div >{contacts[current +1]?.phoneNumber1}</div>
-                                    <div >{contacts[current +1]?.phoneNumber2}</div>
-                                    <div >{contacts[current +1]?.mail}</div>
+                                    <div >{contacts[nextCurrent]?.contactName}</div>
+                                    <div >{contacts[nextCurrent]?.phoneNumber1}</div>
+                                    <div >{contacts[nextCurrent]?.phoneNumber2}</div>
+                                    <div >{contacts[nextCurrent]?.mail}</div>
                                 </div>
                             </div>
+                            )}
                         </div>
                     </div>
                         <div className={styles.boxBottomRight}>
@@ -153,8 +93,8 @@ const ClientCard = ({ client, contacts, iconsToShow }: Props) => {
                                     )
                                 }
                             })}
-                            {isShowOthers &&
-                                <button className={styles.contactBtn}><div className={styles.contactBtnTxt}>{'+'+ totalOthers()}</div></button>
+                            {contacts.length >  iconsToShow &&
+                                <button className={styles.contactBtn}><div className={styles.contactBtnTxt}>{'+'+ `${contacts.length - iconsToShow}`}</div></button>
                             }
                         </div>
                     </div>

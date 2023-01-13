@@ -1,127 +1,79 @@
 @import '../../../../../styles/app';
 
+.boxBottomRight, .sliderContent, .slider, .container, .clientCard {
+    display: flex;
+    flex-direction: row;
+}
 .adress {
     font-size: 0.9em;
     font-style: normal;
     line-height: 80%;
 }
-
 .boxLeft {
-    background: #F6F9FB;
-    height: 12em;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    background: #F6F9FB;
+    height: 12em;
     padding: 1em;
     gap: 8px;
     flex: none;
     order: 0;
-    flex-grow: 1; 
+    width: 10em;
     border: 2px solid black;
-    max-width: 5em;   
 }
 .boxBottomRight{
-    display: flex;
-    flex-direction: row;
     gap: 0.3em;
-    // border: 2px solid greenyellow;
-    // margin-top: 1em;
+    margin-top: 1em;
     margin-left: 2em;
     height: 100px;
 }
 .slider {
-    display: flex;
-    flex-direction: row;
     align-items: flex-start;
     padding: 0px;
     flex: none;
     order: 0;
-    align-self: stretch;
     flex-grow: 0;
     margin-left: 2em;
     margin-top: 1em;
-    border: 3px solid red;
-    width: 16em;
-    // height: 350px;
     overflow: hidden;
     animation-name: slider;
-    animation-duration: 10s;
     
 }
 .sliderContent {
-    display: flex;
-    flex-direction: row;
-    // align-items: flex-start;
     padding: 0px;
-    width: 16em;
     height: 102px;
     flex: none;
     order: 0;
     align-self: stretch;
-    border: 2px solid blue;
     position: relative;
-
-    // animation-name: slider;
-    // animation-duration: 10s;
-
 }
-
-  .sliderContent {
-    &:active {
-        border: 1px solid blue;
-        width: 16em;
-        height: 102px;
-        position: relative;
-        animation-name: slider;
-        animation-duration: 1s;
-
-    }
-  }
-  .container {
-    border: 2px solid pink;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding-right: 1em;
-    height: 200px;
-  }
-
-  @keyframes slider {
+.container {
+    width: 16em;
+}
+.slideAnime {
+    animation: slider 0.3s ease-in-out forwards;
+}
+@keyframes slider {
     0% {
         left: 0px;
-      }
-      100% {
+        }
+        100% {
         left: -16em;
-      }
-  }
-
+        }
+}
 .boxImg{
     width: 6em;
 }
-
 .clientCard {
-    display: flex;
-    flex-direction: row;
     align-items: flex-start;
     padding: 0px;
     height: 12em;
     overflow: hidden;
 }
-
-
 .clientName {
     font-size: 1.25em;
 }
-// .contactBtn::after{
-//     width: 2em;
-//     height: 2em;
-//     border-radius: 2em;
-//     background-color: blue;
-//     box-shadow: 0px 0.125em 0.250em rgba(0, 0, 0, 0.07);
-//     margin-right: -0.6rem;
-//     border: 2px solid white;
-// }
-
 .contactBtn {
     width: 2.2em;
     height: 2.2em;
@@ -162,26 +114,15 @@
         }
     }
 }
-
 .contactImg {
     width: 4em;
     height: 4em;
     border-radius: 4em;
 }
-
 .containerClientCard{
     padding: 1em;
     width: 40em
 }
-
-.blue {
-    width: 1.4em;
-    height: 1.4em;
-    border-radius: 1.4em;
-    background-color: blue;
-    box-shadow: 0px 0.125em 0.250em rgba(0, 0, 0, 0.07);
-}
-
 .boxImg img, .boxBottomRight img {
     object-fit: cover;
 }
