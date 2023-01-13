@@ -3,21 +3,23 @@ import styles from '../styles/Home.module.css';
 import { PageHeaderBanner } from '@projex/ui';
 import UserCard from '../src/components/UserCard/UserCard';
 import ClientCard from '../src/components/ClientCard/ClientCard';
+import { UserModel } from '../models/UserModels';
+import { ProjectModel } from '../models/ProjectModel';
 
 export default function Home() {
-  const client = {clientName: 'eee', addressLine1: 'eeee', addressLine2: 'hieorze',postalCode: 59000, city: 'LILLE',country: 'France'  };
-  const contact = [{contactName: 'hohih', phoneNumber1: 232432, phoneNumber2: 567567576, mail: 'fiozefio@gmail.com'}, 
-  {contactName: 'DZEDEZ', phoneNumber1: 2342, phoneNumber2: 8888, mail: 'EEEE@gmail.com'},
-  {contactName: 'EZZA', phoneNumber1: 2332321, phoneNumber2: 99999, mail: 'Efezfezez@gmail.com'},
-  {contactName: 'EZAEAZ', phoneNumber1: 222, phoneNumber2: 99999, mail: 'Efezfezez@gmail.com'},
-  {contactName: 'fezfze', phoneNumber1: 232432, phoneNumber2: 567567576, mail: 'fiozefio@gmail.com'}, 
-  {contactName: 'gggg', phoneNumber1: 2342, phoneNumber2: 8888, mail: 'EEEE@gmail.com'},
-  {contactName: 'htyhty', phoneNumber1: 2332321, phoneNumber2: 99999, mail: 'Efezfezez@gmail.com'},
-  {contactName: 'cccc', phoneNumber1: 222, phoneNumber2: 99999, mail: 'Efezfezez@gmail.com'},
-  {contactName: 'zzzz', phoneNumber1: 232432, phoneNumber2: 567567576, mail: 'fiozefio@gmail.com'}, 
-  {contactName: 'loliolo', phoneNumber1: 2342, phoneNumber2: 8888, mail: 'EEEE@gmail.com'},
-  {contactName: 'aaaa', phoneNumber1: 2332321, phoneNumber2: 99999, mail: 'Efezfezez@gmail.com'},
-  {contactName: 'wwwww', phoneNumber1: 222, phoneNumber2: 99999, mail: 'Efezfezez@gmail.com'},
+  const client  : ProjectModel = {client_company_name: 'eee', address: 'eeee',zip_code: '59000', city: 'LILLE',country: 'France'  };
+  const contact : UserModel[] = [{first_name: 'DZEDEZ', last_name: 'frzefze', number: '232432', email: 'fiozefio@gmail.com'}, 
+  {first_name: 'DZEDEZ', last_name: 'frzefze', number: '2342', email: 'EEEE@gmail.com'},
+  {first_name: 'EZZA', last_name: ' regert', number: '2332321', email: 'grgerg@gmail.com'},
+  {first_name: 'EZAEAZ', last_name: 'jyuy', number: '576', email: 'gggg@gmail.com'},
+  {first_name: 'fezfze', last_name: 'frzefze',number: '789',  email: 'fiozefio@gmail.com'}, 
+  {first_name: 'gggg', last_name: 'fzefze',number: '2342',  email: 'EEEE@gmail.com'},
+  {first_name: 'htyhty', last_name: 'jyujuy',number: '98709', email: 'Efezfezez@gmail.com'},
+  {first_name: 'cccc', last_name: 'ezz',number: '476547',email: 'azzzz@gmail.com'},
+  {first_name: 'zzzz', last_name: 'nfgdnbdgf',number: '999',  email: 'fiozefio@gmail.com'}, 
+  {first_name: 'loliolo', last_name: 'ltkrekop',number: '2342', email: 'EEEE@gmail.com'},
+  {first_name: 'aaaa', last_name: 'frzefze',number: '2332321',  email: 'Efezfezez@gmail.com'},
+  {first_name: 'wwwww', last_name: 'moptore',number: '222',  email: 'Efezfezez@gmail.com'}
 ];
 
   return (
@@ -34,7 +36,7 @@ export default function Home() {
               email: 'contact@client.fr',
             }}
           /> */}
-          <ClientCard client={client} contacts={contact} iconsToShow={5}></ClientCard>
+          <ClientCard client={client} users={contact} iconsToShow={5}></ClientCard>
         </div>
       </div>
     </>

@@ -4,37 +4,29 @@ import { useEffect, useState } from 'react'
 import { ShadowCard } from '@projex/ui';
 import Img from './portraitA.png';
 import { Tooltip, Button } from 'antd';
-
-type Contact = {
-    image?: ImgHTMLAttributes<HTMLImageElement>;
-    contactName: string;
-    phoneNumber1: number;
-    phoneNumber2: number;
-    mail: string;
-}
+import type { UserModel } from '../../../models/UserModels';
+import type { ProjectModel } from '../../../models/ProjectModel';
+import kebabMenu from '../../../public/ellipsis-vertical.svg';
 
 type Props = {
-    client: {
-        clientName: string;
-        addressLine1?: string;
-        addressLine2?: string;
-        postalCode: number;
-        city: string;
-        country: string;
-    };
-    contacts: Contact[];
+    client: ProjectModel;
+    users: UserModel[];
     iconsToShow: number;
+    // to define
+    onClick?: React.MouseEventHandler;
+    // redirect to profiles
+    redirectTo?: React.MouseEventHandler;
 };
 
-const ClientCard = ({ client, contacts, iconsToShow }: Props) => {
+const ClientCard = ({ client, users, iconsToShow, onClick, redirectTo }: Props) => {
     const [current, setCurrent] = useState(0);
     const [nextCurrent, setNextCurrent] = useState<number | undefined>(undefined);
 
     const nextPerson= (key: number) => {
         key === 0 ? [setCurrent(key), setNextCurrent(undefined)] : setNextCurrent(key);
         setTimeout(() => {
-            setCurrent(key);
             setNextCurrent(undefined)
+            setCurrent(key);
         }, 300);
       };
 
@@ -44,11 +36,11 @@ const ClientCard = ({ client, contacts, iconsToShow }: Props) => {
         <div className={styles.containerClientCard}>
             <ShadowCard>
                 <div className={styles.clientCard}>
+                    
                     <div className={styles.boxLeft}>
-                        <div className={styles.clientName}>{client.clientName}</div>
-                        <div className={styles.adress}>{client.addressLine1}</div>
-                        <div className={styles.adress}>{client.addressLine2}</div>
-                        <div className={styles.adress}>{client.postalCode}</div>
+                        <div className={styles.title}>{client.client_company_name}</div>
+                        <div className={styles.adress}>{client.address}</div>
+                        <div className={styles.adress}>{client.zip_code}</div>
                         <div className={styles.adress}>{client.city}</div>
                         <div className={styles.adress}>{client.country}</div>
                     </div>
@@ -58,46 +50,53 @@ const ClientCard = ({ client, contacts, iconsToShow }: Props) => {
                       
                             <div className={styles.container}>
                                 <div className={styles.boxImg}>
-                                    <img src={contacts[current]?.image ? contacts[current].image?.src  : Img.src} alt={contacts[current]?.image ? '' : 'image contact'} className={styles.contactImg}/>
+                                    <img src={users[current]?.avatar ? users[current].avatar  : Img.src} alt={users[current]?.avatar ? '' : 'image contact'} className={styles.contactImg}/>
                                 </div>
                                 <div>
-                                    <div >{contacts[current]?.contactName}</div>
-                                    <div >{contacts[current]?.phoneNumber1}</div>
-                                    <div >{contacts[current]?.phoneNumber2}</div>
-                                    <div >{contacts[current]?.mail}</div>
+                                    <div className={styles.clientName}>{users[current]?.first_name?.toUpperCase()} {users[current]?.last_name?.toUpperCase()}</div>
+                                    <div >{users[current]?.number}</div>
+                                    {/* second phone number to added in the table */}
+                                    {/* <div >{contacts[current]?.number}</div> */}
+                                    <div >{users[current]?.email}</div>
                                 </div>
 
                             </div>
                             {nextCurrent && (                            
                             <div className={styles.container}>
                                 <div className={styles.boxImg}>
-                                    <img src={contacts[nextCurrent]?.image ? contacts[nextCurrent].image?.src  : Img.src} alt={contacts[nextCurrent]?.image ? '' : 'image contact'} className={styles.contactImg}/>
+                                    <img src={users[nextCurrent]?.avatar ? users[nextCurrent].avatar  : Img.src} alt={users[nextCurrent]?.avatar ? '' : 'image contact'} className={styles.contactImg}/>
                                 </div>
                                 <div>
-                                    <div >{contacts[nextCurrent]?.contactName}</div>
-                                    <div >{contacts[nextCurrent]?.phoneNumber1}</div>
-                                    <div >{contacts[nextCurrent]?.phoneNumber2}</div>
-                                    <div >{contacts[nextCurrent]?.mail}</div>
+                                    <div className={styles.clientName}>{users[nextCurrent]?.first_name?.toUpperCase()} {users[current]?.last_name?.toUpperCase()}</div>
+                                    <div >{users[nextCurrent]?.number}</div>
+                                        {/* second phone number to added in the table */}
+                                    {/* <div >{contacts[nextCurrent]?.number}</div> */}
+                                    <div >{users[nextCurrent]?.email}</div>
                                 </div>
                             </div>
                             )}
                         </div>
                     </div>
+
+                       
                         <div className={styles.boxBottomRight}>
-                            {contacts.map((e: Contact, key: number) => {
+                            {users.map((e: UserModel, key: number) => {
                                 if (key < iconsToShow) {
                                     return (
-                                        <Tooltip placement="bottomLeft" title={e.contactName}>
-                                            <img onClick={() => nextPerson(key)} key={key} src={contacts[current]?.image ? contacts[current].image?.src  : Img.src} alt={contacts[current]?.image ? '' : 'image contact'} className={styles.contactBtn}></img>
+                                        <Tooltip placement="bottomLeft" title={e.first_name + ' ' + e.last_name}>
+                                            <img onClick={() => nextPerson(key)} key={key} src={users[current]?.avatar ? users[current].avatar  : Img.src} alt={users[current]?.avatar ? '' : 'image contact'} className={styles.contactBtn}></img>
                                         </Tooltip>
                                     )
                                 }
                             })}
-                            {contacts.length >  iconsToShow &&
-                                <button className={styles.contactBtn}><div className={styles.contactBtnTxt}>{'+'+ `${contacts.length - iconsToShow}`}</div></button>
+                            {users.length >  iconsToShow &&
+                                <button className={styles.contactBtn}><div className={styles.contactBtnTxt}>{'+'+ `${users.length - iconsToShow}`}</div></button>
                             }
                         </div>
                     </div>
+                    <button className={styles.kebabButton} onClick={onClick}>
+                        <img src={kebabMenu.src} alt={`Kebab menu for ${client.name}`} />
+                    </button>
                 </div>
             </ShadowCard>
             </div>

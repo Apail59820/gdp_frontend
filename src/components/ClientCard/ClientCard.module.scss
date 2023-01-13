@@ -1,79 +1,127 @@
 @import '../../../../../styles/app';
 
-.boxBottomRight, .sliderContent, .slider, .container, .clientCard {
+> .body{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    gap: .25rem;
+
+    font-size: 1rem;
+    line-height: 1.2em;
+    font-weight: 400;
+    color: $text;
 }
 .adress {
     font-size: 0.9em;
     font-style: normal;
     line-height: 80%;
 }
+.title {
+    font-family: 'Open Sans', sans-serif;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 1.25rem;
+      line-height: 1.2em;
+      color: $primary;
+}
+.kebabButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 2.5em;
+    margin-top: 0.5em;
+}
 .boxLeft {
+    background: #F6F9FB;
+    height: 12em;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    background: #F6F9FB;
-    height: 12em;
     padding: 1em;
     gap: 8px;
     flex: none;
     order: 0;
-    width: 10em;
-    border: 2px solid black;
+    width: 12em;
 }
 .boxBottomRight{
+    display: flex;
+    flex-direction: row;
     gap: 0.3em;
     margin-top: 1em;
     margin-left: 2em;
     height: 100px;
 }
+
 .slider {
+    display: flex;
+    flex-direction: row;
     align-items: flex-start;
     padding: 0px;
     flex: none;
     order: 0;
+    align-self: stretch;
     flex-grow: 0;
     margin-left: 2em;
     margin-top: 1em;
+    width: 20em;
     overflow: hidden;
     animation-name: slider;
     
 }
 .sliderContent {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
     padding: 0px;
     height: 102px;
-    flex: none;
     order: 0;
     align-self: stretch;
     position: relative;
+
+
 }
-.container {
-    width: 16em;
-}
-.slideAnime {
+
+  .container {
+    display: flex;
+    flex-direction: row;
+    width: 20em;
+  }
+
+  .slideAnime {
     animation: slider 0.3s ease-in-out forwards;
-}
-@keyframes slider {
+  }
+
+  @keyframes slider {
     0% {
         left: 0px;
-        }
-        100% {
-        left: -16em;
-        }
-}
+      }
+      100% {
+        left: -20em;
+      }
+  }
+
 .boxImg{
     width: 6em;
 }
+
 .clientCard {
+    display: flex;
+    flex-direction: row;
     align-items: flex-start;
     padding: 0px;
     height: 12em;
     overflow: hidden;
 }
+
+
 .clientName {
-    font-size: 1.25em;
+    font-size: 1rem;
+    line-height: 1.05em;
+    font-family: 'Open Sans', sans-serif;
+    font-style: normal;
+    font-weight: 700;
 }
+
+
 .contactBtn {
     width: 2.2em;
     height: 2.2em;
@@ -114,15 +162,18 @@
         }
     }
 }
+
 .contactImg {
     width: 4em;
     height: 4em;
     border-radius: 4em;
 }
+
 .containerClientCard{
     padding: 1em;
     width: 40em
 }
+
 .boxImg img, .boxBottomRight img {
     object-fit: cover;
 }
