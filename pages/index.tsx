@@ -9,6 +9,15 @@ export default function Home() {
   const contact = [{contactName: 'hohih', phoneNumber1: 232432, phoneNumber2: 567567576, mail: 'fiozefio@gmail.com'}, 
   {contactName: 'DZEDEZ', phoneNumber1: 2342, phoneNumber2: 8888, mail: 'EEEE@gmail.com'},
   {contactName: 'EZZA', phoneNumber1: 2332321, phoneNumber2: 99999, mail: 'Efezfezez@gmail.com'},
+  {contactName: 'EZAEAZ', phoneNumber1: 222, phoneNumber2: 99999, mail: 'Efezfezez@gmail.com'},
+  {contactName: 'fezfze', phoneNumber1: 232432, phoneNumber2: 567567576, mail: 'fiozefio@gmail.com'}, 
+  {contactName: 'gggg', phoneNumber1: 2342, phoneNumber2: 8888, mail: 'EEEE@gmail.com'},
+  {contactName: 'htyhty', phoneNumber1: 2332321, phoneNumber2: 99999, mail: 'Efezfezez@gmail.com'},
+  {contactName: 'cccc', phoneNumber1: 222, phoneNumber2: 99999, mail: 'Efezfezez@gmail.com'},
+  {contactName: 'zzzz', phoneNumber1: 232432, phoneNumber2: 567567576, mail: 'fiozefio@gmail.com'}, 
+  {contactName: 'loliolo', phoneNumber1: 2342, phoneNumber2: 8888, mail: 'EEEE@gmail.com'},
+  {contactName: 'aaaa', phoneNumber1: 2332321, phoneNumber2: 99999, mail: 'Efezfezez@gmail.com'},
+  {contactName: 'wwwww', phoneNumber1: 222, phoneNumber2: 99999, mail: 'Efezfezez@gmail.com'},
 ];
 
   return (
@@ -25,7 +34,7 @@ export default function Home() {
               email: 'contact@client.fr',
             }}
           /> */}
-          <ClientCard client={client} contacts={contact}></ClientCard>
+          <ClientCard client={client} contacts={contact} iconsToShow={5}></ClientCard>
         </div>
       </div>
     </>
