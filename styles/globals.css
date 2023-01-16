@@ -27,7 +27,7 @@ body {
 
 #main > #aside {
   position: relative;
-  min-width: 4rem;
+  min-width: 5.125rem;
 }
 
 #main > #aside > #nav {
