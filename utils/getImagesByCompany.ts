@@ -21,11 +21,6 @@ import { CompanyEnum } from '../models/CompanyEnum';
 
 export const getImagesByCompany = (company?: string): { logo: string; picto: string } => {
   switch (company?.toLowerCase()) {
-    case CompanyEnum.GROUPE_PROJEX:
-      return {
-        logo: logoGroupeProjex.src,
-        picto: pictoGroupeProjex.src,
-      };
     case CompanyEnum.AMEXIA:
       return {
         logo: logoAmexia.src,
@@ -52,10 +47,9 @@ export const getImagesByCompany = (company?: string): { logo: string; picto: str
         picto: pictoProjex.src,
       };
     default:
-      // TODO Revoir l'image par défaut
       return {
-        logo: defaultPicture.src,
-        picto: defaultPicture.src,
+        logo: logoGroupeProjex.src,
+        picto: pictoGroupeProjex.src,
       };
   }
 };

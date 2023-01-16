@@ -1,0 +1,45 @@
+@import '../../../../../styles/app';
+
+.pageHeaderBanner {
+  width: 100%;
+  background-color: $bg-secondary;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  position: relative;
+
+  .logo {
+    height: 3rem;
+    margin-right: 2rem;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0.25rem;
+  }
+
+  &.groupeProjex::after {
+    background-color: $groupe-projex;
+  }
+  &.amexia::after {
+    background-color: $amexia;
+  }
+  &.diagobat::after {
+    background-color: $diagobat;
+  }
+  &.imperium::after {
+    background-color: $imperium;
+  }
+  &.probim::after {
+    background-color: $probim;
+  }
+  &.projex::after {
+    background-color: $projex;
+  }
+}
