@@ -1,8 +1,10 @@
+// /!\ Ce composant n'existe plus sur la maquette
+
 import React, { ImgHTMLAttributes, ReactNode } from 'react';
 import styles from './InformationsSection.module.scss';
 import defaultImage from '../../../public/default-project-image.png';
-import { CompanyEnum } from '../../../models/CompanyEnum';
-import { capitalize } from '../../../utils/capitalize';
+import { CompanyEnum } from '../../../../models/CompanyEnum';
+import { capitalize } from '../../../../utils/capitalize';
 
 type Props = {
   // TODO revoir les props
