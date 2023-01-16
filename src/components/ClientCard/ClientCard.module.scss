@@ -4,176 +4,174 @@
     display: flex;
     flex-direction: column;
     gap: .25rem;
-
     font-size: 1rem;
     line-height: 1.2em;
     font-weight: 400;
     color: $text;
 }
-.adress {
-    font-size: 0.9em;
-    font-style: normal;
-    line-height: 80%;
-}
-.title {
-    font-family: 'Open Sans', sans-serif;
-      font-style: normal;
-      font-weight: 700;
-      font-size: 1.25rem;
-      line-height: 1.2em;
-      color: $primary;
-}
-.kebabButton {
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-left: 2.5em;
-    margin-top: 0.5em;
-}
-.boxLeft {
-    background: #F6F9FB;
-    height: 12em;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 1em;
-    gap: 8px;
-    flex: none;
-    order: 0;
-    width: 12em;
-}
-.boxBottomRight{
-    display: flex;
-    flex-direction: row;
-    gap: 0.3em;
-    margin-top: 1em;
-    margin-left: 2em;
-    height: 100px;
-}
-
-.slider {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding: 0px;
-    flex: none;
-    order: 0;
-    align-self: stretch;
-    flex-grow: 0;
-    margin-left: 2em;
-    margin-top: 1em;
-    width: 20em;
-    overflow: hidden;
-    animation-name: slider;
-    
-}
-.sliderContent {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding: 0px;
-    height: 102px;
-    order: 0;
-    align-self: stretch;
-    position: relative;
-
-
-}
-
-  .container {
-    display: flex;
-    flex-direction: row;
-    width: 20em;
-  }
-
-  .slideAnime {
-    animation: slider 0.3s ease-in-out forwards;
-  }
-
-  @keyframes slider {
-    0% {
-        left: 0px;
-      }
-      100% {
-        left: -20em;
-      }
-  }
-
-.boxImg{
-    width: 6em;
-}
-
-.clientCard {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    padding: 0px;
-    height: 12em;
-    overflow: hidden;
-}
-
-
-.clientName {
-    font-size: 1rem;
-    line-height: 1.05em;
-    font-family: 'Open Sans', sans-serif;
-    font-style: normal;
-    font-weight: 700;
-}
-
-
-.contactBtn {
-    width: 2.2em;
-    height: 2.2em;
-    border-radius: 2.2em;
-    background-color: #DDE3EB;
-    box-shadow: 0px 0.125em 0.250em rgba(0, 0, 0, 0.07);
-    margin-right: -0.6rem;
-    border: 2px solid white;
-    transition: 0.3s;
-}
-.contactBtnTxt:hover{
-    color: #F6F9FB;
-    font-size: 0.8em;
-}
-.contactBtnTxt{
-    font-size: 0.8em;
-}
-.contactBtn:hover {
-    width: 2.2em;
-    height: 2.2em;
-    border-radius: 2.2em;
-    background-color: $primary-light;
-    box-shadow: 0px 0.125em 0.250em rgba(0, 0, 0, 0.07);
-    color: #F6F9FB;
-    margin-right: -0.6rem;
-    border: 2px solid white;
-    position: -webkit-sticky;
-    margin-top: -0.4rem;
-    filter: contrast(175%) brightness(103%);
-    transition-timing-function: cubic-bezier(.34,.99,.63,1.18) ease-in-out;
-}
-.boxBottomRight {
-    &:hover {
-        .contactBtn {
-            margin-right: -0.3rem;
-            // transition: transform 2000ms ease-in;
-            transition-timing-function: cubic-bezier(.34,.99,.63,1.18) ease-in-out;
-        }
-    }
-}
-
-.contactImg {
-    width: 4em;
-    height: 4em;
-    border-radius: 4em;
-}
-
 .containerClientCard{
     padding: 1em;
-    width: 40em
-}
+    width: 40em;
+    .boxLeft, .slider, .sliderContent, .boxBottomRight, .container, .clientCard {
+        display: flex;
+    }
 
-.boxImg img, .boxBottomRight img {
-    object-fit: cover;
+    .slider, .sliderContent, .boxBottomRight, .container, .clientCard {
+        flex-direction: row;
+    }
+    .slider, .sliderContent, .boxLeft{
+        align-items: flex-start;
+    }
+
+
+    .adress {
+        font-size: 0.9em;
+        font-style: normal;
+        line-height: 80%;
+    }
+    .title {
+        font-family: 'Open Sans', sans-serif;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 1.25rem;
+        line-height: 1.2em;
+        color: $primary;
+    }
+    .kebabButton {
+        background: none;
+        border: none;
+        cursor: pointer;
+        margin-left: 2.5em;
+        margin-top: 0.5em;
+    }
+    .boxLeft {
+        background: #F6F9FB;
+        height: 12em;
+        flex-direction: column;
+        padding: 1em;
+        gap: 8px;
+        flex: none;
+        order: 0;
+        width: 12em;
+    }
+    .boxBottomRight{
+        gap: 0.3em;
+        margin-top: 1em;
+        margin-left: 2em;
+        height: 100px;
+    }
+
+    .slider {
+        flex-direction: row;
+        padding: 0px;
+        flex: none;
+        order: 0;
+        align-self: stretch;
+        flex-grow: 0;
+        margin-left: 2em;
+        margin-top: 1em;
+        width: 20em;
+        overflow: hidden;
+        animation-name: slider;
+        
+    }
+    .sliderContent {
+        padding: 0px;
+        height: 102px;
+        order: 0;
+        align-self: stretch;
+        position: relative;
+    }
+
+    .container {
+        width: 20em;
+    }
+
+    .slideAnime {
+        animation: slider 0.3s ease-in-out forwards;
+    }
+
+    @keyframes slider {
+        0% {
+            left: 0px;
+        }
+        100% {
+            left: -20em;
+        }
+    }
+
+    .boxImg{
+        width: 6em;
+    }
+
+    .clientCard {
+        align-items: flex-start;
+        padding: 0px;
+        height: 12em;
+        overflow: hidden;
+    }
+
+
+    .clientName {
+        font-size: 1rem;
+        line-height: 1.05em;
+        font-family: 'Open Sans', sans-serif;
+        font-style: normal;
+        font-weight: 700;
+    }
+
+
+    .contactBtn {
+        width: 2.2em;
+        height: 2.2em;
+        border-radius: 2.2em;
+        background-color: #DDE3EB;
+        box-shadow: 0px 0.125em 0.250em rgba(0, 0, 0, 0.07);
+        margin-right: -0.6rem;
+        border: 2px solid white;
+        transition: 0.3s;
+    }
+    .contactBtnTxt:hover{
+        color: #F6F9FB;
+        font-size: 0.8em;
+    }
+    .contactBtnTxt{
+        font-size: 0.8em;
+    }
+    .contactBtn:hover {
+        width: 2.2em;
+        height: 2.2em;
+        border-radius: 2.2em;
+        background-color: $primary-light;
+        box-shadow: 0px 0.125em 0.250em rgba(0, 0, 0, 0.07);
+        color: #F6F9FB;
+        margin-right: -0.6rem;
+        border: 2px solid white;
+        position: -webkit-sticky;
+        margin-top: -0.4rem;
+        filter: contrast(175%) brightness(103%);
+        transition-timing-function: cubic-bezier(.34,.99,.63,1.18) ease-in-out;
+    }
+    .boxBottomRight {
+        &:hover {
+            .contactBtn {
+                margin-right: -0.3rem;
+                // transition: transform 2000ms ease-in;
+                transition-timing-function: cubic-bezier(.34,.99,.63,1.18) ease-in-out;
+            }
+        }
+    }
+
+    .contactImg {
+        width: 4em;
+        height: 4em;
+        border-radius: 4em;
+    }
+
+
+
+
+    .boxImg img, .boxBottomRight img {
+        object-fit: cover;
+    }
 }
