@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 import { PageHeaderBanner } from '@projex/ui';
-import UserCard from '../src/components/UserCard/UserCard';
 import ClientCard from '../src/components/ClientCard/ClientCard';
 import { UserModel } from '../models/UserModels';
 import { ProjectModel } from '../models/ProjectModel';

@@ -1,0 +1,41 @@
+@import '../../../../../styles/app';
+
+.collaboratorInformations {
+  flex-grow: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  h4,
+  span,
+  a {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .name {
+    text-transform: uppercase;
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 0.875rem;
+    line-height: 1.2em;
+    letter-spacing: 0.04em;
+  }
+  .job {
+    font-weight: 700;
+    line-height: 1.2em;
+
+    &.green {
+      color: $green;
+    }
+  }
+  .informations {
+    display: flex;
+    flex-direction: column;
+    color: $text;
+  }
+}

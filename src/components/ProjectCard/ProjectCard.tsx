@@ -2,13 +2,9 @@ import React from 'react';
 import styles from './ProjectCard.module.scss';
 import { ShadowCard } from '@projex/ui';
 import type { ProjectModel } from '../../../models/ProjectModel';
-import img from '../../../public/project-image.png';
-import logoGroupeProjex from '../../../public/logo-groupe-projex.svg';
-import logoAmexia from '../../../public/logo-amexia.svg';
-import logoDiagobat from '../../../public/logo-diagobat.svg';
-import logoImperium from '../../../public/logo-imperium.svg';
-import logoProbim from '../../../public/logo-probim.svg';
-import logoProjex from '../../../public/logo-projex.svg';
+import { capitalize } from '../../../utils/capitalize';
+import defaultImage from '../../../public/default-affair-image.png';
+import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 
 type Props = {
   project: ProjectModel;
@@ -16,42 +12,27 @@ type Props = {
 };
 
 const ProjectCard = ({ project, projectManagerName }: Props) => {
-  const getImageSrc = () => {
-    switch (project.company_entity) {
-      case 'amexia':
-        return logoAmexia.src;
-      case 'diagobat':
-        return logoDiagobat.src;
-      case 'imperium':
-        return logoImperium.src;
-      case 'probim':
-        return logoProbim.src;
-      case 'projex':
-        return logoProjex.src;
-      default:
-        return logoGroupeProjex.src;
-    }
-  };
+  const { name, client_company_name, affairs, company_entity } = project;
 
   return (
     <ShadowCard>
       <div className={styles.projectCard}>
         <img
           className={styles.image}
-          src={project.image || img.src}
+          src={project.image || defaultImage.src}
           alt={`Image illustrant le projet ${project.name}`}
         />
         <section className={styles.content}>
-          <h4 className={styles.title}>{project.name}</h4>
-          <span>{project.client_company_name}</span>
-          <span>{projectManagerName}</span>
-          {project.affairs?.length ? (
+          <h4 className={styles.title}>{name ? capitalize(name) : '/'}</h4>
+          <span>{client_company_name ? capitalize(client_company_name) : client_company_name}</span>
+          <span>{projectManagerName ? capitalize(projectManagerName) : '/'}</span>
+          {affairs?.length ? (
             <span>
-              {project.affairs?.length} affaire{project.affairs.length > 1 ? 's' : ''}
+              {affairs?.length} affaire{affairs.length > 1 ? 's' : ''}
             </span>
           ) : null}
           <div className={styles.logoContainer}>
-            <img className={styles.logo} src={getImageSrc()} alt="Logo" />
+            <img className={styles.logo} src={getImagesByCompany(company_entity).logo} alt="Logo" />
           </div>
         </section>
       </div>
