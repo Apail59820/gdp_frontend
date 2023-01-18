@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './ClientCard.module.scss';
 import { useState } from 'react';
 import { ShadowCard } from '@projex/ui';
-import Img from './portraitA.png';
+import Img from '../../../public/patrice.png';
 import { Tooltip } from 'antd';
 import type { UserModel } from '../../../models/UserModels';
 import type { ProjectModel } from '../../../models/ProjectModel';
@@ -12,110 +12,64 @@ type Props = {
   client: ProjectModel;
   users: UserModel[];
   maxIcon: number;
-  // to define
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onKebabMenuClick?: React.MouseEventHandler<HTMLButtonElement>;
   // redirect to profiles
   hrefUser?: string;
 };
 
-const ClientCard = ({ client, users, maxIcon, onClick, hrefUser }: Props) => {
-  const [current, setCurrent] = useState(0);
-  const [nextCurrent, setNextCurrent] = useState<number | undefined>(undefined);
-
-  const nextPerson = (key: number) => {
-    key === 0 ? [setCurrent(key), setNextCurrent(undefined)] : setNextCurrent(key);
-    setTimeout(() => {
-      setNextCurrent(undefined);
-      setCurrent(key);
-    }, 300);
-  };
+const ClientCard = ({ client, users, maxIcon, onKebabMenuClick, hrefUser }: Props) => {
+  const [currentUser, setCurrentUser] = useState<UserModel>(users[0]);
 
   return (
-    <>
-      {/* <div className={styles.containerClientCard}> */}
-      <ShadowCard>
-        <div className={styles.clientCard}>
-          <section className={styles.clientDetails}>
-            <h1 className={styles.title}>{client.client_company_name}</h1>
-            <div className={styles.contentClientDetails}>
-              <span className={styles.address}>{client.address}</span>
-              <span className={styles.address}>{client.zip_code}</span>
-              <span className={styles.address}>{client.city}</span>
-              <span className={styles.address}>{client.country}</span>
-            </div>
-          </section>
-          <div className={styles.userDetails}>
+    <ShadowCard>
+      <div className={styles.clientCard}>
+        <section className={styles.clientDetails}>
+          <h4 className={styles.title}>{client.client_company_name}</h4>
+          <address className={styles.contentClientDetails}>
+            {client.address} <br />
+            {client.zip_code} <br />
+            {client.city} <br />
+            {client.country} <br />
+          </address>
+        </section>
+        <div className={styles.userDetails}>
+          <div className={styles.sliderContainer}>
             <div className={styles.slider}>
-              <section className={`${styles.sliderContent} ${nextCurrent !== undefined ? styles.slideAnime : ''}`}>
-                <div className={styles.container}>
-                  <div className={styles.contactAvatar}>
-                    <img
-                      src={users[current]?.avatar ? users[current].avatar : Img.src}
-                      alt={users[current]?.avatar ? '' : 'image contact'}
-                      className={styles.contactAvatarImg}
-                    />
-                  </div>
-                  <div>
-                    <div className={styles.clientName}>
-                      {users[current]?.first_name?.toUpperCase()} {users[current]?.last_name?.toUpperCase()}
-                    </div>
-                    <div>{users[current]?.number}</div>
-                    {/* second phone number to added in the table */}
-                    {/* <div >{contacts[current]?.number}</div> */}
-                    <span>{users[current]?.email}</span>
-                  </div>
-                </div>
-                {nextCurrent && (
-                  <div className={styles.container}>
-                    <div className={styles.contactAvatar}>
-                      <img
-                        src={users[nextCurrent]?.avatar ? users[nextCurrent].avatar : Img.src}
-                        alt={users[nextCurrent]?.avatar ? '' : 'image contact'}
-                        className={styles.contactAvatarImg}
-                      />
-                    </div>
-                    <div>
-                      <div className={styles.clientName}>
-                        {users[nextCurrent]?.first_name?.toUpperCase()} {users[current]?.last_name?.toUpperCase()}
-                      </div>
-                      <div>{users[nextCurrent]?.number}</div>
-                      {/* second phone number to added in the table */}
-                      {/* <div >{contacts[nextCurrent]?.number}</div> */}
-                      <span>{users[nextCurrent]?.email}</span>
-                    </div>
-                  </div>
-                )}
-              </section>
-            </div>
-
-            <div className={styles.containerClientIcons}>
-              {users.map((e: UserModel, key: number) => {
-                if (key < maxIcon) {
-                  return (
-                    <Tooltip placement="bottomLeft" title={e.first_name + ' ' + e.last_name}>
-                      <img
-                        onClick={() => nextPerson(key)}
-                        key={key}
-                        src={users[current]?.avatar ? users[current].avatar : Img.src}
-                        alt={users[current]?.avatar ? '' : 'image contact'}
-                        className={styles.contactIconBtn}
-                      ></img>
-                    </Tooltip>
-                  );
-                }
-              })}
-              {users.length > maxIcon && (
-                <button className={styles.contactIconBtn} onClick={() => hrefUser}>
-                  <span className={styles.contactIconBtnTxt}>{'+' + `${users.length - maxIcon}`}</span>
-                </button>
-              )}
+              <div className={styles.imageContainer}>
+                <img
+                  src={currentUser?.avatar ? currentUser.avatar : Img.src}
+                  alt={currentUser?.avatar ? '' : 'image contact'}
+                  className={styles.contactAvatarImg}
+                />
+              </div>
+              <div className={styles.userInformations}>
+                <h5 className={styles.userName}>
+                  {currentUser?.first_name?.toUpperCase()} {currentUser?.last_name?.toUpperCase()}
+                </h5>
+                <ul className={styles.userCoordinates}>
+                  <li>{currentUser?.number}</li>
+                  {/* second phone number to added in the table */}
+                  {/* <div >{contacts[current]?.number}</div> */}
+                  <li>{currentUser?.email}</li>
+                </ul>
+              </div>
             </div>
           </div>
-          <KebabMenuForCards onClick={() => onClick}></KebabMenuForCards>
+          <ul className={styles.usersIconsContainer}>
+            {users.map((user) => (
+              <Tooltip key={user.id} title={`${user.first_name} ${user.last_name}`}>
+                <li className={styles.user} onClick={() => setCurrentUser(user)}>
+                  <div className={styles.userIcon}>
+                    <img src={Img.src} alt={`Photo de ${user.first_name} ${user.last_name}`} />
+                  </div>
+                </li>
+              </Tooltip>
+            ))}
+          </ul>
         </div>
-      </ShadowCard>
-      {/* </div> */}
-    </>
+        <KebabMenuForCards onClick={() => onKebabMenuClick}></KebabMenuForCards>
+      </div>
+    </ShadowCard>
   );
 };
 

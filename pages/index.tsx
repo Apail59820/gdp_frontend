@@ -33,17 +33,8 @@ export default function Home() {
     <>
       <PageHeaderBanner title="Bonjour, Edgar Cresson" />
       <div style={{ height: '100%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ width: '50%', height: '192px' }}>
-          {/* <UserCard
-            user={{
-              first_name: 'Michel',
-              last_name: 'Martin',
-              role: 'Ingénieur',
-              company: 'Diagobat',
-              email: 'contact@client.fr',
-            }}
-          /> */}
-          <ClientCard client={client} users={contact} maxIcon={5}></ClientCard>
+        <div style={{ width: '640px', height: '192px' }}>
+          <ClientCard client={client} users={contact} maxIcon={5} />
         </div>
       </div>
     </>

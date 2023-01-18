@@ -1,129 +1,152 @@
 @import '../../../../../styles/app';
 
 .clientCard {
+  height: 100%;
+  width: 100%;
+
   display: flex;
   overflow: hidden;
   position: relative;
-  height: 100%;
+
   .clientDetails {
-    padding-left: 3%;
-    padding-top: 2%;
+    background: $bg-secondary;
+    padding: 1rem;
+
+    aspect-ratio: 1/1;
+    min-height: 100%;
+    min-width: 12rem;
+
     display: flex;
-    background: #f6f9fb;
     flex-direction: column;
     gap: 0.5rem;
-    min-width: 33.33%;
-    flex: 1;
+
     .title {
-      font-family: 'Open Sans', sans-serif;
-      font-style: normal;
+      margin: 0;
       font-weight: 700;
       font-size: 1.25rem;
-      line-height: 1.2rem;
       color: $primary;
     }
+
     .contentClientDetails {
-      display: flex;
-      flex-direction: column;
-    }
-    .address {
-      width: max-content;
+      font-style: normal;
+      color: $primary;
     }
   }
 
   .userDetails {
+    padding: 1rem 2rem;
+
     display: flex;
     flex-direction: column;
-    padding: 1rem 2rem;
-    width: 60%;
-    flex: 2;
+    justify-content: space-between;
+
+    flex-grow: 1;
+
     gap: 3.5rem;
-  }
 
-  .slider {
-    display: flex;
-    position: relative;
-    width: min-content;
-    overflow: hidden;
-    animation-name: slider;
-    .sliderContent {
-      display: flex;
-      position: relative;
-    }
-    .container {
-      display: flex;
-      .contactAvatar {
-        object-fit: cover;
-        width: 6rem;
-        img {
-          object-fit: cover;
-        }
-        .contactAvatarImg {
+    .sliderContainer {
+      overflow: hidden;
+
+      .slider {
+        overflow: hidden;
+        display: flex;
+        gap: 2rem;
+
+        .imageContainer {
           width: 4rem;
+          min-width: 4rem;
           height: 4rem;
-          border-radius: 4rem;
-        }
-      }
-      .clientName {
-        margin-bottom: 0.2rem;
-        font-size: 1rem;
-        line-height: 1.05rem;
-        font-family: 'Open Sans', sans-serif;
-        font-style: normal;
-        font-weight: 700;
-        width: max-content;
-      }
-    }
-  }
-  .containerClientIcons {
-    position: relative;
-    display: flex;
-    gap: 0.3rem;
-    img {
-      object-fit: cover;
-    }
-    .containerClientIcons {
-      &:hover {
-        .contactIconBtn {
-          margin-right: -0.3rem;
-          transition-timing-function: cubic-bezier(0.34, 0.99, 0.63, 1.18) ease-in-out;
-        }
-      }
-    }
-    .contactIconBtn {
-      width: 2.2rem;
-      height: 2.2rem;
-      border-radius: 2.2rem;
-      background-color: #dde3eb;
-      box-shadow: 0px 0.125rem 0.25rem rgba(0, 0, 0, 0.07);
-      margin-right: -0.6rem;
-      border: 2px solid white;
-      transition: 0.3s;
-    }
-    .contactIconBtn:hover {
-      width: 2.2rem;
-      height: 2.2rem;
-      border-radius: 2.2rem;
-      background-color: $primary-light;
-      box-shadow: 0px 0.125rem 0.25rem rgba(0, 0, 0, 0.07);
-      color: #f6f9fb;
-      margin-right: -0.6rem;
-      border: 2px solid white;
-      margin-top: -0.4rem;
-      filter: contrast(175%) brightness(103%);
-      transition-timing-function: cubic-bezier(0.34, 0.99, 0.63, 1.18) ease-in-out;
-    }
-  }
-  .slideAnime {
-    animation: slider 0.3s ease-in-out forwards;
-  }
+          min-height: 4rem;
 
-  @keyframes slider {
-    0% {
-      left: 0%;
+          border-radius: 50%;
+          overflow: hidden;
+
+          > img {
+            aspect-ratio: 1/1;
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            object-position: center;
+          }
+        }
+        .userInformations {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+
+          .userName {
+            margin: 0;
+            font-weight: 700;
+            font-size: 0.875rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: $primary;
+          }
+          .userCoordinates {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+            font-size: 0.875rem;
+            line-height: 120%;
+
+            display: flex;
+            flex-direction: column;
+          }
+        }
+
+        &.animate {
+          animation: slide $transition-duration ease-in-out;
+        }
+      }
     }
-    100% {
-      left: -48%;
+
+    .usersIconsContainer {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      display: flex;
+      align-items: center;
+
+      max-width: 100%;
+
+      .user {
+        cursor: pointer;
+
+        .userIcon {
+          aspect-ratio: 1/1;
+          width: 2rem;
+          min-width: 2rem;
+          height: 2rem;
+          min-height: 2rem;
+          border-radius: 50%;
+          overflow: hidden;
+          border: 1px solid $bg-primary;
+
+          &:not(:last-of-type) {
+            margin-right: -0.25rem;
+            transition: calc($transition-duration / 2) ease-in-out;
+          }
+
+          > img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+          }
+        }
+
+        transition: calc($transition-duration / 3) cubic-bezier(0.34, -0.56, 0.64, 1.44);
+
+        &:hover .userIcon {
+          transform: translateY(-0.5rem);
+        }
+      }
+
+      &:hover .user:not(:last-of-type) {
+        margin-right: 0.25rem;
+      }
     }
   }
 }
