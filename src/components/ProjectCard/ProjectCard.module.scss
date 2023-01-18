@@ -1,0 +1,44 @@
+@import '../../../../../styles/app';
+
+.projectCard {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+
+  display: flex;
+  gap: 0.625rem;
+
+  .image {
+    display: block;
+    max-width: 30%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .content {
+    padding: 1rem 2rem 1rem 0;
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .title {
+      margin: 0;
+      color: $primary;
+      font-weight: 700;
+      font-size: 1.25rem;
+      line-height: 1.2em;
+    }
+
+    .logoContainer {
+      height: 1.5rem;
+      width: auto;
+
+      > .logo {
+        height: 100%;
+        width: auto;
+      }
+    }
+  }
+}

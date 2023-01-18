@@ -1,0 +1,54 @@
+@import '../../../../../styles/app';
+
+.collaboratorInformations {
+  flex-grow: 1;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  h4,
+  span,
+  a {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .name {
+    margin: 0;
+
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: $primary;
+  }
+  .job {
+    font-weight: 700;
+    line-height: 1.2em;
+
+    &.groupeProjex {
+      color: $groupe-projex;
+    }
+    &.amexia {
+      color: $amexia;
+    }
+    &.diagobat {
+      color: $diagobat;
+    }
+    &.imperium {
+      color: $imperium;
+    }
+    &.probim {
+      color: $probim;
+    }
+    &.projex {
+      color: $projex;
+    }
+  }
+  .informations {
+    display: flex;
+    flex-direction: column;
+    color: $text;
+  }
+}

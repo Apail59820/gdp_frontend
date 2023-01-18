@@ -1,0 +1,9 @@
+@import '../../../../../styles/app';
+
+.progressStatusMessage {
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+  }
+}
