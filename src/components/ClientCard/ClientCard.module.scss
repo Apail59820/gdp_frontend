@@ -2,22 +2,19 @@
 
 .clientCard {
   display: flex;
-  padding: 0px;
   overflow: hidden;
   position: relative;
+  height: 100%;
   .clientDetails {
+    padding-left: 3%;
+    padding-top: 2%;
     display: flex;
     background: #f6f9fb;
-    height: 12rem;
     flex-direction: column;
     gap: 0.5rem;
-    flex: none;
-    order: 0;
-    width: 12rem;
+    min-width: 33.33%;
+    flex: 1;
     .title {
-      top: 1rem;
-      left: 1rem;
-      position: absolute;
       font-family: 'Open Sans', sans-serif;
       font-style: normal;
       font-weight: 700;
@@ -26,42 +23,35 @@
       color: $primary;
     }
     .contentClientDetails {
-      top: 3rem;
-      left: 1rem;
-      position: absolute;
       display: flex;
       flex-direction: column;
     }
     .address {
-      font-size: 0.9rem;
-      line-height: 80%;
+      width: max-content;
     }
+  }
+
+  .userDetails {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 2rem;
+    width: 60%;
+    flex: 2;
+    gap: 3.5rem;
   }
 
   .slider {
     display: flex;
     position: relative;
-    padding: 0px;
-    flex: none;
-    order: 0;
-    top: 1rem;
-    left: 2rem;
-    align-self: stretch;
-    flex-grow: 0;
-    width: 20rem;
+    width: min-content;
     overflow: hidden;
     animation-name: slider;
     .sliderContent {
       display: flex;
-      padding: 0px;
-      height: 6.375rem;
-      order: 0;
-      align-self: stretch;
       position: relative;
     }
     .container {
       display: flex;
-      width: 20rem;
       .contactAvatar {
         object-fit: cover;
         width: 6rem;
@@ -75,19 +65,20 @@
         }
       }
       .clientName {
+        margin-bottom: 0.2rem;
         font-size: 1rem;
         line-height: 1.05rem;
         font-family: 'Open Sans', sans-serif;
         font-style: normal;
         font-weight: 700;
+        width: max-content;
       }
     }
   }
   .containerClientIcons {
+    position: relative;
     display: flex;
     gap: 0.3rem;
-    margin-top: 2.3rem;
-    margin-left: 2rem;
     img {
       object-fit: cover;
     }
@@ -129,10 +120,10 @@
 
   @keyframes slider {
     0% {
-      left: 0px;
+      left: 0%;
     }
     100% {
-      left: -20rem;
+      left: -48%;
     }
   }
 }

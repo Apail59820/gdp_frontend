@@ -33,18 +33,18 @@ const ClientCard = ({ client, users, maxIcon, onClick, hrefUser }: Props) => {
   return (
     <>
       {/* <div className={styles.containerClientCard}> */}
-      <ShadowCard width="40rem" height="12rem">
+      <ShadowCard>
         <div className={styles.clientCard}>
           <section className={styles.clientDetails}>
             <h1 className={styles.title}>{client.client_company_name}</h1>
             <div className={styles.contentClientDetails}>
-              <span className={styles.adress}>{client.address}</span>
-              <span className={styles.adress}>{client.zip_code}</span>
-              <span className={styles.adress}>{client.city}</span>
-              <span className={styles.adress}>{client.country}</span>
+              <span className={styles.address}>{client.address}</span>
+              <span className={styles.address}>{client.zip_code}</span>
+              <span className={styles.address}>{client.city}</span>
+              <span className={styles.address}>{client.country}</span>
             </div>
           </section>
-          <div>
+          <div className={styles.userDetails}>
             <div className={styles.slider}>
               <section className={`${styles.sliderContent} ${nextCurrent !== undefined ? styles.slideAnime : ''}`}>
                 <div className={styles.container}>
