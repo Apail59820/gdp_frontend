@@ -1,9 +1,10 @@
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
-import { PageHeaderBanner } from '@projex/ui';
+
 import ClientCard from '../src/components/ClientCard/ClientCard';
 import { UserModel } from '../models/UserModels';
 import { ProjectModel } from '../models/ProjectModel';
+import PageHeaderBanner from '../src/components/PageHeaderBanner/PageHeaderBanner';
 
 export default function Home() {
   const client: ProjectModel = {
@@ -32,7 +33,7 @@ export default function Home() {
     <>
       <PageHeaderBanner title="Bonjour, Edgar Cresson" />
       <div style={{ height: '100%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ width: '416px', height: '134px' }}>
+        <div style={{ width: '50%', height: '192px' }}>
           {/* <UserCard
             user={{
               first_name: 'Michel',
