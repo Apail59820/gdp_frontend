@@ -6,7 +6,7 @@
   overflow: hidden;
 
   display: flex;
-  gap: .625rem;
+  gap: 0.625rem;
 
   .image {
     display: block;
@@ -21,30 +21,23 @@
 
     display: flex;
     flex-direction: column;
-    gap: .25rem;
-
-    font-size: 1rem;
-    line-height: 1.2em;
-    color: $text;
+    gap: 0.25rem;
 
     .title {
       margin: 0;
       color: $primary;
-      font-family: 'Open Sans', sans-serif;
-      font-style: normal;
       font-weight: 700;
       font-size: 1.25rem;
       line-height: 1.2em;
     }
 
     .logoContainer {
-      width: 8rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      height: 1.5rem;
+      width: auto;
 
       > .logo {
-        width: 100%;
+        height: 100%;
+        width: auto;
       }
     }
   }

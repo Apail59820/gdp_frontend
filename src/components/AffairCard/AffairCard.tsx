@@ -23,7 +23,7 @@ const AffairCard = ({ affair, onKebabMenuClick }: Props) => {
     <ShadowCard>
       <div className={styles.affairCard}>
         <div className={styles.body}>
-          <h4 className={styles.title}>{name ? capitalize(name) : ''}</h4>
+          <h4 className={styles.title}>{name ? capitalize(name) : 'Affaire'}</h4>
           <span>Chef de projet</span>
           <div className={styles.imageContainer}>
             <img src={getImagesByCompany(internal_company).logo} alt={`Logo de l'entité ${internal_company}`} />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { CompanyEnum } from '../../../models/CompanyEnum';
 import { UserModel } from '../../../models/UserModels';
 import { capitalize } from '../../../utils/capitalize';
 import styles from './CollaboratorInformations.module.scss';
@@ -11,12 +12,19 @@ const CollaboratorInformations = ({ user }: Props) => {
   const { first_name, last_name, role, company, email } = user;
 
   const getColorByCompany = () => {
-    // TODO Set colors by company
     switch (company?.toLowerCase()) {
-      case 'diagobat':
-        return styles.green;
+      case CompanyEnum.AMEXIA:
+        return styles.amexia;
+      case CompanyEnum.DIAGOBAT:
+        return styles.diagobat;
+      case CompanyEnum.IMPERIUM:
+        return styles.imperium;
+      case CompanyEnum.PROBIM:
+        return styles.probim;
+      case CompanyEnum.PROJEX:
+        return styles.projex;
       default:
-        return '';
+        return styles.groupeProjex;
     }
   };
 
@@ -32,7 +40,7 @@ const CollaboratorInformations = ({ user }: Props) => {
       </span>
       <div className={styles.informations}>
         {/* TODO Add tel */}
-        <a href="tel:">tel</a>
+        <a href="tel:">/</a>
         {email ? <a href={`mailto:${email}`}>{email}</a> : null}
       </div>
     </div>
