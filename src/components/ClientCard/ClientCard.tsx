@@ -37,10 +37,12 @@ const ClientCard = ({ client, users, maxIcon, onClick, hrefUser }: Props) => {
         <div className={styles.clientCard}>
           <section className={styles.clientDetails}>
             <h1 className={styles.title}>{client.client_company_name}</h1>
-            <span className={styles.adress}>{client.address}</span>
-            <span className={styles.adress}>{client.zip_code}</span>
-            <span className={styles.adress}>{client.city}</span>
-            <span className={styles.adress}>{client.country}</span>
+            <div className={styles.contentClientDetails}>
+              <span className={styles.adress}>{client.address}</span>
+              <span className={styles.adress}>{client.zip_code}</span>
+              <span className={styles.adress}>{client.city}</span>
+              <span className={styles.adress}>{client.country}</span>
+            </div>
           </section>
           <div>
             <div className={styles.slider}>
