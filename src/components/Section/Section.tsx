@@ -24,8 +24,7 @@ const Section = ({ title, link, button, children }: Props) => {
           <Link className={`text-small ${styles.link}`} href={link.href}>
             {link.label}
           </Link>
-        ) : null}
-        {button ? (
+        ) : button ? (
           <button className={`text-small ${styles.button}`} onClick={button.onClick}>
             {button.label}
           </button>

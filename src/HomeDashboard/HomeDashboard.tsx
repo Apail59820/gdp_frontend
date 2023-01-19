@@ -74,7 +74,7 @@ const HomeDashboard = () => {
           </Grid>
         ) : null}
       </Section>
-      <Section title="Mes projets" link={{ label: 'Voir tous les projets', href: '/' }}>
+      <Section title="Mes projets" link={{ label: 'Voir tous les projets', href: '/projects' }}>
         <Grid>
           {CURRENT_USER_PROJECTS.map((project: ProjectModel) => (
             <ProjectCard key={project.id} project={project} projectManagerName={'Chef de projet'} />

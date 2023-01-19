@@ -5,7 +5,12 @@ import { TabBar } from '@projex/ui';
 import HomeDashboard from '../src/HomeDashboard/HomeDashboard';
 import HomeUpdates from '../src/HomeUpdates/HomeUpdates';
 
-const tabs = [
+type Tab = {
+  label: string;
+  content: React.ReactNode;
+};
+
+const tabs: Tab[] = [
   {
     label: 'Tableau de bord',
     content: <HomeDashboard />,
@@ -16,7 +21,7 @@ const tabs = [
   },
 ];
 
-export default function Home() {
+const Home = () => {
   const [currentTab, setCurrentTab] = useState<string>(tabs[0].label);
 
   return (
@@ -29,4 +34,6 @@ export default function Home() {
       </div>
     </>
   );
-}
+};
+
+export default Home;
