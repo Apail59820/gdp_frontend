@@ -1,11 +1,31 @@
-import Image from 'next/image';
-import styles from '../styles/Home.module.css';
+import React, { useState } from 'react';
+import styles from '../styles/Home.module.scss';
 import PageHeaderBanner from '../src/components/PageHeaderBanner/PageHeaderBanner';
+import { TabBar } from '@projex/ui';
+import HomeDashboard from '../src/HomeDashboard/HomeDashboard';
+import HomeUpdates from '../src/HomeUpdates/HomeUpdates';
+
+const tabs = [
+  {
+    label: 'Tableau de bord',
+    content: <HomeDashboard />,
+  },
+  {
+    label: 'Mises à jour',
+    content: <HomeUpdates />,
+  },
+];
 
 export default function Home() {
+  const [currentTab, setCurrentTab] = useState<string>(tabs[0].label);
+
   return (
     <>
-      <PageHeaderBanner title="Bonjour, Edgar Cresson" />
+      <PageHeaderBanner title="Bonjour, Olivier Le Baron" />
+      <div className={styles.homePage}>
+        <TabBar tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
+        {tabs.find((tab) => tab.label === currentTab)?.content}
+      </div>
     </>
   );
 }
