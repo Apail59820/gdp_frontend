@@ -21,6 +21,7 @@ export default function Home() {
 
   return (
     <>
+      {/* TODO Display current user name */}
       <PageHeaderBanner title="Bonjour, Olivier Le Baron" />
       <div className={styles.homePage}>
         <TabBar tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab} />
