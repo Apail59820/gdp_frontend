@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './HomeUpdates.module.scss';
 
 type Update = {
+  id: string;
   title: string;
   content: React.ReactNode;
 };
@@ -9,6 +10,7 @@ type Update = {
 // TODO
 const UPDATES: Update[] = [
   {
+    id: '1',
     title: '12/12/2022 - Mise à jour de la plateforme',
     content: (
       <>
@@ -25,6 +27,7 @@ const UPDATES: Update[] = [
     ),
   },
   {
+    id: '2',
     title: '12/12/2022 - Mise à jour de la plateforme',
     content: (
       <>
@@ -41,6 +44,7 @@ const UPDATES: Update[] = [
     ),
   },
   {
+    id: '3',
     title: '12/12/2022 - Mise à jour de la plateforme',
     content: (
       <>
@@ -57,6 +61,7 @@ const UPDATES: Update[] = [
     ),
   },
   {
+    id: '4',
     title: '12/12/2022 - Mise à jour de la plateforme',
     content: (
       <>
@@ -78,7 +83,7 @@ const HomeUpdates = () => {
   return (
     <div className={styles.homeUpdates}>
       {UPDATES.map((update) => (
-        <section key={update.title} className={styles.update}>
+        <section key={update.id} className={styles.update}>
           <h3 className={styles.title}>{update.title}</h3>
           {update.content}
         </section>
