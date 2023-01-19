@@ -17,7 +17,9 @@ body {
 
 #header {
   width: 100%;
-  min-height: 3.375rem;
+  height: 3.5rem;
+  min-height: 3.5rem;
+  max-height: 3.5rem;
 }
 
 #main {
