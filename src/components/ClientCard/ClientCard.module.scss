@@ -34,17 +34,15 @@
   }
 
   .userDetails {
-    padding: 1rem 2rem;
-
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 1rem;
 
     flex-grow: 1;
 
-    gap: 3.5rem;
-
     .sliderContainer {
+      padding: 1rem 2rem 0;
       overflow: hidden;
 
       .slider {
@@ -113,8 +111,17 @@
 
       .user {
         cursor: pointer;
+        padding: 1rem 0;
 
-        .userIcon {
+        &:first-of-type {
+          padding-left: 2rem;
+        }
+        &:last-of-type {
+          padding-right: 2rem;
+        }
+
+        .userIcon,
+        .linkIcon {
           aspect-ratio: 1/1;
           width: 2rem;
           min-width: 2rem;
@@ -124,10 +131,10 @@
           overflow: hidden;
           border: 1px solid $bg-primary;
 
-          &:not(:last-of-type) {
-            margin-right: -0.25rem;
-            transition: calc($transition-duration / 2) ease-in-out;
-          }
+          margin-right: -0.25rem;
+
+          transition: transform calc($transition-duration / 2) cubic-bezier(0.53, -0.67, 0.41, 1.6),
+            margin-right calc($transition-duration / 3) ease-in-out;
 
           > img {
             width: 100%;
@@ -137,14 +144,23 @@
           }
         }
 
-        transition: calc($transition-duration / 3) cubic-bezier(0.34, -0.56, 0.64, 1.44);
+        .linkIcon {
+          background-color: $primary;
+          color: $bg-primary;
+          line-height: 1em;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
 
         &:hover .userIcon {
           transform: translateY(-0.5rem);
         }
       }
 
-      &:hover .user:not(:last-of-type) {
+      &:hover .userIcon,
+      &:hover .linkIcon {
         margin-right: 0.25rem;
       }
     }

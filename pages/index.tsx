@@ -34,7 +34,7 @@ export default function Home() {
       <PageHeaderBanner title="Bonjour, Edgar Cresson" />
       <div style={{ height: '100%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <div style={{ width: '640px', height: '192px' }}>
-          <ClientCard client={client} users={contact} maxIcon={5} />
+          <ClientCard client={client} users={contact} maxIcon={2} clientPageHref="/clients" />
         </div>
       </div>
     </>
