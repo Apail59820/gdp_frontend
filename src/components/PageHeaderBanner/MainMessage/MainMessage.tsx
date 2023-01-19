@@ -18,7 +18,9 @@ const MainMessage = ({ project }: Props) => {
         </div>
       ) : null}
       <section className={styles.content}>
-        <h1 className={styles.title}>{project.name ? capitalize(project.name) : 'Projet'}</h1>
+        <h2 className={`page-header-banner-title ${styles.title}`}>
+          {project.name ? capitalize(project.name) : 'Projet'}
+        </h2>
         {project.client_info ? <h2 className={styles.subtitle}>{capitalize(project.client_info)}</h2> : null}
       </section>
     </div>

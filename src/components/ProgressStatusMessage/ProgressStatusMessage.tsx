@@ -31,7 +31,7 @@ const ProgressStatusMessage = ({ status }: Props) => {
   };
 
   return (
-    <span className={styles.progressStatusMessage}>
+    <span className={`text-small ${styles.progressStatusMessage}`}>
       État d'avancement :{' '}
       <span className={styles.status}>
         {getInformationsByStatus().text}

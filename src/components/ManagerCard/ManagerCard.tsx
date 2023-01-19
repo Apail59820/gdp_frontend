@@ -4,12 +4,14 @@ import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 import { UserModel } from '../../../models/UserModels';
 import { ShadowCard } from '@projex/ui';
 import CollaboratorInformations from '../CollaboratorInformations/CollaboratorInformations';
+import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 
 type Props = {
   user: UserModel;
+  onKebabMenuClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const ManagerCard = ({ user }: Props) => {
+const ManagerCard = ({ user, onKebabMenuClick }: Props) => {
   return (
     <ShadowCard>
       <div className={styles.managerCard}>
@@ -23,6 +25,7 @@ const ManagerCard = ({ user }: Props) => {
           <h4 className={styles.title}>Chef de projet</h4>
           <CollaboratorInformations user={user} />
         </div>
+        <KebabMenuForCards onClick={onKebabMenuClick} />
       </div>
     </ShadowCard>
   );

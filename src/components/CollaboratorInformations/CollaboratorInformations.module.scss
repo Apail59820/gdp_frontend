@@ -3,6 +3,7 @@
 .collaboratorInformations {
   flex-grow: 1;
   overflow: hidden;
+
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -16,21 +17,33 @@
   }
 
   .name {
-    text-transform: uppercase;
     margin: 0;
-    font-family: 'Open Sans', sans-serif;
-    font-style: normal;
+
     font-weight: 700;
-    font-size: 0.875rem;
-    line-height: 1.2em;
-    letter-spacing: 0.04em;
+    font-size: 1.25rem;
+    color: $primary;
   }
   .job {
     font-weight: 700;
     line-height: 1.2em;
 
-    &.green {
-      color: $green;
+    &.groupeProjex {
+      color: $groupe-projex;
+    }
+    &.amexia {
+      color: $amexia;
+    }
+    &.diagobat {
+      color: $diagobat;
+    }
+    &.imperium {
+      color: $imperium;
+    }
+    &.probim {
+      color: $probim;
+    }
+    &.projex {
+      color: $projex;
     }
   }
   .informations {

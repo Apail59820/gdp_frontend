@@ -20,6 +20,7 @@
     padding: 2.625rem 2rem;
     display: flex;
     flex-direction: column;
+    gap: .25rem;
 
     max-width: 75%;
 
@@ -28,14 +29,10 @@
       white-space: nowrap;
       text-overflow: ellipsis;
     }
-    .title {
-      margin-bottom: 0.25rem;
-    }
     .subtitle {
       font-weight: 700;
       font-size: 1rem;
       line-height: 1.2em;
-      color: #333333;
     }
   }
 }
