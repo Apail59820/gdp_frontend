@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import styles from './HomeDashboard.module.scss';
-import { NewItemCard, QuickActionCard } from '@projex/ui';
 import { PlusOutlined } from '@ant-design/icons';
-import Grid from '../components/Grid/Grid';
-import Section from '../components/Section/Section';
 import { ProjectModel } from '../../models/ProjectModel';
-import ProjectCard from '../components/ProjectCard/ProjectCard';
 import { CompanyEnum } from '../../models/CompanyEnum';
+import { NewItemCard, QuickActionCard } from '@projex/ui';
+import Section from '../components/Section/Section';
+import Grid from '../components/Grid/Grid';
+import ProjectCard from '../components/ProjectCard/ProjectCard';
 
 const PROFILE_PROGRESS_PERCENTAGE = 65; // TODO
 
