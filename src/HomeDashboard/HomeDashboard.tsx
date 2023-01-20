@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProjectModel } from '../../models/ProjectModel';
@@ -77,7 +78,9 @@ const HomeDashboard = () => {
       <Section title="Mes projets" link={{ label: 'Voir tous les projets', href: '/projects' }}>
         <Grid>
           {CURRENT_USER_PROJECTS.map((project: ProjectModel) => (
-            <ProjectCard key={project.id} project={project} projectManagerName={'Chef de projet'} />
+            <Link href={`/projects/${project.id}`}>
+              <ProjectCard key={project.id} project={project} projectManagerName={'Chef de projet'} />
+            </Link>
           ))}
           {/* TODO Handle onClick */}
           <NewItemCard label="Nouveau projet" onClick={() => console.log('open modal ?')} />
