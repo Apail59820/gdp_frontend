@@ -1,30 +1,50 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AffairModel } from '../../models/AffairModel';
-// import { getAffairs } from '../../services/affairs.service';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AffairModel } from '../../Models/AffairModel';
+
+import { getAffairs } from '../../services/affairs';
 
 export interface AffairState {
-  dataAffairs: AffairModel[];
+  affairs: AffairModel[];
+  loading: AffairModel['loading'];
+  error: string;
 }
 
 const initialState: AffairState = {
-  dataAffairs: [
-    {
-      id: 1,
-      name: 'Affaire spéciale',
-      city: 'Wasquehal',
-    },
-  ],
+  affairs: [],
+  loading: false,
+  error: '',
 };
+
+export const affairs = createAsyncThunk('affair/getAffairs', () =>
+  getAffairs().then((data) => {
+    console.log('data', data.data);
+    return data.data!;
+  })
+);
 
 const affairSlice = createSlice({
   name: 'affair',
   initialState: initialState,
   reducers: {
-    addAffair(state) {
-      // const testAffaireToAdd = {id: 3, name: "Affaire très particulière", city:"Lille"}
-      state.dataAffairs = [...state.dataAffairs];
-      console.log('addaffair', state.dataAffairs);
+    addAffair(state, action: PayloadAction<AffairModel[]>) {
+      console.log('state addAffair', state.affairs);
+      state.affairs = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(affairs.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(affairs.fulfilled, (state, action: PayloadAction<AffairModel[]>) => {
+      state.loading = false;
+      state.affairs = action.payload;
+      state.error = '';
+    });
+    builder.addCase(affairs.rejected, (state, action) => {
+      state.loading = false;
+      state.affairs = [];
+      state.error = action.error.message || 'Données actuellement indisponibles';
+    });
   },
 });
 

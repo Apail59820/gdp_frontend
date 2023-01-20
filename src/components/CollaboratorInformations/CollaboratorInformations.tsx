@@ -1,6 +1,6 @@
 import React from 'react';
-import { CompanyEnum } from '../../../models/CompanyEnum';
-import { UserModel } from '../../../models/UserModels';
+import { CompanyEnum } from '../../../Models/CompanyEnum';
+import { UserModel } from '../../../Models/UserModels';
 import { capitalize } from '../../../utils/capitalize';
 import styles from './CollaboratorInformations.module.scss';
 

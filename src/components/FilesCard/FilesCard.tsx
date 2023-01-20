@@ -1,8 +1,8 @@
 import React from 'react';
 import styles from './FilesCard.module.scss';
 import { ShadowCard } from '@projex/ui';
-import { AssetModel } from '../../../models/AssetModel';
-import { AffairModel } from '../../../models/AffairModel';
+import { AssetModel } from '../../../Models/AssetModel';
+import { AffairModel } from '../../../Models/AffairModel';
 import folderIcon from '../../../public/folder.svg';
 import fileIcon from '../../../public/file.svg';
 

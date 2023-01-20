@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './PhaseCard.module.scss';
 import { ShadowCard } from '@projex/ui';
-import { PhaseModel } from '../../../models/PhaseModel';
+import { PhaseModel } from '../../../Models/PhaseModel';
 import { capitalize } from '../../../utils/capitalize';
 import ProgressStatusMessage from '../ProgressStatusMessage/ProgressStatusMessage';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';

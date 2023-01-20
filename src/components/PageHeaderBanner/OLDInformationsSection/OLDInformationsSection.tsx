@@ -3,7 +3,7 @@
 import React, { ImgHTMLAttributes, ReactNode } from 'react';
 import styles from './InformationsSection.module.scss';
 import defaultImage from '../../../public/default-project-image.png';
-import { CompanyEnum } from '../../../../models/CompanyEnum';
+import { CompanyEnum } from '../../../../Models/CompanyEnum';
 import { capitalize } from '../../../../utils/capitalize';
 
 type Props = {

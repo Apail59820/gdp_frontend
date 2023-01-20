@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './ProjectCard.module.scss';
 import { ShadowCard } from '@projex/ui';
-import type { ProjectModel } from '../../../models/ProjectModel';
+import type { ProjectModel } from '../../../Models/ProjectModel';
 import { capitalize } from '../../../utils/capitalize';
 import defaultImage from '../../../public/default-affair-image.png';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';

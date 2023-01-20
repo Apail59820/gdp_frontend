@@ -3,10 +3,11 @@ import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { SideBar, TopBar } from '@projex/ui';
-import ProjectsList from '../components/Projects/ProjectsList';
+
 import { Provider } from 'react-redux';
 import configureStore from '../store/store';
 import { TeamOutlined } from '@ant-design/icons';
+import AffairList from '../components/AffairsList/AffairList';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -25,7 +26,6 @@ export default function App({ Component, pageProps }: AppProps) {
               { label: 'Catalogue des solutions alternatives', href: '/href', active: false },
             ]}
           />
-          <ProjectsList />
         </header>
         <main id="main">
           <aside id="aside">

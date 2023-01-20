@@ -1,8 +1,8 @@
 import React from 'react';
 import styles from './PageHeaderBanner.module.scss';
-import { ProjectModel } from '../../../models/ProjectModel';
+import { ProjectModel } from '../../../Models/ProjectModel';
 import MainMessage from './MainMessage/MainMessage';
-import { CompanyEnum } from '../../../models/CompanyEnum';
+import { CompanyEnum } from '../../../Models/CompanyEnum';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 
 type Props = {

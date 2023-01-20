@@ -1,7 +1,7 @@
-import { UserModel } from './UserModels';
 import { AssetModel } from './AssetModel';
+import { PythagoreAffaireModel } from './PythagoreAffairModel';
 import { SatisfactionModel } from './SatisfactionModel';
-import { PythagoreAffaireModel } from './PythagoreAffaireModel';
+import { UserModel } from './UserModel';
 
 export enum AffairStatusEnum {
   ACTIVE = 'active',
@@ -28,6 +28,8 @@ export type AffairModel = {
   status?: AffairStatusEnum;
   user_access?: Array<UserAccessModel>;
   affairs_satisfaction?: string[] | number[] | SatisfactionModel[];
+  error?: string;
+  loading?: boolean;
 };
 
 export type AffairsPythagoreAffairesModel = {

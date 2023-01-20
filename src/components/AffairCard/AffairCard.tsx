@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './AffairCard.module.scss';
-import { AffairModel } from '../../../models/AffairModel';
+import { AffairModel } from '../../../Models/AffairModel';
 import { ProgressBar, ShadowCard } from '@projex/ui';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';

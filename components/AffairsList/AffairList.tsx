@@ -1,18 +1,43 @@
-import { type } from 'os';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-import { AffairModel } from '../../models/AffairModel';
-import { AffairState, addAffair } from '../../store/features/affairsReducer';
-export default function AffairList() {
-  // const affairs = useSelector((state: AffairState) => console.log('affaires', state));
+import { useDispatch, useSelector } from 'react-redux';
+import { affairs, AffairState } from '../../store/features/affairsReducer';
+import { login } from '../../services/auth';
+import { AffairModel } from '../../Models/AffairModel';
+import { useEffect } from 'react';
 
-  const dispatch = useDispatch();
+const AffairList = () => {
+  const dispatch = useDispatch<any>();
+  const user = { email: 'guillaumedesairs@gmail.com', password: '1234' };
+  async function connection() {
+    await login(user.email, user.password).then((status) => {
+      console.log('status', status);
+      return status;
+    });
+  }
+  connection();
 
+  const affair = useSelector((state: any) => state.affairs);
+  useEffect(() => {
+    dispatch(affairs());
+  }, []);
   return (
     <>
-      <div>AffairList</div>
-      <button onClick={() => dispatch(addAffair())}>Ajouter une affaire</button>
-      {/* <div>{`${affairs}`}</div> */}
+      <h1>Affaires</h1>
+      {/* <button onClick={() => dispatch(affairs())}>Afficher les affaires</button> */}
+      {affair.loading && <div>Chargement...</div>}
+      {!affair.loading && affair.error ? <div>Error: {affair.error}</div> : null}
+      {!affair.loading && affair.affairs.length ? (
+        <ul>
+          {affair.affairs.map((affair: AffairModel) => (
+            <li key={affair.id}>{affair.name}</li>
+          ))}
+        </ul>
+      ) : null}
     </>
   );
-}
+};
+
+AffairList.getInitialProps = () => {
+  return {};
+};
+
+export default AffairList;
