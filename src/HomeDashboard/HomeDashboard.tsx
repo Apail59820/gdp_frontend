@@ -4,7 +4,7 @@ import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import { ProjectModel } from '../../models/ProjectModel';
 import { CompanyEnum } from '../../models/CompanyEnum';
-import { NewItemCard, QuickActionCard } from '@projex/ui';
+import { ManageItemCard, QuickActionCard } from '@projex/ui';
 import Section from '../components/Section/Section';
 import Grid from '../components/Grid/Grid';
 import ProjectCard from '../components/ProjectCard/ProjectCard';
@@ -83,7 +83,7 @@ const HomeDashboard = () => {
             </Link>
           ))}
           {/* TODO Handle onClick */}
-          <NewItemCard label="Nouveau projet" onClick={() => console.log('open modal ?')} />
+          <ManageItemCard label="Nouveau projet" onClick={() => console.log('open modal ?')} />
         </Grid>
       </Section>
     </div>
