@@ -1,13 +1,39 @@
-import Image from 'next/image';
-import styles from '../styles/Home.module.css';
+import React, { useState } from 'react';
+import styles from '../styles/Home.module.scss';
 import PageHeaderBanner from '../src/components/PageHeaderBanner/PageHeaderBanner';
-import AffairList from '../components/AffairsList/AffairList';
+import { TabBar } from '@projex/ui';
+import HomeDashboard from '../src/HomeDashboard/HomeDashboard';
+import HomeUpdates from '../src/HomeUpdates/HomeUpdates';
 
-export default function Home() {
+type Tab = {
+  label: string;
+  content: React.ReactNode;
+};
+
+const tabs: Tab[] = [
+  {
+    label: 'Tableau de bord',
+    content: <HomeDashboard />,
+  },
+  {
+    label: 'Mises à jour',
+    content: <HomeUpdates />,
+  },
+];
+
+const Home = () => {
+  const [currentTab, setCurrentTab] = useState<string>(tabs[0].label);
+
   return (
     <>
-      <PageHeaderBanner title="Bonjour, Edgar Cresson" />
-      <AffairList></AffairList>
+      {/* TODO Display current user name */}
+      <PageHeaderBanner title="Bonjour, Olivier Le Baron" />
+      <div className={styles.homePage}>
+        <TabBar tabs={tabs.map((tab) => tab.label)} currentTab={currentTab} setCurrentTab={setCurrentTab} />
+        {tabs.find((tab) => tab.label === currentTab)?.content}
+      </div>
     </>
   );
-}
+};
+
+export default Home;

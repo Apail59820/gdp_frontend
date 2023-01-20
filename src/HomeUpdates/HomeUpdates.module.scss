@@ -1,0 +1,13 @@
+@import '../../../../styles/app';
+
+.homeUpdates {
+  > .update {
+    margin-top: 4rem;
+    width: 40rem;
+    max-width: 100%;
+
+    .title {
+      color: $primary;
+    }
+  }
+}

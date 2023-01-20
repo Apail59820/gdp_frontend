@@ -17,7 +17,7 @@ body {
 
 #header {
   width: 100%;
-  min-height: 3.375rem;
+  max-width: 100vw;
 }
 
 #main {
@@ -32,7 +32,7 @@ body {
 
 #main > #aside > #nav {
   position: absolute;
-  z-index: 999;
+  z-index: 9;
   top: 0;
   bottom: 0;
 }
