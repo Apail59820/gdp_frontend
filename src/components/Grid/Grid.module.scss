@@ -1,0 +1,10 @@
+@import '../../../../../styles/app';
+
+.grid {
+  @include gridTemplate;
+
+  &.narrow {
+    display: grid;
+    // To define later ?
+  }
+}
