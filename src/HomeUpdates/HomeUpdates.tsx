@@ -4,6 +4,7 @@ import styles from './HomeUpdates.module.scss';
 type Update = {
   id: string;
   title: string;
+  date: string;
   content: React.ReactNode;
 };
 
@@ -11,7 +12,8 @@ type Update = {
 const UPDATES: Update[] = [
   {
     id: '1',
-    title: '12/12/2022 - Mise à jour de la plateforme',
+    title: 'Mise à jour de la plateforme',
+    date: '12/12/2022',
     content: (
       <>
         <p>
@@ -28,7 +30,8 @@ const UPDATES: Update[] = [
   },
   {
     id: '2',
-    title: '12/12/2022 - Mise à jour de la plateforme',
+    title: 'Mise à jour de la plateforme',
+    date: '12/12/2022',
     content: (
       <>
         <p>
@@ -45,7 +48,8 @@ const UPDATES: Update[] = [
   },
   {
     id: '3',
-    title: '12/12/2022 - Mise à jour de la plateforme',
+    title: 'Mise à jour de la plateforme',
+    date: '12/12/2022',
     content: (
       <>
         <p>
@@ -62,7 +66,8 @@ const UPDATES: Update[] = [
   },
   {
     id: '4',
-    title: '12/12/2022 - Mise à jour de la plateforme',
+    title: 'Mise à jour de la plateforme',
+    date: '12/12/2022',
     content: (
       <>
         <p>
@@ -84,7 +89,9 @@ const HomeUpdates = () => {
     <div className={styles.homeUpdates}>
       {UPDATES.map((update) => (
         <section key={update.id} className={styles.update}>
-          <h3 className={styles.title}>{update.title}</h3>
+          <h3 className={styles.title}>
+            {update.date} - {update.title}
+          </h3>
           {update.content}
         </section>
       ))}
