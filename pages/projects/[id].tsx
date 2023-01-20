@@ -132,7 +132,7 @@ const Project = () => {
             <Section title="Équipe client" link={{ label: 'Voir la fiche client', href: '/' }}>
               <ClientCard
                 client={{
-                  id: undefined,
+                  id: '1',
                   name: undefined,
                   client_company_name: 'Nom du client',
                   client_info: undefined,
