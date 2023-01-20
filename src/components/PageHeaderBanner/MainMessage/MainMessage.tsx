@@ -5,32 +5,35 @@ import { ProjectModel } from '../../../../models/ProjectModel';
 import defaultImage from '../../../../public/default-affair-image.png';
 import { ManageItemButton } from '@projex/ui';
 
-type Props = {
-  project: Partial<ProjectModel>;
+export type MainMessageProps = {
+  project: ProjectModel;
+  showImage?: boolean;
 };
 
-const MainMessage = ({ project }: Props) => {
+const MainMessage = ({ project, showImage = true }: MainMessageProps) => {
   return (
     <div className={styles.mainMessage}>
-      <div className={styles.stickerContainer}>
-        {project.image ? (
-          <div className={styles.imageContainer}>
-            {/* // TODO Revoir image */}
-            <img className={styles.image} src={defaultImage.src} alt="Image illustrant le projet" />
-            <div className={styles.editImageButton}>
-              <ManageItemButton
-                label="Modifier la vignette"
-                type="edit"
-                direction="vertical"
-                tiny
-                onClick={() => console.log('')}
-              />
+      {showImage ? (
+        <div className={styles.stickerContainer}>
+          {project.image ? (
+            <div className={styles.imageContainer}>
+              {/* // TODO Revoir image */}
+              <img className={styles.image} src={defaultImage.src} alt="Image illustrant le projet" />
+              <div className={styles.editImageButton}>
+                <ManageItemButton
+                  label="Modifier la vignette"
+                  type="edit"
+                  direction="vertical"
+                  tiny
+                  onClick={() => console.log('')}
+                />
+              </div>
             </div>
-          </div>
-        ) : (
-          <ManageItemButton label="Définir une vignette" direction="vertical" tiny onClick={() => console.log('')} />
-        )}
-      </div>
+          ) : (
+            <ManageItemButton label="Définir une vignette" direction="vertical" tiny onClick={() => console.log('')} />
+          )}
+        </div>
+      ) : null}
       <section className={styles.content}>
         <h2 className={`page-header-banner-title ${styles.title}`}>
           {project.name ? capitalize(project.name) : 'Projet'}

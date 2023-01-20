@@ -78,8 +78,8 @@ const HomeDashboard = () => {
       <Section title="Mes projets" link={{ label: 'Voir tous les projets', href: '/projects' }}>
         <Grid>
           {CURRENT_USER_PROJECTS.map((project: ProjectModel) => (
-            <Link href={`/projects/${project.id}`}>
-              <ProjectCard key={project.id} project={project} projectManagerName={'Chef de projet'} />
+            <Link key={project.id} href={`/projects/${project.id}`}>
+              <ProjectCard project={project} projectManagerName={'Chef de projet'} />
             </Link>
           ))}
           {/* TODO Handle onClick */}
