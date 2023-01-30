@@ -236,6 +236,22 @@ const Project = () => {
             </Section>
           </Grid>
         </section>
+        <section>
+          <Grid type="narrow">
+            <Section
+              title="Fichiers"
+              link={{ label: 'Voir tous les fichiers', href: `/projects/${PROJECT_BY_ID.id}/files` }}
+            >
+              Files
+            </Section>
+            <Section
+              title="Statistiques du projet"
+              link={{ label: 'Voir toutes les statistiques', href: `/projects/${PROJECT_BY_ID.id}/statistics` }}
+            >
+              Statistics
+            </Section>
+          </Grid>
+        </section>
       </div>
     </>
   );
