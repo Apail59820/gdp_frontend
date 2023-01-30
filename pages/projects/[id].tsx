@@ -5,14 +5,16 @@ import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProjectModel } from '../../models/ProjectModel';
 import { AffairModel } from '../../models/AffairModel';
 import { CompanyEnum } from '../../models/CompanyEnum';
+import { UserModel } from '../../models/UserModels';
+import { PythagoreFactureModel } from '../../models/PythagoreFactureModel';
 import { Breadcrumb, ManageItemCard, QuickActionCard, RecentActivitiesCard } from '@projex/ui';
 import PageHeaderBanner from '../../src/components/PageHeaderBanner/PageHeaderBanner';
 import Section from '../../src/components/Section/Section';
 import Grid from '../../src/components/Grid/Grid';
 import AffairCard from '../../src/components/AffairCard/AffairCard';
 import ClientCard from '../../src/components/ClientCard/ClientCard';
-import CollaboratorCard from '../../src/components/CollaboratorCard/CollaboratorCard';
 import ManagerCard from '../../src/components/ManagerCard/ManagerCard';
+import InvoiceCard from '../../src/components/InvoiceCard/InvoiceCard';
 
 // TODO Récupérer le projet selon l'id de l'url
 const PROJECT_BY_ID: ProjectModel = {
@@ -78,6 +80,34 @@ const CURRENT_USER_AFFAIRS: AffairModel[] = [
 // TODO
 const PROJECT_PROGRESS_PERCENTAGE = 65;
 
+const CLIENT: ProjectModel = {
+  id: '1',
+  name: undefined,
+  client_company_name: 'Nom du client',
+  client_info: undefined,
+  address: 'rue Pierre Mauroy',
+  zip_code: '59800',
+  city: 'Lille',
+  country: 'France',
+  image: undefined,
+  status: undefined,
+  project_type: undefined,
+  company_entity: undefined,
+  affairs: undefined,
+};
+const CLIENT_USERS: UserModel[] = [
+  { first_name: 'Patrice', last_name: 'Biervoye', number: '0607080910', email: 'email@email.fr' },
+];
+
+const MANAGER: UserModel = {
+  first_name: 'Michel',
+  last_name: 'Martin',
+  email: 'email@email.fr',
+  role: 'Ingénieur',
+  company: CompanyEnum.DIAGOBAT,
+  number: '0607080910',
+};
+
 const ACTIVITIES = [
   {
     creationDate: '10/12/2022',
@@ -93,6 +123,27 @@ const ACTIVITIES = [
     creationDate: '10/12/2022',
     label: 'Ajout du fichier preview-facade.png',
     author: 'Olivier Le Baron',
+  },
+];
+
+const INVOICES: PythagoreFactureModel[] = [
+  {
+    num_facture: '2021-11-011',
+    etatreglt_facture: 'Reglee',
+    statut_facture: 'Echue',
+    date_echeance_facture: '2023-01-29',
+  },
+  {
+    num_facture: '2021-11-011',
+    etatreglt_facture: 'NonReglee',
+    statut_facture: 'NonEchue',
+    date_echeance_facture: '2023-02-02',
+  },
+  {
+    num_facture: '2021-11-011',
+    etatreglt_facture: 'NonReglee',
+    statut_facture: 'Echue',
+    date_echeance_facture: '2023-01-29',
   },
 ];
 
@@ -152,71 +203,13 @@ const Project = () => {
           <Grid type="narrow">
             {/* Handle href */}
             <Section title="Équipe client" link={{ label: 'Voir la fiche client', href: '/' }}>
-              <ClientCard
-                client={{
-                  id: '1',
-                  name: undefined,
-                  client_company_name: 'Nom du client',
-                  client_info: undefined,
-                  address: 'rue Pierre Mauroy',
-                  zip_code: '59800',
-                  city: 'Lille',
-                  country: 'France',
-                  image: undefined,
-                  status: undefined,
-                  project_type: undefined,
-                  company_entity: undefined,
-                  affairs: undefined,
-                }}
-                users={[
-                  { first_name: 'Patrice', last_name: 'Biervoye', number: '0607080910', email: 'email@email.fr' },
-                ]}
-                maxIcon={5}
-                clientPageHref={''}
-              />
+              <ClientCard client={CLIENT} users={CLIENT_USERS} maxIcon={5} clientPageHref={''} />
             </Section>
             <Section
               title="Chef de projet"
               link={{ label: "Voir toute l'équipe projet", href: `/projects/${PROJECT_BY_ID.id}/team` }}
             >
-              <ManagerCard
-                user={{
-                  id: undefined,
-                  user_created: undefined,
-                  date_created: undefined,
-                  user_updated: undefined,
-                  date_updated: undefined,
-                  first_name: 'Michel',
-                  last_name: 'Martin',
-                  email: 'email@email.fr',
-                  password: undefined,
-                  avatar: undefined,
-                  location: undefined,
-                  title: undefined,
-                  description: undefined,
-                  preferences_divider: undefined,
-                  language: undefined,
-                  theme: undefined,
-                  tfa_secret: undefined,
-                  admin_divider: undefined,
-                  status: undefined,
-                  role: 'Ingénieur',
-                  token: undefined,
-                  last_page: undefined,
-                  last_access: undefined,
-                  company: CompanyEnum.DIAGOBAT,
-                  number: '0607080910',
-                  affairs: undefined,
-                  web_link: undefined,
-                  cgu: undefined,
-                  email_notifications: undefined,
-                  showDocumentation: undefined,
-                  directus_files_avatar_id: undefined,
-                }}
-                onKebabMenuClick={function (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
-                  throw new Error('Function not implemented.');
-                }}
-              />
+              <ManagerCard user={MANAGER} onKebabMenuClick={() => console.log('handle click ?')} />
             </Section>
           </Grid>
         </section>
@@ -228,46 +221,18 @@ const Project = () => {
             </Section>
             <Section
               title="Facturation"
-              link={{ label: 'Voir toutes les factures', href: `/projects/${PROJECT_BY_ID.id}/billings` }}
+              link={{ label: `Voir les ${INVOICES.length} factures`, href: `/projects/${PROJECT_BY_ID.id}/billings` }}
             >
-              <ManagerCard
-                user={{
-                  id: undefined,
-                  user_created: undefined,
-                  date_created: undefined,
-                  user_updated: undefined,
-                  date_updated: undefined,
-                  first_name: 'Michel',
-                  last_name: 'Martin',
-                  email: 'email@email.fr',
-                  password: undefined,
-                  avatar: undefined,
-                  location: undefined,
-                  title: undefined,
-                  description: undefined,
-                  preferences_divider: undefined,
-                  language: undefined,
-                  theme: undefined,
-                  tfa_secret: undefined,
-                  admin_divider: undefined,
-                  status: undefined,
-                  role: 'Ingénieur',
-                  token: undefined,
-                  last_page: undefined,
-                  last_access: undefined,
-                  company: CompanyEnum.DIAGOBAT,
-                  number: '0607080910',
-                  affairs: undefined,
-                  web_link: undefined,
-                  cgu: undefined,
-                  email_notifications: undefined,
-                  showDocumentation: undefined,
-                  directus_files_avatar_id: undefined,
-                }}
-                onKebabMenuClick={function (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
-                  throw new Error('Function not implemented.');
-                }}
-              />
+              <Grid type="narrow">
+                {INVOICES.slice(0, 3).map((invoice) => (
+                  <InvoiceCard invoice={invoice} />
+                ))}
+                <ManageItemCard
+                  type="edit"
+                  label="Configurer la facturation"
+                  onClick={() => console.log('handle click ?')}
+                />
+              </Grid>
             </Section>
           </Grid>
         </section>

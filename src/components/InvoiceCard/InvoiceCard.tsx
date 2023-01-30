@@ -3,19 +3,17 @@ import styles from './InvoiceCard.module.scss';
 import { PythagoreFactureModel } from '../../../models/PythagoreFactureModel';
 
 type Props = {
-  billing: PythagoreFactureModel;
+  invoice: PythagoreFactureModel;
 };
 
-const InvoiceCard = ({ billing }: Props) => {
-  const { num_facture, etatreglt_facture, statut_facture, date_echeance_facture } = billing;
+const InvoiceCard = ({ invoice }: Props) => {
+  const { num_facture, etatreglt_facture, statut_facture, date_echeance_facture } = invoice;
 
   // TODO Add ENV variable
   const MAX_DAYS_BEFORE_SOON_TO_EXPIRE_STATUS = 3;
 
   const getDaysCountUntilDueDate = (): number => {
     const difference = new Date(date_echeance_facture).getTime() - new Date().getTime();
-    console.log(new Date(date_echeance_facture).getTime());
-
     const totalDays = Math.ceil(difference / (1000 * 3600 * 24));
     return totalDays;
   };
@@ -54,7 +52,7 @@ const InvoiceCard = ({ billing }: Props) => {
             <span className={styles.value}>{getInformationsByBillingStatus().statusText}</span>
           </li>
           <li className={styles.information}>
-            <span className={styles.label}>Date d'échéance</span>
+            <span className={styles.label}>Date d&apos;échéance</span>
             <span className={styles.value}>
               <time dateTime={new Date(date_echeance_facture).toLocaleDateString('fr')}>
                 {new Date(date_echeance_facture).toLocaleDateString('fr')}
