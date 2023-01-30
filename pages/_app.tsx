@@ -3,7 +3,6 @@ import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { SideBar, TopBar } from '@projex/ui';
-import { TeamOutlined } from '@ant-design/icons';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
