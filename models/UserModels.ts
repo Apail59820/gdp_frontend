@@ -1,4 +1,5 @@
 import { UserAccessModel } from './AffairModel';
+import { CompanyEnum } from './CompanyEnum';
 
 export type UserModel = {
   id?: string;
@@ -24,7 +25,7 @@ export type UserModel = {
   token?: string;
   last_page?: string;
   last_access?: string;
-  company?: string;
+  company?: CompanyEnum;
   number?: string;
   affairs?: Array<UserAccessModel>;
   web_link?: string;

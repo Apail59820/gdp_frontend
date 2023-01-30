@@ -9,7 +9,7 @@ type Props = {
 };
 
 const CollaboratorInformations = ({ user }: Props) => {
-  const { first_name, last_name, role, company, email } = user;
+  const { first_name, last_name, role, company, number, email } = user;
 
   const getColorByCompany = () => {
     switch (company?.toLowerCase()) {
@@ -40,7 +40,7 @@ const CollaboratorInformations = ({ user }: Props) => {
       </span>
       <div className={styles.informations}>
         {/* TODO Add tel */}
-        <a href="tel:">/</a>
+        <a href="tel:">{number}</a>
         {email ? <a href={`mailto:${email}`}>{email}</a> : null}
       </div>
     </div>

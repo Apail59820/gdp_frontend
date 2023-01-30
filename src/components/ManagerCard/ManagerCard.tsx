@@ -22,7 +22,6 @@ const ManagerCard = ({ user, onKebabMenuClick }: Props) => {
           alt={`Photo de ${user.first_name} ${user.last_name}`}
         />
         <div className={styles.content}>
-          <h4 className={styles.title}>Chef de projet</h4>
           <CollaboratorInformations user={user} />
         </div>
         <KebabMenuForCards onClick={onKebabMenuClick} />
