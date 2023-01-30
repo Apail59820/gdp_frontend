@@ -15,6 +15,7 @@ import AffairCard from '../../src/components/AffairCard/AffairCard';
 import ClientCard from '../../src/components/ClientCard/ClientCard';
 import ManagerCard from '../../src/components/ManagerCard/ManagerCard';
 import InvoiceCard from '../../src/components/InvoiceCard/InvoiceCard';
+import StatisticsCard from '../../src/components/StatisticsCard/StatisticsCard';
 
 // TODO Récupérer le projet selon l'id de l'url
 const PROJECT_BY_ID: ProjectModel = {
@@ -147,6 +148,11 @@ const INVOICES: PythagoreFactureModel[] = [
   },
 ];
 
+const STATISTICS = [
+  { label: 'Label', percentage: 65 },
+  { label: 'Label', percentage: 65 },
+];
+
 const Project = () => {
   const [displayQuickAccessSection, setDisplayQuickAccessSection] = useState<boolean>(true);
 
@@ -248,7 +254,16 @@ const Project = () => {
               title="Statistiques du projet"
               link={{ label: 'Voir toutes les statistiques', href: `/projects/${PROJECT_BY_ID.id}/statistics` }}
             >
-              Statistics
+              <div className={styles.statisticsContainer}>
+                <StatisticsCard statistics={STATISTICS} />
+                <div>
+                  <ManageItemCard
+                    direction="vertical"
+                    label="Nouvelle statistique"
+                    onClick={() => console.log('handle click')}
+                  />
+                </div>
+              </div>
             </Section>
           </Grid>
         </section>
