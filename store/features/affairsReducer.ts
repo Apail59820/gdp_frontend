@@ -10,12 +10,12 @@ export interface AffairState {
 }
 
 const initialState: AffairState = {
-  affairs: [],
+  affairs: <AffairModel[]>[],
   loading: false,
   error: '',
 };
 
-export const affairs = createAsyncThunk('affair/getAffairs', () =>
+export const affairs = createAsyncThunk('affairs/getAffairs', () =>
   getAffairs().then((data) => {
     console.log('data', data.data);
     return data.data!;
@@ -23,7 +23,7 @@ export const affairs = createAsyncThunk('affair/getAffairs', () =>
 );
 
 const affairSlice = createSlice({
-  name: 'affair',
+  name: 'affairs',
   initialState: initialState,
   reducers: {
     addAffair(state, action: PayloadAction<AffairModel[]>) {

@@ -32,6 +32,8 @@ export type UserModel = {
   email_notifications?: boolean;
   showDocumentation?: boolean;
   directus_files_avatar_id?: string[];
+  error?: string;
+  loading?: boolean;
 };
 
 export type UpdateUserModel = {

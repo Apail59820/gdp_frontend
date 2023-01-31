@@ -2,7 +2,7 @@ import cookie from 'js-cookie';
 import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
-const urlLogin = 'http://localhost:8055';
+// const urlLogin = 'http://localhost:8055';
 export const login = (email: string, password: string): Promise<{ status: number; data?: string }> => {
   return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/auth/login`, {
     method: 'POST',
@@ -20,10 +20,8 @@ export const login = (email: string, password: string): Promise<{ status: number
       if (res.status == 200) {
         return res.json().then((r) => {
           const expiringDate = new Date(new Date().getTime() + r.data.expires);
-          console.log('tok', r.data.access_token);
 
           cookie.set('maia_gestion_projet_token', r.data.access_token, { expires: expiringDate });
-          // cookie.set('ds_token_expiration', expiringDate.toDateString(), { expires: expiringDate });
           return { status: res.status, data: r.data };
         });
       } else return { status: res.status };

@@ -3,13 +3,14 @@ import { affairs, AffairState } from '../../store/features/affairsReducer';
 import { login } from '../../services/auth';
 import { AffairModel } from '../../Models/AffairModel';
 import { useEffect } from 'react';
+import { userProfile, UserState } from '../../store/features/userProfileReducer';
 
 const AffairList = () => {
   const dispatch = useDispatch<any>();
   const user = { email: 'guillaumedesairs@gmail.com', password: '1234' };
   async function connection() {
     await login(user.email, user.password).then((status) => {
-      console.log('status', status);
+      console.log('status login', status);
       return status;
     });
   }
@@ -18,7 +19,11 @@ const AffairList = () => {
   const affair = useSelector((state: any) => state.affairs);
   useEffect(() => {
     dispatch(affairs());
+    dispatch(userProfile());
   }, []);
+  const userProfil = useSelector((state: UserState) => state.userProfile);
+  console.log('userProfile', userProfil);
+
   return (
     <>
       <h1>Affaires</h1>
