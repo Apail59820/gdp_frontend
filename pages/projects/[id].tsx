@@ -1,21 +1,14 @@
 import React, { useState } from 'react';
 import styles from '../../styles/Project.module.scss';
-import Link from 'next/link';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProjectModel } from '../../models/ProjectModel';
 import { AffairModel } from '../../models/AffairModel';
 import { CompanyEnum } from '../../models/CompanyEnum';
 import { UserModel } from '../../models/UserModels';
 import { PythagoreFactureModel } from '../../models/PythagoreFactureModel';
-import { Breadcrumb, ManageItemCard, QuickActionCard, RecentActivitiesCard } from '@projex/ui';
+import { Breadcrumb, ManageItemCard, QuickActionCard } from '@projex/ui';
 import PageHeaderBanner from '../../src/components/PageHeaderBanner/PageHeaderBanner';
-import Section from '../../src/components/Section/Section';
 import Grid from '../../src/components/Grid/Grid';
-import AffairCard from '../../src/components/AffairCard/AffairCard';
-import ClientCard from '../../src/components/ClientCard/ClientCard';
-import ManagerCard from '../../src/components/ManagerCard/ManagerCard';
-import InvoiceCard from '../../src/components/InvoiceCard/InvoiceCard';
-import StatisticsCard from '../../src/components/StatisticsCard/StatisticsCard';
 import BillingWidget from '../../src/components/BillingWidget/BillingWidget';
 import ActivitiesWidget from '../../src/components/ActivitiesWidget/ActivitiesWidget';
 import StatisticsWidget from '../../src/components/StatisticsWidget/StatisticsWidget';
@@ -24,8 +17,9 @@ import ProjectTeamWidget from '../../src/components/ProjectTeamWidget/ProjectTea
 import ClientTeamWidget from '../../src/components/ClientTeamWidget/ClientTeamWidget';
 import AffairsWidget from '../../src/components/AffairsWidget/AffairsWidget';
 import QuickAccessWidget from '../../src/components/QuickAccessWidget/QuickAccessWidget';
+import { AssetModel } from '../../models/AssetModel';
 
-// TODO Récupérer le projet selon l'id de l'url
+// TODO
 const PROJECT_BY_ID: ProjectModel = {
   id: '1',
   name: 'Nom du projet',
@@ -42,8 +36,7 @@ const PROJECT_BY_ID: ProjectModel = {
   affairs: undefined,
 };
 
-// TODO
-const CURRENT_USER_AFFAIRS: AffairModel[] = [
+const PROJECT_AFFAIRS: AffairModel[] = [
   {
     id: '1',
     user_created: undefined,
@@ -86,7 +79,6 @@ const CURRENT_USER_AFFAIRS: AffairModel[] = [
   },
 ];
 
-// TODO
 const PROJECT_PROGRESS_PERCENTAGE = 65;
 
 const CLIENT: ProjectModel = {
@@ -156,6 +148,45 @@ const INVOICES: PythagoreFactureModel[] = [
   },
 ];
 
+const FILES: AssetModel[] = [
+  {
+    id: '1',
+    title: 'Titre 1',
+    type: 'png',
+    uploaded_on: '2023-01-31',
+  },
+  {
+    id: '1',
+    title: 'Titre 2',
+    type: 'pdf',
+    uploaded_on: '2022-02-28',
+  },
+  {
+    id: '1',
+    title: 'Titre 3',
+    type: 'jpg',
+    uploaded_on: '2022-07-21',
+  },
+  {
+    id: '1',
+    title: 'Titre 1',
+    type: 'png',
+    uploaded_on: '2023-01-31',
+  },
+  {
+    id: '1',
+    title: 'Titre 2',
+    type: 'pdf',
+    uploaded_on: '2022-02-28',
+  },
+  {
+    id: '1',
+    title: 'Titre 3',
+    type: 'jpg',
+    uploaded_on: '2022-07-21',
+  },
+];
+
 const STATISTICS = [
   { label: 'Label 1 ', percentage: 65 },
   { label: 'Label 2', percentage: 65 },
@@ -188,7 +219,7 @@ const Project = () => {
             </QuickActionCard>
           </Grid>
         </QuickAccessWidget>
-        <AffairsWidget affairs={CURRENT_USER_AFFAIRS || []} handleNewAffairClick={() => console.log('open modal ?')} />
+        <AffairsWidget affairs={PROJECT_AFFAIRS || []} handleNewAffairClick={() => console.log('open modal ?')} />
         <section>
           <Grid type="narrow">
             <ClientTeamWidget clientTeam={[]} />
@@ -203,7 +234,7 @@ const Project = () => {
         </section>
         <section>
           <Grid type="narrow">
-            <FilesWidget files={[]} handleNewFileClick={() => console.log('open modal ?')} />
+            <FilesWidget files={FILES || []} handleNewFileClick={() => console.log('open modal ?')} />
             <StatisticsWidget
               statistics={STATISTICS || []}
               handleNewStatisticClick={() => console.log('open modal ?')}
