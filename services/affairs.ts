@@ -1,5 +1,5 @@
-import { AffairModel, CreateAffairModel, UpdateAffairModel } from '../Models/AffairModel';
-import { QueryParameters } from '../Models/DirectusModel';
+import { AffairModel, CreateAffairModel, UpdateAffairModel } from '../models/AffairModel';
+import { QueryParameters } from '../models/DirectusModel';
 import concatenateQueryParameters from '../utils/queryParamsFormatter';
 import { retrieveToken } from './auth';
 import getConfig from 'next/config';

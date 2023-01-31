@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AffairModel, UserAccessModel } from '../../Models/AffairModel';
-import { UserModel } from '../../Models/UserModel';
+import { AffairModel, UserAccessModel } from '../../models/AffairModel';
+import { UserModel } from '../../models/UserModel';
 import { getMyProfile } from '../../services/profile';
 
 export interface UserState {

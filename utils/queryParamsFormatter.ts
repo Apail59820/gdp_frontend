@@ -1,4 +1,4 @@
-import { QueryParameters } from '../Models/DirectusModel';
+import { QueryParameters } from '../models/DirectusModel';
 
 const concatenateQueryParameters = (props: QueryParameters) => {
   let allParams = '';

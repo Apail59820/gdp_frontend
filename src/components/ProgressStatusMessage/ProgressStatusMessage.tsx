@@ -1,5 +1,5 @@
 import React from 'react';
-import { PhaseStatusEnum } from '../../../Models/PhaseModel';
+import { PhaseStatusEnum } from '../../../models/PhaseModel';
 import styles from './ProgressStatusMessage.module.scss';
 import completedIcon from '../../../public/completed.svg';
 import ongoingIcon from '../../../public/ongoing.svg';

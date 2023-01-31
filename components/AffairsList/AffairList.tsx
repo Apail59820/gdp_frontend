@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { affairs, AffairState } from '../../store/features/affairsReducer';
 import { login } from '../../services/auth';
-import { AffairModel } from '../../Models/AffairModel';
+import { AffairModel } from '../../models/AffairModel';
 import { useEffect } from 'react';
 import { userProfile, UserState } from '../../store/features/userProfileReducer';
 
