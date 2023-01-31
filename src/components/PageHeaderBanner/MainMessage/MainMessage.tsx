@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './MainMessage.module.scss';
 import { capitalize } from '../../../../utils/capitalize';
-import { ProjectModel } from '../../../../Models/ProjectModel';
+import { ProjectModel } from '../../../../models/ProjectModel';
 import defaultImage from '../../../../public/default-affair-image.png';
 
 type Props = {

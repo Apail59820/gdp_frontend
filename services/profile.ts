@@ -1,5 +1,5 @@
-import { UpdateUserModel, UserModel } from '../Models/UserModel';
-import { QueryParameters } from '../Models/DirectusModel';
+import { UpdateUserModel, UserModel } from '../models/UserModel';
+import { QueryParameters } from '../models/DirectusModel';
 import concatenateQueryParameters from '../utils/queryParamsFormatter';
 import { retrieveToken } from './auth';
 import getConfig from 'next/config';
