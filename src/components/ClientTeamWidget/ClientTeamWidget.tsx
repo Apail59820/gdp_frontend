@@ -4,22 +4,26 @@ import ClientTeamCard, { ClientTeamCardProps } from '../ClientTeamCard/ClientTea
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 import Section from '../Section/Section';
 
-type Props = Omit<ClientTeamCardProps, 'allUsersPageHref'> & {
-  handleAddClientClick: React.MouseEventHandler<HTMLButtonElement>;
+type Props = Omit<ClientTeamCardProps, 'allUsersPageHref' | 'onKebabMenuClick'> & {
+  onAddClientClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 const ClientTeamWidget = (props: Props) => {
-  const { handleAddClientClick } = props;
+  const { onAddClientClick } = props;
   const router = useRouter();
 
   return (
     <Section title="Équipe client" link={{ label: 'Voir la fiche client', href: `${router.asPath}/client` }}>
       {props.users.length > 0 ? (
-        <ClientTeamCard {...props} allUsersPageHref={`${router.asPath}/client`} />
+        <ClientTeamCard
+          {...props}
+          allUsersPageHref={`${router.asPath}/client`}
+          onKebabMenuClick={() => console.log('handle click ?')}
+        />
       ) : (
         <ConfigureWidget
           descriptionText="Aucun client ajouté au projet"
-          button={{ label: 'Ajouter des clients', onClick: handleAddClientClick }}
+          button={{ label: 'Ajouter des clients', onClick: onAddClientClick }}
         />
       )}
     </Section>

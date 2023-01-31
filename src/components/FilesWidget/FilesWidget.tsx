@@ -6,10 +6,10 @@ import Section from '../Section/Section';
 
 type Props = {
   files: any[];
-  handleNewFileClick: React.MouseEventHandler<HTMLButtonElement>;
+  onNewFileClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const FilesWidget = ({ files, handleNewFileClick }: Props) => {
+const FilesWidget = ({ files, onNewFileClick }: Props) => {
   const router = useRouter();
 
   return (
@@ -32,7 +32,7 @@ const FilesWidget = ({ files, handleNewFileClick }: Props) => {
           button={{
             label: 'Ajouter un fichier',
             type: 'edit',
-            onClick: handleNewFileClick,
+            onClick: onNewFileClick,
           }}
         />
       )}

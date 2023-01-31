@@ -10,10 +10,10 @@ import Section from '../Section/Section';
 
 type Props = {
   affairs: AffairModel[];
-  handleNewAffairClick: React.MouseEventHandler<HTMLButtonElement>;
+  onNewAffairClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const AffairsWidget = ({ affairs, handleNewAffairClick }: Props) => {
+const AffairsWidget = ({ affairs, onNewAffairClick }: Props) => {
   const router = useRouter();
 
   return (
@@ -29,7 +29,7 @@ const AffairsWidget = ({ affairs, handleNewAffairClick }: Props) => {
           </Link>
         ))}
         <div className={styles.manageItemCardContainer}>
-          <ManageItemCard label="Nouvelle affaire" onClick={handleNewAffairClick} />
+          <ManageItemCard label="Nouvelle affaire" onClick={onNewAffairClick} />
         </div>
       </Grid>
     </Section>

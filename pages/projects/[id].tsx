@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from '../../styles/Project.module.scss';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { CompanyEnum } from '../../models/CompanyEnum';
 import { ProjectModel } from '../../models/ProjectModel';
 import { AffairModel } from '../../models/AffairModel';
-import { CompanyEnum } from '../../models/CompanyEnum';
 import { UserModel } from '../../models/UserModels';
 import { PythagoreFactureModel } from '../../models/PythagoreFactureModel';
-import { Breadcrumb, ManageItemCard, QuickActionCard } from '@projex/ui';
-import PageHeaderBanner from '../../src/components/PageHeaderBanner/PageHeaderBanner';
-import Grid from '../../src/components/Grid/Grid';
-import BillingWidget from '../../src/components/BillingWidget/BillingWidget';
-import ActivitiesWidget from '../../src/components/ActivitiesWidget/ActivitiesWidget';
-import StatisticsWidget from '../../src/components/StatisticsWidget/StatisticsWidget';
-import FilesWidget from '../../src/components/FilesWidget/FilesWidget';
-import ProjectTeamWidget from '../../src/components/ProjectTeamWidget/ProjectTeamWidget';
-import ClientTeamWidget from '../../src/components/ClientTeamWidget/ClientTeamWidget';
-import AffairsWidget from '../../src/components/AffairsWidget/AffairsWidget';
-import QuickAccessWidget from '../../src/components/QuickAccessWidget/QuickAccessWidget';
 import { AssetModel } from '../../models/AssetModel';
+import { Breadcrumb, QuickActionCard } from '@projex/ui';
+import Grid from '../../src/components/Grid/Grid';
+import PageHeaderBanner from '../../src/components/PageHeaderBanner/PageHeaderBanner';
+import QuickAccessWidget from '../../src/components/QuickAccessWidget/QuickAccessWidget';
+import AffairsWidget from '../../src/components/AffairsWidget/AffairsWidget';
+import ClientTeamWidget from '../../src/components/ClientTeamWidget/ClientTeamWidget';
+import ProjectTeamWidget from '../../src/components/ProjectTeamWidget/ProjectTeamWidget';
+import ActivitiesWidget from '../../src/components/ActivitiesWidget/ActivitiesWidget';
+import BillingWidget from '../../src/components/BillingWidget/BillingWidget';
+import FilesWidget from '../../src/components/FilesWidget/FilesWidget';
+import StatisticsWidget from '../../src/components/StatisticsWidget/StatisticsWidget';
 
 // TODO
 const PROJECT_BY_ID: ProjectModel = {
@@ -282,36 +282,31 @@ const Project = () => {
             </QuickActionCard>
           </Grid>
         </QuickAccessWidget>
-        <AffairsWidget affairs={PROJECT_AFFAIRS || []} handleNewAffairClick={() => console.log('open modal ?')} />
+        <AffairsWidget affairs={PROJECT_AFFAIRS || []} onNewAffairClick={() => console.log('open modal ?')} />
         <section>
           <Grid type="narrow">
             <ClientTeamWidget
               users={CLIENT_TEAM || []}
               clientCompany={PROJECT_BY_ID}
-              onKebabMenuClick={() => console.log('handle click ?')}
-              handleAddClientClick={() => console.log('open modal ?')}
+              onAddClientClick={() => console.log('open modal ?')}
             />
             <ProjectTeamWidget
               users={PROJECT_TEAM || []}
               companyEntity={PROJECT_BY_ID.company_entity!!}
-              onKebabMenuClick={() => console.log('handle click ?')}
-              handleAddCollaboratorClick={() => console.log('open modal ?')}
+              onAddCollaboratorClick={() => console.log('open modal ?')}
             />
           </Grid>
         </section>
         <section>
           <Grid type="narrow">
             <ActivitiesWidget activities={ACTIVITIES || []} />
-            <BillingWidget invoices={INVOICES || []} handleConfigureBillingClick={() => console.log('open modal ?')} />
+            <BillingWidget invoices={INVOICES || []} onConfigureBillingClick={() => console.log('open modal ?')} />
           </Grid>
         </section>
         <section>
           <Grid type="narrow">
-            <FilesWidget files={FILES || []} handleNewFileClick={() => console.log('open modal ?')} />
-            <StatisticsWidget
-              statistics={STATISTICS || []}
-              handleNewStatisticClick={() => console.log('open modal ?')}
-            />
+            <FilesWidget files={FILES || []} onNewFileClick={() => console.log('open modal ?')} />
+            <StatisticsWidget statistics={STATISTICS || []} onNewStatisticClick={() => console.log('open modal ?')} />
           </Grid>
         </section>
       </div>

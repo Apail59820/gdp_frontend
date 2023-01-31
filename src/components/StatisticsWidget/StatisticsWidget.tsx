@@ -7,10 +7,10 @@ import StatisticsCard, { StatisticsCardProps } from '../StatisticsCard/Statistic
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 
 type Props = StatisticsCardProps & {
-  handleNewStatisticClick: React.MouseEventHandler<HTMLButtonElement>;
+  onNewStatisticClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const StatisticsWidget = ({ statistics, max, handleNewStatisticClick }: Props) => {
+const StatisticsWidget = ({ statistics, max, onNewStatisticClick }: Props) => {
   const router = useRouter();
 
   return (
@@ -28,7 +28,7 @@ const StatisticsWidget = ({ statistics, max, handleNewStatisticClick }: Props) =
             <StatisticsCard statistics={statistics} max={max} />
           </div>
           <div>
-            <ManageItemCard direction="vertical" label="Nouvelle statistique" onClick={handleNewStatisticClick} />
+            <ManageItemCard direction="vertical" label="Nouvelle statistique" onClick={onNewStatisticClick} />
           </div>
         </div>
       ) : (
@@ -36,7 +36,7 @@ const StatisticsWidget = ({ statistics, max, handleNewStatisticClick }: Props) =
           descriptionText="Vous n'avez aucune statistique"
           button={{
             label: 'Ajouter une statistique',
-            onClick: handleNewStatisticClick,
+            onClick: onNewStatisticClick,
           }}
         />
       )}

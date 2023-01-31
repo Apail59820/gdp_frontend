@@ -10,10 +10,10 @@ import { useRouter } from 'next/router';
 type Props = {
   invoices: PythagoreFactureModel[];
   max?: number;
-  handleConfigureBillingClick: React.MouseEventHandler<HTMLButtonElement>;
+  onConfigureBillingClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const BillingWidget = ({ invoices, max = 3, handleConfigureBillingClick }: Props) => {
+const BillingWidget = ({ invoices, max = 3, onConfigureBillingClick }: Props) => {
   const router = useRouter();
 
   return (
@@ -35,7 +35,7 @@ const BillingWidget = ({ invoices, max = 3, handleConfigureBillingClick }: Props
           {invoices.slice(0, max).map((invoice: PythagoreFactureModel) => (
             <InvoiceCard key={invoice.num_facture} invoice={invoice} />
           ))}
-          <ManageItemCard type="edit" label="Configurer la facturation" onClick={handleConfigureBillingClick} />
+          <ManageItemCard type="edit" label="Configurer la facturation" onClick={onConfigureBillingClick} />
         </Grid>
       ) : (
         <ConfigureWidget
@@ -43,7 +43,7 @@ const BillingWidget = ({ invoices, max = 3, handleConfigureBillingClick }: Props
           button={{
             label: 'Configurer la facturation',
             type: 'edit',
-            onClick: handleConfigureBillingClick,
+            onClick: onConfigureBillingClick,
           }}
         />
       )}

@@ -4,22 +4,26 @@ import ProjectTeamCard, { ProjectTeamCardProps } from '../ProjectTeamCard/Projec
 import Section from '../Section/Section';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 
-type Props = Omit<ProjectTeamCardProps, 'allUsersPageHref'> & {
-  handleAddCollaboratorClick: React.MouseEventHandler<HTMLButtonElement>;
+type Props = Omit<ProjectTeamCardProps, 'allUsersPageHref' | 'onKebabMenuClick'> & {
+  onAddCollaboratorClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 const ProjectTeamWidget = (props: Props) => {
-  const { handleAddCollaboratorClick } = props;
+  const { onAddCollaboratorClick } = props;
   const router = useRouter();
 
   return (
     <Section title="Équipe projet" link={{ label: "Voir toute l'équipe projet", href: `${router.asPath}/team` }}>
       {props.users.length > 0 ? (
-        <ProjectTeamCard {...props} allUsersPageHref={`${router.asPath}/team`} />
+        <ProjectTeamCard
+          {...props}
+          allUsersPageHref={`${router.asPath}/team`}
+          onKebabMenuClick={() => console.log('handle click ?')}
+        />
       ) : (
         <ConfigureWidget
           descriptionText="Aucun collaborateur ajouté au projet"
-          button={{ label: 'Ajouter des collaborateurs', onClick: handleAddCollaboratorClick }}
+          button={{ label: 'Ajouter des collaborateurs', onClick: onAddCollaboratorClick }}
         />
       )}
     </Section>
