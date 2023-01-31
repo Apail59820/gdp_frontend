@@ -1,19 +1,27 @@
-import { useRouter } from 'next/router';
 import React from 'react';
-import type { UserModel } from '../../../models/UserModels';
+import { useRouter } from 'next/router';
+import ProjectTeamCard, { ProjectTeamCardProps } from '../ProjectTeamCard/ProjectTeamCard';
 import Section from '../Section/Section';
-// import ManagerCard from '../ManagerCard/ManagerCard';
+import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 
-type Props = {
-  projectTeam: UserModel[];
+type Props = Omit<ProjectTeamCardProps, 'allUsersPageHref'> & {
+  handleAddCollaboratorClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const ProjectTeamWidget = ({ projectTeam }: Props) => {
+const ProjectTeamWidget = (props: Props) => {
+  const { handleAddCollaboratorClick } = props;
   const router = useRouter();
 
   return (
     <Section title="Équipe projet" link={{ label: "Voir toute l'équipe projet", href: `${router.asPath}/team` }}>
-      Carte équipe projet
+      {props.users.length > 0 ? (
+        <ProjectTeamCard {...props} allUsersPageHref={`${router.asPath}/team`} />
+      ) : (
+        <ConfigureWidget
+          descriptionText="Aucun collaborateur ajouté au projet"
+          button={{ label: 'Ajouter des collaborateurs', onClick: handleAddCollaboratorClick }}
+        />
+      )}
     </Section>
   );
 };

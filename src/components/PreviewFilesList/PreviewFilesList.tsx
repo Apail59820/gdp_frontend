@@ -4,7 +4,6 @@ import fileIcon from '../../../public/file.svg';
 import styles from './PreviewFilesList.module.scss';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
-import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 import { ShadowCard } from '@projex/ui';
 
 type Props = { assetsList: AssetModel[]; linkToAllAssets?: string; max?: number };

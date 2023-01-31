@@ -29,8 +29,11 @@ const FilesWidget = ({ files, handleNewFileClick }: Props) => {
       ) : (
         <ConfigureWidget
           descriptionText="Vous n'avez aucun fichier"
-          label="Ajouter un fichier"
-          onClick={handleNewFileClick}
+          button={{
+            label: 'Ajouter un fichier',
+            type: 'edit',
+            onClick: handleNewFileClick,
+          }}
         />
       )}
     </Section>

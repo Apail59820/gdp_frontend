@@ -40,9 +40,11 @@ const BillingWidget = ({ invoices, max = 3, handleConfigureBillingClick }: Props
       ) : (
         <ConfigureWidget
           descriptionText="Vous n'avez aucune facture configurée"
-          label="Configurer la facturation"
-          type="edit"
-          onClick={handleConfigureBillingClick}
+          button={{
+            label: 'Configurer la facturation',
+            type: 'edit',
+            onClick: handleConfigureBillingClick,
+          }}
         />
       )}
     </Section>

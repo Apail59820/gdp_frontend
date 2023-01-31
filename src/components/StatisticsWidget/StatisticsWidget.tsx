@@ -34,8 +34,10 @@ const StatisticsWidget = ({ statistics, max, handleNewStatisticClick }: Props) =
       ) : (
         <ConfigureWidget
           descriptionText="Vous n'avez aucune statistique"
-          label="Ajouter une statistique"
-          onClick={handleNewStatisticClick}
+          button={{
+            label: 'Ajouter une statistique',
+            onClick: handleNewStatisticClick,
+          }}
         />
       )}
     </Section>

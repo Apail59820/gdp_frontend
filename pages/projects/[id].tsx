@@ -36,6 +36,8 @@ const PROJECT_BY_ID: ProjectModel = {
   affairs: undefined,
 };
 
+const PROJECT_PROGRESS_PERCENTAGE: number = 65;
+
 const PROJECT_AFFAIRS: AffairModel[] = [
   {
     id: '1',
@@ -79,35 +81,98 @@ const PROJECT_AFFAIRS: AffairModel[] = [
   },
 ];
 
-const PROJECT_PROGRESS_PERCENTAGE = 65;
-
-const CLIENT: ProjectModel = {
-  id: '1',
-  name: undefined,
-  client_company_name: 'Nom du client',
-  client_info: undefined,
-  address: 'rue Pierre Mauroy',
-  zip_code: '59800',
-  city: 'Lille',
-  country: 'France',
-  image: undefined,
-  status: undefined,
-  project_type: undefined,
-  company_entity: undefined,
-  affairs: undefined,
-};
-const CLIENT_USERS: UserModel[] = [
-  { first_name: 'Patrice', last_name: 'Biervoye', number: '0607080910', email: 'email@email.fr' },
+const CLIENT_TEAM: UserModel[] = [
+  {
+    id: '1',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    number: '1',
+    email: 'email',
+    role: 'Développeur',
+    company: CompanyEnum.AMEXIA,
+  },
+  {
+    id: '2',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    number: '2',
+    email: 'email',
+  },
+  {
+    id: '3',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    number: '3',
+    email: 'email',
+  },
+  {
+    id: '4',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    number: '4',
+    email: 'email',
+  },
+  {
+    id: '5',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    number: '5',
+    email: 'email',
+  },
+  {
+    id: '6',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    number: '6',
+    email: 'email',
+  },
 ];
-
-const MANAGER: UserModel = {
-  first_name: 'Michel',
-  last_name: 'Martin',
-  email: 'email@email.fr',
-  role: 'Ingénieur',
-  company: CompanyEnum.DIAGOBAT,
-  number: '0607080910',
-};
+const PROJECT_TEAM: UserModel[] = [
+  {
+    id: '1',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    number: '1',
+    email: 'email',
+    role: 'Développeur',
+    company: CompanyEnum.AMEXIA,
+  },
+  {
+    id: '2',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    number: '2',
+    email: 'email',
+  },
+  {
+    id: '3',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    number: '3',
+    email: 'email',
+  },
+  {
+    id: '4',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    number: '4',
+    email: 'email',
+  },
+  {
+    id: '5',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    number: '5',
+    email: 'email',
+  },
+  {
+    id: '6',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    number: '6',
+    email: 'email',
+  },
+];
 
 const ACTIVITIES = [
   {
@@ -126,7 +191,6 @@ const ACTIVITIES = [
     author: 'Olivier Le Baron',
   },
 ];
-
 const INVOICES: PythagoreFactureModel[] = [
   {
     num_facture: '2021-11-011',
@@ -186,7 +250,6 @@ const FILES: AssetModel[] = [
     uploaded_on: '2022-07-21',
   },
 ];
-
 const STATISTICS = [
   { label: 'Label 1 ', percentage: 65 },
   { label: 'Label 2', percentage: 65 },
@@ -222,8 +285,18 @@ const Project = () => {
         <AffairsWidget affairs={PROJECT_AFFAIRS || []} handleNewAffairClick={() => console.log('open modal ?')} />
         <section>
           <Grid type="narrow">
-            <ClientTeamWidget clientTeam={[]} />
-            <ProjectTeamWidget projectTeam={[]} />
+            <ClientTeamWidget
+              users={CLIENT_TEAM || []}
+              clientCompany={PROJECT_BY_ID}
+              onKebabMenuClick={() => console.log('handle click ?')}
+              handleAddClientClick={() => console.log('open modal ?')}
+            />
+            <ProjectTeamWidget
+              users={PROJECT_TEAM || []}
+              companyEntity={PROJECT_BY_ID.company_entity!!}
+              onKebabMenuClick={() => console.log('handle click ?')}
+              handleAddCollaboratorClick={() => console.log('open modal ?')}
+            />
           </Grid>
         </section>
         <section>

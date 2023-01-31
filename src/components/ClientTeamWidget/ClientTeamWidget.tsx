@@ -1,19 +1,27 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import type { UserModel } from '../../../models/UserModels';
+import ClientTeamCard, { ClientTeamCardProps } from '../ClientTeamCard/ClientTeamCard';
+import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 import Section from '../Section/Section';
-// import ManagerCard from '../ManagerCard/ManagerCard';
 
-type Props = {
-  clientTeam: UserModel[];
+type Props = Omit<ClientTeamCardProps, 'allUsersPageHref'> & {
+  handleAddClientClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const ClientTeamWidget = ({ clientTeam }: Props) => {
+const ClientTeamWidget = (props: Props) => {
+  const { handleAddClientClick } = props;
   const router = useRouter();
 
   return (
     <Section title="Équipe client" link={{ label: 'Voir la fiche client', href: `${router.asPath}/client` }}>
-      Carte Client
+      {props.users.length > 0 ? (
+        <ClientTeamCard {...props} allUsersPageHref={`${router.asPath}/client`} />
+      ) : (
+        <ConfigureWidget
+          descriptionText="Aucun client ajouté au projet"
+          button={{ label: 'Ajouter des clients', onClick: handleAddClientClick }}
+        />
+      )}
     </Section>
   );
 };

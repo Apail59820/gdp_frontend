@@ -4,11 +4,11 @@ import { ProjectModel } from '../../../models/ProjectModel';
 import { UserModel } from '../../../models/UserModels';
 import TeamCard, { TeamCardProps } from '../TeamCard/TeamCard';
 
-type Props = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
+export type ClientTeamCardProps = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
   clientCompany: ProjectModel;
 };
 
-const ClientTeamCard = (props: Props) => {
+const ClientTeamCard = (props: ClientTeamCardProps) => {
   const { clientCompany } = props;
 
   const aside = (

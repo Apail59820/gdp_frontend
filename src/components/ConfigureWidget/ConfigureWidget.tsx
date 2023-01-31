@@ -3,17 +3,18 @@ import { ManageItemCard } from '@projex/ui';
 import styles from './ConfigureWidget.module.scss';
 import { ManageItemButtonProps } from '@projex/ui/dist/components/atoms/ManageItemButton/ManageItemButton';
 
-type props = Partial<ManageItemButtonProps> & {
+type props = {
   descriptionText: string;
+  button?: ManageItemButtonProps;
 };
 
-const ConfigureWidget = ({ descriptionText, label, type, onClick }: props) => {
+const ConfigureWidget = ({ descriptionText, button }: props) => {
   return (
     <div className={styles.container}>
       <span>{descriptionText}</span>
-      {label && onClick ? (
+      {button ? (
         <div className={styles.btnContainer}>
-          <ManageItemCard label={label} onClick={onClick} type={type} />
+          <ManageItemCard label={button.label} onClick={button.onClick} type={button.type} />
         </div>
       ) : null}
     </div>
