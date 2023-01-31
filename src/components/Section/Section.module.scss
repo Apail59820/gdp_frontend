@@ -1,6 +1,9 @@
 @import '../../../../../styles/app';
 
 .section {
+  display: flex;
+  flex-direction: column;
+
   .head {
     display: flex;
     align-items: center;
@@ -15,5 +18,9 @@
       cursor: pointer;
       color: $primary;
     }
+  }
+
+  .content {
+    flex-grow: 1;
   }
 }
