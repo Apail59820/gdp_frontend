@@ -16,6 +16,10 @@ import ClientCard from '../../src/components/ClientCard/ClientCard';
 import ManagerCard from '../../src/components/ManagerCard/ManagerCard';
 import InvoiceCard from '../../src/components/InvoiceCard/InvoiceCard';
 import StatisticsCard from '../../src/components/StatisticsCard/StatisticsCard';
+import BillingWidget from '../../src/components/BillingWidget/BillingWidget';
+import ActivitiesWidget from '../../src/components/ActivitiesWidget/ActivitiesWidget';
+import StatisticsWidget from '../../src/components/StatisticsWidget/StatisticsWidget';
+import FilesWidget from '../../src/components/FilesWidget/FilesWidget';
 
 // TODO Récupérer le projet selon l'id de l'url
 const PROJECT_BY_ID: ProjectModel = {
@@ -135,13 +139,13 @@ const INVOICES: PythagoreFactureModel[] = [
     date_echeance_facture: '2023-01-29',
   },
   {
-    num_facture: '2021-11-011',
+    num_facture: '2021-11-012',
     etatreglt_facture: 'NonReglee',
     statut_facture: 'NonEchue',
     date_echeance_facture: '2023-02-02',
   },
   {
-    num_facture: '2021-11-011',
+    num_facture: '2021-11-013',
     etatreglt_facture: 'NonReglee',
     statut_facture: 'Echue',
     date_echeance_facture: '2023-01-29',
@@ -149,8 +153,8 @@ const INVOICES: PythagoreFactureModel[] = [
 ];
 
 const STATISTICS = [
-  { label: 'Label', percentage: 65 },
-  { label: 'Label', percentage: 65 },
+  { label: 'Label 1 ', percentage: 65 },
+  { label: 'Label 2', percentage: 65 },
 ];
 
 const Project = () => {
@@ -221,50 +225,17 @@ const Project = () => {
         </section>
         <section>
           <Grid type="narrow">
-            {/* Handle href */}
-            <Section title="Activités récentes">
-              {ACTIVITIES.length ? <RecentActivitiesCard activities={ACTIVITIES} /> : <span>Aucune activité</span>}
-            </Section>
-            <Section
-              title="Facturation"
-              link={{ label: `Voir les ${INVOICES.length} factures`, href: `/projects/${PROJECT_BY_ID.id}/billings` }}
-            >
-              <Grid type="narrow">
-                {INVOICES.slice(0, 3).map((invoice) => (
-                  <InvoiceCard invoice={invoice} />
-                ))}
-                <ManageItemCard
-                  type="edit"
-                  label="Configurer la facturation"
-                  onClick={() => console.log('handle click ?')}
-                />
-              </Grid>
-            </Section>
+            <ActivitiesWidget activities={ACTIVITIES || []} />
+            <BillingWidget invoices={INVOICES || []} handleConfigureBillingClick={() => console.log('open modal ?')} />
           </Grid>
         </section>
         <section>
           <Grid type="narrow">
-            <Section
-              title="Fichiers"
-              link={{ label: 'Voir tous les fichiers', href: `/projects/${PROJECT_BY_ID.id}/files` }}
-            >
-              Files
-            </Section>
-            <Section
-              title="Statistiques du projet"
-              link={{ label: 'Voir toutes les statistiques', href: `/projects/${PROJECT_BY_ID.id}/statistics` }}
-            >
-              <div className={styles.statisticsContainer}>
-                <StatisticsCard statistics={STATISTICS} />
-                <div>
-                  <ManageItemCard
-                    direction="vertical"
-                    label="Nouvelle statistique"
-                    onClick={() => console.log('handle click')}
-                  />
-                </div>
-              </div>
-            </Section>
+            <FilesWidget files={[]} handleNewFileClick={() => console.log('open modal ?')} />
+            <StatisticsWidget
+              statistics={STATISTICS || []}
+              handleNewStatisticClick={() => console.log('open modal ?')}
+            />
           </Grid>
         </section>
       </div>

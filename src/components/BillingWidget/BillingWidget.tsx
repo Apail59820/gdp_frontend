@@ -1,23 +1,51 @@
 import { ManageItemCard } from '@projex/ui';
-import styles from './BillingWidget.module.scss';
 import React from 'react';
 import Grid from '../Grid/Grid';
 import InvoiceCard from '../InvoiceCard/InvoiceCard';
+import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
+import type { PythagoreFactureModel } from '../../../models/PythagoreFactureModel';
+import Section from '../Section/Section';
+import { useRouter } from 'next/router';
 
 type Props = {
-  invoices: any[];
+  invoices: PythagoreFactureModel[];
+  max?: number;
+  handleConfigureBillingClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const BillingWidget = ({ invoices }: Props) => {
-  return invoices.length > 0 ? (
-    <Grid type="narrow">
-      {invoices.slice(0, 3).map((invoice) => (
-        <InvoiceCard invoice={invoice} />
-      ))}
-      <ManageItemCard type="edit" label="Configurer la facturation" onClick={() => console.log('handle click ?')} />
-    </Grid>
-  ) : (
-    <>Configurer la facturation</>
+const BillingWidget = ({ invoices, max = 3, handleConfigureBillingClick }: Props) => {
+  const router = useRouter();
+
+  return (
+    <Section
+      title="Facturation"
+      link={
+        invoices.length > 0
+          ? {
+              label: `Voir l${invoices.length > 1 ? `es ${invoices.length}` : 'a'} facture${
+                invoices.length > 1 ? 's' : ''
+              }`,
+              href: `${router.asPath}/billings`,
+            }
+          : undefined
+      }
+    >
+      {invoices.length > 0 ? (
+        <Grid type="narrow">
+          {invoices.slice(0, max).map((invoice: PythagoreFactureModel) => (
+            <InvoiceCard key={invoice.num_facture} invoice={invoice} />
+          ))}
+          <ManageItemCard type="edit" label="Configurer la facturation" onClick={handleConfigureBillingClick} />
+        </Grid>
+      ) : (
+        <ConfigureWidget
+          descriptionText="Vous n'avez aucune facture configurée"
+          label="Configurer la facturation"
+          type="edit"
+          onClick={handleConfigureBillingClick}
+        />
+      )}
+    </Section>
   );
 };
 
