@@ -20,6 +20,10 @@ import BillingWidget from '../../src/components/BillingWidget/BillingWidget';
 import ActivitiesWidget from '../../src/components/ActivitiesWidget/ActivitiesWidget';
 import StatisticsWidget from '../../src/components/StatisticsWidget/StatisticsWidget';
 import FilesWidget from '../../src/components/FilesWidget/FilesWidget';
+import ProjectTeamWidget from '../../src/components/ProjectTeamWidget/ProjectTeamWidget';
+import ClientTeamWidget from '../../src/components/ClientTeamWidget/ClientTeamWidget';
+import AffairsWidget from '../../src/components/AffairsWidget/AffairsWidget';
+import QuickAccessWidget from '../../src/components/QuickAccessWidget/QuickAccessWidget';
 
 // TODO Récupérer le projet selon l'id de l'url
 const PROJECT_BY_ID: ProjectModel = {
@@ -158,69 +162,37 @@ const STATISTICS = [
 ];
 
 const Project = () => {
-  const [displayQuickAccessSection, setDisplayQuickAccessSection] = useState<boolean>(true);
-
   return (
     <>
       <PageHeaderBanner project={PROJECT_BY_ID} />
       <div className={styles.projectPage}>
         <Breadcrumb dynamicRoutesLabel={[PROJECT_BY_ID.name!]} />
         <h1 className={styles.title}>Le projet</h1>
-        <Section
-          title="Accès rapide"
-          button={{
-            label: `${displayQuickAccessSection ? 'Masquer' : 'Afficher'} l'accès rapide`,
-            onClick: () => setDisplayQuickAccessSection((prev) => !prev),
-          }}
-        >
-          {displayQuickAccessSection ? (
-            <Grid>
-              <QuickActionCard
-                title="Créez une nouvelle affaire"
-                button={{ label: 'Ajouter une affaire', href: '/', icon: <PlusOutlined /> }} // TODO Handle link href
-              >
-                Vous pouvez désormais ajouter une affaire au projet afin d&apos;en suivre l&apos;évolution et la
-                facturation
-              </QuickActionCard>
-              <QuickActionCard
-                title="Facturation"
-                button={{ label: 'Configurer la facturation', href: '/', icon: <EditOutlined /> }} // TODO Handle link href
-              >
-                Vous pouvez associer les numéros Pythagore aux affaires correspondantes
-              </QuickActionCard>
-              <QuickActionCard title="Complétez le projet" progress={PROJECT_PROGRESS_PERCENTAGE}>
-                Remplissez votre profil pour profiter pleinement de toutes les fonctionnalités
-              </QuickActionCard>
-            </Grid>
-          ) : null}
-        </Section>
-        <Section
-          title="Les affaires"
-          link={{ label: 'Voir toutes les affaires', href: `/projects/${PROJECT_BY_ID.id}/affairs` }}
-        >
+        <QuickAccessWidget>
           <Grid>
-            {CURRENT_USER_AFFAIRS.map((affair: AffairModel) => (
-              <Link key={affair.id} href={`/projects/${PROJECT_BY_ID.id}/affairs/${affair.id}`}>
-                {/* TODO Handle onClick */}
-                <AffairCard affair={affair} onKebabMenuClick={() => console.log('handle click ?')} />
-              </Link>
-            ))}
-            {/* TODO Handle onClick */}
-            <ManageItemCard label="Nouvelle affaire" onClick={() => console.log('open modal ?')} />
+            <QuickActionCard
+              title="Créez une nouvelle affaire"
+              button={{ label: 'Ajouter une affaire', href: '/', icon: <PlusOutlined /> }} // TODO Handle link href
+            >
+              Vous pouvez désormais ajouter une affaire au projet afin d&apos;en suivre l&apos;évolution et la
+              facturation
+            </QuickActionCard>
+            <QuickActionCard
+              title="Facturation"
+              button={{ label: 'Configurer la facturation', href: '/', icon: <EditOutlined /> }} // TODO Handle link href
+            >
+              Vous pouvez associer les numéros Pythagore aux affaires correspondantes
+            </QuickActionCard>
+            <QuickActionCard title="Complétez le projet" progress={PROJECT_PROGRESS_PERCENTAGE}>
+              Remplissez votre profil pour profiter pleinement de toutes les fonctionnalités
+            </QuickActionCard>
           </Grid>
-        </Section>
+        </QuickAccessWidget>
+        <AffairsWidget affairs={CURRENT_USER_AFFAIRS || []} handleNewAffairClick={() => console.log('open modal ?')} />
         <section>
           <Grid type="narrow">
-            {/* Handle href */}
-            <Section title="Équipe client" link={{ label: 'Voir la fiche client', href: '/' }}>
-              <ClientCard client={CLIENT} users={CLIENT_USERS} maxIcon={5} clientPageHref={''} />
-            </Section>
-            <Section
-              title="Chef de projet"
-              link={{ label: "Voir toute l'équipe projet", href: `/projects/${PROJECT_BY_ID.id}/team` }}
-            >
-              <ManagerCard user={MANAGER} onKebabMenuClick={() => console.log('handle click ?')} />
-            </Section>
+            <ClientTeamWidget clientTeam={[]} />
+            <ProjectTeamWidget projectTeam={[]} />
           </Grid>
         </section>
         <section>
