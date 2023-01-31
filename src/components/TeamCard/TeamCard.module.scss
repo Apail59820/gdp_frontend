@@ -1,6 +1,6 @@
 @import '../../../../../styles/app';
 
-.clientCard {
+.teamCard {
   height: 100%;
   width: 100%;
 
@@ -8,65 +8,46 @@
   overflow: hidden;
   position: relative;
 
-  .clientDetails {
+  .aside {
     background: $bg-secondary;
     padding: 1rem;
 
     aspect-ratio: 1/1;
     min-height: 100%;
     min-width: 12rem;
-
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-
-    .title {
-      margin: 0;
-      font-weight: 700;
-      font-size: 1.25rem;
-      color: $primary;
-    }
-
-    .contentClientDetails {
-      font-style: normal;
-      color: $primary;
-    }
   }
 
-  .userDetails {
+  .body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 1rem;
 
     flex-grow: 1;
+    overflow: hidden;
 
-    .sliderContainer {
+    .userDetails {
       padding: 1rem 2rem 0;
-      overflow: hidden;
+      display: flex;
+      gap: 2rem;
 
-      .slider {
+      .imageContainer {
+        width: 4rem;
+        min-width: 4rem;
+        height: 4rem;
+        min-height: 4rem;
+
+        border-radius: 50%;
         overflow: hidden;
-        display: flex;
-        gap: 2rem;
 
-        .imageContainer {
-          width: 4rem;
-          min-width: 4rem;
-          height: 4rem;
-          min-height: 4rem;
-
-          border-radius: 50%;
-          overflow: hidden;
-
-          > img {
-            aspect-ratio: 1/1;
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-            object-position: center;
-          }
+        > img {
+          aspect-ratio: 1/1;
+          height: 100%;
+          width: 100%;
+          object-fit: cover;
+          object-position: center;
         }
+
         .userInformations {
           display: flex;
           flex-direction: column;
@@ -96,6 +77,10 @@
         &.animate {
           animation: slide $transition-duration ease-in-out;
         }
+      }
+      .details {
+        flex-grow: 1;
+        overflow: hidden;
       }
     }
 
