@@ -1,0 +1,45 @@
+@import '../../../../../styles/app';
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  .assetsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .assetContainer {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    position: relative;
+    font-size: .9rem;
+    .imgAndTitle {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      font-size: 1rem;
+      b {
+        transform: translateY(calc(12px - 50%));
+      }
+      img {
+        height: 1.5rem;
+      }
+    }
+    span {
+      transform: translateY(calc(12px - 50%));
+    }
+    &::after {
+      position: absolute;
+      display: block;
+      content: '';
+      height: 1px;
+      width: 100%;
+      background-color: $neutral;
+      bottom: -1rem;
+    }
+  }
+  .moreFiles {
+    color: $text;
+  }
+}
