@@ -3,8 +3,8 @@ import styles from './ClientCard.module.scss';
 import { ShadowCard } from '@projex/ui';
 import Img from '../../../public/patrice.png';
 import { Tooltip } from 'antd';
-import type { UserModel } from '../../../Models/UserModels';
-import type { ProjectModel } from '../../../Models/ProjectModel';
+import type { UserModel } from '../../../models/UserModel';
+import type { ProjectModel } from '../../../models/ProjectModel';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 import Link from 'next/link';
 

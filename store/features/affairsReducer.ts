@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AffairModel } from '../../Models/AffairModel';
+import { AffairModel } from '../../models/AffairModel';
 
 import { getAffairs } from '../../services/affairs';
 

@@ -17,7 +17,7 @@ import logoProjex from '../public/logo-projex.svg';
 import pictoProjex from '../public/picto-projex.svg';
 
 import defaultPicture from '../public/default-profile-picture.png';
-import { CompanyEnum } from '../Models/CompanyEnum';
+import { CompanyEnum } from '../models/CompanyEnum';
 
 export const getImagesByCompany = (company?: string): { logo: string; picto: string } => {
   switch (company?.toLowerCase()) {
