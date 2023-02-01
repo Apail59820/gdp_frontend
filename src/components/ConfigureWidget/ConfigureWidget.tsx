@@ -1,21 +1,22 @@
 import React from 'react';
 import { ManageItemCard } from '@projex/ui';
 import styles from './ConfigureWidget.module.scss';
+import { ManageItemButtonProps } from '@projex/ui/dist/components/atoms/ManageItemButton/ManageItemButton';
 
 type props = {
   descriptionText: string;
-  buttonText: string;
-  icon?: 'add' | 'edit';
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  button?: ManageItemButtonProps;
 };
 
-const ConfigureWidget = ({ descriptionText, buttonText, icon = 'add', onClick }: props) => {
+const ConfigureWidget = ({ descriptionText, button }: props) => {
   return (
     <div className={styles.container}>
       <span>{descriptionText}</span>
-      <div className={styles.btnContainer}>
-        <ManageItemCard label={buttonText} onClick={onClick} type={icon} />
-      </div>
+      {button ? (
+        <div className={styles.btnContainer}>
+          <ManageItemCard label={button.label} onClick={button.onClick} type={button.type} />
+        </div>
+      ) : null}
     </div>
   );
 };

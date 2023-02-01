@@ -6,11 +6,11 @@ import CollaboratorInformations from '../CollaboratorInformations/CollaboratorIn
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 import { CompanyEnum } from '../../../models/CompanyEnum';
 
-type Props = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
+export type ProjectTeamCardProps = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
   companyEntity: CompanyEnum;
 };
 
-const ProjectTeamCard = (props: Props) => {
+const ProjectTeamCard = (props: ProjectTeamCardProps) => {
   const { companyEntity } = props;
   const aside = (
     <figure className={styles.logoContainer}>

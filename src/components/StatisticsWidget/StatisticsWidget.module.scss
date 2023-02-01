@@ -1,0 +1,11 @@
+@import '../../../../../styles/app';
+
+.statisticsContainer {
+  max-width: 100%;
+  display: flex;
+  gap: 2rem;
+
+  .statisticsCardContainer, .newStatisticCardContainer {
+    flex-grow: 1;
+  }
+}

@@ -1,16 +1,15 @@
 import React from 'react';
 import styles from './PageHeaderBanner.module.scss';
 import { ProjectModel } from '../../../models/ProjectModel';
-import MainMessage from './MainMessage/MainMessage';
+import MainMessage, { MainMessageProps } from './MainMessage/MainMessage';
 import { CompanyEnum } from '../../../models/CompanyEnum';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 
-type Props = {
-  project?: ProjectModel;
+type Props = Partial<MainMessageProps> & {
   title?: string;
 };
 
-const PageHeaderBanner = ({ project, title }: Props) => {
+const PageHeaderBanner = ({ project, onManageThumbnailClick, title }: Props) => {
   const getColorByCompany = () => {
     switch (project?.company_entity) {
       case CompanyEnum.AMEXIA:
@@ -32,7 +31,7 @@ const PageHeaderBanner = ({ project, title }: Props) => {
     <div className={`${styles.pageHeaderBanner} ${project?.company_entity ? getColorByCompany() : ''}`}>
       {project ? (
         <>
-          <MainMessage project={project} />
+          <MainMessage project={project} onManageThumbnailClick={onManageThumbnailClick} />
           <img
             className={styles.logo}
             src={getImagesByCompany(project.company_entity).logo}
@@ -40,7 +39,7 @@ const PageHeaderBanner = ({ project, title }: Props) => {
           />
         </>
       ) : null}
-      {!project && title ? <MainMessage project={{ name: title }} /> : null}
+      {!project && title ? <MainMessage project={{ name: title }} showImage={false} /> : null}
     </div>
   );
 };
