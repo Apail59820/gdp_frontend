@@ -1,25 +1,25 @@
 import React from 'react';
-import styles from '../../styles/Project.module.scss';
+import styles from '../../../styles/Project.module.scss';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { CompanyEnum } from '../../models/CompanyEnum';
-import { ProjectModel } from '../../models/ProjectModel';
-import { AffairModel } from '../../models/AffairModel';
-import { UserModel } from '../../models/UserModels';
-import { PythagoreFactureModel } from '../../models/PythagoreFactureModel';
-import { AssetModel } from '../../models/AssetModel';
+import { CompanyEnum } from '../../../models/CompanyEnum';
+import { ProjectModel } from '../../../models/ProjectModel';
+import { AffairModel } from '../../../models/AffairModel';
+import { UserModel } from '../../../models/UserModels';
+import { PythagoreFactureModel } from '../../../models/PythagoreFactureModel';
+import { AssetModel } from '../../../models/AssetModel';
 import { Breadcrumb, QuickActionCard } from '@projex/ui';
 import type { Activity } from '@projex/ui/dist/components/molecules/RecentActivities/RecentActivities';
-import Grid from '../../src/components/Grid/Grid';
-import PageHeaderBanner from '../../src/components/PageHeaderBanner/PageHeaderBanner';
-import QuickAccessWidget from '../../src/components/QuickAccessWidget/QuickAccessWidget';
-import AffairsWidget from '../../src/components/AffairsWidget/AffairsWidget';
-import ClientTeamWidget from '../../src/components/ClientTeamWidget/ClientTeamWidget';
-import ProjectTeamWidget from '../../src/components/ProjectTeamWidget/ProjectTeamWidget';
-import ActivitiesWidget from '../../src/components/ActivitiesWidget/ActivitiesWidget';
-import BillingWidget from '../../src/components/BillingWidget/BillingWidget';
-import FilesWidget from '../../src/components/FilesWidget/FilesWidget';
-import StatisticsWidget from '../../src/components/StatisticsWidget/StatisticsWidget';
-import type { Statistic } from '../../src/components/StatisticsCard/StatisticsCard';
+import Grid from '../../../src/components/Grid/Grid';
+import PageHeaderBanner from '../../../src/components/PageHeaderBanner/PageHeaderBanner';
+import QuickAccessWidget from '../../../src/components/QuickAccessWidget/QuickAccessWidget';
+import AffairsWidget from '../../../src/components/AffairsWidget/AffairsWidget';
+import ClientTeamWidget from '../../../src/components/ClientTeamWidget/ClientTeamWidget';
+import CollaboratorTeamWidget from '../../../src/components/CollaboratorTeamWidget/CollaboratorTeamWidget';
+import ActivitiesWidget from '../../../src/components/ActivitiesWidget/ActivitiesWidget';
+import BillingWidget from '../../../src/components/BillingWidget/BillingWidget';
+import FilesWidget from '../../../src/components/FilesWidget/FilesWidget';
+import StatisticsWidget from '../../../src/components/StatisticsWidget/StatisticsWidget';
+import type { Statistic } from '../../../src/components/StatisticsCard/StatisticsCard';
 
 // TODO
 const PROJECT_BY_ID: ProjectModel = {
@@ -300,7 +300,7 @@ const Project = () => {
               clientCompany={PROJECT_BY_ID}
               onAddClientClick={() => console.log('open modal ?')}
             />
-            <ProjectTeamWidget
+            <CollaboratorTeamWidget
               users={PROJECT_TEAM || []}
               companyEntity={PROJECT_BY_ID.company_entity!}
               onAddCollaboratorClick={() => console.log('open modal ?')}

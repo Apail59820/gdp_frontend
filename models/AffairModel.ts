@@ -2,6 +2,7 @@ import { UserModel } from './UserModels';
 import { AssetModel } from './AssetModel';
 import { SatisfactionModel } from './SatisfactionModel';
 import { PythagoreAffaireModel } from './PythagoreAffaireModel';
+import { CompanyEnum } from './CompanyEnum';
 
 export enum AffairStatusEnum {
   ACTIVE = 'active',
@@ -18,7 +19,7 @@ export type AffairModel = {
   name?: string;
   client_company_name?: string;
   client_info?: string;
-  internal_company?: string;
+  internal_company?: CompanyEnum;
   address?: string;
   zip_code?: string;
   city?: string;
