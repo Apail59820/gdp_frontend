@@ -5,6 +5,7 @@ import PageHeaderBanner from '../src/components/PageHeaderBanner/PageHeaderBanne
 import HomeDashboard from '../src/HomeDashboard/HomeDashboard';
 import HomeUpdates from '../src/HomeUpdates/HomeUpdates';
 import AffairList from '../example/AffairsList/AffairList';
+import Projects from '../example/Projects';
 
 type Tab = {
   label: string;
@@ -31,6 +32,7 @@ const Home = () => {
       <PageHeaderBanner title="Bonjour, Olivier Le Baron" />
       <div className={styles.homePage}>
         <AffairList></AffairList>
+        <Projects></Projects>
         {/* <TabBar tabs={tabs.map((tab) => tab.label)} currentTab={currentTab} setCurrentTab={setCurrentTab} />
         {tabs.find((tab) => tab.label === currentTab)?.content} */}
       </div>

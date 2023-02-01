@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AffairModel } from '../../models/AffairModel';
-import { current, original } from '@reduxjs/toolkit';
+
 import { getAffairs } from '../../services/affairs';
-import staticMethods from 'antd/es/message';
 
 export interface AffairState {
   affairs: AffairModel[];

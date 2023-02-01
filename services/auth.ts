@@ -4,7 +4,7 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 // const urlLogin = 'http://localhost:8055';
 export const login = (email: string, password: string): Promise<{ status: number; data?: string }> => {
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/auth/login`, {
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/auth/login`, {
     method: 'POST',
     credentials: 'include', //NOTE needed to receive the new token in cookie
     headers: new Headers({

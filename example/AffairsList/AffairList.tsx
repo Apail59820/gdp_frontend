@@ -8,19 +8,18 @@ import { userProfile, UserState } from '../../store/features/userProfileReducer'
 const AffairList = () => {
   const dispatch = useDispatch<any>();
   const user = { email: 'guillaumedesairs@gmail.com', password: '1234' };
-  // async function connection() {
-  //   await login(user.email, user.password).then((status) => {
-  //     console.log('status login', status);
-  //     return status;
-  //   });
-  // }
-  // connection();
+  async function connection() {
+    await login(user.email, user.password).then((status) => {
+      console.log('status login', status);
+      return status;
+    });
+  }
+  connection();
 
   const affair = useSelector((state: any) => state.affairs);
 
   useEffect(() => {
     dispatch(affairs());
-    dispatch(userProfile());
   }, []);
   const userProfil = useSelector((state: UserState) => state.userProfile);
   console.log('userProfile', userProfil);
@@ -31,6 +30,7 @@ const AffairList = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   return (
     <>
+      <button onClick={() => dispatch(userProfile())}>login</button>
       <h1>Affaires</h1>
       <input type="text" ref={inputRef} onChange={filteredAffairsByName} />
 
