@@ -9,7 +9,7 @@ type Props = Partial<MainMessageProps> & {
   title?: string;
 };
 
-const PageHeaderBanner = ({ project, title }: Props) => {
+const PageHeaderBanner = ({ project, onManageThumbnailClick, title }: Props) => {
   const getColorByCompany = () => {
     switch (project?.company_entity) {
       case CompanyEnum.AMEXIA:
@@ -31,7 +31,7 @@ const PageHeaderBanner = ({ project, title }: Props) => {
     <div className={`${styles.pageHeaderBanner} ${project?.company_entity ? getColorByCompany() : ''}`}>
       {project ? (
         <>
-          <MainMessage project={project} />
+          <MainMessage project={project} onManageThumbnailClick={onManageThumbnailClick} />
           <img
             className={styles.logo}
             src={getImagesByCompany(project.company_entity).logo}

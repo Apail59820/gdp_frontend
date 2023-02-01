@@ -7,13 +7,14 @@ import { ManageItemButton } from '@projex/ui';
 
 export type MainMessageProps = {
   project: ProjectModel;
+  onManageThumbnailClick?: React.MouseEventHandler<HTMLButtonElement>;
   showImage?: boolean;
 };
 
-const MainMessage = ({ project, showImage = true }: MainMessageProps) => {
+const MainMessage = ({ project, showImage = true, onManageThumbnailClick }: MainMessageProps) => {
   return (
     <div className={styles.mainMessage}>
-      {showImage ? (
+      {showImage && onManageThumbnailClick ? (
         <div className={styles.stickerContainer}>
           {project.image ? (
             <div className={styles.imageContainer}>
@@ -25,12 +26,12 @@ const MainMessage = ({ project, showImage = true }: MainMessageProps) => {
                   type="edit"
                   direction="vertical"
                   tiny
-                  onClick={() => console.log('')}
+                  onClick={onManageThumbnailClick}
                 />
               </div>
             </div>
           ) : (
-            <ManageItemButton label="Définir une vignette" direction="vertical" tiny onClick={() => console.log('')} />
+            <ManageItemButton label="Définir une vignette" direction="vertical" tiny onClick={onManageThumbnailClick} />
           )}
         </div>
       ) : null}

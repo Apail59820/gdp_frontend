@@ -258,7 +258,7 @@ const STATISTICS = [
 const Project = () => {
   return (
     <>
-      <PageHeaderBanner project={PROJECT_BY_ID} />
+      <PageHeaderBanner project={PROJECT_BY_ID} onManageThumbnailClick={() => console.log('open modal ?')} />
       <div className={styles.projectPage}>
         <Breadcrumb dynamicRoutesLabel={[PROJECT_BY_ID.name!]} />
         <h1 className={styles.title}>Le projet</h1>
@@ -266,14 +266,22 @@ const Project = () => {
           <Grid>
             <QuickActionCard
               title="Créez une nouvelle affaire"
-              button={{ label: 'Ajouter une affaire', href: '/', icon: <PlusOutlined /> }} // TODO Handle link href
+              button={{
+                label: 'Ajouter une affaire',
+                icon: <PlusOutlined />,
+                onClick: () => console.log('open modal ?'),
+              }}
             >
               Vous pouvez désormais ajouter une affaire au projet afin d&apos;en suivre l&apos;évolution et la
               facturation
             </QuickActionCard>
             <QuickActionCard
               title="Facturation"
-              button={{ label: 'Configurer la facturation', href: '/', icon: <EditOutlined /> }} // TODO Handle link href
+              button={{
+                label: 'Configurer la facturation',
+                icon: <EditOutlined />,
+                onClick: () => console.log('open modal ?'),
+              }}
             >
               Vous pouvez associer les numéros Pythagore aux affaires correspondantes
             </QuickActionCard>

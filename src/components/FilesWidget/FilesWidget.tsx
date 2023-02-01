@@ -31,7 +31,6 @@ const FilesWidget = ({ files, onNewFileClick }: Props) => {
           descriptionText="Vous n'avez aucun fichier"
           button={{
             label: 'Ajouter un fichier',
-            type: 'edit',
             onClick: onNewFileClick,
           }}
         />

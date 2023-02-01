@@ -13,7 +13,10 @@ const ProjectTeamWidget = (props: Props) => {
   const router = useRouter();
 
   return (
-    <Section title="Équipe projet" link={{ label: "Voir toute l'équipe projet", href: `${router.asPath}/team` }}>
+    <Section
+      title="Équipe projet"
+      link={props.users.length > 0 ? { label: "Voir toute l'équipe projet", href: `${router.asPath}/team` } : undefined}
+    >
       {props.users.length > 0 ? (
         <ProjectTeamCard
           {...props}
