@@ -302,7 +302,7 @@ const Project = () => {
             />
             <ProjectTeamWidget
               users={PROJECT_TEAM || []}
-              companyEntity={PROJECT_BY_ID.company_entity!!}
+              companyEntity={PROJECT_BY_ID.company_entity!}
               onAddCollaboratorClick={() => console.log('open modal ?')}
             />
           </Grid>
