@@ -1,6 +1,6 @@
 import { AffairModel } from './AffairModel';
 import { PhaseModel } from './PhaseModel';
-import { UserModel } from './UserModels';
+import { UserModel } from './UserModel';
 
 export enum AssetStatusEnum {
   Visible = 'visible',

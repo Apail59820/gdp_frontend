@@ -7,7 +7,7 @@ import { userProfile, UserState } from '../../store/features/userProfileReducer'
 
 const AffairList = () => {
   const dispatch = useDispatch<any>();
-  const user = { email: 'guillaumedesairs@gmail.com', password: '1234' };
+  const user = { email: 'c@ollabo.fr', password: '123' };
   async function connection() {
     await login(user.email, user.password).then((status) => {
       console.log('status login', status);

@@ -1,5 +1,5 @@
 import { AffairModel } from './AffairModel';
-import { UserModel } from './UserModels';
+import { UserModel } from './UserModel';
 
 export enum PhaseStatusEnum {
   PENDING = 'pending',

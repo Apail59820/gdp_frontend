@@ -7,7 +7,7 @@ import getConfig from 'next/config';
 const { publicRuntimeConfig } = getConfig();
 
 // const defaultFields = ['*', 'user_access.*', 'affairs_satisfaction.*', 'pythagore_ids.*'].join(',');
-const defaultFields = ['*', 'user_access.*'].join(',');
+const defaultFields = ['*'].join(',');
 /**
  * Retrieve affairs respecting the query parameters.
  * @param props Object containing query parameters.
@@ -30,8 +30,8 @@ export async function getAffairs(props: QueryParameters = {}): Promise<{ status:
   };
 
   return (
-    fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/items/affairs?${concatenateQueryParameters(props)}`, myInit)
-      // return fetch(`  ${publicRuntimeConfig.DIRECTUS_HOST}/${concatenateQueryParameters(props)}`, myInit)
+    fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs?${concatenateQueryParameters(props)}`, myInit)
+      // return fetch(`  ${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/${concatenateQueryParameters(props)}`, myInit)
       .then((res) => {
         if (res.status == 200)
           return res.json().then((data) => {
@@ -66,7 +66,7 @@ export async function getAffair(id: number, fields = defaultFields): Promise<{ s
     cache: 'default',
   };
 
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/items/affairs/${id}?fields=${fields}`, myInit).then((res) => {
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}?fields=${fields}`, myInit).then((res) => {
     if (res.status === 200) {
       return res.json().then((data) => {
         return { status: res.status, data: data.data };
@@ -98,7 +98,7 @@ export async function createAffair(affair: CreateAffairModel): Promise<{ status:
     body: JSON.stringify(affair),
   };
 
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/items/affairs`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)
     .then((response) => {
       if (response.status === 200 || response.status === 204) {
         return response
@@ -147,7 +147,7 @@ export async function updateAffair(
     body: JSON.stringify(data),
   };
 
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/items/affairs/${id}`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response
@@ -201,7 +201,7 @@ export async function deleteAffairs(affairsArray: Array<number>): Promise<{ stat
     body: JSON.stringify(affairsArray),
   };
 
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/items/affairs`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)
     .then((response) => {
       return { status: response.status };
     })

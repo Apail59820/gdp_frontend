@@ -6,9 +6,8 @@ const nextConfig = {
     appDir: true,
   },
   publicRuntimeConfig: {
-    // TEST_1: process.env.NEXT_PUBLIC_TEST_1,
-    // TEST_2: process.env.TEST_2,
     DIRECTUS_HOST: process.env.DIRECTUS_HOST,
+    GESTION_DE_PROJET_API_URL: process.env.GESTION_DE_PROJET_API_URL,
     INVITE_URL: process.env.INVITE_URL,
     PASSWORD_RESET_URL_ALLOW_LIST: process.env.PASSWORD_RESET_URL_ALLOW_LIST,
     APP_NAME: process.env.APP_NAME,
