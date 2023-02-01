@@ -11,9 +11,10 @@ type Props = {
   invoices: PythagoreFactureModel[];
   max?: number;
   onConfigureBillingClick: React.MouseEventHandler<HTMLButtonElement>;
+  allInvoicesPageHref?: string;
 };
 
-const BillingWidget = ({ invoices, max = 3, onConfigureBillingClick }: Props) => {
+const BillingWidget = ({ invoices, max = 3, onConfigureBillingClick, allInvoicesPageHref }: Props) => {
   const router = useRouter();
 
   return (
@@ -25,7 +26,7 @@ const BillingWidget = ({ invoices, max = 3, onConfigureBillingClick }: Props) =>
               label: `Voir l${invoices.length > 1 ? `es ${invoices.length}` : 'a'} facture${
                 invoices.length > 1 ? 's' : ''
               }`,
-              href: `${router.asPath}/billings`,
+              href: allInvoicesPageHref || `${router.asPath}/billings`,
             }
           : undefined
       }

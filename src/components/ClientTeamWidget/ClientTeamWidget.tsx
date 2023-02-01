@@ -6,21 +6,26 @@ import Section from '../Section/Section';
 
 type Props = Omit<ClientTeamCardProps, 'allUsersPageHref' | 'onKebabMenuClick'> & {
   onAddClientClick: React.MouseEventHandler<HTMLButtonElement>;
+  clientTeamPageHref?: string;
 };
 
 const ClientTeamWidget = (props: Props) => {
-  const { onAddClientClick } = props;
+  const { onAddClientClick, clientTeamPageHref } = props;
   const router = useRouter();
 
   return (
     <Section
       title="Équipe client"
-      link={props.users.length > 0 ? { label: 'Voir la fiche client', href: `${router.asPath}/client` } : undefined}
+      link={
+        props.users.length > 0
+          ? { label: 'Voir la fiche client', href: clientTeamPageHref || `${router.asPath}/client` }
+          : undefined
+      }
     >
       {props.users.length > 0 ? (
         <ClientTeamCard
           {...props}
-          allUsersPageHref={`${router.asPath}/client`}
+          allUsersPageHref={clientTeamPageHref || `${router.asPath}/client`}
           onKebabMenuClick={() => console.log('handle click ?')}
         />
       ) : (

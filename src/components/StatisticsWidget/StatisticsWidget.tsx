@@ -8,9 +8,10 @@ import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 
 type Props = StatisticsCardProps & {
   onNewStatisticClick: React.MouseEventHandler<HTMLButtonElement>;
+  allStatisticsPageHref?: string;
 };
 
-const StatisticsWidget = ({ statistics, max, onNewStatisticClick }: Props) => {
+const StatisticsWidget = ({ statistics, max, onNewStatisticClick, allStatisticsPageHref }: Props) => {
   const router = useRouter();
 
   return (
@@ -18,7 +19,7 @@ const StatisticsWidget = ({ statistics, max, onNewStatisticClick }: Props) => {
       title="Statistiques du projet"
       link={
         statistics.length > 0
-          ? { label: 'Voir toutes les statistiques', href: `${router.asPath}/statistics` }
+          ? { label: 'Voir toutes les statistiques', href: allStatisticsPageHref || `${router.asPath}/statistics` }
           : undefined
       }
     >

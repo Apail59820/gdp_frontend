@@ -6,21 +6,26 @@ import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 
 type Props = Omit<ProjectTeamCardProps, 'allUsersPageHref' | 'onKebabMenuClick'> & {
   onAddCollaboratorClick: React.MouseEventHandler<HTMLButtonElement>;
+  projectTeamPageHref?: string;
 };
 
 const ProjectTeamWidget = (props: Props) => {
-  const { onAddCollaboratorClick } = props;
+  const { onAddCollaboratorClick, projectTeamPageHref } = props;
   const router = useRouter();
 
   return (
     <Section
       title="Équipe projet"
-      link={props.users.length > 0 ? { label: "Voir toute l'équipe projet", href: `${router.asPath}/team` } : undefined}
+      link={
+        props.users.length > 0
+          ? { label: "Voir toute l'équipe projet", href: projectTeamPageHref || `${router.asPath}/team` }
+          : undefined
+      }
     >
       {props.users.length > 0 ? (
         <ProjectTeamCard
           {...props}
-          allUsersPageHref={`${router.asPath}/team`}
+          allUsersPageHref={projectTeamPageHref || `${router.asPath}/team`}
           onKebabMenuClick={() => console.log('handle click ?')}
         />
       ) : (

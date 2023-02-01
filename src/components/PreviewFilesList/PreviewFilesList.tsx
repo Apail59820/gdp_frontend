@@ -6,10 +6,14 @@ import { DateTime } from 'luxon';
 import Link from 'next/link';
 import { ShadowCard } from '@projex/ui';
 
-type Props = { assetsList: AssetModel[]; linkToAllAssets?: string; max?: number };
+export type PreviewFilesListProps = {
+  files: AssetModel[];
+  max?: number;
+  allFilesPageHref?: string;
+};
 
-const PreviewFilesList = ({ assetsList, linkToAllAssets, max = 4 }: Props) => {
-  const count = assetsList.length;
+const PreviewFilesList = ({ files, max = 4, allFilesPageHref }: PreviewFilesListProps) => {
+  const count = files.length;
   const getImage = () => {
     // TODO Si le fichier est une image, retourner l'image en question
     // if (['png', 'svg', 'jpg'].includes(asset?.type)) return;
@@ -30,7 +34,7 @@ const PreviewFilesList = ({ assetsList, linkToAllAssets, max = 4 }: Props) => {
     <ShadowCard>
       <div className={styles.container}>
         <ul className={styles.assetsContainer}>
-          {[...assetsList].slice(0, max).map(({ title, uploaded_on, type }, index) => (
+          {[...files].slice(0, max).map(({ title, uploaded_on, type }, index) => (
             <li className={styles.assetContainer} key={index}>
               <div className={styles.imgAndTitle}>
                 <div className={styles.imageContainer}>
@@ -50,7 +54,7 @@ const PreviewFilesList = ({ assetsList, linkToAllAssets, max = 4 }: Props) => {
           ))}
         </ul>
         {count > max && (
-          <Link href={linkToAllAssets ?? '/files'} className={styles.moreFiles}>
+          <Link href={allFilesPageHref ?? '/files'} className={styles.moreFiles}>
             + {count - max} autres fichiers
           </Link>
         )}

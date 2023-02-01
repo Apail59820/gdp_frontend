@@ -1,15 +1,14 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
-import PreviewFilesList from '../PreviewFilesList/PreviewFilesList';
+import PreviewFilesList, { PreviewFilesListProps } from '../PreviewFilesList/PreviewFilesList';
 import Section from '../Section/Section';
 
-type Props = {
-  files: any[];
+type Props = PreviewFilesListProps & {
   onNewFileClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const FilesWidget = ({ files, onNewFileClick }: Props) => {
+const FilesWidget = ({ files, max, onNewFileClick, allFilesPageHref }: Props) => {
   const router = useRouter();
 
   return (
@@ -19,13 +18,13 @@ const FilesWidget = ({ files, onNewFileClick }: Props) => {
         files.length > 0
           ? {
               label: `Voir le${files.length > 1 ? `s ${files.length}` : ''} fichier${files.length > 1 ? 's' : ''}`,
-              href: `${router.asPath}/files`,
+              href: allFilesPageHref || `${router.asPath}/files`,
             }
           : undefined
       }
     >
       {files.length > 0 ? (
-        <PreviewFilesList assetsList={files} linkToAllAssets={`${router.asPath}/files`} />
+        <PreviewFilesList files={files} max={max} allFilesPageHref={allFilesPageHref || `${router.asPath}/files`} />
       ) : (
         <ConfigureWidget
           descriptionText="Vous n'avez aucun fichier"

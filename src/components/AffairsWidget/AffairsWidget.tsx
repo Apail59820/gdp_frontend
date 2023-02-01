@@ -11,15 +11,20 @@ import Section from '../Section/Section';
 type Props = {
   affairs: AffairModel[];
   onNewAffairClick: React.MouseEventHandler<HTMLButtonElement>;
+  allAffairsPageHref?: string;
 };
 
-const AffairsWidget = ({ affairs, onNewAffairClick }: Props) => {
+const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref }: Props) => {
   const router = useRouter();
 
   return (
     <Section
       title="Les affaires"
-      link={affairs.length > 0 ? { label: 'Voir toutes les affaires', href: `${router.asPath}/affairs` } : undefined}
+      link={
+        affairs.length > 0
+          ? { label: 'Voir toutes les affaires', href: allAffairsPageHref || `${router.asPath}/affairs` }
+          : undefined
+      }
     >
       <Grid>
         {affairs.map((affair: AffairModel) => (
