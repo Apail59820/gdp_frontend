@@ -21,6 +21,9 @@ const InvoiceCard = ({ invoice }: Props) => {
   const isTheDueDateComingSoon: boolean = getDaysCountUntilDueDate() <= MAX_DAYS_BEFORE_SOON_TO_EXPIRE_STATUS;
 
   const getInformationsByBillingStatus = (): { style: string; bannerText: string; statusText: string } => {
+    const daysRemaining = getDaysCountUntilDueDate();
+    const daysOverdue = Math.abs(daysRemaining);
+
     if (etatreglt_facture === 'Reglee')
       return {
         style: styles.ok,
@@ -30,13 +33,15 @@ const InvoiceCard = ({ invoice }: Props) => {
     else if (etatreglt_facture === 'NonReglee' && statut_facture === 'Echue')
       return {
         style: styles.alert,
-        bannerText: `+${Math.abs(getDaysCountUntilDueDate())} jours`,
+        bannerText: `+${daysOverdue} jour${daysOverdue > 1 ? 's' : ''}`,
         statusText: 'impayée',
       };
     else
       return {
         style: isTheDueDateComingSoon ? styles.warning : '',
-        bannerText: `échéance dans ${getDaysCountUntilDueDate()} jours`,
+        bannerText: `échéance ${
+          daysRemaining === 0 ? "aujourd'hui" : `dans ${daysRemaining} jour${daysRemaining > 1 ? 's' : ''}`
+        }`,
         statusText: 'en attente',
       };
   };
