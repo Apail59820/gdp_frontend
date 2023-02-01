@@ -6,26 +6,27 @@ import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 
 type Props = Omit<ProjectTeamCardProps, 'allUsersPageHref' | 'onKebabMenuClick'> & {
   onAddCollaboratorClick: React.MouseEventHandler<HTMLButtonElement>;
-  projectTeamPageHref?: string;
+  type?: 'project' | 'affair';
+  collaboratorTeamPageHref?: string;
 };
 
-const ProjectTeamWidget = (props: Props) => {
-  const { onAddCollaboratorClick, projectTeamPageHref } = props;
+const CollaboratorTeamWidget = (props: Props) => {
+  const { onAddCollaboratorClick, type = 'project', collaboratorTeamPageHref } = props;
   const router = useRouter();
 
   return (
     <Section
-      title="Équipe projet"
+      title={`Responsables ${type === 'project' ? 'du projet' : "de l'affaire"}`}
       link={
         props.users.length > 0
-          ? { label: "Voir toute l'équipe projet", href: projectTeamPageHref || `${router.asPath}/team` }
+          ? { label: "Voir toute l'équipe", href: collaboratorTeamPageHref || `${router.asPath}/team` }
           : undefined
       }
     >
       {props.users.length > 0 ? (
         <ProjectTeamCard
           {...props}
-          allUsersPageHref={projectTeamPageHref || `${router.asPath}/team`}
+          allUsersPageHref={collaboratorTeamPageHref || `${router.asPath}/team`}
           onKebabMenuClick={() => console.log('handle click ?')}
         />
       ) : (
@@ -38,4 +39,4 @@ const ProjectTeamWidget = (props: Props) => {
   );
 };
 
-export default ProjectTeamWidget;
+export default CollaboratorTeamWidget;
