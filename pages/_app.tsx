@@ -7,7 +7,7 @@ import { SideBar, TopBar } from '@projex/ui';
 import { Provider } from 'react-redux';
 import configureStore from '../store/store';
 import { TeamOutlined } from '@ant-design/icons';
-import AffairList from '../components/AffairsList/AffairList';
+import AffairList from '../example/AffairsList/AffairList';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

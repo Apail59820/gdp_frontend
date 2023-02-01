@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { affairs, AffairState } from '../../store/features/affairsReducer';
+import { affairs, AffairState, searchByAffairName } from '../../store/features/affairsReducer';
 import { login } from '../../services/auth';
 import { AffairModel } from '../../models/AffairModel';
 import { useEffect } from 'react';
@@ -17,12 +17,17 @@ const AffairList = () => {
   connection();
 
   const affair = useSelector((state: any) => state.affairs);
+  console.log('affairr', affair);
+
   useEffect(() => {
     dispatch(affairs());
     dispatch(userProfile());
   }, []);
   const userProfil = useSelector((state: UserState) => state.userProfile);
   console.log('userProfile', userProfil);
+  const filteredAffairsByName = useSelector((state: AffairState) => state.filteredAffairsByName);
+
+  console.log('filteredAffairsByName', filteredAffairsByName);
 
   return (
     <>
@@ -37,6 +42,12 @@ const AffairList = () => {
           ))}
         </ul>
       ) : null}
+      <div>
+        <button onClick={() => dispatch(searchByAffairName('Affaire spéciale'))}>Par nom d'affaire</button>
+        {filteredAffairsByName?.map((e) => (
+          <div>{e.name}</div>
+        ))}
+      </div>
     </>
   );
 };

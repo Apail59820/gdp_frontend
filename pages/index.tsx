@@ -4,7 +4,7 @@ import PageHeaderBanner from '../src/components/PageHeaderBanner/PageHeaderBanne
 // import { TabBar } from '@projex/ui';
 import HomeDashboard from '../src/HomeDashboard/HomeDashboard';
 import HomeUpdates from '../src/HomeUpdates/HomeUpdates';
-import AffairList from '../components/AffairsList/AffairList';
+import AffairList from '../example/AffairsList/AffairList';
 
 type Tab = {
   label: string;
