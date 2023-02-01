@@ -2,7 +2,7 @@ import { ProgressBarRounded } from '@projex/ui';
 import React from 'react';
 import styles from './StatisticsCard.module.scss';
 
-type Statistic = {
+export type Statistic = {
   label: string;
   percentage: number;
 };

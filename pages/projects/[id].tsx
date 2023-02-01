@@ -8,6 +8,7 @@ import { UserModel } from '../../models/UserModels';
 import { PythagoreFactureModel } from '../../models/PythagoreFactureModel';
 import { AssetModel } from '../../models/AssetModel';
 import { Breadcrumb, QuickActionCard } from '@projex/ui';
+import type { Activity } from '@projex/ui/dist/components/molecules/RecentActivities/RecentActivities';
 import Grid from '../../src/components/Grid/Grid';
 import PageHeaderBanner from '../../src/components/PageHeaderBanner/PageHeaderBanner';
 import QuickAccessWidget from '../../src/components/QuickAccessWidget/QuickAccessWidget';
@@ -18,6 +19,7 @@ import ActivitiesWidget from '../../src/components/ActivitiesWidget/ActivitiesWi
 import BillingWidget from '../../src/components/BillingWidget/BillingWidget';
 import FilesWidget from '../../src/components/FilesWidget/FilesWidget';
 import StatisticsWidget from '../../src/components/StatisticsWidget/StatisticsWidget';
+import type { Statistic } from '../../src/components/StatisticsCard/StatisticsCard';
 
 // TODO
 const PROJECT_BY_ID: ProjectModel = {
@@ -174,7 +176,7 @@ const PROJECT_TEAM: UserModel[] = [
   },
 ];
 
-const ACTIVITIES = [
+const ACTIVITIES: Activity[] = [
   {
     creationDate: '10/12/2022',
     label: 'Ajout du fichier preview-facade.png',
@@ -250,7 +252,7 @@ const FILES: AssetModel[] = [
     uploaded_on: '2022-07-21',
   },
 ];
-const STATISTICS = [
+const STATISTICS: Statistic[] = [
   { label: 'Label 1 ', percentage: 65 },
   { label: 'Label 2', percentage: 65 },
 ];
