@@ -5,7 +5,7 @@
   display: flex;
   gap: 2rem;
 
-  .statisticsCardContainer {
+  .statisticsCardContainer, .newStatisticCardContainer {
     flex-grow: 1;
   }
 }

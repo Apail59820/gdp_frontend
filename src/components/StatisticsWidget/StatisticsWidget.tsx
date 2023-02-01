@@ -28,7 +28,7 @@ const StatisticsWidget = ({ statistics, max, onNewStatisticClick, allStatisticsP
           <div className={styles.statisticsCardContainer}>
             <StatisticsCard statistics={statistics} max={max} />
           </div>
-          <div>
+          <div className={styles.newStatisticCardContainer}>
             <ManageItemCard direction="vertical" label="Nouvelle statistique" onClick={onNewStatisticClick} />
           </div>
         </div>
