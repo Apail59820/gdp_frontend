@@ -204,7 +204,7 @@ const INVOICES: PythagoreFactureModel[] = [
     num_facture: '2021-11-012',
     etatreglt_facture: 'NonReglee',
     statut_facture: 'NonEchue',
-    date_echeance_facture: '2023-02-01',
+    date_echeance_facture: new Date().toDateString(),
   },
   {
     num_facture: '2021-11-013',
