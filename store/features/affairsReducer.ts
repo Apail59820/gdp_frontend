@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AffairModel } from '../../models/AffairModel';
-import { current } from '@reduxjs/toolkit';
+import { current, original } from '@reduxjs/toolkit';
 import { getAffairs } from '../../services/affairs';
+import staticMethods from 'antd/es/message';
 
 export interface AffairState {
   affairs: AffairModel[];
@@ -19,7 +20,6 @@ const initialState: AffairState = {
 
 export const affairs = createAsyncThunk('affairs/getAffairs', () =>
   getAffairs().then((data) => {
-    console.log('data', data.data);
     return data.data!;
   })
 );
@@ -32,20 +32,11 @@ const affairSlice = createSlice({
     //   console.log('state addAffair', state.affairs);
     //   state.affairs = action.payload;
     // },
-    searchByAffairName(state, action: PayloadAction<string>) {
-      const filtered = [...state.affairs].filter((e) => e?.name?.toLowerCase().includes(action.payload.toLowerCase()));
-      state.filteredAffairsByName = filtered;
-      console.log('state.filteredAffairsByName', state.filteredAffairsByName);
+    searchByAffairName: (state, action: PayloadAction<string>) => {
+      state.filteredAffairsByName = state.affairs.filter((e) =>
+        e?.name?.toLowerCase().includes(action.payload.toLowerCase())
+      );
     },
-    // searchByAffairName: (state, action) => {
-    //   const filteredAffairsByName = [...state.affairs].filter((e) =>
-    //     e.name?.toLowerCase().includes(action.payload.toLowerCase())
-    //   );
-    //   return {
-    //     ...state,
-    //     filteredAffairsByName: action.payload.length > 0 ? filteredAffairsByName : [...state.affairs],
-    //   };
-    // },
   },
   extraReducers: (builder) => {
     builder.addCase(affairs.pending, (state) => {
@@ -54,6 +45,7 @@ const affairSlice = createSlice({
     builder.addCase(affairs.fulfilled, (state, action: PayloadAction<AffairModel[]>) => {
       state.loading = false;
       state.affairs = action.payload;
+      state.filteredAffairsByName = action.payload;
       state.error = '';
     });
     builder.addCase(affairs.rejected, (state, action) => {
