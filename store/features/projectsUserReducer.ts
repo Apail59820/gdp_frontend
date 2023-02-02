@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AffairModel } from '../../models/AffairModel';
-import { ProjectModel } from '../../models/ProjectModel';
+import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
+import { GdpProjectModel } from '../../models/GestionDeProjets/GdpProjectModel';
 
 import projects from '../mocks/projects.json';
 

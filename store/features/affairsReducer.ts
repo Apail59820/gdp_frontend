@@ -1,20 +1,20 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AffairModel } from '../../models/AffairModel';
+import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
 
 import { getAffairs } from '../../services/affairs';
 
 export interface AffairState {
-  affairs: AffairModel[];
-  loading: AffairModel['loading'];
+  affairs: GdpAffairModel[];
+  loading: boolean;
   error: string;
-  filteredAffairsByName: AffairModel[];
+  filteredAffairsByName: GdpAffairModel[];
 }
 
 const initialState: AffairState = {
-  affairs: <AffairModel[]>[],
+  affairs: <GdpAffairModel[]>[],
   loading: false,
   error: '',
-  filteredAffairsByName: <AffairModel[]>[],
+  filteredAffairsByName: <GdpAffairModel[]>[],
 };
 
 export const affairs = createAsyncThunk('affairs/getAffairs', () =>
@@ -41,7 +41,7 @@ const affairSlice = createSlice({
     builder.addCase(affairs.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(affairs.fulfilled, (state, action: PayloadAction<AffairModel[]>) => {
+    builder.addCase(affairs.fulfilled, (state, action: PayloadAction<GdpAffairModel[]>) => {
       state.loading = false;
       state.affairs = action.payload;
       state.filteredAffairsByName = action.payload;
