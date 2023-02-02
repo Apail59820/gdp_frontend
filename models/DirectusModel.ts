@@ -13,3 +13,9 @@ export type QueryParameters = {
   meta?: string;
   export?: string;
 };
+
+export type RequestResponse<T> = {
+  status: number,
+  data?: T,
+  message?: string,
+}
