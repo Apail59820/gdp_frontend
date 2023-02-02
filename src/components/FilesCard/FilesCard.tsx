@@ -1,14 +1,14 @@
 import React from 'react';
 import styles from './FilesCard.module.scss';
 import { ShadowCard } from '@projex/ui';
-import { AssetModel } from '../../../models/AssetModel';
-import { AffairModel } from '../../../models/AffairModel';
+import { GdpFilesModel } from '../../../models/GestionDeProjets/GdpFilesModel';
+import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import folderIcon from '../../../public/folder.svg';
 import fileIcon from '../../../public/file.svg';
 
 type Props = {
-  asset?: AssetModel;
-  affair?: AffairModel;
+  asset?: GdpFilesModel;
+  affair?: GdpAffairModel;
 };
 
 const FilesCard = ({ asset, affair }: Props) => {

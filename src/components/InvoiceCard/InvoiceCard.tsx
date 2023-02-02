@@ -1,9 +1,9 @@
 import React from 'react';
 import styles from './InvoiceCard.module.scss';
-import { PythagoreFactureModel } from '../../../models/PythagoreFactureModel';
+import { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
 
 type Props = {
-  billing: PythagoreFactureModel;
+  billing: GdpPythagoreFactureModel;
 };
 
 const InvoiceCard = ({ billing }: Props) => {

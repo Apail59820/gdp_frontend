@@ -1,4 +1,4 @@
-import { AffairModel, CreateAffairModel, UpdateAffairModel } from '../models/AffairModel';
+import { GdpAffairModel, CreateAffairModel, UpdateAffairModel } from '../models/GestionDeProjets/GdpAffairModel';
 import { QueryParameters } from '../models/DirectusModel';
 import concatenateQueryParameters from '../utils/queryParamsFormatter';
 import { retrieveToken } from './auth';
@@ -13,7 +13,7 @@ const defaultFields = ['*'].join(',');
  * @param props Object containing query parameters.
  * @returns List all items that exist in affairs.
  */
-export async function getAffairs(props: QueryParameters = {}): Promise<{ status: number; data?: AffairModel[] }> {
+export async function getAffairs(props: QueryParameters = {}): Promise<{ status: number; data?: GdpAffairModel[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -51,7 +51,7 @@ export async function getAffairs(props: QueryParameters = {}): Promise<{ status:
  * @param fields list of fields to retrieve.
  * @returns Promise containing the request status and the affair corresponding to the id
  */
-export async function getAffair(id: number, fields = defaultFields): Promise<{ status: number; data?: AffairModel }> {
+export async function getAffair(id: number, fields = defaultFields): Promise<{ status: number; data?: GdpAffairModel }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -82,7 +82,7 @@ export async function getAffair(id: number, fields = defaultFields): Promise<{ s
  * @param affair Object containing affair properties.
  * @returns Status and data containing affair properties.
  */
-export async function createAffair(affair: CreateAffairModel): Promise<{ status: number; data?: AffairModel }> {
+export async function createAffair(affair: CreateAffairModel): Promise<{ status: number; data?: GdpAffairModel }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -131,7 +131,7 @@ export async function createAffair(affair: CreateAffairModel): Promise<{ status:
 export async function updateAffair(
   id: string,
   data: UpdateAffairModel
-): Promise<{ status: number; data?: AffairModel; error?: string }> {
+): Promise<{ status: number; data?: GdpAffairModel; error?: string }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -152,7 +152,7 @@ export async function updateAffair(
       if (response.status === 200) {
         return response
           .json()
-          .then((responseData: { data: AffairModel }) => {
+          .then((responseData: { data: GdpAffairModel }) => {
             return { status: response.status, data: responseData.data };
           })
           .catch((error) => {

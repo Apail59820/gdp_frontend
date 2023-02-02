@@ -1,4 +1,4 @@
-import { UpdateUserModel, UserModel } from '../models/UserModel';
+import { UpdateUserModel, UsUserModel } from '../models/UserService/UsUserModel';
 import { QueryParameters } from '../models/DirectusModel';
 import concatenateQueryParameters from '../utils/queryParamsFormatter';
 import { retrieveToken } from './auth';
@@ -11,7 +11,7 @@ const { publicRuntimeConfig } = getConfig();
  * @param props Object containing query parameters.
  * @returns List all items that exist in users.
  */
-export async function getProfiles(props: QueryParameters = {}): Promise<{ status: number; data?: Array<UserModel> }> {
+export async function getProfiles(props: QueryParameters = {}): Promise<{ status: number; data?: Array<UsUserModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -39,7 +39,7 @@ export async function getProfiles(props: QueryParameters = {}): Promise<{ status
  * @param data key/value pairs to update
  * @return a Promise with the request status and the user data in case of success
  */
-export async function updateMyProfile(userData: UpdateUserModel): Promise<{ status: number; data?: UserModel }> {
+export async function updateMyProfile(userData: UpdateUserModel): Promise<{ status: number; data?: UsUserModel }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -58,7 +58,7 @@ export async function updateMyProfile(userData: UpdateUserModel): Promise<{ stat
       if (response.status === 200) {
         return response
           .json()
-          .then((responseData: { data: UserModel }) => {
+          .then((responseData: { data: UsUserModel }) => {
             return { status: response.status, data: responseData.data };
           })
           .catch((error) => {
@@ -82,7 +82,7 @@ export async function updateMyProfile(userData: UpdateUserModel): Promise<{ stat
  */
 export async function getMyProfile(): Promise<{
   status: number;
-  data?: UserModel;
+  data?: UsUserModel;
 }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
@@ -102,7 +102,7 @@ export async function getMyProfile(): Promise<{
     if (res.status == 200)
       return res
         .json()
-        .then((resData: { data: UserModel }) => {
+        .then((resData: { data: UsUserModel }) => {
           return { status: res.status, data: resData.data };
         })
         .catch((error) => {
@@ -119,7 +119,7 @@ export async function getMyProfile(): Promise<{
  * @param id ID of the user
  * @return a Promise with the request status and the user data in case of success
  */
-export async function getProfileById(id: string): Promise<{ status: number; data?: UserModel }> {
+export async function getProfileById(id: string): Promise<{ status: number; data?: UsUserModel }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -138,7 +138,7 @@ export async function getProfileById(id: string): Promise<{ status: number; data
     if (res.status == 200)
       return res
         .json()
-        .then((resData: { data: UserModel }) => {
+        .then((resData: { data: UsUserModel }) => {
           return { status: res.status, data: resData.data };
         })
         .catch((error) => {
@@ -159,7 +159,7 @@ export async function getProfileById(id: string): Promise<{ status: number; data
 export async function updateProfileById(
   id: string,
   userData: UpdateUserModel
-): Promise<{ status: number; data?: UserModel }> {
+): Promise<{ status: number; data?: UsUserModel }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
