@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { projectsUserByRange, rangeDataSelection } from '../store/features/projectsUserReducer';
+import { getProjects, projectsUserByRange, rangeDataSelection } from '../store/features/projectsUserReducer';
 
 const Projects = () => {
   const dispatch = useDispatch<any>();
@@ -8,8 +8,8 @@ const Projects = () => {
 
   return (
     <>
-      <button onClick={() => dispatch()}>Get projects</button>
-      <button onClick={() => dispatch(rangeDataSelection({ offSet: 2, limit: 50 }))}>Range</button>
+      <button onClick={() => dispatch(getProjects())}>Get projects</button>
+      <button onClick={() => dispatch(rangeDataSelection({ offSet: 2, limit: 10 }))}>Range</button>
       <button onClick={() => dispatch(projectsUserByRange())}>Projets user by range</button>
 
       {projects.projectsUser.map((e: any) => (
