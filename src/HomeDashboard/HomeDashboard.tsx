@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
-import { ProjectModel } from '../../models/ProjectModel';
+import { GdpProjectModel } from '../../models/GestionDeProjets/GdpProjectModel';
 import { CompanyEnum } from '../../models/CompanyEnum';
 import { ManageItemCard, QuickActionCard } from '@projex/ui';
 import Section from '../components/Section/Section';
@@ -12,7 +12,7 @@ import ProjectCard from '../components/ProjectCard/ProjectCard';
 const PROFILE_PROGRESS_PERCENTAGE = 65; // TODO
 
 // TODO
-const CURRENT_USER_PROJECTS: ProjectModel[] = [
+const CURRENT_USER_PROJECTS: GdpProjectModel[] = [
   {
     id: '1',
     name: 'Nom du projet',
@@ -77,7 +77,7 @@ const HomeDashboard = () => {
       </Section>
       <Section title="Mes projets" link={{ label: 'Voir tous les projets', href: '/projects' }}>
         <Grid>
-          {CURRENT_USER_PROJECTS.map((project: ProjectModel) => (
+          {CURRENT_USER_PROJECTS.map((project: GdpProjectModel) => (
             <Link href={`/projects/${project.id}`}>
               <ProjectCard key={project.id} project={project} projectManagerName={'Chef de projet'} />
             </Link>

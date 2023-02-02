@@ -1,12 +1,12 @@
 import React from 'react';
 import styles from './PageHeaderBanner.module.scss';
-import { ProjectModel } from '../../../models/ProjectModel';
+import { GdpProjectModel } from '../../../models/GestionDeProjets/GdpProjectModel';
 import MainMessage from './MainMessage/MainMessage';
 import { CompanyEnum } from '../../../models/CompanyEnum';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 
 type Props = {
-  project?: ProjectModel;
+  project?: GdpProjectModel;
   title?: string;
 };
 

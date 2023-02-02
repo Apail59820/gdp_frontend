@@ -1,13 +1,13 @@
 import React from 'react';
 import styles from './PhaseCard.module.scss';
 import { ShadowCard } from '@projex/ui';
-import { PhaseModel } from '../../../models/PhaseModel';
+import { GdpPhaseModel } from '../../../models/GestionDeProjets/GdpPhaseModel';
 import { capitalize } from '../../../utils/capitalize';
 import ProgressStatusMessage from '../ProgressStatusMessage/ProgressStatusMessage';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 
 type Props = {
-  phase: PhaseModel;
+  phase: GdpPhaseModel;
   onKebabMenuClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 

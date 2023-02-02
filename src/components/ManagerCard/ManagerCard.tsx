@@ -1,13 +1,13 @@
 import React from 'react';
 import styles from './ManagerCard.module.scss';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
-import { UserModel } from '../../../models/UserModel';
+import { UsUserModel } from '../../../models/UserService/UsUserModel';
 import { ShadowCard } from '@projex/ui';
 import CollaboratorInformations from '../CollaboratorInformations/CollaboratorInformations';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 
 type Props = {
-  user: UserModel;
+  user: UsUserModel;
   onKebabMenuClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 

@@ -1,11 +1,11 @@
 import React from 'react';
 import styles from './MainMessage.module.scss';
 import { capitalize } from '../../../../utils/capitalize';
-import { ProjectModel } from '../../../../models/ProjectModel';
+import { GdpProjectModel } from '../../../../models/GestionDeProjets/GdpProjectModel';
 import defaultImage from '../../../../public/default-affair-image.png';
 
 type Props = {
-  project: Partial<ProjectModel>;
+  project: Partial<GdpProjectModel>;
 };
 
 const MainMessage = ({ project }: Props) => {

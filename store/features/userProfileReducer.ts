@@ -1,16 +1,16 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AffairModel, UserAccessModel } from '../../models/AffairModel';
-import { UserModel } from '../../models/UserModel';
+import { GdpAffairModel, UserAccessModel } from '../../models/GestionDeProjets/GdpAffairModel';
+import { UsUserModel } from '../../models/UserService/UsUserModel';
 import { getMyProfile } from '../../services/profile';
 
 export interface UserState {
-  userProfile: UserModel[];
-  loading: UserModel['loading'];
+  userProfile: UsUserModel[];
+  loading: UsUserModel['loading'];
   error: string;
 }
 
 const initialState: UserState = {
-  userProfile: <UserModel[]>[],
+  userProfile: <UsUserModel[]>[],
   loading: false,
   error: '',
 };
@@ -31,7 +31,7 @@ const userProfileSlice = createSlice({
     builder.addCase(userProfile.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(userProfile.fulfilled, (state, action: PayloadAction<UserModel>) => {
+    builder.addCase(userProfile.fulfilled, (state, action: PayloadAction<UsUserModel>) => {
       state.loading = false;
       state.userProfile = [action.payload];
       console.log('State UserProfile', state.userProfile);
