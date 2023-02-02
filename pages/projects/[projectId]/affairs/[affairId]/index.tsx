@@ -1,27 +1,27 @@
 import React from 'react';
-import styles from '../../../../styles/Affair.module.scss';
+import styles from '../../../../../styles/Affair.module.scss';
 import { EditOutlined } from '@ant-design/icons';
-import { CompanyEnum } from '../../../../models/CompanyEnum';
-import { ProjectModel } from '../../../../models/ProjectModel';
-import { AffairModel, AffairStatusEnum } from '../../../../models/AffairModel';
-import { UserModel } from '../../../../models/UserModels';
-import { PythagoreFactureModel } from '../../../../models/PythagoreFactureModel';
-import { AssetModel } from '../../../../models/AssetModel';
+import { CompanyEnum } from '../../../../../models/CompanyEnum';
+import { ProjectModel } from '../../../../../models/ProjectModel';
+import { AffairModel, AffairStatusEnum } from '../../../../../models/AffairModel';
+import { UserModel } from '../../../../../models/UserModels';
+import { PythagoreFactureModel } from '../../../../../models/PythagoreFactureModel';
+import { AssetModel } from '../../../../../models/AssetModel';
 import { Breadcrumb, QuickActionCard } from '@projex/ui';
 import type { Activity } from '@projex/ui/dist/components/molecules/RecentActivities/RecentActivities';
-import Grid from '../../../../src/components/Grid/Grid';
-import PageHeaderBanner from '../../../../src/components/PageHeaderBanner/PageHeaderBanner';
-import QuickAccessWidget from '../../../../src/components/QuickAccessWidget/QuickAccessWidget';
-import ClientTeamWidget from '../../../../src/components/ClientTeamWidget/ClientTeamWidget';
-import CollaboratorTeamWidget from '../../../../src/components/CollaboratorTeamWidget/CollaboratorTeamWidget';
-import ActivitiesWidget from '../../../../src/components/ActivitiesWidget/ActivitiesWidget';
-import BillingWidget from '../../../../src/components/BillingWidget/BillingWidget';
-import FilesWidget from '../../../../src/components/FilesWidget/FilesWidget';
-import StatisticsWidget from '../../../../src/components/StatisticsWidget/StatisticsWidget';
-import type { Statistic } from '../../../../src/components/StatisticsCard/StatisticsCard';
-import { capitalize } from '../../../../utils/capitalize';
-import PhasesWidget from '../../../../src/components/PhasesWidget/PhasesWidget';
-import { PhaseModel, PhaseStatusEnum } from '../../../../models/PhaseModel';
+import Grid from '../../../../../src/components/Grid/Grid';
+import PageHeaderBanner from '../../../../../src/components/PageHeaderBanner/PageHeaderBanner';
+import QuickAccessWidget from '../../../../../src/components/QuickAccessWidget/QuickAccessWidget';
+import ClientTeamWidget from '../../../../../src/components/ClientTeamWidget/ClientTeamWidget';
+import CollaboratorTeamWidget from '../../../../../src/components/CollaboratorTeamWidget/CollaboratorTeamWidget';
+import ActivitiesWidget from '../../../../../src/components/ActivitiesWidget/ActivitiesWidget';
+import BillingWidget from '../../../../../src/components/BillingWidget/BillingWidget';
+import FilesWidget from '../../../../../src/components/FilesWidget/FilesWidget';
+import StatisticsWidget from '../../../../../src/components/StatisticsWidget/StatisticsWidget';
+import type { Statistic } from '../../../../../src/components/StatisticsCard/StatisticsCard';
+import { capitalize } from '../../../../../utils/capitalize';
+import PhasesWidget from '../../../../../src/components/PhasesWidget/PhasesWidget';
+import { PhaseModel, PhaseStatusEnum } from '../../../../../models/PhaseModel';
 
 // TODO
 const PROJECT_BY_ID: ProjectModel = {
@@ -248,7 +248,7 @@ const STATISTICS: Statistic[] = [
 const Affair = () => {
   return (
     <>
-      <PageHeaderBanner project={PROJECT_BY_ID} onManageThumbnailClick={() => console.log('open modal ?')} />
+      <PageHeaderBanner data={PROJECT_BY_ID} />
       <div className={styles.affairPage}>
         <Breadcrumb dynamicRoutesLabel={[PROJECT_BY_ID.name!, AFFAIR_BY_ID.name!]} />
         <h1 className={styles.title}>{capitalize(AFFAIR_BY_ID.name!)}</h1>

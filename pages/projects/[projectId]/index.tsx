@@ -260,7 +260,7 @@ const STATISTICS: Statistic[] = [
 const Project = () => {
   return (
     <>
-      <PageHeaderBanner project={PROJECT_BY_ID} onManageThumbnailClick={() => console.log('open modal ?')} />
+      <PageHeaderBanner data={PROJECT_BY_ID} />
       <div className={styles.projectPage}>
         <Breadcrumb dynamicRoutesLabel={[PROJECT_BY_ID.name!]} />
         <h1 className={styles.title}>Le projet</h1>
