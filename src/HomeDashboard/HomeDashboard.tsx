@@ -54,14 +54,18 @@ const HomeDashboard = () => {
         <Grid>
           <QuickActionCard
             title="Créez un nouveau projet"
-            button={{ label: 'Ajouter un projet', href: '/', icon: <PlusOutlined /> }} // TODO Handle link href
+            button={{ label: 'Ajouter un projet', onClick: () => console.log('open modal ?'), icon: <PlusOutlined /> }} // TODO Handle link href
           >
             Créer un nouveau projet dés maintenant
           </QuickActionCard>
           <QuickActionCard
             title="Complétez votre profil"
             progress={PROFILE_PROGRESS_PERCENTAGE}
-            button={{ label: 'Ajouter des informations', href: '/', icon: <PlusOutlined /> }} // TODO Handle link href
+            button={{
+              label: 'Ajouter des informations',
+              onClick: () => console.log('open modal ?'),
+              icon: <PlusOutlined />,
+            }} // TODO Handle link href
           >
             Remplissez votre profil pour profiter pleinement de toutes les fonctionnalités
           </QuickActionCard>
