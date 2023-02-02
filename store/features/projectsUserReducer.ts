@@ -15,7 +15,7 @@ export interface ProjectsUserState {
 }
 
 const initialState: ProjectsUserState = {
-  projectsUser: projects,
+  projectsUser: [],
   range: {
     offSet: 0,
     limit: 0,
@@ -32,20 +32,17 @@ const projectsUserSlice = createSlice({
   name: 'projectsUser',
   initialState: initialState,
   reducers: {
+    getProjects(state) {
+      state.projectsUser = projects;
+    },
     rangeDataSelection: (state, action: PayloadAction<Range>) => {
       state.range = action.payload;
     },
-    projectsUserByRange: (state, action) => {
-      state.projectsUser = state.projectsUser.filter((e: any) => e.id);
+    projectsUserByRange: (state) => {
+      // Data by range, use rangeDataSelection in your components to determine a range offSet and a range limit
+      state.projectsUser = state.projectsUser.slice(state.range.offSet, state.range.limit);
     },
-    twoLastUserProject: (state) => {
-      const limit = state.projectsUser.length;
-      console.log('limit', limit);
-      const offSet = limit - 2;
-      state.range.offSet = offSet;
-      state.range.limit = limit;
-      console.log('offSet', offSet);
-    },
+
     // searchByAffairName: (state, action: PayloadAction<string>) => {
     //   state.filteredAffairsByName = state.affairs.filter((e) =>
     //     e?.name?.toLowerCase().includes(action.payload.toLowerCase())
@@ -70,7 +67,7 @@ const projectsUserSlice = createSlice({
 //Action
 
 //Reducer
-export const { rangeDataSelection, twoLastUserProject } = projectsUserSlice.actions;
+export const { rangeDataSelection, projectsUserByRange } = projectsUserSlice.actions;
 
 const projectsUserReducer = projectsUserSlice.reducer;
 export default projectsUserReducer;
