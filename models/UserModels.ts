@@ -25,7 +25,7 @@ export type UserModel = {
   token?: string;
   last_page?: string;
   last_access?: string;
-  company?: CompanyEnum;
+  company?: CompanyEnum | string;
   number?: string;
   affairs?: Array<UserAccessModel>;
   web_link?: string;

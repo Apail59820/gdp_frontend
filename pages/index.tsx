@@ -27,7 +27,7 @@ const Home = () => {
   return (
     <>
       {/* TODO Display current user name */}
-      <PageHeaderBanner title="Bonjour, Olivier Le Baron" />
+      <PageHeaderBanner data="Bonjour, Olivier Le Baron" />
       <div className={styles.homePage}>
         <TabBar tabs={tabs.map((tab) => tab.label)} currentTab={currentTab} setCurrentTab={setCurrentTab} />
         {tabs.find((tab) => tab.label === currentTab)?.content}
