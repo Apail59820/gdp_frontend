@@ -29,7 +29,7 @@ const Home = () => {
   return (
     <>
       {/* TODO Display current user name */}
-      <PageHeaderBanner title="Bonjour, Olivier Le Baron" />
+      <PageHeaderBanner data="Bonjour, Olivier Le Baron" />
       <div className={styles.homePage}>
         <AffairList></AffairList>
         <Projects></Projects>

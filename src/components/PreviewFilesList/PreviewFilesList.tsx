@@ -4,12 +4,16 @@ import fileIcon from '../../../public/file.svg';
 import styles from './PreviewFilesList.module.scss';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
-import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
+import { ShadowCard } from '@projex/ui';
 
-type props = { assetsList: AssetModel[]; linkToAllAssets?: string };
+export type PreviewFilesListProps = {
+  files: AssetModel[];
+  max?: number;
+  allFilesPageHref?: string;
+};
 
-const PreviewFilesList = ({ assetsList, linkToAllAssets }: props) => {
-  const count = assetsList.length;
+const PreviewFilesList = ({ files, max = 4, allFilesPageHref }: PreviewFilesListProps) => {
+  const count = files.length;
   const getImage = () => {
     // TODO Si le fichier est une image, retourner l'image en question
     // if (['png', 'svg', 'jpg'].includes(asset?.type)) return;
@@ -26,32 +30,36 @@ const PreviewFilesList = ({ assetsList, linkToAllAssets }: props) => {
     'rar' = 'Archive RAR',
   }
 
-  return assetsList.length > 0 ? (
-    <div className={styles.container}>
-      <div className={styles.assetsContainer}>
-        {[...assetsList].slice(0, 4).map(({ title, uploaded_on, type }, index) => (
-          <div className={styles.assetContainer} key={index}>
-            <div className={styles.imgAndTitle}>
-              <img src={getImage().src} alt="Icon" />
-              <b>{title}</b>
-            </div>
-            {type && <span>{displayType[type as keyof typeof displayType] ?? 'Inconnu'}</span>}
-            {uploaded_on && <span>{DateTime.fromISO(uploaded_on).toLocaleString(DateTime.DATE_FULL)}</span>}
-          </div>
-        ))}
+  return (
+    <ShadowCard>
+      <div className={styles.container}>
+        <ul className={styles.assetsContainer}>
+          {[...files].slice(0, max).map(({ title, uploaded_on, type }, index) => (
+            <li className={styles.assetContainer} key={index}>
+              <div className={styles.imgAndTitle}>
+                <div className={styles.imageContainer}>
+                  <img src={getImage().src} alt="Icon" />
+                </div>
+                <span className={styles.title}>{title}</span>
+              </div>
+              {type && (
+                <span className={styles.type}>{displayType[type as keyof typeof displayType] ?? 'Inconnu'}</span>
+              )}
+              {uploaded_on && (
+                <span className={styles.uploadDate}>
+                  {DateTime.fromISO(uploaded_on).setLocale('fr').toLocaleString(DateTime.DATE_FULL)}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+        {count > max && (
+          <Link href={allFilesPageHref ?? '/files'} className={styles.moreFiles}>
+            + {count - max} autres fichiers
+          </Link>
+        )}
       </div>
-      {count > 4 && (
-        <Link href={linkToAllAssets ?? '/files'} className={styles.moreFiles}>
-          + {count - 4} autres fichiers
-        </Link>
-      )}
-    </div>
-  ) : (
-    <ConfigureWidget
-      descriptionText={"Vous n'avez aucun fichier."}
-      buttonText={'Ajouter un fichier'}
-      onClick={() => console.log('Open Modal to add file')}
-    />
+    </ShadowCard>
   );
 };
 

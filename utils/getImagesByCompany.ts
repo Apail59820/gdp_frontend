@@ -16,10 +16,11 @@ import pictoProbim from '../public/picto-probim.svg';
 import logoProjex from '../public/logo-projex.svg';
 import pictoProjex from '../public/picto-projex.svg';
 
-import defaultPicture from '../public/default-profile-picture.png';
+import defaultImage from '../public/patrice.png';
+
 import { CompanyEnum } from '../models/CompanyEnum';
 
-export const getImagesByCompany = (company?: string): { logo: string; picto: string } => {
+export const getImagesByCompany = (company?: CompanyEnum | string): { logo: string; picto: string } => {
   switch (company?.toLowerCase()) {
     case CompanyEnum.AMEXIA:
       return {
@@ -47,9 +48,10 @@ export const getImagesByCompany = (company?: string): { logo: string; picto: str
         picto: pictoProjex.src,
       };
     default:
+      //TODO Revoir l'image par défaut
       return {
-        logo: logoGroupeProjex.src,
-        picto: pictoGroupeProjex.src,
+        logo: defaultImage.src,
+        picto: defaultImage.src,
       };
   }
 };

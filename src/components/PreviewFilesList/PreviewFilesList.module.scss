@@ -1,45 +1,63 @@
 @import '../../../../../styles/app';
 .container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  padding: 1rem;
+
   .assetsContainer {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-  }
-  .assetContainer {
-    display: flex;
-    align-items: center;
-    gap: 2.5rem;
-    position: relative;
-    font-size: .9rem;
-    .imgAndTitle {
+
+    .assetContainer {
       display: flex;
       align-items: center;
-      gap: .75rem;
-      font-size: 1rem;
-      b {
-        transform: translateY(calc(12px - 50%));
+      gap: 2.5rem;
+      position: relative;
+      font-size: .9rem;
+      line-height: 120%;
+      padding: .5rem .75rem;
+      border-bottom: 1px solid $neutral-light;
+
+      .imgAndTitle {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        font-size: 1rem;
+        .imageContainer {
+          aspect-ratio: 1/1;
+          min-height: 1.5rem;
+          height: 1.5rem;
+          min-width: 1.5rem;
+          width: 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          img {
+            height: 100%;
+            width: auto;
+          }
+        }
+        .title {
+          font-weight: 700;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
-      img {
-        height: 1.5rem;
+      .type, .uploadDate{
+        min-width: 8.75rem;
+        max-width: 8.75rem;
       }
-    }
-    span {
-      transform: translateY(calc(12px - 50%));
-    }
-    &::after {
-      position: absolute;
-      display: block;
-      content: '';
-      height: 1px;
-      width: 100%;
-      background-color: $neutral;
-      bottom: -1rem;
+      // span {
+      //   // transform: translateY(calc(12px - 50%));
+      // }
     }
   }
   .moreFiles {
+    display: block;
+    padding: .625rem .75rem;
     color: $text;
   }
 }

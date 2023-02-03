@@ -2,22 +2,28 @@
 
 .pageHeaderBanner {
   width: 100%;
-  background-color: $bg-secondary;
+  max-width: 100%;
+  overflow: hidden;
+  background-color: $bg-primary;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2rem;
 
   position: relative;
 
   .logo {
     height: 3rem;
     margin-right: 2rem;
+    margin: 2rem;
   }
 
   &::after {
     content: '';
     position: absolute;
+    z-index: 2;
     bottom: 0;
     left: 0;
     right: 0;

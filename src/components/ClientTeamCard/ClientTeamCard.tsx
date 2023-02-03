@@ -1,14 +1,13 @@
 import React from 'react';
 import styles from './ClientTeamCard.module.scss';
 import { ProjectModel } from '../../../models/ProjectModel';
-import { UserModel } from '../../../models/UserModels';
 import TeamCard, { TeamCardProps } from '../TeamCard/TeamCard';
 
-type Props = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
+export type ClientTeamCardProps = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
   clientCompany: ProjectModel;
 };
 
-const ClientTeamCard = (props: Props) => {
+const ClientTeamCard = (props: ClientTeamCardProps) => {
   const { clientCompany } = props;
 
   const aside = (
@@ -23,27 +22,7 @@ const ClientTeamCard = (props: Props) => {
     </section>
   );
 
-  const renderUserDetails = (user: UserModel) => (
-    <section className={styles.userDetailsContainer}>
-      <span className={`text-small ${styles.title}`}>
-        {user.first_name} {user.last_name}
-      </span>
-      <ul className={`small ${styles.coordinates}`}>
-        {user.number ? (
-          <li>
-            <a href={`tel:${user.number}`}>{user.number}</a>
-          </li>
-        ) : null}
-        {user.email ? (
-          <li>
-            <a href={`mailto:${user.email}`}>{user.email}</a>
-          </li>
-        ) : null}
-      </ul>
-    </section>
-  );
-
-  return <TeamCard {...props} aside={aside} renderUserDetails={renderUserDetails} />;
+  return <TeamCard {...props} aside={aside} />;
 };
 
 export default ClientTeamCard;

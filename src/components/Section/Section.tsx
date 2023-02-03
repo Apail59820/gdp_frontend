@@ -30,7 +30,7 @@ const Section = ({ title, link, button, children }: Props) => {
           </button>
         ) : null}
       </div>
-      {children}
+      <div className={styles.content}>{children}</div>
     </section>
   );
 };
