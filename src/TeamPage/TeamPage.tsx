@@ -22,7 +22,7 @@ const TeamPage = ({ project, affair, clientTeam, collaboratorTeam }: Props) => {
   const MANAGERS: UserModel[] = [...collaboratorTeam].slice(0, 1);
 
   return (
-    <>
+    <div className="page">
       <PageHeaderBanner data={project} />
       <div className={styles.teamPage}>
         <Breadcrumb dynamicRoutesLabel={affair ? [project.name!, affair.name!] : [project.name!]} />
@@ -63,7 +63,7 @@ const TeamPage = ({ project, affair, clientTeam, collaboratorTeam }: Props) => {
           onNewUserClick={() => console.log('open modal ?')}
         />
       </div>
-    </>
+    </div>
   );
 };
 
