@@ -225,7 +225,7 @@ const Projects = () => {
   const displayAsList = (): React.ReactNode => <>List</>;
 
   return (
-    <>
+    <div className="page">
       <FilterBar>
         <div>
           <DropdownFilter
@@ -246,7 +246,7 @@ const Projects = () => {
           {displayOption === 'grid' ? displayAsGrid() : displayOption === 'list' ? displayAsList() : ''}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
