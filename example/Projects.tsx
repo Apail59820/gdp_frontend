@@ -2,19 +2,61 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getProjects, projectsUserByRange, rangeDataSelection } from '../store/features/projectsUserReducer';
 
 const Projects = () => {
+  const [text, setText] = useState("aaa");
   const dispatch = useDispatch<any>();
-  const projects = useSelector((state: any) => state.projectsUser);
-  console.log('project', projects);
+  const affairsList = useSelector((state: StoreStatesType) => state.affairs);
+  const globalFilters = useSelector((state: StoreStatesType) => state.globalFilters);
+  const globalFilterNew = {
+    projects: {
+      list: [],
+      filter: { limit: "10" }
+    },
+    affairs: {
+      list: [],
+      filter: {}
+    },
+    pythagore_affaires: {
+      list: [],
+      filter: {}
+    },
+    files: {
+      list: [],
+      filter: {}
+    },
+    satisfaction: {
+      list: [],
+      filter: {}
+    },
+    clients: {
+      list: [],
+      filter: {}
+    },
+    collaborators: {
+      list: [],
+      filter: {}
+    }
+  };
+
+  useEffect(() => {
+    console.log("affairsList ", affairsList.data);
+  }, [affairsList]);
+
+  function updateAffair() {
+    dispatch(setAffairState({ data: [{ name: text }], loading: true }));
+    setText(text + "z");
+  }
 
   return (
     <>
-      <button onClick={() => dispatch(getProjects())}>Get projects</button>
-      <button onClick={() => dispatch(rangeDataSelection({ offSet: 2, limit: 10 }))}>Range</button>
-      <button onClick={() => dispatch(projectsUserByRange())}>Projets user by range</button>
+      <button onClick={() => dispatch(setGlobalFilters(globalFilterNew))}>setGlobalFilters</button>
+      <button onClick={updateAffair}>Get Affairs
+      </button>
+      {/*<button onClick={getFromSelector}>Get Affairs From Selector</button>*/}
+      {/*<button onClick={() => dispatch(projectsUserByRange())}>Projets user by range</button>*/}
 
-      {projects.projectsUser.map((e: any) => (
-        <div>{e.id}</div>
-      ))}
+      {/*{projects.projectsUser.map((e: any) => (*/}
+      {/*  <div>{e.id}</div>*/}
+      {/*))}*/}
     </>
   );
 };

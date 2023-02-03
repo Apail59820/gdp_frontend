@@ -1,32 +1,33 @@
-import { GdpAffairModel, CreateAffairModel, UpdateAffairModel } from '../models/GestionDeProjets/GdpAffairModel';
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
-import getConfig from 'next/config';
+import { GdpAffairModel, CreateAffairModel, UpdateAffairModel } from "../models/GestionDeProjets/GdpAffairModel";
+import { QueryParameters } from "../models/DirectusModel";
+import concatenateQueryParameters from "../utils/queryParamsFormatter";
+import { retrieveToken } from "./auth";
+import getConfig from "next/config";
 
 const { publicRuntimeConfig } = getConfig();
 
 // const defaultFields = ['*', 'user_access.*', 'affairs_satisfaction.*', 'pythagore_ids.*'].join(',');
-const defaultFields = ['*'].join(',');
+const defaultFields = ["*"].join(",");
+
 /**
  * Retrieve affairs respecting the query parameters.
  * @param props Object containing query parameters.
  * @returns List all items that exist in affairs.
  */
-export async function getAffairs(props: QueryParameters = {}): Promise<{ status: number; data?: GdpAffairModel[] }> {
+export async function getAffairs(props: QueryParameters = {}): Promise<{ status: number; data?: Partial<GdpAffairModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${token}`
   });
 
   const myInit: RequestInit = {
-    method: 'GET',
+    method: "GET",
     headers: myHeaders,
-    mode: 'cors',
-    cache: 'default',
+    mode: "cors",
+    cache: "default"
   };
 
   return (
@@ -56,14 +57,14 @@ export async function getAffair(id: number, fields = defaultFields): Promise<{ s
   if (!token) return Promise.resolve({ status: 401 });
 
   const myHeaders = new Headers({
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${token}`
   });
 
   const myInit: RequestInit = {
-    method: 'GET',
+    method: "GET",
     headers: myHeaders,
-    mode: 'cors',
-    cache: 'default',
+    mode: "cors",
+    cache: "default"
   };
 
   return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}?fields=${fields}`, myInit).then((res) => {
@@ -86,16 +87,16 @@ export async function createAffair(affair: CreateAffairModel): Promise<{ status:
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`
   });
 
   const myInit: RequestInit = {
-    method: 'POST',
+    method: "POST",
     headers: myHeaders,
-    mode: 'cors',
-    cache: 'default',
-    body: JSON.stringify(affair),
+    mode: "cors",
+    cache: "default",
+    body: JSON.stringify(affair)
   };
 
   return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)
@@ -135,16 +136,16 @@ export async function updateAffair(
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`
   });
 
   const myInit: RequestInit = {
-    method: 'PATCH',
+    method: "PATCH",
     headers: myHeaders,
-    mode: 'cors',
-    cache: 'default',
-    body: JSON.stringify(data),
+    mode: "cors",
+    cache: "default",
+    body: JSON.stringify(data)
   };
 
   return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}`, myInit)
@@ -189,16 +190,16 @@ export async function deleteAffairs(affairsArray: Array<number>): Promise<{ stat
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`
   });
 
   const myInit: RequestInit = {
-    method: 'DELETE',
+    method: "DELETE",
     headers: myHeaders,
-    mode: 'cors',
-    cache: 'default',
-    body: JSON.stringify(affairsArray),
+    mode: "cors",
+    cache: "default",
+    body: JSON.stringify(affairsArray)
   };
 
   return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)

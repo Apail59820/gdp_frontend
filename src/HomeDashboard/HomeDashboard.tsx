@@ -3,7 +3,6 @@ import Link from 'next/link';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import { GdpProjectModel } from '../../models/GestionDeProjets/GdpProjectModel';
-import { CompanyEnum } from '../../models/CompanyEnum';
 import { ManageItemCard, QuickActionCard } from '@projex/ui';
 import Section from '../components/Section/Section';
 import Grid from '../components/Grid/Grid';
@@ -12,7 +11,7 @@ import ProjectCard from '../components/ProjectCard/ProjectCard';
 const PROFILE_PROGRESS_PERCENTAGE = 65; // TODO
 
 // TODO
-const CURRENT_USER_PROJECTS: GdpProjectModel[] = [
+const CURRENT_USER_PROJECTS: Partial<GdpProjectModel>[] = [
   {
     id: '1',
     name: 'Nom du projet',
@@ -22,10 +21,10 @@ const CURRENT_USER_PROJECTS: GdpProjectModel[] = [
     zip_code: undefined,
     city: undefined,
     country: undefined,
-    image: undefined,
+    // image: undefined,
     status: undefined,
     project_type: undefined,
-    company_entity: CompanyEnum.PROJEX,
+    company_entity: 1,
     affairs: undefined,
   },
   {
@@ -37,10 +36,10 @@ const CURRENT_USER_PROJECTS: GdpProjectModel[] = [
     zip_code: undefined,
     city: undefined,
     country: undefined,
-    image: undefined,
+    // image: undefined,
     status: undefined,
     project_type: undefined,
-    company_entity: CompanyEnum.PROJEX,
+    company_entity: 1,
     affairs: undefined,
   },
 ];
@@ -77,11 +76,11 @@ const HomeDashboard = () => {
       </Section>
       <Section title="Mes projets" link={{ label: 'Voir tous les projets', href: '/projects' }}>
         <Grid>
-          {CURRENT_USER_PROJECTS.map((project: GdpProjectModel) => (
-            <Link href={`/projects/${project.id}`}>
-              <ProjectCard key={project.id} project={project} projectManagerName={'Chef de projet'} />
-            </Link>
-          ))}
+          {/*{CURRENT_USER_PROJECTS.map((project: GdpProjectModel) => (*/}
+          {/*  <Link href={`/projects/${project.id}`}>*/}
+          {/*    <ProjectCard key={project.id} project={project} projectManagerName={'Chef de projet'} />*/}
+          {/*  </Link>*/}
+          {/*))}*/}
           {/* TODO Handle onClick */}
           <ManageItemCard label="Nouveau projet" onClick={() => console.log('open modal ?')} />
         </Grid>

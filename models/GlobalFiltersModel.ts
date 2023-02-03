@@ -1,6 +1,6 @@
-import { QueryParameters } from "../models/DirectusModel";
+import { QueryParameters } from "./DirectusModel";
 
-type FiltreGlobaux = {
+export type GlobalFiltersModel = {
   projects: {
     list: number[];
     filter: QueryParameters; // { status: { _eq : "archived" } }
@@ -30,16 +30,3 @@ type FiltreGlobaux = {
     filter: QueryParameters;
   };
 };
-
-{
-  _and: [
-    {
-      id: {
-        _in: [2, 3, 4],
-      },
-    },
-    {
-      //filter
-    },
-  ];
-}
