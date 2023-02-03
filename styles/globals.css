@@ -40,5 +40,10 @@ body {
 #main > #content {
   flex-grow: 1;
   max-height: calc(100vh - 3.375rem);
-  overflow: auto;
+  overflow: hidden;
+}
+
+.page {
+  max-height: 100%;
+  overflow: scroll;
 }
