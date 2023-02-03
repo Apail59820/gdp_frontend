@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { affairs, AffairState, searchByAffairName } from '../../store/features/affairsReducer';
 import { login } from '../../services/auth';
-import { AffairModel } from '../../models/AffairModel';
+import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
 import { useEffect, useRef } from 'react';
 import { userProfile, UserState } from '../../store/features/userProfileReducer';
 
@@ -38,13 +38,13 @@ const AffairList = () => {
       {!affair.loading && affair.error ? <div>Error: {affair.error}</div> : null}
       {!affair.loading && affair.affairs.length ? (
         <ul>
-          {affair.affairs.map((affair: AffairModel) => (
+          {affair.affairs.map((affair: GdpAffairModel) => (
             <li key={affair.id}>{affair.name}</li>
           ))}
         </ul>
       ) : null}
       <div>
-        {affair.filteredAffairsByName.map((e: AffairModel) => (
+        {affair.filteredAffairsByName.map((e: GdpAffairModel) => (
           <div>{e.name}</div>
         ))}
         {}

@@ -21,7 +21,7 @@ const affairSlice = createSlice({
 ;
 
 //Reducer
-export const { searchByAffairName } = affairSlice.actions;
+export const { setAffairState } = affairSlice.actions;
 
 const affairReducers = affairSlice.reducer;
 export default affairReducers;

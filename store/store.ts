@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import affairsReducer from './features/affairsReducer';
+import affairReducer from './features/affairsReducer';
 import projectsUserReducer from './features/projectsUserReducer';
 import userProfileReducer from './features/userProfileReducer';
 import globalFilterReducer from "./features/globalFilterReducer";
@@ -14,7 +14,7 @@ export type StoreStatesType = any;
 
 export default configureStore({
   reducer: {
-    affairs: affairsReducer,
+    affairs: affairReducer,
     userProfile: userProfileReducer,
     projectsUser: projectsUserReducer,
     globalFilters: globalFilterReducer,

@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GdpAffairModel, UserAccessModel } from '../../models/GestionDeProjets/GdpAffairModel';
+import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
 import { UsUserModel } from '../../models/UserService/UsUserModel';
 import { getMyProfile } from '../../services/profile';
 
 export interface UserState {
   userProfile: UsUserModel[];
-  loading: UsUserModel['loading'];
+  loading: boolean;
   error: string;
 }
 

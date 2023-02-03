@@ -1,5 +1,8 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { getProjects, projectsUserByRange, rangeDataSelection } from '../store/features/projectsUserReducer';
+import { useDispatch, useSelector } from "react-redux";
+import { setGlobalFilters } from "../store/features/globalFilterReducer";
+import { StoreStatesType } from "../store/store";
+import { setAffairState } from "../store/features/affairsReducer";
+import { useEffect, useState } from "react";
 
 const Projects = () => {
   const [text, setText] = useState("aaa");
