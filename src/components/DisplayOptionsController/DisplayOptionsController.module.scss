@@ -1,0 +1,25 @@
+@import '../../../../../styles/app';
+
+.displayOptionsController {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  .option {
+    height: 2.375rem;
+    min-height: 2.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    opacity: 1;
+    transition: $transition-duration ease-in-out;
+
+    &.inactive {
+      opacity: .2;
+    }
+  }
+}

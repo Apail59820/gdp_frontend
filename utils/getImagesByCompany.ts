@@ -32,6 +32,11 @@ export const getImagesByCompany = (company?: CompanyEnum | string): { logo: stri
         logo: logoDiagobat.src,
         picto: pictoDiagobat.src,
       };
+    case CompanyEnum.GROUPE_PROJEX:
+      return {
+        logo: logoGroupeProjex.src,
+        picto: pictoGroupeProjex.src,
+      };
     case CompanyEnum.IMPERIUM:
       return {
         logo: logoImperium.src,
