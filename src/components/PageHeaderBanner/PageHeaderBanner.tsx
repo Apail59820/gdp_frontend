@@ -2,30 +2,29 @@ import React from 'react';
 import styles from './PageHeaderBanner.module.scss';
 import { GdpProjectModel } from '../../../models/GestionDeProjets/GdpProjectModel';
 import MainMessage from './MainMessage/MainMessage';
-import { CompanyEnum } from '../../../models/CompanyEnum';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 
 type Props = {
-  project?: GdpProjectModel;
+  project?: Partial<GdpProjectModel>;
   title?: string;
 };
 
 const PageHeaderBanner = ({ project, title }: Props) => {
   const getColorByCompany = () => {
-    switch (project?.company_entity) {
-      case CompanyEnum.AMEXIA:
-        return styles.amexia;
-      case CompanyEnum.DIAGOBAT:
-        return styles.diagobat;
-      case CompanyEnum.IMPERIUM:
-        return styles.imperium;
-      case CompanyEnum.PROBIM:
-        return styles.probim;
-      case CompanyEnum.PROJEX:
-        return styles.projex;
-      default:
+    // switch (project?.company_entity) {
+    //   case CompanyEnum.AMEXIA:
+    //     return styles.amexia;
+    //   case CompanyEnum.DIAGOBAT:
+    //     return styles.diagobat;
+    //   case CompanyEnum.IMPERIUM:
+    //     return styles.imperium;
+    //   case CompanyEnum.PROBIM:
+    //     return styles.probim;
+    //   case CompanyEnum.PROJEX:
+    //     return styles.projex;
+    //   default:
         return styles.groupeProjex;
-    }
+    // }
   };
 
   return (
@@ -35,7 +34,7 @@ const PageHeaderBanner = ({ project, title }: Props) => {
           <MainMessage project={project} />
           <img
             className={styles.logo}
-            src={getImagesByCompany(project.company_entity).logo}
+            // src={getImagesByCompany(project.company_entity).logo}
             alt={`Logo de ${project.company_entity}`}
           />
         </>

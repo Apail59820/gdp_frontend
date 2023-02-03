@@ -7,6 +7,7 @@ const nextConfig = {
   },
   publicRuntimeConfig: {
     DIRECTUS_HOST: process.env.DIRECTUS_HOST,
+    USER_SERVICE_URL: process.env.USER_SERVICE_URL,
     GESTION_DE_PROJET_API_URL: process.env.GESTION_DE_PROJET_API_URL,
     INVITE_URL: process.env.INVITE_URL,
     PASSWORD_RESET_URL_ALLOW_LIST: process.env.PASSWORD_RESET_URL_ALLOW_LIST,

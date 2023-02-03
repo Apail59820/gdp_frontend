@@ -1,4 +1,4 @@
-import { GdpAffairModel } from "../models/GestionDeProjets/GdpAffairModel";
+import { GdpProjectModel } from "../models/GdPModels";
 import { QueryParameters } from "../models/DirectusModel";
 import concatenateQueryParameters from "../utils/queryParamsFormatter";
 import { retrieveToken } from "./auth";
@@ -10,11 +10,11 @@ const { publicRuntimeConfig } = getConfig();
 const defaultFields = ["*"].join(",");
 
 /**
- * Retrieve affairs respecting the query parameters.
+ * Retrieve projects respecting the query parameters.
  * @param props Object containing query parameters.
  * @returns List all items that exist in affairs.
  */
-export async function getAffairs(props: QueryParameters = {}): Promise<{ status: number; data?: Partial<GdpAffairModel>[] }> {
+export async function getProjects(props: QueryParameters = {}): Promise<{ status: number; data?: Partial<GdpProjectModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -31,7 +31,7 @@ export async function getAffairs(props: QueryParameters = {}): Promise<{ status:
   };
 
   return (
-    fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs?${concatenateQueryParameters(props)}`, myInit)
+    fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects?${concatenateQueryParameters(props)}`, myInit)
       // return fetch(`  ${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/${concatenateQueryParameters(props)}`, myInit)
       .then((res) => {
         if (res.status == 200)
