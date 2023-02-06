@@ -51,7 +51,6 @@ const HomeDashboard = () => {
     <div className={styles.homeDashboard}>
       <QuickAccessWidget>
         <Grid>
-<<<<<<< HEAD
           {/*{CURRENT_USER_PROJECTS.map((project: GdpProjectModel) => (*/}
           {/*  <Link href={`/projects/${project.id}`}>*/}
           {/*    <ProjectCard key={project.id} project={project} projectManagerName={'Chef de projet'} />*/}
@@ -59,7 +58,6 @@ const HomeDashboard = () => {
           {/*))}*/}
           {/* TODO Handle onClick */}
           <ManageItemCard label="Nouveau projet" onClick={() => console.log('open modal ?')} />
-=======
           <QuickActionCard
             title="Créez un nouveau projet"
             button={{ label: 'Ajouter un projet', onClick: () => console.log('open modal ?'), icon: <PlusOutlined /> }} // TODO Handle link href
@@ -77,7 +75,6 @@ const HomeDashboard = () => {
           >
             Remplissez votre profil pour profiter pleinement de toutes les fonctionnalités
           </QuickActionCard>
->>>>>>> 29b630cfdd4bbec7939beaeef95ef4236b2134c7
         </Grid>
       </QuickAccessWidget>
       <ProjectsWidget
