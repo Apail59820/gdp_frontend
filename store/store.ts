@@ -2,13 +2,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import affairReducer from './features/affairsReducer';
 import projectsUserReducer from './features/projectsUserReducer';
 import userProfileReducer from './features/userProfileReducer';
-import globalFilterReducer from "./features/globalFilterReducer";
+import globalFilterReducer from './features/globalFilterReducer';
 
 export type StateType<T> = {
-  data: T[],
-  loading: boolean,
-  error?: string,
-}
+  data: T[];
+  loading: boolean;
+  error?: string;
+};
 
 export type StoreStatesType = any;
 

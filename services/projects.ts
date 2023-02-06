@@ -1,8 +1,8 @@
-import { GdpAffairModel, CreateAffairModel, UpdateAffairModel } from '../models/GestionDeProjets/GdpAffairModel';
 import { QueryParameters } from '../models/DirectusModel';
 import concatenateQueryParameters from '../utils/queryParamsFormatter';
 import { retrieveToken } from './auth';
 import getConfig from 'next/config';
+import { GdpProjectModel } from '../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -10,13 +10,13 @@ const { publicRuntimeConfig } = getConfig();
 const defaultFields = ['*'].join(',');
 
 /**
- * Retrieve affairs respecting the query parameters.
+ * Retrieve projects respecting the query parameters.
  * @param props Object containing query parameters.
  * @returns List all items that exist in affairs.
  */
-export async function getAffairs(
+export async function getProjects(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<GdpAffairModel>[] }> {
+): Promise<{ status: number; data?: Partial<GdpProjectModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -32,32 +32,32 @@ export async function getAffairs(
     cache: 'default',
   };
 
-  return (
-    fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs?${concatenateQueryParameters(props)}`, myInit)
-      // return fetch(`  ${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/${concatenateQueryParameters(props)}`, myInit)
-      .then((res) => {
-        if (res.status == 200)
-          return res.json().then((data) => {
-            return { status: res.status, data: data.data };
-          });
-        else return { status: res.status };
-      })
-      .catch(() => {
-        return { status: 500 };
-      })
-  );
+  return fetch(
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects?${concatenateQueryParameters(props)}`,
+    myInit
+  )
+    .then((res) => {
+      if (res.status == 200)
+        return res.json().then((data) => {
+          return { status: res.status, data: data.data };
+        });
+      else return { status: res.status };
+    })
+    .catch(() => {
+      return { status: 500 };
+    });
 }
 
 /**
- * Retrieve an Affair by id
- * @param id id of the affair
+ * Retrieve a project by id
+ * @param id id of the project
  * @param fields list of fields to retrieve.
- * @returns Promise containing the request status and the affair corresponding to the id
+ * @returns Promise containing the request status and the project corresponding to the id
  */
-export async function getAffair(
+export async function getProject(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: GdpAffairModel }> {
+): Promise<{ status: number; data?: GdpProjectModel }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -72,7 +72,7 @@ export async function getAffair(
     cache: 'default',
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}?fields=${fields}`, myInit).then(
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects/${id}?fields=${fields}`, myInit).then(
     (res) => {
       if (res.status === 200) {
         return res.json().then((data) => {
@@ -86,11 +86,13 @@ export async function getAffair(
 }
 
 /**
- * Create an affair.
- * @param affair Object containing affair properties.
- * @returns Status and data containing affair properties.
+ * Create a project.
+ * @param project Object containing project properties.
+ * @returns Status and data containing project properties.
  */
-export async function createAffair(affair: CreateAffairModel): Promise<{ status: number; data?: GdpAffairModel }> {
+export async function createProject(
+  project: CreateGdpProjectModel
+): Promise<{ status: number; data?: GdpProjectModel }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -103,10 +105,10 @@ export async function createAffair(affair: CreateAffairModel): Promise<{ status:
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(affair),
+    body: JSON.stringify(project),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects`, myInit)
     .then((response) => {
       if (response.status === 200 || response.status === 204) {
         return response
@@ -131,15 +133,15 @@ export async function createAffair(affair: CreateAffairModel): Promise<{ status:
 }
 
 /**
- * Update affair properties.
+ * Update project properties.
  * @param id Affair ID.
  * @param data Properties to update.
- * @returns Status and updated affair properties.
+ * @returns Status and updated project properties.
  */
-export async function updateAffair(
+export async function updateProject(
   id: string,
-  data: UpdateAffairModel
-): Promise<{ status: number; data?: GdpAffairModel; error?: string }> {
+  data: UpdateGdpProjectModel
+): Promise<{ status: number; data?: GdpProjectModel; error?: string }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -155,12 +157,12 @@ export async function updateAffair(
     body: JSON.stringify(data),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects/${id}`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response
           .json()
-          .then((responseData: { data: GdpAffairModel }) => {
+          .then((responseData: { data: GdpProjectModel }) => {
             return { status: response.status, data: responseData.data };
           })
           .catch((error) => {
@@ -189,11 +191,11 @@ export async function updateAffair(
 }
 
 /**
- * Delete one or more affairs.
- * @param affairsArray Array of one or more affairs identifiers in the form of a number.
+ * Delete one or more projects.
+ * @param projectsArray Array of one or more projects identifiers in the form of a number.
  * @returns Status.
  */
-export async function deleteAffairs(affairsArray: Array<number>): Promise<{ status: number }> {
+export async function deleteProjects(projectsArray: Array<number>): Promise<{ status: number }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -206,10 +208,10 @@ export async function deleteAffairs(affairsArray: Array<number>): Promise<{ stat
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(affairsArray),
+    body: JSON.stringify(projectsArray),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects`, myInit)
     .then((response) => {
       return { status: response.status };
     })

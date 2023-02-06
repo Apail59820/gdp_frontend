@@ -15,7 +15,7 @@ export type QueryParameters = {
 };
 
 export type RequestResponse<T> = {
-  status: number,
-  data?: T,
-  message?: string,
-}
+  status: number;
+  data?: T;
+  message?: string;
+};

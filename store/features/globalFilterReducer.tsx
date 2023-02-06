@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GlobalFiltersModel } from "../../models/GlobalFiltersModel";
+import { GlobalFiltersModel } from '../../models/GlobalFiltersModel';
 
 const initialState: GlobalFiltersModel = {
   projects: {
@@ -37,8 +37,8 @@ const globalFilterSlice = createSlice({
   initialState: initialState,
   reducers: {
     setGlobalFilters(state, action: PayloadAction<GlobalFiltersModel>) {
-      return action.payload
-    }
+      return action.payload;
+    },
   },
 });
 
