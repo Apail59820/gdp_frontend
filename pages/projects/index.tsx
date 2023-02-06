@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import styles from '../../styles/Projects.module.scss';
 import { DropdownFilter, FilterBar, Filters } from '@projex/ui';
+import type { DataCategory, SelectedValues } from '@projex/ui/dist/components/organisms/Filters/Filters';
 import DisplayOptionsController from '../../src/components/DisplayOptionsController/DisplayOptionsController';
 import Grid from '../../src/components/Grid/Grid';
+import ProjectCard from '../../src/components/ProjectCard/ProjectCard';
+import ProjectsList from '../../src/ProjectsList/ProjectsList';
 import { ProjectModel } from '../../models/ProjectModel';
 import { CompanyEnum } from '../../models/CompanyEnum';
-import ProjectCard from '../../src/components/ProjectCard/ProjectCard';
-import type { DataCategory, SelectedValues } from '@projex/ui/dist/components/organisms/Filters/Filters';
-import ProjectsList from '../../src/ProjectsList/ProjectsList';
 
 const PROJECTS: ProjectModel[] = [
   {

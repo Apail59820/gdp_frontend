@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styles from './ProjectsList.module.scss';
+import Link from 'next/link';
+import { capitalize } from '../../utils/capitalize';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { CompanyEnum } from '../../models/CompanyEnum';
 import { ProjectModel } from '../../models/ProjectModel';
-import { capitalize } from '../../utils/capitalize';
-import Link from 'next/link';
+import { CompanyEnum } from '../../models/CompanyEnum';
 
 interface DataType {
   key: string;
