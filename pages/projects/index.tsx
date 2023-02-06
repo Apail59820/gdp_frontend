@@ -7,6 +7,7 @@ import { ProjectModel } from '../../models/ProjectModel';
 import { CompanyEnum } from '../../models/CompanyEnum';
 import ProjectCard from '../../src/components/ProjectCard/ProjectCard';
 import type { DataCategory, SelectedValues } from '@projex/ui/dist/components/organisms/Filters/Filters';
+import ProjectsList from '../../src/ProjectsList/ProjectsList';
 
 const PROJECTS: ProjectModel[] = [
   {
@@ -222,7 +223,7 @@ const Projects = () => {
     </Grid>
   );
 
-  const displayAsList = (): React.ReactNode => <>List</>;
+  const displayAsList = (): React.ReactNode => <ProjectsList projects={PROJECTS} />;
 
   return (
     <div className="page">
