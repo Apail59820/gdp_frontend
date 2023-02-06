@@ -6,8 +6,13 @@ import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
 
-// const defaultFields = ['*', 'user_access.*', 'affairs_satisfaction.*', 'pythagore_ids.*'].join(',');
-const defaultFields = ['*'].join(',');
+const defaultFields = [
+  '*',
+  'projects_directus_users_clients_ids.*',
+  'projects_directus_users_collaborators_ids.*',
+  'company_entity.*',
+  'activities_id.*',
+].join(',');
 
 /**
  * Retrieve projects respecting the query parameters.
@@ -96,6 +101,7 @@ type createFieldsToOmit =
   | 'files'
   | 'affairs'
   | 'activities_id';
+
 /**
  * Create a Project.
  * @param project Object containing project properties.
@@ -154,6 +160,7 @@ type updateFieldsToOmit =
   | 'files'
   | 'affairs'
   | 'activities_id';
+
 /**
  * Update project properties.
  * @param id project ID.
