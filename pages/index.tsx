@@ -27,7 +27,7 @@ const Home = () => {
   const [currentTab, setCurrentTab] = useState<string>(tabs[0].label);
 
   return (
-    <>
+    <div className="page">
       {/* TODO Display current user name */}
       <PageHeaderBanner data="Bonjour, Olivier Le Baron" />
       <div className={styles.homePage}>
@@ -36,7 +36,7 @@ const Home = () => {
         {/* <TabBar tabs={tabs.map((tab) => tab.label)} currentTab={currentTab} setCurrentTab={setCurrentTab} />
         {tabs.find((tab) => tab.label === currentTab)?.content} */}
       </div>
-    </>
+    </div>
   );
 };
 

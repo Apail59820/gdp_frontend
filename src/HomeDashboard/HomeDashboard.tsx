@@ -1,12 +1,16 @@
 import React from 'react';
-import Link from 'next/link';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
+<<<<<<< HEAD
 import { GdpProjectModel } from '../../models/GestionDeProjets/GdpProjectModel';
 import { ManageItemCard, QuickActionCard } from '@projex/ui';
 import Section from '../components/Section/Section';
+=======
+import { ProjectModel } from '../../models/ProjectModel';
+import { CompanyEnum } from '../../models/CompanyEnum';
+import { QuickActionCard } from '@projex/ui';
+>>>>>>> 902668ca745cf2c268ab6accd4974d4f56936673
 import Grid from '../components/Grid/Grid';
-import ProjectCard from '../components/ProjectCard/ProjectCard';
 import QuickAccessWidget from '../components/QuickAccessWidget/QuickAccessWidget';
 import ProjectsWidget from '../components/ProjectsWidget/ProjectsWidget';
 
@@ -60,7 +64,7 @@ const HomeDashboard = () => {
           <ManageItemCard label="Nouveau projet" onClick={() => console.log('open modal ?')} />
           <QuickActionCard
             title="Créez un nouveau projet"
-            button={{ label: 'Ajouter un projet', onClick: () => console.log('open modal ?'), icon: <PlusOutlined /> }} // TODO Handle link href
+            button={{ label: 'Ajouter un projet', onClick: () => console.log('open modal ?'), icon: <PlusOutlined /> }}
           >
             Créer un nouveau projet dés maintenant
           </QuickActionCard>
@@ -71,7 +75,7 @@ const HomeDashboard = () => {
               label: 'Ajouter des informations',
               onClick: () => console.log('open modal ?'),
               icon: <PlusOutlined />,
-            }} // TODO Handle link href
+            }}
           >
             Remplissez votre profil pour profiter pleinement de toutes les fonctionnalités
           </QuickActionCard>

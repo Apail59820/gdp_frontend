@@ -259,7 +259,7 @@ const STATISTICS: Statistic[] = [
 
 const Project = () => {
   return (
-    <>
+    <div className="page">
       <PageHeaderBanner data={PROJECT_BY_ID} />
       <div className={styles.projectPage}>
         <Breadcrumb dynamicRoutesLabel={[PROJECT_BY_ID.name!]} />
@@ -320,7 +320,7 @@ const Project = () => {
           </Grid>
         </section>
       </div>
-    </>
+    </div>
   );
 };
 
