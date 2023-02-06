@@ -17,11 +17,8 @@ const ProjectCard = ({ project, projectManagerName }: Props) => {
   return (
     <ShadowCard>
       <div className={styles.projectCard}>
-        <img
-          className={styles.image}
-          src={project.image || defaultImage.src}
-          alt={`Image illustrant le projet ${project.name}`}
-        />
+        {/* TODO Revoir l'image */}
+        <img className={styles.image} src={defaultImage.src} alt={`Image illustrant le projet ${project.name}`} />
         <section className={styles.content}>
           <h4 className={styles.title}>{name ? capitalize(name) : '/'}</h4>
           <span>{client_company_name ? capitalize(client_company_name) : client_company_name}</span>

@@ -1,0 +1,30 @@
+@import '../../../../styles/app';
+
+.projectName {
+  font-weight: 700;
+  color: $primary;
+
+  &:hover {
+    color: $primary; // override antd style
+  }
+}
+
+.seeTheProjectLink {
+  color: $primary;
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+
+  &::after {
+    content: '→';
+    transition: transform calc($transition-duration / 3) ease-in-out;
+  }
+
+  &:hover {
+    color: $primary; // override antd style
+
+    &::after {
+      transform: translateX(25%);
+    }
+  }
+}
