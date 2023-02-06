@@ -1,22 +1,23 @@
+import { QueryParameters } from '../models/DirectusModel';
 import concatenateQueryParameters from '../utils/queryParamsFormatter';
+import {
+  CreateFactureEmailAlertModel,
+  GdpFactureEmailAlertModel,
+  GdpEmailsLogsModel,
+} from '../models/GestionDeProjets/GdpEmailsLogsModel';
 import { retrieveToken } from './auth';
 import getConfig from 'next/config';
-import { QueryParameters } from '../models/DirectusModel';
-import { GdpSatisfactionModel } from '../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
-const defaultFields = ['*'].join(',');
-
 /**
- * Retrieve all satisfactions entries respecting the query parameters.
+ * Retrieve date of emails sent to notice a client that his bills hasn't get paid
  * @param props Object containing query parameters.
- * @returns Status and data containing satisfactions properties.
- */
-export async function getSatisfactions(
+ * @returns data contains all dates of emails
+ * */
+export async function getDateSentEmail(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<GdpSatisfactionModel>[] }> {
-  if (!props.fields) props.fields = defaultFields;
+): Promise<{ status: number; data?: GdpEmailsLogsModel }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -31,7 +32,7 @@ export async function getSatisfactions(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_satisfaction?${concatenateQueryParameters(props)}`,
+    `${publicRuntimeConfig.DIRECTUS_HOST}/items/emails_logs?${concatenateQueryParameters(props)}`,
     myInit
   ).then((res) => {
     if (res.status == 200)
@@ -42,15 +43,9 @@ export async function getSatisfactions(
   });
 }
 
-type createFieldsToOmit = 'id' | 'user_created' | 'user_updated' | 'date_created' | 'date_updated' | 'activities_id';
-/**
- * Create a satisfaction entry.
- * @param satisfaction Object containing satisfactions properties.
- * @returns Status and data containing satisfactions properties.
- */
-export async function createSatisfaction(
-  satisfaction: Partial<GdpSatisfactionModel>
-): Promise<{ status: number; data?: Partial<Omit<GdpSatisfactionModel, createFieldsToOmit>> }> {
+export async function createFactureEmailAlert(
+  data: CreateFactureEmailAlertModel
+): Promise<{ status: number; data?: GdpEmailsLogsModel }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -63,10 +58,10 @@ export async function createSatisfaction(
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(satisfaction),
+    body: JSON.stringify(data),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_satisfaction`, myInit)
+  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/items/emails_logs`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response

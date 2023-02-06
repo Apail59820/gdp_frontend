@@ -1,6 +1,6 @@
-import { GdpPythagoreAffaireModel } from "./GdpPythagoreAffairModel";
-import { GdpAffairModel } from "./GdpAffairModel";
-import { GdpActivitiesModel } from "./GdpActivitiesModel";
+import { GdpPythagoreAffaireModel } from './GdpPythagoreAffairModel';
+import { GdpAffairModel } from './GdpAffairModel';
+import { GdpActivitiesModel } from './GdpActivitiesModel';
 
 export type GdpAffairsPythagoreAffairesModel = {
   id: number;

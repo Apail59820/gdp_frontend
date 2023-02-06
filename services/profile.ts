@@ -1,4 +1,4 @@
-import { UpdateUserModel, UsUserModel } from '../models/UserService/UsUserModel';
+import { UsUserModel } from '../models/UserService/UsUserModel';
 import { QueryParameters } from '../models/DirectusModel';
 import concatenateQueryParameters from '../utils/queryParamsFormatter';
 import { retrieveToken } from './auth';
