@@ -2,73 +2,6 @@ import cookie from 'js-cookie';
 import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
-// const urlLogin = 'http://localhost:8055';
-export const login = (email: string, password: string): Promise<{ status: number; data?: string }> => {
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/auth/login`, {
-    method: 'POST',
-    credentials: 'include', //NOTE needed to receive the new token in cookie
-    headers: new Headers({
-      'Content-Type': 'application/json',
-    }),
-    body: JSON.stringify({
-      email,
-      password,
-      mode: 'cookie',
-    }),
-  }).then(
-    (res) => {
-      if (res.status == 200) {
-        return res.json().then((r) => {
-          const expiringDate = new Date(new Date().getTime() + r.data.expires);
-
-          cookie.set('maia_gestion_projet_token', r.data.access_token, { expires: expiringDate });
-          return { status: res.status, data: r.data };
-        });
-      } else return { status: res.status };
-    },
-    () => {
-      return { status: 500 };
-    }
-  );
-};
-
-export const logout = (): Promise<{ status: number }> => {
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/auth/logout`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: new Headers({
-      'Content-Type': 'application/json',
-    }),
-  }).then((res) => {
-    cookie.remove('maia_gestion_projet_token');
-    cookie.remove('ds_token_expiration');
-    return { status: res.status };
-  });
-};
-
-type RegisterBodyType = {
-  first_name: string;
-  last_name: string;
-  password: string;
-  email: string;
-  company?: string;
-  title?: string;
-  number?: string;
-  web_link?: string;
-  cgu: boolean;
-};
-
-export const register = (body: RegisterBodyType): Promise<{ status: number }> => {
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/register`, {
-    method: 'POST',
-    headers: new Headers({
-      'Content-Type': 'application/json',
-    }),
-    body: JSON.stringify(body),
-  }).then((res) => {
-    return { status: res.status };
-  });
-};
 
 let isRefreshing = false;
 
@@ -132,50 +65,10 @@ export const refreshToken = () => {
   );
 };
 
-export const recoverPasswordRequest = (email: string, reset_url: string) => {
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/auth/password/request`, {
-    method: 'POST',
-    headers: new Headers({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ email, reset_url }),
-  }).then((res) => {
-    return { status: res.status };
-  });
-};
-
-export const recoverPassword = (password: string, token: string) => {
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/auth/password/reset`, {
-    method: 'POST',
-    headers: new Headers({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ password, token }),
-  }).then((res) => {
-    return { status: res.status };
-  });
-};
-
-export const requestEmailValidation = (email: string) => {
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/register/request`, {
-    method: 'POST',
-    headers: new Headers({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ email }),
-  }).then((res) => {
-    return { status: res.status };
-  });
-};
-
-export const validateEmail = (token: string) => {
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/register/validate`, {
-    method: 'POST',
-    headers: new Headers({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ token }),
-  }).then((res) => {
-    return { status: res.status };
-  });
-};
-
 /**
  * @param email user email
  */
-export async function userInvite(
+export async function inviteNewUsers(
   email: string | string[]
 ): Promise<{ status: number; data?: { id: string; email: string }[] }> {
   const token = await retrieveToken();
@@ -219,25 +112,3 @@ export async function userInvite(
       return { status: 500 };
     });
 }
-
-/**
- * @param urlToken token contained in invite URL as query parameter
- * @param password password and confirmed password from login form
- */
-export const acceptUserInvite = (urlToken: string, password: string): Promise<{ status: number }> => {
-  const myHeaders = new Headers({
-    'Content-Type': 'application/json',
-  });
-  const body = JSON.stringify({ token: urlToken, password });
-  const myInit: RequestInit = {
-    method: 'POST',
-    headers: myHeaders,
-    mode: 'cors',
-    cache: 'default',
-    body,
-  };
-
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/users/invite/accept`, myInit).then((res) => {
-    return { status: res.status };
-  });
-};

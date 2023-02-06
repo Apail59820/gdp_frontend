@@ -1,19 +1,19 @@
 import { GdpAffairModel } from './GdpAffairModel';
-import { UsUserModel } from "../UserService/UsUserModel";
-import { UsCompanyEntityModel } from "../UserService/UsCompanyEntityModel";
-import { GdpActivitiesModel } from "./GdpActivitiesModel";
-import { GdpProjectsCollaboratorsModel } from "./GdpProjectsCollaboratorsModel";
-import { GdpProjectsClientsModel } from "./GdpProjectsClientsModel";
+import { UsUserModel } from '../UserService/UsUserModel';
+import { UsCompanyEntityModel } from '../UserService/UsCompanyEntityModel';
+import { GdpActivitiesModel } from './GdpActivitiesModel';
+import { GdpProjectsCollaboratorsModel } from './GdpProjectsCollaboratorsModel';
+import { GdpProjectsClientsModel } from './GdpProjectsClientsModel';
 
 export enum GdpProjectTypesEnum {
   CO_TRAITANCE = 'co-traitance',
-  SOUS_TRAITANCE = 'sous-traitance'
+  SOUS_TRAITANCE = 'sous-traitance',
 }
 
 export enum GdpProjectStatusEnum {
   ACTIVE = 'active',
   ARCHIVED = 'archived',
-  DELETED = 'deleted'
+  DELETED = 'deleted',
 }
 
 export type GdpProjectModel = {
@@ -33,8 +33,8 @@ export type GdpProjectModel = {
   user_updated: string | UsUserModel | null;
   date_updated: Date | null;
 
-  projects_directus_users_clients_ids: number[] | GdpProjectsCollaboratorsModel[]
-  projects_directus_users_collaborators_ids: number[] | GdpProjectsClientsModel[]
+  projects_directus_users_clients_ids: number[] | GdpProjectsCollaboratorsModel[];
+  projects_directus_users_collaborators_ids: number[] | GdpProjectsClientsModel[];
   company_entity: number | UsCompanyEntityModel;
   files: string[] | GdpAffairModel[];
   affairs: number[] | GdpAffairModel[];
