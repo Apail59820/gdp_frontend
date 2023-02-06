@@ -1,49 +1,50 @@
-import { GdpAffairModel } from "../models/GestionDeProjets/GdpAffairModel";
-import { QueryParameters } from "../models/DirectusModel";
-import concatenateQueryParameters from "../utils/queryParamsFormatter";
-import { retrieveToken } from "./auth";
-import getConfig from "next/config";
+import { GdpAffairModel } from '../models/GestionDeProjets/GdpAffairModel';
+import { QueryParameters } from '../models/DirectusModel';
+import concatenateQueryParameters from '../utils/queryParamsFormatter';
+import { retrieveToken } from './auth';
+import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
 
-// const defaultFields = ['*', 'user_access.*', 'affairs_satisfaction.*', 'pythagore_ids.*'].join(',');
-const defaultFields = ["*"].join(",");
+const defaultFields = ['*', 'company_entity.*', 'pythagore_ids.*'].join(',');
 
 /**
  * Retrieve affairs respecting the query parameters.
  * @param props Object containing query parameters.
  * @returns List all items that exist in affairs.
  */
-export async function getAffairs(props: QueryParameters = {}): Promise<{ status: number; data?: Partial<GdpAffairModel>[] }> {
+export async function getAffairs(
+  props: QueryParameters = {}
+): Promise<{ status: number; data?: Partial<GdpAffairModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
-    Authorization: `Bearer ${token}`
+    Authorization: `Bearer ${token}`,
   });
 
   const myInit: RequestInit = {
-    method: "GET",
+    method: 'GET',
     headers: myHeaders,
-    mode: "cors",
-    cache: "default"
+    mode: 'cors',
+    cache: 'default',
   };
 
-  return (
-    fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs?${concatenateQueryParameters(props)}`, myInit)
-      // return fetch(`  ${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/${concatenateQueryParameters(props)}`, myInit)
-      .then((res) => {
-        if (res.status == 200)
-          return res.json().then((data) => {
-            return { status: res.status, data: data.data };
-          });
-        else return { status: res.status };
-      })
-      .catch(() => {
-        return { status: 500 };
-      })
-  );
+  return fetch(
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs?${concatenateQueryParameters(props)}`,
+    myInit
+  )
+    .then((res) => {
+      if (res.status == 200)
+        return res.json().then((data) => {
+          return { status: res.status, data: data.data };
+        });
+      else return { status: res.status };
+    })
+    .catch(() => {
+      return { status: 500 };
+    });
 }
 
 /**
@@ -52,51 +53,68 @@ export async function getAffairs(props: QueryParameters = {}): Promise<{ status:
  * @param fields list of fields to retrieve.
  * @returns Promise containing the request status and the affair corresponding to the id
  */
-export async function getAffair(id: number, fields = defaultFields): Promise<{ status: number; data?: GdpAffairModel }> {
+export async function getAffair(
+  id: number,
+  fields = defaultFields
+): Promise<{ status: number; data?: Partial<GdpAffairModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
   const myHeaders = new Headers({
-    Authorization: `Bearer ${token}`
+    Authorization: `Bearer ${token}`,
   });
 
   const myInit: RequestInit = {
-    method: "GET",
+    method: 'GET',
     headers: myHeaders,
-    mode: "cors",
-    cache: "default"
+    mode: 'cors',
+    cache: 'default',
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}?fields=${fields}`, myInit).then((res) => {
-    if (res.status === 200) {
-      return res.json().then((data) => {
-        return { status: res.status, data: data.data };
-      });
-    } else {
-      return { status: res.status };
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}?fields=${fields}`, myInit).then(
+    (res) => {
+      if (res.status === 200) {
+        return res.json().then((data) => {
+          return { status: res.status, data: data.data };
+        });
+      } else {
+        return { status: res.status };
+      }
     }
-  });
+  );
 }
 
+type createFieldsToOmit =
+  | 'id'
+  | 'user_created'
+  | 'user_updated'
+  | 'date_created'
+  | 'date_updated'
+  | 'affairs_satisfaction'
+  | 'affairs_directus_users_ids'
+  | 'files'
+  | 'activities_id';
 /**
  * Create an affair.
  * @param affair Object containing affair properties.
  * @returns Status and data containing affair properties.
  */
-export async function createAffair(affair: CreateAffairModel): Promise<{ status: number; data?: GdpAffairModel }> {
+export async function createAffair(
+  affair: Partial<Omit<GdpAffairModel, createFieldsToOmit>>
+): Promise<{ status: number; data?: Partial<GdpAffairModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
   });
 
   const myInit: RequestInit = {
-    method: "POST",
+    method: 'POST',
     headers: myHeaders,
-    mode: "cors",
-    cache: "default",
-    body: JSON.stringify(affair)
+    mode: 'cors',
+    cache: 'default',
+    body: JSON.stringify(affair),
   };
 
   return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)
@@ -123,6 +141,16 @@ export async function createAffair(affair: CreateAffairModel): Promise<{ status:
     });
 }
 
+type updateFieldsToOmit =
+  | 'id'
+  | 'user_created'
+  | 'user_updated'
+  | 'date_created'
+  | 'date_updated'
+  | 'affairs_satisfaction'
+  | 'affairs_directus_users_ids'
+  | 'files'
+  | 'activities_id';
 /**
  * Update affair properties.
  * @param id Affair ID.
@@ -131,21 +159,21 @@ export async function createAffair(affair: CreateAffairModel): Promise<{ status:
  */
 export async function updateAffair(
   id: string,
-  data: UpdateAffairModel
-): Promise<{ status: number; data?: GdpAffairModel; error?: string }> {
+  data: Partial<Omit<GdpAffairModel, updateFieldsToOmit>>
+): Promise<{ status: number; data?: Partial<GdpAffairModel>; error?: string }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
   });
 
   const myInit: RequestInit = {
-    method: "PATCH",
+    method: 'PATCH',
     headers: myHeaders,
-    mode: "cors",
-    cache: "default",
-    body: JSON.stringify(data)
+    mode: 'cors',
+    cache: 'default',
+    body: JSON.stringify(data),
   };
 
   return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}`, myInit)
@@ -183,23 +211,23 @@ export async function updateAffair(
 
 /**
  * Delete one or more affairs.
- * @param affairsArray Array of one or more affairs identifiers in the form of a number.
+ * @param affairsIds Array of one or more affairs identifiers in the form of a number.
  * @returns Status.
  */
-export async function deleteAffairs(affairsArray: Array<number>): Promise<{ status: number }> {
+export async function deleteAffairs(affairsIds: number[]): Promise<{ status: number }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
   });
 
   const myInit: RequestInit = {
-    method: "DELETE",
+    method: 'DELETE',
     headers: myHeaders,
-    mode: "cors",
-    cache: "default",
-    body: JSON.stringify(affairsArray)
+    mode: 'cors',
+    cache: 'default',
+    body: JSON.stringify(affairsIds),
   };
 
   return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)
