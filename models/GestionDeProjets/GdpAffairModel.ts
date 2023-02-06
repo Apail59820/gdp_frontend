@@ -1,11 +1,11 @@
 import { GdpFilesModel } from './GdpFilesModel';
 import { GdpSatisfactionModel } from './GdpSatisfactionModel';
 import { UsUserModel } from '../UserService/UsUserModel';
-import { GdpProjectModel } from "./GdpProjectModel";
-import { GdpAffairsPythagoreAffairesModel } from "./GdpAffairsPythagoreAffairesModel";
-import { UsCompanyEntityModel } from "../UserService/UsCompanyEntityModel";
-import { GdpActivitiesModel } from "./GdpActivitiesModel";
-import { GdpAffairsUsersModel } from "./GdpAffairsUsersModel";
+import { GdpProjectModel } from './GdpProjectModel';
+import { GdpAffairsPythagoreAffairesModel } from './GdpAffairsPythagoreAffairesModel';
+import { UsCompanyEntityModel } from '../UserService/UsCompanyEntityModel';
+import { GdpActivitiesModel } from './GdpActivitiesModel';
+import { GdpAffairsUsersModel } from './GdpAffairsUsersModel';
 
 export type GdpAffairModel = {
   id: number;
