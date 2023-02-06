@@ -45,7 +45,6 @@ const ProjectsList = ({ projects }: Props) => {
       title: 'Nom du projet',
       dataIndex: 'project_name',
       key: 'project_name',
-      render: (text: string) => <a>{text}</a>,
     },
     {
       title: 'Nom du client',
