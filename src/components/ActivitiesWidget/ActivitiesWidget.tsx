@@ -1,6 +1,6 @@
 import { RecentActivitiesCard } from '@projex/ui';
 import React from 'react';
-import Section from '../Section/Section';
+import { Section } from '@projex/ui';
 import type { RecentActivitiesProps } from '@projex/ui/dist/components/molecules/RecentActivities/RecentActivities';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 

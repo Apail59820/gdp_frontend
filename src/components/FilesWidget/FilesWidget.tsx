@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 import PreviewFilesList, { PreviewFilesListProps } from '../PreviewFilesList/PreviewFilesList';
-import Section from '../Section/Section';
+import { Section } from '@projex/ui';
 
 type Props = PreviewFilesListProps & {
   onNewFileClick: React.MouseEventHandler<HTMLButtonElement>;

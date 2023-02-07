@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import ClientTeamCard, { ClientTeamCardProps } from '../ClientTeamCard/ClientTeamCard';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
-import Section from '../Section/Section';
+import { Section } from '@projex/ui';
 
 type Props = Omit<ClientTeamCardProps, 'allUsersPageHref' | 'onKebabMenuClick'> & {
   onAddClientClick: React.MouseEventHandler<HTMLButtonElement>;

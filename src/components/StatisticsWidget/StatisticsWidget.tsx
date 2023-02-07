@@ -2,7 +2,7 @@ import { ManageItemCard } from '@projex/ui';
 import styles from './StatisticsWidget.module.scss';
 import { useRouter } from 'next/router';
 import React from 'react';
-import Section from '../Section/Section';
+import { Section } from '@projex/ui';
 import StatisticsCard, { StatisticsCardProps } from '../StatisticsCard/StatisticsCard';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 
