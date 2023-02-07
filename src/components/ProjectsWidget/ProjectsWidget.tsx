@@ -5,7 +5,7 @@ import { ManageItemCard } from '@projex/ui';
 import { ProjectModel } from '../../../models/ProjectModel';
 import Grid from '../Grid/Grid';
 import ProjectCard from '../ProjectCard/ProjectCard';
-import Section from '../Section/Section';
+import { Section } from '@projex/ui';
 
 type Props = {
   projects: ProjectModel[];

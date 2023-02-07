@@ -6,7 +6,7 @@ import { AffairModel } from '../../../models/AffairModel';
 import { ManageItemCard } from '@projex/ui';
 import AffairCard from '../AffairCard/AffairCard';
 import Grid from '../Grid/Grid';
-import Section from '../Section/Section';
+import { Section } from '@projex/ui';
 
 type Props = {
   affairs: AffairModel[];

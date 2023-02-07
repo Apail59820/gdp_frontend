@@ -3,7 +3,7 @@ import styles from './PhasesWidget.module.scss';
 import { useRouter } from 'next/router';
 import { ManageItemCard } from '@projex/ui';
 import Grid from '../Grid/Grid';
-import Section from '../Section/Section';
+import { Section } from '@projex/ui';
 import PhaseCard from '../PhaseCard/PhaseCard';
 import type { PhaseModel } from '../../../models/PhaseModel';
 

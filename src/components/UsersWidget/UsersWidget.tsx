@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './UsersWidget.module.scss';
 import { UserModel } from '../../../models/UserModels';
 import { ManageItemCard } from '@projex/ui';
-import Section from '../Section/Section';
+import { Section } from '@projex/ui';
 import Grid from '../Grid/Grid';
 import UserCard from '../UserCard/UserCard';
 
