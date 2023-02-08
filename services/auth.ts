@@ -9,7 +9,7 @@ let isRefreshing = false;
  * Retrieve the access Token. Try to refresh it if not found.
  */
 export async function retrieveToken(): Promise<string | undefined> {
-  let token = cookie.get('maia_gestion_projet_token');
+  let token = cookie.get('ds_access_token');
   if (!token) {
     if (isRefreshing) {
       let tryCount = 1;
@@ -17,11 +17,11 @@ export async function retrieveToken(): Promise<string | undefined> {
         await new Promise((done) => setTimeout(done, 100));
         tryCount++;
       }
-      return cookie.get('maia_gestion_projet_token');
+      return cookie.get('ds_access_token');
     }
     isRefreshing = true;
     await refreshToken();
-    token = cookie.get('maia_gestion_projet_token');
+    token = cookie.get('ds_access_token');
     isRefreshing = false;
   }
   return token;
@@ -38,28 +38,24 @@ export const refreshToken = () => {
         return res.json().then(
           (r) => {
             const expiringDate = new Date(new Date().getTime() + r.data.expires);
-            cookie.set('maia_gestion_projet_token', r.data.access_token, { expires: expiringDate });
-            cookie.set('ds_token_expiration', expiringDate.toDateString(), { expires: expiringDate });
+            cookie.set('ds_access_token', r.data.access_token, { expires: expiringDate });
             return Promise.resolve();
           },
           () => {
             //failed to parse
-            cookie.remove('maia_gestion_projet_token');
-            cookie.remove('ds_token_expiration');
+            cookie.remove('ds_access_token');
             return Promise.reject();
           }
         );
       } else {
         //bad Request or other codes
-        cookie.remove('maia_gestion_projet_token');
-        cookie.remove('ds_token_expiration');
+        cookie.remove('ds_access_token');
         return Promise.reject();
       }
     },
     () => {
       //failed to fetch
-      cookie.remove('maia_gestion_projet_token');
-      cookie.remove('ds_token_expiration');
+      cookie.remove('ds_access_token');
       return Promise.reject();
     }
   );

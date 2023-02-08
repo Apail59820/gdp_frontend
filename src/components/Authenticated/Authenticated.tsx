@@ -3,7 +3,7 @@ import cookie from 'js-cookie';
 import { useRouter } from 'next/router';
 import { retrieveToken } from '../../../services/auth';
 import { useDispatch } from 'react-redux';
-import { setAuthState } from '../../../store/authSlice';
+import { setAuthState } from '../../../store/reducers/authReducer';
 import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();

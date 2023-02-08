@@ -1,7 +1,7 @@
 import { UsUserModel } from './UsUserModel';
 import { UsActivitiesModel } from './UsActivitiesModel';
 
-export type UsNotificationModel = {
+export type UsUsersNotificationModel = {
   id: number;
   seen: boolean;
   sent_mail: boolean;

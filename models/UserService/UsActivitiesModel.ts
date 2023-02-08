@@ -1,6 +1,6 @@
 import { UsUserModel } from './UsUserModel';
 
-export enum NotificationActionEnum {
+export enum UsActivitiesActionEnum {
   Create = 'create',
   Delete = 'delete',
   Update = 'update',
@@ -8,7 +8,7 @@ export enum NotificationActionEnum {
 
 export type UsActivitiesModel = {
   id: number;
-  action: NotificationActionEnum;
+  action: UsActivitiesActionEnum;
   collection: string | null;
   content: any | null;
 

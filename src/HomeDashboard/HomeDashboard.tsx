@@ -1,15 +1,8 @@
 import React from 'react';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
-<<<<<<< HEAD
 import { GdpProjectModel } from '../../models/GestionDeProjets/GdpProjectModel';
 import { ManageItemCard, QuickActionCard } from '@projex/ui';
-import Section from '../components/Section/Section';
-=======
-import { ProjectModel } from '../../models/ProjectModel';
-import { CompanyEnum } from '../../models/CompanyEnum';
-import { QuickActionCard } from '@projex/ui';
->>>>>>> 902668ca745cf2c268ab6accd4974d4f56936673
 import Grid from '../components/Grid/Grid';
 import QuickAccessWidget from '../components/QuickAccessWidget/QuickAccessWidget';
 import ProjectsWidget from '../components/ProjectsWidget/ProjectsWidget';

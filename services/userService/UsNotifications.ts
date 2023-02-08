@@ -2,7 +2,7 @@ import { QueryParameters } from '../../models/DirectusModel';
 import concatenateQueryParameters from '../../utils/queryParamsFormatter';
 import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
-import { UsNotificationModel } from '../../models/UsModels';
+import { UsUsersNotificationModel } from '../../models/UsModels';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -27,7 +27,7 @@ const defaultFields = [
  */
 export async function getUsNotifications(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<UsNotificationModel>[] }> {
+): Promise<{ status: number; data?: Partial<UsUsersNotificationModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -68,7 +68,7 @@ export async function getUsNotifications(
 export async function getUsNotification(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: Partial<UsNotificationModel> }> {
+): Promise<{ status: number; data?: Partial<UsUsersNotificationModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -113,8 +113,8 @@ type updateFieldsToOmit =
  */
 export async function updateUsNotifications(payload: {
   keys: number[];
-  data: Partial<UsNotificationModel>;
-}): Promise<{ status: number; data?: Partial<Omit<UsNotificationModel, updateFieldsToOmit>> }> {
+  data: Partial<UsUsersNotificationModel>;
+}): Promise<{ status: number; data?: Partial<Omit<UsUsersNotificationModel, updateFieldsToOmit>> }> {
   if (!payload.keys) return Promise.resolve({ status: 400 });
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
@@ -136,7 +136,7 @@ export async function updateUsNotifications(payload: {
       if (response.status === 200) {
         return response
           .json()
-          .then((responseData: { data: Partial<UsNotificationModel> }) => {
+          .then((responseData: { data: Partial<UsUsersNotificationModel> }) => {
             return { status: response.status, data: responseData.data };
           })
           .catch((error) => {

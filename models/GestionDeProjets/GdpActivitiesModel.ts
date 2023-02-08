@@ -1,7 +1,7 @@
 import { UsUserModel } from '../UserService/UsUserModel';
 import { GdpUsersNotificationModel } from './GdpUsersNotificationModel';
 
-export enum NotificationActionEnum {
+export enum ActivitiesActionEnum {
   Create = 'create',
   Delete = 'delete',
   Update = 'update',
@@ -9,7 +9,7 @@ export enum NotificationActionEnum {
 
 export type GdpActivitiesModel = {
   id: number;
-  action: NotificationActionEnum;
+  action: ActivitiesActionEnum;
   collection: string | null;
   content: any | null;
 
