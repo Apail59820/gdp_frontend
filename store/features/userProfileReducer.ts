@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
 import { UsUserModel } from '../../models/UserService/UsUserModel';
-import { getMyProfile } from '../../services/profile';
+
+// import { getMyProfile } from '../../services/userService/profile';
 
 export interface UserState {
   userProfile: UsUserModel[];
@@ -16,11 +16,14 @@ const initialState: UserState = {
 };
 
 export const userProfile = createAsyncThunk('userProfile/getMyProfile', () =>
-  getMyProfile().then((res) => {
-    console.log('data userProfile', res.data);
-    console.log('status', res.status);
-    return res.data!;
-  })
+  // getMyProfile().then((res) => {
+  //   console.log('data userProfile', res.data);
+  //   console.log('status', res.status);
+  //   return res.data!;
+  // })
+  {
+    return {} as any; //TODO a refaire
+  }
 );
 
 const userProfileSlice = createSlice({
@@ -34,7 +37,7 @@ const userProfileSlice = createSlice({
     builder.addCase(userProfile.fulfilled, (state, action: PayloadAction<UsUserModel>) => {
       state.loading = false;
       state.userProfile = [action.payload];
-      console.log('State UserProfile', state.userProfile);
+      // console.log('State UserProfile', state.userProfile);
       state.error = '';
     });
     builder.addCase(userProfile.rejected, (state, action) => {

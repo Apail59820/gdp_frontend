@@ -1,5 +1,5 @@
-import { UsUserModel } from "./UsUserModel";
-import { UsActivitiesModel } from "./UsActivitiesModel";
+import { UsUserModel } from './UsUserModel';
+import { UsActivitiesModel } from './UsActivitiesModel';
 
 export type UsNotificationModel = {
   id: number;
@@ -12,5 +12,5 @@ export type UsNotificationModel = {
   date_updated: Date | null;
 
   directus_users_id: string | UsUserModel;
-  activity_id: number[] | UsActivitiesModel[]
+  activity_id: number | UsActivitiesModel;
 };

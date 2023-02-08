@@ -1,27 +1,21 @@
-import { GdpProjectModel } from '../models/GdPModels';
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
+import { GdpProjectsClientsModel } from '../../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
-const defaultFields = [
-  '*',
-  'projects_directus_users_clients_ids.*',
-  'projects_directus_users_collaborators_ids.*',
-  'company_entity.*',
-  'activities_id.*',
-].join(',');
+const defaultFields = ['*'].join(',');
 
 /**
- * Retrieve projects respecting the query parameters.
+ * Retrieve gdp projects directus users clients respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns request status and projects.
+ * @returns List all items that exist in affairs.
  */
-export async function getProjects(
+export async function getGdpProjectsUsersClients(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<GdpProjectModel>[] }> {
+): Promise<{ status: number; data?: Partial<GdpProjectsClientsModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -38,7 +32,9 @@ export async function getProjects(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects?${concatenateQueryParameters(props)}`,
+    `${
+      publicRuntimeConfig.GESTION_DE_PROJET_API_URL
+    }/items/projects_directus_users_clients?${concatenateQueryParameters(props)}`,
     myInit
   )
     .then((res) => {
@@ -54,15 +50,15 @@ export async function getProjects(
 }
 
 /**
- * Retrieve a Project by id
- * @param id id of the project
+ * Retrieve a gdp project_directus_user_client by id
+ * @param id id of the gdp project_directus_user_client
  * @param fields list of fields to retrieve.
- * @returns Promise containing the request status and the project
+ * @returns Promise containing the request status and the gdp project_directus_user_client corresponding to the id
  */
-export async function getProjectById(
+export async function getGdpProjectUserClientById(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: Partial<GdpProjectModel> }> {
+): Promise<{ status: number; data?: Partial<GdpProjectsClientsModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -77,39 +73,30 @@ export async function getProjectById(
     cache: 'default',
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects/${id}?fields=${fields}`, myInit).then(
-    (res) => {
-      if (res.status === 200) {
-        return res.json().then((data) => {
-          return { status: res.status, data: data.data };
-        });
-      } else {
-        return { status: res.status };
-      }
+  return fetch(
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/project_directus_user_clients/${id}?fields=${fields}`,
+    myInit
+  ).then((res) => {
+    if (res.status === 200) {
+      return res.json().then((data) => {
+        return { status: res.status, data: data.data };
+      });
+    } else {
+      return { status: res.status };
     }
-  );
+  });
 }
 
-type createFieldsToOmit =
-  | 'id'
-  | 'user_created'
-  | 'user_updated'
-  | 'date_created'
-  | 'date_updated'
-  | 'projects_directus_users_clients_ids'
-  | 'projects_directus_users_collaborators_ids'
-  | 'files'
-  | 'affairs'
-  | 'activities_id';
+type createFieldsToOmit = 'id' | 'activities_id' | 'show_notifications';
 
 /**
- * Create a Project.
- * @param project Object containing project properties.
- * @returns Status and data containing project properties.
+ * Create a gdp project_directus_user_client.
+ * @param projectUsersClients array of items.
+ * @returns Status and data containing gdp project_directus_user_client properties.
  */
-export async function createProject(
-  project: Partial<Omit<GdpProjectModel, createFieldsToOmit>>
-): Promise<{ status: number; data?: Partial<GdpProjectModel> }> {
+export async function createGdpProjectUsersClients(
+  projectUsersClients: Omit<GdpProjectsClientsModel, createFieldsToOmit>[]
+): Promise<{ status: number; data?: Partial<GdpProjectsClientsModel>[] }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -122,10 +109,10 @@ export async function createProject(
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(project),
+    body: JSON.stringify(projectUsersClients),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/project`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects_directus_users_clients`, myInit)
     .then((response) => {
       if (response.status === 200 || response.status === 204) {
         return response
@@ -149,28 +136,17 @@ export async function createProject(
     });
 }
 
-type updateFieldsToOmit =
-  | 'id'
-  | 'user_created'
-  | 'user_updated'
-  | 'date_created'
-  | 'date_updated'
-  | 'projects_directus_users_clients_ids'
-  | 'projects_directus_users_collaborators_ids'
-  | 'files'
-  | 'affairs'
-  | 'activities_id';
-
+type updateFieldsToOmit = 'id' | 'projects_id' | 'directus_users_id' | 'activities_id';
 /**
- * Update project properties.
- * @param id project ID.
+ * Update project directus user collaborator properties.
+ * @param id Affair ID.
  * @param data Properties to update.
- * @returns Status and updated project properties.
+ * @returns Status and updated project directus user collaborator properties.
  */
-export async function updateProject(
+export async function updateGdpProjectUserClient(
   id: string,
-  data: Partial<GdpProjectModel>
-): Promise<{ status: number; data?: Partial<Omit<GdpProjectModel, updateFieldsToOmit>>; error?: string }> {
+  data: Partial<Omit<GdpProjectsClientsModel, updateFieldsToOmit>>
+): Promise<{ status: number; data?: Partial<GdpProjectsClientsModel>; error?: string }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -186,12 +162,12 @@ export async function updateProject(
     body: JSON.stringify(data),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects/${id}`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects_directus_users_clients/${id}`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response
           .json()
-          .then((responseData: { data: Partial<GdpProjectModel> }) => {
+          .then((responseData: { data: Partial<GdpProjectsClientsModel> }) => {
             return { status: response.status, data: responseData.data };
           })
           .catch((error) => {
@@ -220,11 +196,11 @@ export async function updateProject(
 }
 
 /**
- * Delete one or more projects.
- * @param projects primary keys to delete.
+ * Delete one or more gdp project directus user clients.
+ * @param projectsUsersClientsIds Array of one or more gdp project directus user collaborator identifiers in the form of a number.
  * @returns Status.
  */
-export async function deleteProject(projectIds: number[]): Promise<{ status: number }> {
+export async function deleteProjectsUsersClient(projectsUsersClientsIds: number[]): Promise<{ status: number }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -237,10 +213,10 @@ export async function deleteProject(projectIds: number[]): Promise<{ status: num
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(projectIds),
+    body: JSON.stringify(projectsUsersClientsIds),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/project`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects_directus_users_clients`, myInit)
     .then((response) => {
       return { status: response.status };
     })

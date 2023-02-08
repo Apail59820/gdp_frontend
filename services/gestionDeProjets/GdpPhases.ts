@@ -1,22 +1,21 @@
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
-import { GdpProjectsCollaboratorsModel } from '../models/GestionDeProjets/GdpProjectsCollaboratorsModel';
+import { GdpPhaseModel } from '../../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
-// const defaultFields = ['*', 'user_access.*', 'affairs_satisfaction.*', 'pythagore_ids.*'].join(',');
 const defaultFields = ['*'].join(',');
 
 /**
- * Retrieve projects directus users collaborators respecting the query parameters.
+ * Retrieve gdpAffairsPhases respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns List all items that exist in affairs.
+ * @returns List all items that exist in gdpFileAffairsPhases.
  */
-export async function getProjectsDirectusUsersCollaborators(
+export async function getGdpAffairsPhases(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<GdpProjectsCollaboratorsModel>[] }> {
+): Promise<{ status: number; data?: Partial<GdpPhaseModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -33,9 +32,7 @@ export async function getProjectsDirectusUsersCollaborators(
   };
 
   return fetch(
-    `${
-      publicRuntimeConfig.GESTION_DE_PROJET_API_URL
-    }/items/projects_directus_users_collaborators?${concatenateQueryParameters(props)}`,
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases?${concatenateQueryParameters(props)}`,
     myInit
   )
     .then((res) => {
@@ -51,15 +48,15 @@ export async function getProjectsDirectusUsersCollaborators(
 }
 
 /**
- * Retrieve a project by id
- * @param id id of the project directus user collaborator
+ * Retrieve a phase by id
+ * @param id id of the gdpAffairPhase
  * @param fields list of fields to retrieve.
- * @returns Promise containing the request status and the project directus user collaborator corresponding to the id
+ * @returns Promise containing the request status and the phase corresponding to the id
  */
-export async function getProjectDirectusUserCollaborator(
+export async function getGdpAffairPhase(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: GdpProjectsCollaboratorsModel }> {
+): Promise<{ status: number; data?: Partial<GdpPhaseModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -75,7 +72,7 @@ export async function getProjectDirectusUserCollaborator(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects_directus_users_collaborators/${id}?fields=${fields}`,
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases/${id}?fields=${fields}`,
     myInit
   ).then((res) => {
     if (res.status === 200) {
@@ -88,14 +85,15 @@ export async function getProjectDirectusUserCollaborator(
   });
 }
 
+type createFieldsToOmit = 'id' | 'user_created' | 'date_created' | 'user_updated' | 'date_updated' | 'activities_id';
 /**
- * Create a project directus user collaborator.
- * @param projectDirectusUserCollaborator Object containing project properties.
- * @returns Status and data containing project directus user collaborator properties.
+ * Create a gdpAffairPhase.
+ * @param project Object containing gdpAffairPhase properties.
+ * @returns Status and data containing gdpAffairPhase properties.
  */
-export async function createProjectDirectusUserCollaborator(
-  projectDirectusUserCollaborator: CreateGdpProjectsCollaboratorsModel
-): Promise<{ status: number; data?: GdpProjectsCollaboratorsModel }> {
+export async function createGdpAffairPhase(
+  project: Omit<GdpPhaseModel, createFieldsToOmit>
+): Promise<{ status: number; data?: Partial<GdpPhaseModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -108,10 +106,10 @@ export async function createProjectDirectusUserCollaborator(
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(projectDirectusUserCollaborator),
+    body: JSON.stringify(project),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects_directus_users_collaborators`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases`, myInit)
     .then((response) => {
       if (response.status === 200 || response.status === 204) {
         return response
@@ -135,16 +133,24 @@ export async function createProjectDirectusUserCollaborator(
     });
 }
 
+type updateFieldsToOmit =
+  | 'id'
+  | 'user_created'
+  | 'date_created'
+  | 'user_updated'
+  | 'date_updated'
+  | 'affairs_id'
+  | 'activities_id';
 /**
- * Update project directus user collaborator properties.
- * @param id Affair ID.
+ * Update gdpAffairPhase properties.
+ * @param id gdpAffairPhase ID.
  * @param data Properties to update.
- * @returns Status and updated project directus user collaborator properties.
+ * @returns Status and updated gdpAffairPhase properties.
  */
-export async function updateProjectDirectusUserCollaborator(
+export async function updateGdpAffairPhase(
   id: string,
-  data: UpdateGdpProjectsCollaboratorsModel
-): Promise<{ status: number; data?: GdpProjectsCollaboratorsModel; error?: string }> {
+  data: Partial<Omit<GdpPhaseModel, updateFieldsToOmit>>
+): Promise<{ status: number; data?: Partial<GdpPhaseModel>; error?: string }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -160,15 +166,12 @@ export async function updateProjectDirectusUserCollaborator(
     body: JSON.stringify(data),
   };
 
-  return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects_directus_users_collaborators/${id}`,
-    myInit
-  )
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases/${id}`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response
           .json()
-          .then((responseData: { data: GdpProjectsCollaboratorsModel }) => {
+          .then((responseData: { data: Partial<GdpPhaseModel> }) => {
             return { status: response.status, data: responseData.data };
           })
           .catch((error) => {
@@ -197,13 +200,11 @@ export async function updateProjectDirectusUserCollaborator(
 }
 
 /**
- * Delete one or more project directus user collaborator.
- * @param projectsDirectusUsersCollaboratorsArray Array of one or more project directus user collaborator identifiers in the form of a number.
+ * Delete one or more gdpAffairPhase.
+ * @param affairsPhasesIds Array of gdpAffairPhase identifiers.
  * @returns Status.
  */
-export async function deleteProjectsDirectusUsersCollaborators(
-  projectsDirectusUsersCollaboratorsArray: Array<number>
-): Promise<{ status: number }> {
+export async function deleteAffairsPhases(affairsPhasesIds: number[]): Promise<{ status: number }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -216,10 +217,10 @@ export async function deleteProjectsDirectusUsersCollaborators(
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(projectsDirectusUsersCollaboratorsArray),
+    body: JSON.stringify(affairsPhasesIds),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects_directus_users_collaborators`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases`, myInit)
     .then((response) => {
       return { status: response.status };
     })

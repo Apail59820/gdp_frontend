@@ -1,21 +1,21 @@
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
-import { GdpPythagoreFactureModel } from '../models/GdPModels';
+import { GdpPythagoreClientModel } from '../../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
-const defaultFields = ['*', 'num_affaire.*', 'num_facture'].join(',');
+const defaultFields = ['*'].join(',');
 
 /**
- * Retrieve pythagore factures respecting the query parameters.
+ * Retrieve gdp pythagore clients respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns List all items that exist in pythagore factures.
+ * @returns List all items that exist in gdp pythagore clients.
  */
-export async function getPythagoreFactures(
+export async function getGdpPythagoreClients(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<GdpPythagoreFactureModel>[] }> {
+): Promise<{ status: number; data?: Partial<GdpPythagoreClientModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -32,7 +32,7 @@ export async function getPythagoreFactures(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/pythagore_factures?${concatenateQueryParameters(props)}`,
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/pythagore_clients?${concatenateQueryParameters(props)}`,
     myInit
   )
     .then((res) => {
@@ -48,15 +48,15 @@ export async function getPythagoreFactures(
 }
 
 /**
- * Retrieve a pythagore facture by id
- * @param id id of the pythagore facture
+ * Retrieve a gdp pythagore client by id
+ * @param id id of the gdp pythagore client
  * @param fields list of fields to retrieve.
- * @returns Promise containing the request status and the pythagore facture corresponding to the id
+ * @returns Promise containing the request status and the gdp pythagore client corresponding to the id
  */
-export async function getPythagoreFacture(
+export async function getGdpPythagoreClient(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: GdpPythagoreFactureModel }> {
+): Promise<{ status: number; data?: Partial<GdpPythagoreClientModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -72,7 +72,7 @@ export async function getPythagoreFacture(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/pythagore_factures/${id}?fields=${fields}`,
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/pythagore_clients/${id}?fields=${fields}`,
     myInit
   ).then((res) => {
     if (res.status === 200) {

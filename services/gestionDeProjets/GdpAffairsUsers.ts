@@ -1,21 +1,23 @@
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
-import { QueryParameters } from '../models/DirectusModel';
-import { GdpAffairsUsersModel } from '../models/GdPModels';
+import { QueryParameters } from '../../models/DirectusModel';
+import { GdpAffairsUsersModel } from '../../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
 // const defaultFields = ['id', 'show_notifications', 'project_manager', 'affairs_id', 'directus_users_id'].join(',');
+const defaultFields = '*';
 
 /**
- * Retrieve affair users respecting the query parameters.
+ * Retrieve gdp affair users respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns List all items that exist in affair user access.
+ * @returns List all items that exist in gdp affair user access.
  */
-export async function getAffairsUsers(
+export async function getGdpAffairsUsers(
   props: QueryParameters = {}
 ): Promise<{ status: number; data?: Partial<GdpAffairsUsersModel>[] }> {
+  if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -49,8 +51,8 @@ type createFieldsToOmit = 'id' | 'show_notifications' | 'activities_id';
  * @returns Status and data containing affair properties.
  * @param affairUsers
  */
-export async function createAffairUsers(
-  affairUsers: Partial<Omit<GdpAffairsUsersModel, createFieldsToOmit>>[]
+export async function createGdpAffairUsers(
+  affairUsers: Omit<GdpAffairsUsersModel, createFieldsToOmit>[]
 ): Promise<{ status: number; data?: Partial<GdpAffairsUsersModel>[] }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
@@ -95,14 +97,13 @@ type updateFieldsToOmit = 'id' | 'affairs_id' | 'directus_users_id' | 'activitie
 /**
  * Update item.
  * @param payload Object with ids of targets and data to update.
- * @returns Status and updated affair user access properties.
+ * @returns Status and updated gdp affair user access properties.
  */
 export async function updateAffairUsers(payload: {
   keys: number[];
-  query?: QueryParameters;
-  data: Partial<GdpAffairsUsersModel>;
-}): Promise<{ status: number; data?: Partial<Omit<GdpAffairsUsersModel, updateFieldsToOmit>> }> {
-  if (!payload.query && !payload.keys) return Promise.resolve({ status: 400 });
+  data: Partial<Omit<GdpAffairsUsersModel, updateFieldsToOmit>>;
+}): Promise<{ status: number; data?: Partial<GdpAffairsUsersModel> }> {
+  if (!payload.keys) return Promise.resolve({ status: 400 });
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -143,11 +144,11 @@ export async function updateAffairUsers(payload: {
 }
 
 /**
- * Delete one or more affairs user access.
- * @param affairsUsers Array of one or more affairs user access identifiers in the form of a number.
+ * Delete one or more gdp affairs user access.
+ * @param affairsUsersIds Array of gdp affairsUsers identifiers.
  * @returns Status.
  */
-export async function deleteAffairUsers(affairsUsers: Array<number>): Promise<{ status: number }> {
+export async function deleteGdpAffairUsers(affairsUsersIds: number[]): Promise<{ status: number }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -160,7 +161,7 @@ export async function deleteAffairUsers(affairsUsers: Array<number>): Promise<{ 
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(affairsUsers),
+    body: JSON.stringify(affairsUsersIds),
   };
 
   return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_directus_users`, myInit)

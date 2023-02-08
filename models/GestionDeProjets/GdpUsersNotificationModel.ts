@@ -1,7 +1,7 @@
-import { GdpActivitiesModel } from "./GdpActivitiesModel";
-import { UsUserModel } from "../UserService/UsUserModel";
+import { GdpActivitiesModel } from './GdpActivitiesModel';
+import { UsUserModel } from '../UserService/UsUserModel';
 
-export type GdpNotificationModel = {
+export type GdpUsersNotificationModel = {
   id: number;
   seen: boolean;
   sent_mail: boolean;

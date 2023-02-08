@@ -1,5 +1,5 @@
 import { GdpPythagoreFactureModel } from './GdpPythagoreFactureModel';
-import { UsUserModel } from "../UserService/UsUserModel";
+import { UsUserModel } from '../UserService/UsUserModel';
 
 export type GdpEmailsLogsModel = {
   id: number;

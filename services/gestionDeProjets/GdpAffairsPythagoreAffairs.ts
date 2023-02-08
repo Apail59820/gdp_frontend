@@ -1,19 +1,19 @@
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
-import { GdpAffairsPythagoreAffairesModel } from '../models/GdPModels';
+import { GdpAffairsPythagoreAffairesModel } from '../../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
 const defaultFields = ['*', 'pythagore_affaires_id.*', 'affairs_id.*', 'activities_id.*'].join(',');
 
 /**
- * Retrieve affairs pythagore affairs respecting the query parameters.
+ * Retrieve gdp affairs pythagore affairs respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns List all items that exist in affairs pythagore affairs.
+ * @returns List all items that exist in gdp affairs pythagore affairs.
  */
-export async function getAffairsPythagoreAffairs(
+export async function getGdpAffairsPythagoreAffairs(
   props: QueryParameters = {}
 ): Promise<{ status: number; data?: Partial<GdpAffairsPythagoreAffairesModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
@@ -50,15 +50,15 @@ export async function getAffairsPythagoreAffairs(
 }
 
 /**
- * Retrieve a affair pythagore affair by id
- * @param id id of the affair pythagore affair
+ * Retrieve a gdp affair pythagore affair by id
+ * @param id id of the gdp affair pythagore affair
  * @param fields list of fields to retrieve.
- * @returns Promise containing the request status and the affair pythagore affair corresponding to the id
+ * @returns Promise containing the request status and the gdp affair pythagore affair corresponding to the id
  */
-export async function getAffairPythagoreAffair(
+export async function getGdpAffairPythagoreAffair(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: GdpAffairsPythagoreAffairesModel }> {
+): Promise<{ status: number; data?: Partial<GdpAffairsPythagoreAffairesModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -86,15 +86,15 @@ export async function getAffairPythagoreAffair(
     }
   });
 }
-type createFieldsToOmit = 'id' | 'activities_id';
 
+type createFieldsToOmit = 'id' | 'activities_id';
 /**
- * Create an affair pythagore affair.
- * @param project Object containing affair pythagore affair properties.
- * @returns Status and data containing affair pythagore affair properties.
+ * Create a gdp affair pythagore affair.
+ * @param project Object containing gdp affair pythagore affair properties.
+ * @returns Status and data containing gdp affair pythagore affair properties.
  */
-export async function createAffairPythagoreAffair(
-  project: Partial<Omit<GdpAffairsPythagoreAffairesModel, createFieldsToOmit>>
+export async function createGdpAffairPythagoreAffair(
+  project: Omit<GdpAffairsPythagoreAffairesModel, createFieldsToOmit>
 ): Promise<{ status: number; data?: Partial<GdpAffairsPythagoreAffairesModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
@@ -136,12 +136,12 @@ export async function createAffairPythagoreAffair(
 }
 
 /**
- * Delete one or more projects.
- * @param affairsPythagoreAffairsArray Array of one or more projects identifiers in the form of a number.
+ * Delete one or more gdpAffairsPythagoreAffair.
+ * @param gdpAffairsPythagoreAffairsIds Array of one or more gdpAffairsPythagoreAffair identifiers in the form of a number.
  * @returns Status.
  */
-export async function deleteAffairPythagoreAffair(
-  affairsPythagoreAffairsArray: Array<number>
+export async function deleteGdpAffairPythagoreAffair(
+  gdpAffairsPythagoreAffairsIds: number[]
 ): Promise<{ status: number }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
@@ -155,7 +155,7 @@ export async function deleteAffairPythagoreAffair(
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(affairsPythagoreAffairsArray),
+    body: JSON.stringify(gdpAffairsPythagoreAffairsIds),
   };
 
   return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_pythagore_affaires`, myInit)

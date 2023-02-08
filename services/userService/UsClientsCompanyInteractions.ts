@@ -1,21 +1,21 @@
-import { GdpAffairModel } from '../models/GestionDeProjets/GdpAffairModel';
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import { UsClientsCompanyInteractionsModel } from '../../models/UsModels';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
 
-const defaultFields = ['*', 'company_entity.*', 'pythagore_ids.*'].join(',');
+const defaultFields = ['*'].join(',');
 
 /**
- * Retrieve affairs respecting the query parameters.
+ * Retrieve clients company interactions respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns List all items that exist in affairs.
+ * @returns List all items that exist in clients company interactions.
  */
-export async function getAffairs(
+export async function getUsClientsInteractions(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<GdpAffairModel>[] }> {
+): Promise<{ status: number; data?: Partial<UsClientsCompanyInteractionsModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -32,7 +32,9 @@ export async function getAffairs(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs?${concatenateQueryParameters(props)}`,
+    `${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_interactions?${concatenateQueryParameters(
+      props
+    )}`,
     myInit
   )
     .then((res) => {
@@ -48,15 +50,15 @@ export async function getAffairs(
 }
 
 /**
- * Retrieve an Affair by id
- * @param id id of the affair
+ * Retrieve a client company interaction by id
+ * @param id id of the client company interaction
  * @param fields list of fields to retrieve.
- * @returns Promise containing the request status and the affair corresponding to the id
+ * @returns Promise containing the request status and the client company interaction corresponding to the id
  */
-export async function getAffair(
+export async function getUsClientCompanyInteraction(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: Partial<GdpAffairModel> }> {
+): Promise<{ status: number; data?: Partial<UsClientsCompanyInteractionsModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -71,37 +73,30 @@ export async function getAffair(
     cache: 'default',
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}?fields=${fields}`, myInit).then(
-    (res) => {
-      if (res.status === 200) {
-        return res.json().then((data) => {
-          return { status: res.status, data: data.data };
-        });
-      } else {
-        return { status: res.status };
-      }
+  return fetch(
+    `${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_interactions/${id}?fields=${fields}`,
+    myInit
+  ).then((res) => {
+    if (res.status === 200) {
+      return res.json().then((data) => {
+        return { status: res.status, data: data.data };
+      });
+    } else {
+      return { status: res.status };
     }
-  );
+  });
 }
 
-type createFieldsToOmit =
-  | 'id'
-  | 'user_created'
-  | 'user_updated'
-  | 'date_created'
-  | 'date_updated'
-  | 'affairs_satisfaction'
-  | 'affairs_directus_users_ids'
-  | 'files'
-  | 'activities_id';
+type createFieldsToOmit = 'id' | 'user_created' | 'user_updated' | 'date_created' | 'date_updated';
+
 /**
- * Create an affair.
- * @param affair Object containing affair properties.
- * @returns Status and data containing affair properties.
+ * Create a client company interaction.
+ * @param clientCompanyInteraction Object containing client company interaction properties.
+ * @returns Status and data containing client company interaction properties.
  */
-export async function createAffair(
-  affair: Partial<Omit<GdpAffairModel, createFieldsToOmit>>
-): Promise<{ status: number; data?: Partial<GdpAffairModel> }> {
+export async function createUsClientCompanyInteraction(
+  clientCompanyInteraction: Omit<UsClientsCompanyInteractionsModel, createFieldsToOmit>
+): Promise<{ status: number; data?: Partial<UsClientsCompanyInteractionsModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -114,10 +109,10 @@ export async function createAffair(
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(affair),
+    body: JSON.stringify(clientCompanyInteraction),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)
+  return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_interactions`, myInit)
     .then((response) => {
       if (response.status === 200 || response.status === 204) {
         return response
@@ -141,26 +136,18 @@ export async function createAffair(
     });
 }
 
-type updateFieldsToOmit =
-  | 'id'
-  | 'user_created'
-  | 'user_updated'
-  | 'date_created'
-  | 'date_updated'
-  | 'affairs_satisfaction'
-  | 'affairs_directus_users_ids'
-  | 'files'
-  | 'activities_id';
+type updateFieldsToOmit = 'id' | 'user_created' | 'user_updated' | 'date_created' | 'date_updated' | 'entity_id';
+
 /**
- * Update affair properties.
- * @param id Affair ID.
+ * Update client company interaction properties.
+ * @param id client company interaction ID.
  * @param data Properties to update.
- * @returns Status and updated affair properties.
+ * @returns Status and updated client company interaction properties.
  */
-export async function updateAffair(
+export async function updateUsClientCompanyInteraction(
   id: string,
-  data: Partial<Omit<GdpAffairModel, updateFieldsToOmit>>
-): Promise<{ status: number; data?: Partial<GdpAffairModel>; error?: string }> {
+  data: Partial<Omit<UsClientsCompanyInteractionsModel, updateFieldsToOmit>>
+): Promise<{ status: number; data?: Partial<UsClientsCompanyInteractionsModel>; error?: string }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -176,12 +163,12 @@ export async function updateAffair(
     body: JSON.stringify(data),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}`, myInit)
+  return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_interactions/${id}`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response
           .json()
-          .then((responseData: { data: GdpAffairModel }) => {
+          .then((responseData: { data: Partial<UsClientsCompanyInteractionsModel> }) => {
             return { status: response.status, data: responseData.data };
           })
           .catch((error) => {
@@ -210,11 +197,13 @@ export async function updateAffair(
 }
 
 /**
- * Delete one or more affairs.
- * @param affairsIds Array of one or more affairs identifiers in the form of a number.
+ * Delete one or more us clients company interactions.
+ * @param usClientsCompanyInteractionsIds Array of one or more us clients company interactions identifiers in the form of a number.
  * @returns Status.
  */
-export async function deleteAffairs(affairsIds: number[]): Promise<{ status: number }> {
+export async function deleteUsClientsCompanyInteractions(
+  usClientsCompanyInteractionsIds: number[]
+): Promise<{ status: number }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -227,10 +216,10 @@ export async function deleteAffairs(affairsIds: number[]): Promise<{ status: num
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(affairsIds),
+    body: JSON.stringify(usClientsCompanyInteractionsIds),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)
+  return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_interactions`, myInit)
     .then((response) => {
       return { status: response.status };
     })

@@ -1,9 +1,9 @@
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
-import { UsCompanyEntitiesUsersModel } from '../models/UserService/UsCompanyEntitiesUsersModel';
-import { GdpAffairsUsersModel } from '../models/GestionDeProjets/GdpAffairsUsersModel';
+import { UsCompanyEntitiesUsersModel } from '../../models/UserService/UsCompanyEntitiesUsersModel';
+import { GdpAffairsUsersModel } from '../../models/GestionDeProjets/GdpAffairsUsersModel';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -14,7 +14,7 @@ const defaultFields = ['*'].join(',');
  * @param props Object containing query parameters.
  * @returns List all items that exist in company entities directus users.
  */
-export async function getCompanyEntitiesUsers(
+export async function geUsCompanyEntitiesUsers(
   props: QueryParameters = {}
 ): Promise<{ status: number; data?: Partial<UsCompanyEntitiesUsersModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
@@ -56,7 +56,7 @@ export async function getCompanyEntitiesUsers(
  * @param fields list of fields to retrieve.
  * @returns Promise containing the request status and the company entities directus users corresponding to the id
  */
-export async function getCompanyEntityUser(
+export async function getUsCompanyEntityUser(
   id: number,
   fields = defaultFields
 ): Promise<{ status: number; data?: Partial<UsCompanyEntitiesUsersModel> }> {
@@ -88,15 +88,16 @@ export async function getCompanyEntityUser(
   });
 }
 
-type createFieldsToOmit = 'id' | 'show_notifications' | 'activities_id';
+type createFieldsToOmit = 'id' | 'user_created' | 'user_updated' | 'date_created' | 'date_updated' | 'activities_id';
+
 /**
  * Create a new item.
- * @returns Status and data containing affair properties.
- * @param affairUsers
+ * @returns Status and data containing company entity user properties.
+ * @param companyEntityUser
  */
-export async function createAffairUsers(
-  affairUsers: Partial<Omit<GdpAffairsUsersModel, createFieldsToOmit>>[]
-): Promise<{ status: number; data?: Partial<GdpAffairsUsersModel>[] }> {
+export async function createUsCompanyEntityUser(
+  companyEntityUser: Omit<UsCompanyEntitiesUsersModel, createFieldsToOmit>[]
+): Promise<{ status: number; data?: Partial<UsCompanyEntitiesUsersModel>[] }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -109,10 +110,10 @@ export async function createAffairUsers(
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(affairUsers),
+    body: JSON.stringify(companyEntityUser),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_directus_users`, myInit)
+  return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/items/company_entities_directus_users`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response
@@ -136,18 +137,26 @@ export async function createAffairUsers(
     });
 }
 
-type updateFieldsToOmit = 'id' | 'affairs_id' | 'directus_users_id' | 'activities_id';
+type updateFieldsToOmit =
+  | 'id'
+  | 'user_created'
+  | 'user_updated'
+  | 'date_created'
+  | 'date_updated'
+  | 'company_entities_id'
+  | 'directus_users_id'
+  | 'activities_id';
+
 /**
  * Update item.
  * @param payload Object with ids of targets and data to update.
- * @returns Status and updated affair user access properties.
+ * @returns Status and updated company entity directus user access properties.
  */
-export async function updateAffairUsers(payload: {
+export async function updateUsCompanyEntityUser(payload: {
   keys: number[];
-  query?: QueryParameters;
-  data: Partial<GdpAffairsUsersModel>;
-}): Promise<{ status: number; data?: Partial<Omit<GdpAffairsUsersModel, updateFieldsToOmit>> }> {
-  if (!payload.query && !payload.keys) return Promise.resolve({ status: 400 });
+  data: Partial<Omit<UsCompanyEntitiesUsersModel, updateFieldsToOmit>>;
+}): Promise<{ status: number; data?: Partial<UsCompanyEntitiesUsersModel> }> {
+  if (!payload.keys) return Promise.resolve({ status: 400 });
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -163,7 +172,7 @@ export async function updateAffairUsers(payload: {
     body: JSON.stringify(payload),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_directus_users`, myInit)
+  return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/items/company_entities_directus_users`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response
@@ -179,38 +188,6 @@ export async function updateAffairUsers(payload: {
       } else {
         return { status: response.status };
       }
-    })
-    .catch((error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return { status: 500 };
-    });
-}
-
-/**
- * Delete one or more affairs user access.
- * @param affairsUsers Array of one or more affairs user access identifiers in the form of a number.
- * @returns Status.
- */
-export async function deleteAffairUsers(affairsUsers: Array<number>): Promise<{ status: number }> {
-  const token = await retrieveToken();
-  if (!token) return Promise.resolve({ status: 401 });
-  const myHeaders = new Headers({
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  });
-
-  const myInit: RequestInit = {
-    method: 'DELETE',
-    headers: myHeaders,
-    mode: 'cors',
-    cache: 'default',
-    body: JSON.stringify(affairsUsers),
-  };
-
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_directus_users`, myInit)
-    .then((response) => {
-      return { status: response.status };
     })
     .catch((error) => {
       // eslint-disable-next-line no-console

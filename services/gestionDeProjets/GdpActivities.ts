@@ -1,19 +1,19 @@
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
-import { GdpActivitiesModel, GdpProjectModel } from '../models/GdPModels';
+import { GdpActivitiesModel } from '../../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
 const defaultFields = ['*'].join(',');
 
 /**
- * Retrieve activities respecting the query parameters.
+ * Retrieve GdpActivities respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns List all items that exist in activities.
+ * @returns List all items that exist in GdpActivities.
  */
-export async function getActivities(
+export async function getGdpActivities(
   props: QueryParameters = {}
 ): Promise<{ status: number; data?: Partial<GdpActivitiesModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
@@ -48,15 +48,15 @@ export async function getActivities(
 }
 
 /**
- * Retrieve a activity by id
- * @param id id of the activity
+ * Retrieve a GdpActivity by id
+ * @param id id of the GdpActivity
  * @param fields list of fields to retrieve.
- * @returns Promise containing the request status and the activity corresponding to the id
+ * @returns Promise containing the request status and the GdpActivity corresponding to the id
  */
-export async function getActivity(
+export async function getGdpActivity(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: GdpActivitiesModel }> {
+): Promise<{ status: number; data?: Partial<GdpActivitiesModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 

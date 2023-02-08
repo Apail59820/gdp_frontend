@@ -1,21 +1,21 @@
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
-import { GdpPythagoreAffaireModel } from '../models/GdPModels';
+import { GdpPythagoreFactureModel } from '../../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
-const defaultFields = ['*'].join(',');
+const defaultFields = ['*', 'num_affaire.*'].join(',');
 
 /**
- * Retrieve pythagore affairs respecting the query parameters.
+ * Retrieve gdp pythagore factures respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns List all items that exist in affairs.
+ * @returns List all items that exist in gdp pythagore factures.
  */
-export async function getPythagoreAffairs(
+export async function getGdpPythagoreFactures(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<GdpPythagoreAffaireModel>[] }> {
+): Promise<{ status: number; data?: Partial<GdpPythagoreFactureModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -32,7 +32,7 @@ export async function getPythagoreAffairs(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/pythagore_affaires?${concatenateQueryParameters(props)}`,
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/pythagore_factures?${concatenateQueryParameters(props)}`,
     myInit
   )
     .then((res) => {
@@ -48,15 +48,15 @@ export async function getPythagoreAffairs(
 }
 
 /**
- * Retrieve a pythagore affair by id
- * @param id id of the project
+ * Retrieve a gdp pythagore facture by id
+ * @param id id of the gdp pythagore facture
  * @param fields list of fields to retrieve.
- * @returns Promise containing the request status and the pythagore affair corresponding to the id
+ * @returns Promise containing the request status and the gdp pythagore facture corresponding to the id
  */
-export async function getPythagoreAffair(
+export async function getGdpPythagoreFacture(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: GdpPythagoreAffaireModel }> {
+): Promise<{ status: number; data?: Partial<GdpPythagoreFactureModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -72,7 +72,7 @@ export async function getPythagoreAffair(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/pythagore_affaires/${id}?fields=${fields}`,
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/pythagore_factures/${id}?fields=${fields}`,
     myInit
   ).then((res) => {
     if (res.status === 200) {

@@ -1,21 +1,21 @@
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
-import { UsCompanyEntityModel } from '../models/UsModels';
+import { UsActivitiesModel } from '../../models/UsModels';
 
 const { publicRuntimeConfig } = getConfig();
 
 const defaultFields = ['*'].join(',');
 
 /**
- * Retrieve company entities respecting the query parameters.
+ * Retrieve UsActivities respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns List all items that exist in company entities .
+ * @returns List all items that exist in UsActivities.
  */
-export async function getCompanyEntities(
+export async function getUsActivities(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<UsCompanyEntityModel>[] }> {
+): Promise<{ status: number; data?: Partial<UsActivitiesModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -32,7 +32,7 @@ export async function getCompanyEntities(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/company_entities?${concatenateQueryParameters(props)}`,
+    `${publicRuntimeConfig.USER_SERVICE_API_URL}/items/activities?${concatenateQueryParameters(props)}`,
     myInit
   )
     .then((res) => {
@@ -48,15 +48,15 @@ export async function getCompanyEntities(
 }
 
 /**
- * Retrieve a company entity by id
- * @param id of the company entity
+ * Retrieve a UsActivity by id
+ * @param id id of the UsActivity
  * @param fields list of fields to retrieve.
- * @returns Promise containing the request status and the company entity  corresponding to the id
+ * @returns Promise containing the request status and the UsActivity corresponding to the id
  */
-export async function getCompanyEntity(
+export async function getUsActivity(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: UsCompanyEntityModel }> {
+): Promise<{ status: number; data?: Partial<UsActivitiesModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -71,16 +71,15 @@ export async function getCompanyEntity(
     cache: 'default',
   };
 
-  return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/company_entities/${id}?fields=${fields}`,
-    myInit
-  ).then((res) => {
-    if (res.status === 200) {
-      return res.json().then((data) => {
-        return { status: res.status, data: data.data };
-      });
-    } else {
-      return { status: res.status };
+  return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/items/activities/${id}?fields=${fields}`, myInit).then(
+    (res) => {
+      if (res.status === 200) {
+        return res.json().then((data) => {
+          return { status: res.status, data: data.data };
+        });
+      } else {
+        return { status: res.status };
+      }
     }
-  });
+  );
 }

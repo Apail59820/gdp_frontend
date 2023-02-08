@@ -1,10 +1,10 @@
-import React, { ReactNode, useEffect } from "react";
-import cookie from "js-cookie";
-import { useRouter } from "next/router";
-import { retrieveToken } from "../../../services/auth";
-import { useDispatch } from "react-redux";
-import { setAuthState } from "../../../store/authSlice";
-import getConfig from "next/config";
+import React, { ReactNode, useEffect } from 'react';
+import cookie from 'js-cookie';
+import { useRouter } from 'next/router';
+import { retrieveToken } from '../../../services/auth';
+import { useDispatch } from 'react-redux';
+import { setAuthState } from '../../../store/authSlice';
+import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
 

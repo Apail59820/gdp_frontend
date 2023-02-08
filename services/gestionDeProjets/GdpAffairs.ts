@@ -1,21 +1,21 @@
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import { GdpAffairModel } from '../../models/GdPModels';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
-import { GdpPhaseModel } from '../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
-const defaultFields = ['*'].join(',');
+const defaultFields = ['*', 'company_entity.*', 'pythagore_ids.*'].join(',');
 
 /**
- * Retrieve affairsPhases respecting the query parameters.
+ * Retrieve GdpAffairs respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns List all items that exist in affairsPhases.
+ * @returns List all items that exist in GdpAffairs.
  */
-export async function getAffairsPhases(
+export async function getGdpAffairs(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<GdpPhaseModel>[] }> {
+): Promise<{ status: number; data?: Partial<GdpAffairModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -32,7 +32,7 @@ export async function getAffairsPhases(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases?${concatenateQueryParameters(props)}`,
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs?${concatenateQueryParameters(props)}`,
     myInit
   )
     .then((res) => {
@@ -48,15 +48,15 @@ export async function getAffairsPhases(
 }
 
 /**
- * Retrieve a affairPhase by id
- * @param id id of the affairPhase
+ * Retrieve a GdpAffair by id
+ * @param id id of the GdpAffair
  * @param fields list of fields to retrieve.
- * @returns Promise containing the request status and the affairPhase corresponding to the id
+ * @returns Promise containing the request status and the GdpAffair corresponding to the id
  */
-export async function getProject(
+export async function getGdpAffair(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: GdpPhaseModel }> {
+): Promise<{ status: number; data?: Partial<GdpAffairModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -71,29 +71,39 @@ export async function getProject(
     cache: 'default',
   };
 
-  return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases/${id}?fields=${fields}`,
-    myInit
-  ).then((res) => {
-    if (res.status === 200) {
-      return res.json().then((data) => {
-        return { status: res.status, data: data.data };
-      });
-    } else {
-      return { status: res.status };
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}?fields=${fields}`, myInit).then(
+    (res) => {
+      if (res.status === 200) {
+        return res.json().then((data) => {
+          return { status: res.status, data: data.data };
+        });
+      } else {
+        return { status: res.status };
+      }
     }
-  });
+  );
 }
-type createFieldsToOmit = 'id' | 'user_updated' | 'date_updated';
+
+type createFieldsToOmit =
+  | 'id'
+  | 'user_created'
+  | 'date_created'
+  | 'user_updated'
+  | 'date_updated'
+  | 'pythagore_ids'
+  | 'affairs_satisfaction'
+  | 'affairs_directus_users_ids'
+  | 'files'
+  | 'activities_id';
 
 /**
- * Create a affairPhase.
- * @param project Object containing affairPhase properties.
- * @returns Status and data containing affairPhase properties.
+ * Create a GdpAffair.
+ * @param gdpAffair Object containing GdpAffair properties.
+ * @returns Status and data containing GdpAffair properties.
  */
-export async function createAffairPhase(
-  project: Partial<Omit<GdpPhaseModel, createFieldsToOmit>>
-): Promise<{ status: number; data?: Partial<GdpPhaseModel> }> {
+export async function createGdpAffair(
+  gdpAffair: Omit<GdpAffairModel, createFieldsToOmit>
+): Promise<{ status: number; data?: Partial<GdpAffairModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -106,10 +116,10 @@ export async function createAffairPhase(
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(project),
+    body: JSON.stringify(gdpAffair),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)
     .then((response) => {
       if (response.status === 200 || response.status === 204) {
         return response
@@ -133,18 +143,28 @@ export async function createAffairPhase(
     });
 }
 
-type updateFieldsToOmit = 'id' | 'user_created' | 'date_created';
-
+type updateFieldsToOmit =
+  | 'id'
+  | 'user_created'
+  | 'user_updated'
+  | 'date_created'
+  | 'date_updated'
+  | 'projects_id'
+  | 'pythagore_ids'
+  | 'affairs_satisfaction'
+  | 'affairs_directus_users_ids'
+  | 'files'
+  | 'activities_id';
 /**
- * Update affairPhase properties.
- * @param id AffairPhase ID.
+ * Update GdpAffair properties.
+ * @param id GdpAffair ID.
  * @param data Properties to update.
- * @returns Status and updated affairPhase properties.
+ * @returns Status and updated GdpAffair properties.
  */
-export async function updateAffairPhase(
+export async function updateGdpAffair(
   id: string,
-  data: Partial<GdpPhaseModel>
-): Promise<{ status: number; data?: Partial<Omit<GdpPhaseModel, updateFieldsToOmit>>; error?: string }> {
+  data: Partial<Omit<GdpAffairModel, updateFieldsToOmit>>
+): Promise<{ status: number; data?: Partial<GdpAffairModel>; error?: string }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -160,12 +180,12 @@ export async function updateAffairPhase(
     body: JSON.stringify(data),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases/${id}`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response
           .json()
-          .then((responseData: { data: GdpPhaseModel }) => {
+          .then((responseData: { data: GdpAffairModel }) => {
             return { status: response.status, data: responseData.data };
           })
           .catch((error) => {
@@ -185,38 +205,6 @@ export async function updateAffairPhase(
             return { status: response.status };
           });
       }
-    })
-    .catch((error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      return { status: 500 };
-    });
-}
-
-/**
- * Delete one or more affairsPhases.
- * @param affairsPhasesArray Array of one or more affairsPhases identifiers in the form of a number.
- * @returns Status.
- */
-export async function deleteAffairsPhases(affairsPhasesArray: Array<number>): Promise<{ status: number }> {
-  const token = await retrieveToken();
-  if (!token) return Promise.resolve({ status: 401 });
-  const myHeaders = new Headers({
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  });
-
-  const myInit: RequestInit = {
-    method: 'DELETE',
-    headers: myHeaders,
-    mode: 'cors',
-    cache: 'default',
-    body: JSON.stringify(affairsPhasesArray),
-  };
-
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases`, myInit)
-    .then((response) => {
-      return { status: response.status };
     })
     .catch((error) => {
       // eslint-disable-next-line no-console

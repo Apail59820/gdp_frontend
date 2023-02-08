@@ -1,5 +1,5 @@
-import { UsUserModel } from '../UserService/UsUserModel';
-import { UsActivitiesModel } from "./UsActivitiesModel";
+import { UsUserModel } from './UsUserModel';
+import { UsActivitiesModel } from './UsActivitiesModel';
 
 export type UsFilesModel = {
   id: string;

@@ -1,6 +1,6 @@
-import { UsUserModel } from "../UserService/UsUserModel";
-import { GdpActivitiesModel } from "./GdpActivitiesModel";
-import { GdpProjectModel } from "./GdpProjectModel";
+import { UsUserModel } from '../UserService/UsUserModel';
+import { GdpActivitiesModel } from './GdpActivitiesModel';
+import { GdpProjectModel } from './GdpProjectModel';
 
 export type GdpProjectsClientsModel = {
   id: string;
@@ -10,4 +10,3 @@ export type GdpProjectsClientsModel = {
   directus_users_id: string | UsUserModel;
   activities_id: number[] | GdpActivitiesModel[];
 };
-

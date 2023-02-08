@@ -28,7 +28,7 @@ export async function retrieveToken(): Promise<string | undefined> {
 }
 
 export const refreshToken = () => {
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/auth/refresh`, {
+  return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/auth/refresh`, {
     method: 'POST',
     credentials: 'include',
     headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -89,7 +89,7 @@ export async function inviteNewUsers(
     body,
   };
 
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/register/invite`, myInit)
+  return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/register/invite`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response

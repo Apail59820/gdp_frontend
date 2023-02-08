@@ -1,6 +1,6 @@
 import { GdpAffairModel } from './GdpAffairModel';
 import { UsUserModel } from '../UserService/UsUserModel';
-import { GdpActivitiesModel } from "./GdpActivitiesModel";
+import { GdpActivitiesModel } from './GdpActivitiesModel';
 
 export enum GdpPhaseStatusEnum {
   PENDING = 'pending',

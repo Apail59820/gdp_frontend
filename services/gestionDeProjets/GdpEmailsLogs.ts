@@ -1,23 +1,19 @@
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import {
-  CreateFactureEmailAlertModel,
-  GdpFactureEmailAlertModel,
-  GdpEmailsLogsModel,
-} from '../models/GestionDeProjets/GdpEmailsLogsModel';
-import { retrieveToken } from './auth';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { GdpEmailsLogsModel } from '../../models/GdPModels';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
 
 /**
- * Retrieve date of emails sent to notice a client that his bills hasn't get paid
+ * Retrieve emails logs
  * @param props Object containing query parameters.
  * @returns data contains all dates of emails
  * */
-export async function getDateSentEmail(
+export async function getGdpEmailsLogs(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: GdpEmailsLogsModel }> {
+): Promise<{ status: number; data?: Partial<GdpEmailsLogsModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -43,9 +39,10 @@ export async function getDateSentEmail(
   });
 }
 
-export async function createFactureEmailAlert(
-  data: CreateFactureEmailAlertModel
-): Promise<{ status: number; data?: GdpEmailsLogsModel }> {
+type createFieldsToOmit = 'id' | 'date_created' | 'user_created';
+export async function createGdpEmailLogs(
+  data: Omit<GdpEmailsLogsModel, createFieldsToOmit>
+): Promise<{ status: number; data?: Partial<GdpEmailsLogsModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({

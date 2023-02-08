@@ -1,19 +1,19 @@
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
-import { QueryParameters } from '../models/DirectusModel';
-import { GdpSatisfactionModel } from '../models/GdPModels';
+import { QueryParameters } from '../../models/DirectusModel';
+import { GdpSatisfactionModel } from '../../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
 const defaultFields = ['*'].join(',');
 
 /**
- * Retrieve all satisfactions entries respecting the query parameters.
+ * Retrieve all gdp satisfactions entries respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns Status and data containing satisfactions properties.
+ * @returns Status and data containing gdp satisfactions properties.
  */
-export async function getSatisfactions(
+export async function getGdpSatisfactions(
   props: QueryParameters = {}
 ): Promise<{ status: number; data?: Partial<GdpSatisfactionModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
@@ -43,14 +43,15 @@ export async function getSatisfactions(
 }
 
 type createFieldsToOmit = 'id' | 'user_created' | 'user_updated' | 'date_created' | 'date_updated' | 'activities_id';
+
 /**
- * Create a satisfaction entry.
- * @param satisfaction Object containing satisfactions properties.
- * @returns Status and data containing satisfactions properties.
+ * Create a gdp satisfaction entry.
+ * @param satisfaction Object containing gdp satisfactions properties.
+ * @returns Status and data containing gdp satisfactions properties.
  */
-export async function createSatisfaction(
-  satisfaction: Partial<GdpSatisfactionModel>
-): Promise<{ status: number; data?: Partial<Omit<GdpSatisfactionModel, createFieldsToOmit>> }> {
+export async function createGdpSatisfaction(
+  satisfaction: Omit<GdpSatisfactionModel, createFieldsToOmit>
+): Promise<{ status: number; data?: Partial<GdpSatisfactionModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({

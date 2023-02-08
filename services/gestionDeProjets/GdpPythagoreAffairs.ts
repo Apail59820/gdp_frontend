@@ -1,21 +1,21 @@
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
-import { UsNotificationModel } from '../models/UsModels';
+import { GdpPythagoreAffaireModel } from '../../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
 const defaultFields = ['*'].join(',');
 
 /**
- * Retrieve notifications respecting the query parameters.
+ * Retrieve gdp pythagore affairs respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns List all items that exist in notifications.
+ * @returns List all items that exist in gdp pythagore affairs.
  */
-export async function getNotifications(
+export async function getGdpPythagoreAffairs(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<UsNotificationModel>[] }> {
+): Promise<{ status: number; data?: Partial<GdpPythagoreAffaireModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -32,7 +32,7 @@ export async function getNotifications(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/notifications?${concatenateQueryParameters(props)}`,
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/pythagore_affaires?${concatenateQueryParameters(props)}`,
     myInit
   )
     .then((res) => {
@@ -48,15 +48,15 @@ export async function getNotifications(
 }
 
 /**
- * Retrieve a notification by id
- * @param id of the notification
+ * Retrieve a gdp pythagore affair by id
+ * @param id id of the gdp pythagore affair
  * @param fields list of fields to retrieve.
- * @returns Promise containing the request status and the notification corresponding to the id
+ * @returns Promise containing the request status and the gdp pythagore affair corresponding to the id
  */
-export async function getNotification(
+export async function getGdpPythagoreAffair(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: UsNotificationModel }> {
+): Promise<{ status: number; data?: Partial<GdpPythagoreAffaireModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -72,7 +72,7 @@ export async function getNotification(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/notifications/${id}?fields=${fields}`,
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/pythagore_affaires/${id}?fields=${fields}`,
     myInit
   ).then((res) => {
     if (res.status === 200) {

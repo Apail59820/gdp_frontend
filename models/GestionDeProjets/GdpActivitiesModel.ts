@@ -1,5 +1,5 @@
-import { UsUserModel } from "../UserService/UsUserModel";
-import { GdpNotificationModel } from "./GdpNotificationModel";
+import { UsUserModel } from '../UserService/UsUserModel';
+import { GdpUsersNotificationModel } from './GdpUsersNotificationModel';
 
 export enum NotificationActionEnum {
   Create = 'create',
@@ -25,5 +25,5 @@ export type GdpActivitiesModel = {
   affairs_directus_users_id: number | null;
   projects_directus_users_clients_id: number | null;
   projects_directus_users_collaborators_id: number | null;
-  notifications_id: number[] | GdpNotificationModel[];
+  notifications_id: number[] | GdpUsersNotificationModel[];
 };

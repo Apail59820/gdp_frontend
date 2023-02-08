@@ -1,8 +1,8 @@
-import { UsUserModel } from "./UsUserModel";
+import { UsUserModel } from './UsUserModel';
 
 export type UsClientsInteractionsModel = {
   id: number;
-  type: string | null;
+  type: string;
   content: any | null;
   comment: string | null;
 
@@ -12,4 +12,4 @@ export type UsClientsInteractionsModel = {
   date_updated: Date | null;
 
   directus_users_id: number | UsUserModel;
-}
+};
