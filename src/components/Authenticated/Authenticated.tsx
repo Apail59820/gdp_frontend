@@ -18,7 +18,7 @@ const Authenticated = ({ children }: Props) => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      if (cookie.get('ds_access_token_catalog')) {
+      if (cookie.get('maia_gestion_projet_token')) {
         dispatch(setAuthState(true));
         return;
       }
