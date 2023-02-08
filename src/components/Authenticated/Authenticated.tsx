@@ -17,8 +17,8 @@ const Authenticated = ({ children }: Props) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (cookie.get("ds_access_token_catalog")) {
+    if (typeof window !== 'undefined') {
+      if (cookie.get('ds_access_token_catalog')) {
         dispatch(setAuthState(true));
         return;
       }
@@ -29,19 +29,19 @@ const Authenticated = ({ children }: Props) => {
             else {
               dispatch(setAuthState(false));
               const href = window.location.href;
-              router.push(publicRuntimeConfig.USER_SERVICE_URL + "/login?r=" + href, undefined, { shallow: true });
+              router.push(publicRuntimeConfig.USER_SERVICE_URL + '/login?r=' + href, undefined, { shallow: true });
             }
           },
           () => {
             dispatch(setAuthState(false));
             const href = window.location.href;
-            router.push(publicRuntimeConfig.USER_SERVICE_URL + "/login?r=" + href, undefined, { shallow: true });
+            router.push(publicRuntimeConfig.USER_SERVICE_URL + '/login?r=' + href, undefined, { shallow: true });
           }
         );
       } catch (e) {
         dispatch(setAuthState(false));
         const href = window.location.href;
-        router.push(publicRuntimeConfig.USER_SERVICE_URL + "/login?r=" + href, undefined, { shallow: true });
+        router.push(publicRuntimeConfig.USER_SERVICE_URL + '/login?r=' + href, undefined, { shallow: true });
       }
     }
   }, [dispatch, router]);
