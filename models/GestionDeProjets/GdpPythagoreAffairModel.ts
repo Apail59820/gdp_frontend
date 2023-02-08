@@ -1,5 +1,5 @@
 import { GdpPythagoreClientModel } from './GdpPythagoreClientModel';
-import { GdpAffairsPythagoreAffairesModel } from "./GdpAffairsPythagoreAffairesModel";
+import { GdpAffairsPythagoreAffairesModel } from './GdpAffairsPythagoreAffairesModel';
 
 export type GdpPythagoreAffaireModel = {
   numero_affaire: string;

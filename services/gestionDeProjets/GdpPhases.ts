@@ -1,22 +1,21 @@
-import { GdpAffairModel, CreateAffairModel, UpdateAffairModel } from '../models/GestionDeProjets/GdpAffairModel';
-import { QueryParameters } from '../models/DirectusModel';
-import concatenateQueryParameters from '../utils/queryParamsFormatter';
-import { retrieveToken } from './auth';
+import { QueryParameters } from '../../models/DirectusModel';
+import concatenateQueryParameters from '../../utils/queryParamsFormatter';
+import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
+import { GdpPhaseModel } from '../../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
-// const defaultFields = ['*', 'user_access.*', 'affairs_satisfaction.*', 'pythagore_ids.*'].join(',');
 const defaultFields = ['*'].join(',');
 
 /**
- * Retrieve affairs respecting the query parameters.
+ * Retrieve gdpAffairsPhases respecting the query parameters.
  * @param props Object containing query parameters.
- * @returns List all items that exist in affairs.
+ * @returns List all items that exist in gdpFileAffairsPhases.
  */
-export async function getAffairs(
+export async function getGdpAffairsPhases(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<GdpAffairModel>[] }> {
+): Promise<{ status: number; data?: Partial<GdpPhaseModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -32,32 +31,32 @@ export async function getAffairs(
     cache: 'default',
   };
 
-  return (
-    fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs?${concatenateQueryParameters(props)}`, myInit)
-      // return fetch(`  ${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/${concatenateQueryParameters(props)}`, myInit)
-      .then((res) => {
-        if (res.status == 200)
-          return res.json().then((data) => {
-            return { status: res.status, data: data.data };
-          });
-        else return { status: res.status };
-      })
-      .catch(() => {
-        return { status: 500 };
-      })
-  );
+  return fetch(
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases?${concatenateQueryParameters(props)}`,
+    myInit
+  )
+    .then((res) => {
+      if (res.status == 200)
+        return res.json().then((data) => {
+          return { status: res.status, data: data.data };
+        });
+      else return { status: res.status };
+    })
+    .catch(() => {
+      return { status: 500 };
+    });
 }
 
 /**
- * Retrieve an Affair by id
- * @param id id of the affair
+ * Retrieve a phase by id
+ * @param id id of the gdpAffairPhase
  * @param fields list of fields to retrieve.
- * @returns Promise containing the request status and the affair corresponding to the id
+ * @returns Promise containing the request status and the phase corresponding to the id
  */
-export async function getAffair(
+export async function getGdpAffairPhase(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: GdpAffairModel }> {
+): Promise<{ status: number; data?: Partial<GdpPhaseModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -72,25 +71,29 @@ export async function getAffair(
     cache: 'default',
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}?fields=${fields}`, myInit).then(
-    (res) => {
-      if (res.status === 200) {
-        return res.json().then((data) => {
-          return { status: res.status, data: data.data };
-        });
-      } else {
-        return { status: res.status };
-      }
+  return fetch(
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases/${id}?fields=${fields}`,
+    myInit
+  ).then((res) => {
+    if (res.status === 200) {
+      return res.json().then((data) => {
+        return { status: res.status, data: data.data };
+      });
+    } else {
+      return { status: res.status };
     }
-  );
+  });
 }
 
+type createFieldsToOmit = 'id' | 'user_created' | 'date_created' | 'user_updated' | 'date_updated' | 'activities_id';
 /**
- * Create an affair.
- * @param affair Object containing affair properties.
- * @returns Status and data containing affair properties.
+ * Create a gdpAffairPhase.
+ * @param project Object containing gdpAffairPhase properties.
+ * @returns Status and data containing gdpAffairPhase properties.
  */
-export async function createAffair(affair: CreateAffairModel): Promise<{ status: number; data?: GdpAffairModel }> {
+export async function createGdpAffairPhase(
+  project: Omit<GdpPhaseModel, createFieldsToOmit>
+): Promise<{ status: number; data?: Partial<GdpPhaseModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -103,10 +106,10 @@ export async function createAffair(affair: CreateAffairModel): Promise<{ status:
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(affair),
+    body: JSON.stringify(project),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases`, myInit)
     .then((response) => {
       if (response.status === 200 || response.status === 204) {
         return response
@@ -130,16 +133,24 @@ export async function createAffair(affair: CreateAffairModel): Promise<{ status:
     });
 }
 
+type updateFieldsToOmit =
+  | 'id'
+  | 'user_created'
+  | 'date_created'
+  | 'user_updated'
+  | 'date_updated'
+  | 'affairs_id'
+  | 'activities_id';
 /**
- * Update affair properties.
- * @param id Affair ID.
+ * Update gdpAffairPhase properties.
+ * @param id gdpAffairPhase ID.
  * @param data Properties to update.
- * @returns Status and updated affair properties.
+ * @returns Status and updated gdpAffairPhase properties.
  */
-export async function updateAffair(
+export async function updateGdpAffairPhase(
   id: string,
-  data: UpdateAffairModel
-): Promise<{ status: number; data?: GdpAffairModel; error?: string }> {
+  data: Partial<Omit<GdpPhaseModel, updateFieldsToOmit>>
+): Promise<{ status: number; data?: Partial<GdpPhaseModel>; error?: string }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -155,12 +166,12 @@ export async function updateAffair(
     body: JSON.stringify(data),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs/${id}`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases/${id}`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response
           .json()
-          .then((responseData: { data: GdpAffairModel }) => {
+          .then((responseData: { data: Partial<GdpPhaseModel> }) => {
             return { status: response.status, data: responseData.data };
           })
           .catch((error) => {
@@ -189,11 +200,11 @@ export async function updateAffair(
 }
 
 /**
- * Delete one or more affairs.
- * @param affairsArray Array of one or more affairs identifiers in the form of a number.
+ * Delete one or more gdpAffairPhase.
+ * @param affairsPhasesIds Array of gdpAffairPhase identifiers.
  * @returns Status.
  */
-export async function deleteAffairs(affairsArray: Array<number>): Promise<{ status: number }> {
+export async function deleteAffairsPhases(affairsPhasesIds: number[]): Promise<{ status: number }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -206,10 +217,10 @@ export async function deleteAffairs(affairsArray: Array<number>): Promise<{ stat
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(affairsArray),
+    body: JSON.stringify(affairsPhasesIds),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/affairs_phases`, myInit)
     .then((response) => {
       return { status: response.status };
     })

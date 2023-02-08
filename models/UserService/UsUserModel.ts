@@ -1,12 +1,12 @@
-import { UsActivitiesModel } from "./UsActivitiesModel";
-import { UsClientsInteractionsModel } from "./UsClientsInteractionsModel";
-import { UsClientsCompanyEntitiesUsersModel } from "./UsClientsCompanyEntitiesUsersModel";
-import { UsCompanyEntitiesUsersModel } from "./UsCompanyEntitiesUsersModel";
-import { UsClientsCompanyInteractionsModel } from "./UsClientsCompanyInteractionsModel";
+import { UsActivitiesModel } from './UsActivitiesModel';
+import { UsClientsInteractionsModel } from './UsClientsInteractionsModel';
+import { UsClientsCompanyEntitiesUsersModel } from './UsClientsCompanyEntitiesUsersModel';
+import { UsCompanyEntitiesUsersModel } from './UsCompanyEntitiesUsersModel';
 
 export type UsUserModel = {
-  id: string
+  id: string;
   email: string;
+  password: string;
   first_name: string | null;
   last_name: string | null;
   title: string | null;
@@ -25,11 +25,9 @@ export type UsUserModel = {
 
   activities_id: number[] | UsActivitiesModel[];
   clients_interactions_id: number[] | UsClientsInteractionsModel[];
-  clients_company_interactions_id: number | UsClientsCompanyInteractionsModel[];
   clients_company_entities: number[] | UsClientsCompanyEntitiesUsersModel[];
   company_entities: number[] | UsCompanyEntitiesUsersModel[];
 
   web_link: string | null;
   company: string | null;
 };
-

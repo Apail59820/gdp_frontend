@@ -1,4 +1,4 @@
-import { UsUserModel } from "./UsUserModel";
+import { UsUserModel } from './UsUserModel';
 
 export enum NotificationActionEnum {
   Create = 'create',

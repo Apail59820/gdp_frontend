@@ -1,9 +1,9 @@
-import { UsUserModel } from "./UsUserModel";
-import { UsCompanyEntityModel } from "./UsCompanyEntityModel";
+import { UsUserModel } from './UsUserModel';
+import { UsCompanyEntityModel } from './UsCompanyEntityModel';
 
 export type UsClientsCompanyInteractionsModel = {
   id: number;
-  type: string | null;
+  type: string;
   content: any | null;
   comment: string | null;
 
@@ -13,4 +13,4 @@ export type UsClientsCompanyInteractionsModel = {
   date_updated: Date | null;
 
   entity_id: number | UsCompanyEntityModel;
-}
+};

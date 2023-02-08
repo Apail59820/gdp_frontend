@@ -21,6 +21,6 @@ export type GdpAffairModel = {
   pythagore_ids: number[] | GdpAffairsPythagoreAffairesModel[];
   affairs_satisfaction: string[] | number[] | GdpSatisfactionModel[];
   affairs_directus_users_ids: number[] | GdpAffairsUsersModel[];
-  files: string | GdpFilesModel[];
+  files: string[] | GdpFilesModel[];
   activities_id: number[] | GdpActivitiesModel[];
 };

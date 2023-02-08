@@ -1,7 +1,7 @@
-import { UsUserModel } from "./UsUserModel";
-import { UsActivitiesModel } from "./UsActivitiesModel";
-import { UsFilesModel } from "./UsFilesModel";
-import { UsCompanyEntitiesUsersModel } from "./UsCompanyEntitiesUsersModel";
+import { UsUserModel } from './UsUserModel';
+import { UsActivitiesModel } from './UsActivitiesModel';
+import { UsFilesModel } from './UsFilesModel';
+import { UsCompanyEntitiesUsersModel } from './UsCompanyEntitiesUsersModel';
 
 export type UsCompanyEntityModel = {
   id: number;
@@ -22,4 +22,4 @@ export type UsCompanyEntityModel = {
   image: string | UsFilesModel | null;
   users: number[] | UsCompanyEntitiesUsersModel[];
   activities_id: number[] | UsActivitiesModel[];
-}
+};

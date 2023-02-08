@@ -1,8 +1,8 @@
 import { GdpAffairModel } from './GdpAffairModel';
 import { GdpPhaseModel } from './GdpPhaseModel';
 import { UsUserModel } from '../UserService/UsUserModel';
-import { GdpProjectModel } from "./GdpProjectModel";
-import { GdpActivitiesModel } from "./GdpActivitiesModel";
+import { GdpProjectModel } from './GdpProjectModel';
+import { GdpActivitiesModel } from './GdpActivitiesModel';
 
 export enum GdpFilesStatusEnum {
   VISIBLE = 'visible',

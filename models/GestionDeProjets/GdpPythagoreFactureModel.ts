@@ -1,4 +1,4 @@
-import { GdpPythagoreAffaireModel } from "./GdpPythagoreAffairModel";
+import { GdpPythagoreAffaireModel } from './GdpPythagoreAffairModel';
 import { GdpPythagoreClientModel } from './GdpPythagoreClientModel';
 import { GdpEmailsLogsModel } from './GdpEmailsLogsModel';
 
@@ -18,7 +18,7 @@ export type GdpPythagoreFactureModel = {
   etatreglt_facture: 'NonReglee' | 'Reglee' | 'RegltPartiel' | null;
   nom_fichierpdf_facture: string | null;
 
-  emails_logs?: GdpEmailsLogsModel[];
+  emails_logs?: number[] | GdpEmailsLogsModel[];
   code_client: string | GdpPythagoreClientModel | null;
   num_affaire: string | GdpPythagoreAffaireModel | null;
 };

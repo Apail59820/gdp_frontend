@@ -1,7 +1,7 @@
 import { UsUserModel } from '../UserService/UsUserModel';
 import { GdpAffairModel } from './GdpAffairModel';
 import { GdpPhaseModel } from './GdpPhaseModel';
-import { GdpActivitiesModel } from "./GdpActivitiesModel";
+import { GdpActivitiesModel } from './GdpActivitiesModel';
 
 export type GdpSatisfactionModel = {
   id: number;

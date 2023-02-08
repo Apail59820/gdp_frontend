@@ -5,11 +5,8 @@ import { GdpProjectModel } from '../../../../models/GestionDeProjets/GdpProjectM
 import defaultImage from '../../../../public/default-affair-image.png';
 import { ManageItemButton } from '@projex/ui';
 
-type Props = {
-  project: Partial<GdpProjectModel>;
-};
 export type MainMessageProps = {
-  project: GdpProjectModel;
+  project: Partial<GdpProjectModel>;
   onManageThumbnailClick?: React.MouseEventHandler<HTMLButtonElement>;
   showImage?: boolean;
 };

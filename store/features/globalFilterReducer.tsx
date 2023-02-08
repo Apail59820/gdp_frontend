@@ -42,8 +42,6 @@ const globalFilterSlice = createSlice({
   },
 });
 
-//Action
-
 //Reducer
 export const { setGlobalFilters } = globalFilterSlice.actions;
 

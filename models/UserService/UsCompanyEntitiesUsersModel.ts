@@ -1,6 +1,6 @@
-import { UsUserModel } from "./UsUserModel";
-import { UsActivitiesModel } from "./UsActivitiesModel";
-import { UsCompanyEntityModel } from "./UsCompanyEntityModel";
+import { UsUserModel } from './UsUserModel';
+import { UsActivitiesModel } from './UsActivitiesModel';
+import { UsCompanyEntityModel } from './UsCompanyEntityModel';
 
 export type UsCompanyEntitiesUsersModel = {
   id: number;
@@ -10,7 +10,6 @@ export type UsCompanyEntitiesUsersModel = {
   start_date: Date | null;
   end_date: Date | null;
 
-
   user_created: string | UsUserModel;
   date_created: Date;
   user_updated: string | UsUserModel | null;
@@ -18,5 +17,5 @@ export type UsCompanyEntitiesUsersModel = {
 
   company_entities_id: number | UsCompanyEntityModel;
   directus_users_id: number | UsUserModel;
-  activities_id: number[] | UsActivitiesModel[]
-}
+  activities_id: number[] | UsActivitiesModel[];
+};
