@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React from 'react';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
+<<<<<<< HEAD
 import { GdpProjectModel } from '../../models/GestionDeProjets/GdpProjectModel';
 import { ManageItemCard, QuickActionCard } from '@projex/ui';
 import Section from '../components/Section/Section';
+=======
+import { ProjectModel } from '../../models/ProjectModel';
+import { CompanyEnum } from '../../models/CompanyEnum';
+import { QuickActionCard } from '@projex/ui';
+>>>>>>> 902668ca745cf2c268ab6accd4974d4f56936673
 import Grid from '../components/Grid/Grid';
-import ProjectCard from '../components/ProjectCard/ProjectCard';
+import QuickAccessWidget from '../components/QuickAccessWidget/QuickAccessWidget';
+import ProjectsWidget from '../components/ProjectsWidget/ProjectsWidget';
 
 const PROFILE_PROGRESS_PERCENTAGE = 65; // TODO
 
@@ -45,36 +51,9 @@ const CURRENT_USER_PROJECTS: Partial<GdpProjectModel>[] = [
 ];
 
 const HomeDashboard = () => {
-  const [displayQuickAccessSection, setDisplayQuickAccessSection] = useState<boolean>(true);
-
   return (
     <div className={styles.homeDashboard}>
-      <Section
-        title="Accès rapide"
-        button={{
-          label: `${displayQuickAccessSection ? 'Masquer' : 'Afficher'} l'accès rapide`,
-          onClick: () => setDisplayQuickAccessSection((prev) => !prev),
-        }}
-      >
-        {displayQuickAccessSection ? (
-          <Grid>
-            <QuickActionCard
-              title="Créez un nouveau projet"
-              button={{ label: 'Ajouter un projet', href: '/', icon: <PlusOutlined /> }} // TODO Handle link href
-            >
-              Créer un nouveau projet dés maintenant
-            </QuickActionCard>
-            <QuickActionCard
-              title="Complétez votre profil"
-              progress={PROFILE_PROGRESS_PERCENTAGE}
-              button={{ label: 'Ajouter des informations', href: '/', icon: <PlusOutlined /> }} // TODO Handle link href
-            >
-              Remplissez votre profil pour profiter pleinement de toutes les fonctionnalités
-            </QuickActionCard>
-          </Grid>
-        ) : null}
-      </Section>
-      <Section title="Mes projets" link={{ label: 'Voir tous les projets', href: '/projects' }}>
+      <QuickAccessWidget>
         <Grid>
           {/*{CURRENT_USER_PROJECTS.map((project: GdpProjectModel) => (*/}
           {/*  <Link href={`/projects/${project.id}`}>*/}
@@ -83,8 +62,29 @@ const HomeDashboard = () => {
           {/*))}*/}
           {/* TODO Handle onClick */}
           <ManageItemCard label="Nouveau projet" onClick={() => console.log('open modal ?')} />
+          <QuickActionCard
+            title="Créez un nouveau projet"
+            button={{ label: 'Ajouter un projet', onClick: () => console.log('open modal ?'), icon: <PlusOutlined /> }}
+          >
+            Créer un nouveau projet dés maintenant
+          </QuickActionCard>
+          <QuickActionCard
+            title="Complétez votre profil"
+            progress={PROFILE_PROGRESS_PERCENTAGE}
+            button={{
+              label: 'Ajouter des informations',
+              onClick: () => console.log('open modal ?'),
+              icon: <PlusOutlined />,
+            }}
+          >
+            Remplissez votre profil pour profiter pleinement de toutes les fonctionnalités
+          </QuickActionCard>
         </Grid>
-      </Section>
+      </QuickAccessWidget>
+      <ProjectsWidget
+        projects={CURRENT_USER_PROJECTS || []}
+        handleNewProjectClick={() => console.log('open modal ?')}
+      />
     </div>
   );
 };

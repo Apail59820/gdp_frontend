@@ -27,32 +27,3 @@
       }
     }
 }
-
-.userDetailsContainer {
-  display: flex;
-  flex-direction: column;
-  gap: .25rem;
-  overflow: hidden;
-
-  .title {
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: $primary;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  .coordinates {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    line-height: 120%;
-
-    li {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-  }
-}

@@ -87,7 +87,7 @@ const UPDATES: Update[] = [
 const HomeUpdates = () => {
   return (
     <div className={styles.homeUpdates}>
-      {UPDATES.map((update) => (
+      {UPDATES.map((update: Update) => (
         <section key={update.id} className={styles.update}>
           <h3 className={styles.title}>
             {update.date} - {update.title}

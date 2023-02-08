@@ -8,7 +8,13 @@ type Props = {
 
 const KebabMenuForCards = ({ onClick }: Props) => {
   return (
-    <button className={styles.kebabMenuForCards} onClick={onClick}>
+    <button
+      className={styles.kebabMenuForCards}
+      onClick={(e) => {
+        e.preventDefault();
+        onClick(e);
+      }}
+    >
       <img src={kebabMenu.src} alt="Kebab menu icon" />
     </button>
   );

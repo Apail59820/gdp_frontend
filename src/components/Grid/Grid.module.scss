@@ -4,7 +4,16 @@
   @include gridTemplate;
 
   &.narrow {
-    display: grid;
-    // To define later ?
+    @include grid-property(grid-template-columns, repeat(2, 1fr));
+
+    @include media-breakpoint-down(xxxl) {
+      @include grid-property(grid-template-columns, repeat(2, 1fr));
+    }
+    @include media-breakpoint-down(lg) {
+      @include grid-property(grid-template-columns, repeat(1, 1fr));
+    }
+    @include media-breakpoint-down(sm) {
+      @include grid-property(grid-template-columns, repeat(1, 1fr));
+    }
   }
 }
