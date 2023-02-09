@@ -1,5 +1,4 @@
 export type QueryParameters = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filter?: any;
   aggregate?: any;
   groupBy?: any;
@@ -12,10 +11,4 @@ export type QueryParameters = {
   deep?: string;
   meta?: string;
   export?: string;
-};
-
-export type RequestResponse<T> = {
-  status: number;
-  data?: T;
-  message?: string;
 };
