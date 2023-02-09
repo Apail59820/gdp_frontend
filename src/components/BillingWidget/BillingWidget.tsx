@@ -4,7 +4,7 @@ import Grid from '../Grid/Grid';
 import InvoiceCard from '../InvoiceCard/InvoiceCard';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 import type { PythagoreFactureModel } from '../../../models/PythagoreFactureModel';
-import Section from '../Section/Section';
+import { Section } from '@projex/ui';
 import { useRouter } from 'next/router';
 
 type Props = {
