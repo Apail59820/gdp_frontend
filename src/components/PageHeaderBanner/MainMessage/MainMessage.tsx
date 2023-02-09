@@ -1,12 +1,12 @@
 import React from 'react';
 import styles from './MainMessage.module.scss';
 import { capitalize } from '../../../../utils/capitalize';
-import { ProjectModel } from '../../../../models/ProjectModel';
+import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';
 import defaultImage from '../../../../public/default-affair-image.png';
 import { ManageItemButton } from '@projex/ui';
 
 export type MainMessageProps = {
-  project: ProjectModel;
+  project: Partial<GdpProjectsModel>;
   onManageThumbnailClick?: React.MouseEventHandler<HTMLButtonElement>;
   showImage?: boolean;
 };
@@ -16,7 +16,7 @@ const MainMessage = ({ project, showImage = true, onManageThumbnailClick }: Main
     <div className={styles.mainMessage}>
       {showImage && onManageThumbnailClick ? (
         <div className={styles.stickerContainer}>
-          {project.image ? (
+          {project ? (
             <div className={styles.imageContainer}>
               {/* // TODO Revoir image */}
               <img className={styles.image} src={defaultImage.src} alt="Image illustrant le projet" />

@@ -1,13 +1,13 @@
 import React from 'react';
 import styles from './AffairCard.module.scss';
-import { AffairModel } from '../../../models/AffairModel';
+import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { ProgressBar, ShadowCard } from '@projex/ui';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 import { capitalize } from '../../../utils/capitalize';
 
 type Props = {
-  affair: AffairModel;
+  affair: GdpAffairModel;
   onKebabMenuClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 

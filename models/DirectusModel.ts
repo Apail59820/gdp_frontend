@@ -1,5 +1,4 @@
 export type QueryParameters = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   filter?: any;
   aggregate?: any;
   groupBy?: any;

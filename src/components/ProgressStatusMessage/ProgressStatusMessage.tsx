@@ -1,28 +1,28 @@
 import React from 'react';
-import { PhaseStatusEnum } from '../../../models/PhaseModel';
+import { GdpPhaseStatusEnum } from '../../../models/GestionDeProjets/GdpPhaseModel';
 import styles from './ProgressStatusMessage.module.scss';
 import completedIcon from '../../../public/completed.svg';
 import ongoingIcon from '../../../public/ongoing.svg';
 import pendingIcon from '../../../public/pending.svg';
 
 type Props = {
-  status: PhaseStatusEnum;
+  status: GdpPhaseStatusEnum;
 };
 
 const ProgressStatusMessage = ({ status }: Props) => {
   const getInformationsByStatus = (): { text: string; icon: string } => {
     switch (status) {
-      case PhaseStatusEnum.COMPLETED:
+      case GdpPhaseStatusEnum.COMPLETED:
         return {
           text: 'Terminée',
           icon: completedIcon.src,
         };
-      case PhaseStatusEnum.ONGOING:
+      case GdpPhaseStatusEnum.ONGOING:
         return {
           text: 'En cours',
           icon: ongoingIcon.src,
         };
-      case PhaseStatusEnum.PENDING:
+      case GdpPhaseStatusEnum.PENDING:
         return {
           text: 'En attente',
           icon: pendingIcon.src,
