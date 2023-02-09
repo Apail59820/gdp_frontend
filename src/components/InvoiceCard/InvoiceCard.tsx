@@ -3,7 +3,6 @@ import styles from './InvoiceCard.module.scss';
 import { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
 
 type Props = {
-  billing: GdpPythagoreFactureModel;
   invoice: GdpPythagoreFactureModel;
 };
 

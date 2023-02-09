@@ -6,146 +6,10 @@ import DisplayOptionsController from '../../src/components/DisplayOptionsControl
 import Grid from '../../src/components/Grid/Grid';
 import ProjectCard from '../../src/components/ProjectCard/ProjectCard';
 import ProjectsList from '../../src/ProjectsList/ProjectsList';
-import { ProjectModel } from '../../models/ProjectModel';
-import { CompanyEnum } from '../../models/CompanyEnum';
+import { GdpProjectsModel } from '../../models/GestionDeProjets/GdpProjectsModel';
+import { CompanyEnum } from '../../models/UsModels';
 
-const PROJECTS: ProjectModel[] = [
-  {
-    id: '1',
-    name: 'Nom du projet',
-    client_company_name: 'Nom du client',
-    client_info: undefined,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
-    image: 'ok',
-    status: undefined,
-    project_type: undefined,
-    company_entity: CompanyEnum.DIAGOBAT,
-    affairs: undefined,
-  },
-  {
-    id: '2',
-    name: 'Nom du projet',
-    client_company_name: 'Nom du client',
-    client_info: undefined,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
-    image: 'ok',
-    status: undefined,
-    project_type: undefined,
-    company_entity: CompanyEnum.AMEXIA,
-    affairs: undefined,
-  },
-  {
-    id: '3',
-    name: 'Nom du projet',
-    client_company_name: 'Nom du client',
-    client_info: undefined,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
-    image: 'ok',
-    status: undefined,
-    project_type: undefined,
-    company_entity: CompanyEnum.GROUPE_PROJEX,
-    affairs: undefined,
-  },
-  {
-    id: '4',
-    name: 'Nom du projet',
-    client_company_name: 'Nom du client',
-    client_info: undefined,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
-    image: 'ok',
-    status: undefined,
-    project_type: undefined,
-    company_entity: CompanyEnum.IMPERIUM,
-    affairs: undefined,
-  },
-  {
-    id: '5',
-    name: 'Nom du projet',
-    client_company_name: 'Nom du client',
-    client_info: undefined,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
-    image: 'ok',
-    status: undefined,
-    project_type: undefined,
-    company_entity: CompanyEnum.PROBIM,
-    affairs: undefined,
-  },
-  {
-    id: '6',
-    name: 'Nom du projet',
-    client_company_name: 'Nom du client',
-    client_info: undefined,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
-    image: 'ok',
-    status: undefined,
-    project_type: undefined,
-    company_entity: CompanyEnum.PROJEX,
-    affairs: undefined,
-  },
-  {
-    id: '7',
-    name: 'Nom du projet',
-    client_company_name: 'Nom du client',
-    client_info: undefined,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
-    image: 'ok',
-    status: undefined,
-    project_type: undefined,
-    company_entity: CompanyEnum.DIAGOBAT,
-    affairs: undefined,
-  },
-  {
-    id: '8',
-    name: 'Nom du projet',
-    client_company_name: 'Nom du client',
-    client_info: undefined,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
-    image: 'ok',
-    status: undefined,
-    project_type: undefined,
-    company_entity: CompanyEnum.AMEXIA,
-    affairs: undefined,
-  },
-  {
-    id: '9',
-    name: 'Nom du projet',
-    client_company_name: 'Nom du client',
-    client_info: undefined,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
-    image: 'ok',
-    status: undefined,
-    project_type: undefined,
-    company_entity: CompanyEnum.GROUPE_PROJEX,
-    affairs: undefined,
-  },
-];
+const PROJECTS: GdpProjectsModel[] = [];
 
 const DATA: DataCategory[] = [
   {
@@ -217,7 +81,7 @@ const Projects = () => {
 
   const displayAsGrid = (): React.ReactNode => (
     <Grid>
-      {PROJECTS.map((project: ProjectModel) => (
+      {PROJECTS.map((project: GdpProjectsModel) => (
         <ProjectCard key={project.id} project={project} projectManagerName={'Manager'} />
       ))}
     </Grid>

@@ -29,7 +29,7 @@ const ProjectCard = ({ project, projectManagerName }: Props) => {
             </span>
           ) : null}
           <div className={styles.logoContainer}>
-            <img className={styles.logo} src={getImagesByCompany(company_entity).logo} alt="Logo" />
+            <img className={styles.logo} src={getImagesByCompany('company_entity').logo} alt="Logo" />
           </div>
         </section>
       </div>

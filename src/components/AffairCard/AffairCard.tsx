@@ -12,7 +12,8 @@ type Props = {
 };
 
 const AffairCard = ({ affair, onKebabMenuClick }: Props) => {
-  const { name, internal_company } = affair;
+  const { name } = affair;
+  // const { name, internal_company } = affair;
   // TODO
   const STEPS = [{ status: 'DONE' }, { status: 'DONE' }, { status: 'IN_PROGRESS' }];
   const STEPS_COUNT = STEPS.length;
@@ -26,7 +27,7 @@ const AffairCard = ({ affair, onKebabMenuClick }: Props) => {
           <h4 className={styles.title}>{name ? capitalize(name) : 'Affaire'}</h4>
           <span>Chef de projet</span>
           <div className={styles.imageContainer}>
-            <img src={getImagesByCompany(internal_company).logo} alt={`Logo de l'entité ${internal_company}`} />
+            {/*<img src={getImagesByCompany(internal_company).logo} alt={`Logo de l'entité ${internal_company}`} />*/}
           </div>
         </div>
         <div className={styles.footer}>

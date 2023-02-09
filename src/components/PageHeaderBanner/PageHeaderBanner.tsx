@@ -5,7 +5,8 @@ import MainMessage from './MainMessage/MainMessage';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 
 type Props = {
-  data: string | Partial<GdpProjectsModel>;
+  data: any;
+  // data: string | Partial<GdpProjectsModel>;
 };
 
 const PageHeaderBanner = ({ data }: Props) => {
@@ -39,11 +40,11 @@ const PageHeaderBanner = ({ data }: Props) => {
       ) : (
         <>
           <MainMessage project={data} onManageThumbnailClick={() => console.log('open modal ?')} />
-          <img
-            className={styles.logo}
-            src={getImagesByCompany(data.company_entity).logo}
-            alt={`Logo de ${data.company_entity}`}
-          />
+          {/*<img*/}
+          {/*  className={styles.logo}*/}
+          {/*  src={getImagesByCompany(data.company_entity).logo}*/}
+          {/*  alt={`Logo de ${data.company_entity}`}*/}
+          {/*/>*/}
         </>
       )}
     </div>

@@ -1,13 +1,13 @@
 import React from 'react';
-import { AssetModel } from '../../../models/AssetModel';
 import fileIcon from '../../../public/file.svg';
 import styles from './PreviewFilesList.module.scss';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
 import { ShadowCard } from '@projex/ui';
+import { GdpFilesModel } from '../../../models/GestionDeProjets/GdpFilesModel';
 
 export type PreviewFilesListProps = {
-  files: AssetModel[];
+  files: GdpFilesModel[];
   max?: number;
   allFilesPageHref?: string;
 };
@@ -47,7 +47,7 @@ const PreviewFilesList = ({ files, max = 4, allFilesPageHref }: PreviewFilesList
               )}
               {uploaded_on && (
                 <span className={styles.uploadDate}>
-                  {DateTime.fromISO(uploaded_on).setLocale('fr').toLocaleString(DateTime.DATE_FULL)}
+                  {DateTime.fromISO('uploaded_on').setLocale('fr').toLocaleString(DateTime.DATE_FULL)}
                 </span>
               )}
             </li>

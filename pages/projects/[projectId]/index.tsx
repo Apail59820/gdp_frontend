@@ -1,12 +1,6 @@
 import React from 'react';
 import styles from '../../../styles/Project.module.scss';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { CompanyEnum } from '../../../models/CompanyEnum';
-import { ProjectModel } from '../../../models/ProjectModel';
-import { AffairModel } from '../../../models/AffairModel';
-import { UserModel } from '../../../models/UserModels';
-import { PythagoreFactureModel } from '../../../models/PythagoreFactureModel';
-import { AssetModel } from '../../../models/AssetModel';
 import { Breadcrumb, QuickActionCard } from '@projex/ui';
 import type { Activity } from '@projex/ui/dist/components/molecules/RecentActivities/RecentActivities';
 import Grid from '../../../src/components/Grid/Grid';
@@ -22,7 +16,7 @@ import StatisticsWidget from '../../../src/components/StatisticsWidget/Statistic
 import type { Statistic } from '../../../src/components/StatisticsCard/StatisticsCard';
 
 // TODO
-const PROJECT_BY_ID: ProjectModel = {
+const PROJECT_BY_ID: any = {
   id: '1',
   name: 'Nom du projet',
   client_company_name: 'Nom du client',
@@ -34,147 +28,16 @@ const PROJECT_BY_ID: ProjectModel = {
   image: 'ok',
   status: undefined,
   project_type: undefined,
-  company_entity: CompanyEnum.DIAGOBAT,
+  company_entity: 'oui',
   affairs: undefined,
 };
 
 const PROJECT_PROGRESS_PERCENTAGE: number = 65;
 
-const PROJECT_AFFAIRS: AffairModel[] = [
-  {
-    id: '1',
-    user_created: undefined,
-    date_created: undefined,
-    user_updated: undefined,
-    date_updated: undefined,
-    name: "Nom de l'affaire",
-    client_company_name: undefined,
-    client_info: undefined,
-    internal_company: CompanyEnum.DIAGOBAT,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
-    image: undefined,
-    pythagore_ids: undefined,
-    status: undefined,
-    user_access: undefined,
-    affairs_satisfaction: undefined,
-  },
-  {
-    id: '2',
-    user_created: undefined,
-    date_created: undefined,
-    user_updated: undefined,
-    date_updated: undefined,
-    name: "Nom de l'affaire",
-    client_company_name: undefined,
-    client_info: undefined,
-    internal_company: CompanyEnum.DIAGOBAT,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
-    image: undefined,
-    pythagore_ids: undefined,
-    status: undefined,
-    user_access: undefined,
-    affairs_satisfaction: undefined,
-  },
-];
+const PROJECT_AFFAIRS: any[] = [];
 
-const CLIENT_TEAM: UserModel[] = [
-  {
-    id: '1',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    number: '1',
-    email: 'email',
-    role: 'Développeur',
-    company: CompanyEnum.AMEXIA,
-  },
-  {
-    id: '2',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    number: '2',
-    email: 'email',
-  },
-  {
-    id: '3',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    number: '3',
-    email: 'email',
-  },
-  {
-    id: '4',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    number: '4',
-    email: 'email',
-  },
-  {
-    id: '5',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    number: '5',
-    email: 'email',
-  },
-  {
-    id: '6',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    number: '6',
-    email: 'email',
-  },
-];
-const PROJECT_TEAM: UserModel[] = [
-  {
-    id: '1',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    number: '1',
-    email: 'email',
-    role: 'Développeur',
-    company: CompanyEnum.AMEXIA,
-  },
-  {
-    id: '2',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    number: '2',
-    email: 'email',
-  },
-  {
-    id: '3',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    number: '3',
-    email: 'email',
-  },
-  {
-    id: '4',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    number: '4',
-    email: 'email',
-  },
-  {
-    id: '5',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    number: '5',
-    email: 'email',
-  },
-  {
-    id: '6',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    number: '6',
-    email: 'email',
-  },
-];
+const CLIENT_TEAM: any[] = [];
+const PROJECT_TEAM: any[] = [];
 
 const ACTIVITIES: Activity[] = [
   {
@@ -193,65 +56,9 @@ const ACTIVITIES: Activity[] = [
     author: 'Olivier Le Baron',
   },
 ];
-const INVOICES: PythagoreFactureModel[] = [
-  {
-    num_facture: '2021-11-011',
-    etatreglt_facture: 'Reglee',
-    statut_facture: 'Echue',
-    date_echeance_facture: '2023-01-29',
-  },
-  {
-    num_facture: '2021-11-012',
-    etatreglt_facture: 'NonReglee',
-    statut_facture: 'NonEchue',
-    date_echeance_facture: new Date().toDateString(),
-  },
-  {
-    num_facture: '2021-11-013',
-    etatreglt_facture: 'NonReglee',
-    statut_facture: 'Echue',
-    date_echeance_facture: '2023-01-29',
-  },
-];
+const INVOICES: any[] = [];
 
-const FILES: AssetModel[] = [
-  {
-    id: '1',
-    title: 'Titre 1',
-    type: 'png',
-    uploaded_on: '2023-01-31',
-  },
-  {
-    id: '1',
-    title: 'Titre 2',
-    type: 'pdf',
-    uploaded_on: '2022-02-28',
-  },
-  {
-    id: '1',
-    title: 'Titre 3',
-    type: 'jpg',
-    uploaded_on: '2022-07-21',
-  },
-  {
-    id: '1',
-    title: 'Titre 1',
-    type: 'png',
-    uploaded_on: '2023-01-31',
-  },
-  {
-    id: '1',
-    title: 'Titre 2',
-    type: 'pdf',
-    uploaded_on: '2022-02-28',
-  },
-  {
-    id: '1',
-    title: 'Titre 3',
-    type: 'jpg',
-    uploaded_on: '2022-07-21',
-  },
-];
+const FILES: any[] = [];
 const STATISTICS: Statistic[] = [
   { label: 'Label 1 ', percentage: 65 },
   { label: 'Label 2', percentage: 65 },

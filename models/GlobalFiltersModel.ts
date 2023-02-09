@@ -1,4 +1,4 @@
-import { QueryParameters } from "./DirectusModel";
+import { QueryParameters } from './DirectusModel';
 
 export type GlobalFiltersModel = {
   projects: {

@@ -1,25 +1,25 @@
 import React from 'react';
 import styles from '../../styles/Team.module.scss';
 import { Breadcrumb } from '@projex/ui';
-import { AffairModel } from '../../models/AffairModel';
-import { ProjectModel } from '../../models/ProjectModel';
-import { UserModel } from '../../models/UserModels';
 import ClientTeamWidget from '../components/ClientTeamWidget/ClientTeamWidget';
 import CollaboratorTeamWidget from '../components/CollaboratorTeamWidget/CollaboratorTeamWidget';
 import Grid from '../components/Grid/Grid';
 import PageHeaderBanner from '../components/PageHeaderBanner/PageHeaderBanner';
 import UsersWidget from '../components/UsersWidget/UsersWidget';
+import { GdpProjectsModel } from '../../models/GestionDeProjets/GdpProjectsModel';
+import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
+import { UsUserModel } from '../../models/UserService/UsUserModel';
 
 type Props = {
-  project: ProjectModel;
-  affair?: AffairModel;
-  clientTeam: UserModel[];
-  collaboratorTeam: UserModel[];
+  project: GdpProjectsModel;
+  affair?: GdpAffairModel;
+  clientTeam: UsUserModel[];
+  collaboratorTeam: UsUserModel[];
 };
 
 const TeamPage = ({ project, affair, clientTeam, collaboratorTeam }: Props) => {
   // TODO
-  const MANAGERS: UserModel[] = [...collaboratorTeam].slice(0, 1);
+  const MANAGERS: UsUserModel[] = [...collaboratorTeam].slice(0, 1);
 
   return (
     <div className="page">
@@ -39,7 +39,7 @@ const TeamPage = ({ project, affair, clientTeam, collaboratorTeam }: Props) => {
             />
             <CollaboratorTeamWidget
               users={collaboratorTeam || []}
-              companyEntity={project.company_entity!}
+              companyEntity={project.company_entity! as any}
               onAddCollaboratorClick={() => console.log('open modal ?')}
             />
           </Grid>

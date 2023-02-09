@@ -3,14 +3,14 @@ import styles from './TeamCard.module.scss';
 import { ShadowCard } from '@projex/ui';
 import Link from 'next/link';
 import defaultImage from '../../../public/patrice.png';
-import { UserModel } from '../../../models/UserModels';
 import { Tooltip } from 'antd';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 import UserInformations from '../UserInformations/UserInformations';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
+import { UsUserModel } from '../../../models/UserService/UsUserModel';
 
 export type TeamCardProps = {
-  users: UserModel[];
+  users: UsUserModel[];
   maxIcon?: number;
   allUsersPageHref: string;
   aside: React.ReactNode;
@@ -18,7 +18,7 @@ export type TeamCardProps = {
 };
 
 const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClick }: TeamCardProps) => {
-  const [currentUser, setCurrentUser] = useState<UserModel>(users[0]);
+  const [currentUser, setCurrentUser] = useState<UsUserModel>(users[0]);
 
   return (
     <ShadowCard>
@@ -29,14 +29,14 @@ const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClic
             <UserInformations user={currentUser} />
           </div>
           <ul className={styles.usersIconsContainer}>
-            {users.slice(0, maxIcon).map((user: UserModel) => (
+            {users.slice(0, maxIcon).map((user) => (
               <li key={user.id} className={styles.user} onClick={() => setCurrentUser(user)}>
                 <Tooltip title={`${user.first_name} ${user.last_name}`}>
                   <div className={styles.userIcon}>
-                    <img
-                      src={user.avatar || getImagesByCompany(user.company).picto}
-                      alt={`Photo de ${user.first_name} ${user.last_name}`}
-                    />
+                    {/*<img*/}
+                    {/*  src={user.avatar || getImagesByCompany(user.company).picto}*/}
+                    {/*  alt={`Photo de ${user.first_name} ${user.last_name}`}*/}
+                    {/*/>*/}
                   </div>
                 </Tooltip>
               </li>

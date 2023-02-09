@@ -1,12 +1,6 @@
 import React from 'react';
 import styles from '../../../../../styles/Affair.module.scss';
 import { EditOutlined } from '@ant-design/icons';
-import { CompanyEnum } from '../../../../../models/CompanyEnum';
-import { ProjectModel } from '../../../../../models/ProjectModel';
-import { AffairModel, AffairStatusEnum } from '../../../../../models/AffairModel';
-import { UserModel } from '../../../../../models/UserModels';
-import { PythagoreFactureModel } from '../../../../../models/PythagoreFactureModel';
-import { AssetModel } from '../../../../../models/AssetModel';
 import { Breadcrumb, QuickActionCard } from '@projex/ui';
 import type { Activity } from '@projex/ui/dist/components/molecules/RecentActivities/RecentActivities';
 import Grid from '../../../../../src/components/Grid/Grid';
@@ -22,9 +16,10 @@ import type { Statistic } from '../../../../../src/components/StatisticsCard/Sta
 import { capitalize } from '../../../../../utils/capitalize';
 import PhasesWidget from '../../../../../src/components/PhasesWidget/PhasesWidget';
 import { GdpPhaseModel, GdpPhaseStatusEnum } from '../../../../../models/GdPModels';
+import { CompanyEnum } from '../../../../../models/UsModels';
 
 // TODO
-const PROJECT_BY_ID: ProjectModel = {
+const PROJECT_BY_ID = {
   id: '1',
   name: 'Nom du projet',
   client_company_name: 'Nom du client',
@@ -40,7 +35,7 @@ const PROJECT_BY_ID: ProjectModel = {
   affairs: undefined,
 };
 
-const AFFAIR_BY_ID: AffairModel = {
+const AFFAIR_BY_ID = {
   id: '1',
   user_created: undefined,
   date_created: undefined,
@@ -49,29 +44,16 @@ const AFFAIR_BY_ID: AffairModel = {
   name: "Nom de l'affaire",
   internal_company: CompanyEnum.PROJEX,
   pythagore_ids: undefined,
-  status: AffairStatusEnum.ACTIVE,
+  status: 'AffairStatusEnum.ACTIVE',
   user_access: undefined,
   affairs_satisfaction: undefined,
 };
 
 const AFFAIR_PROGRESS_PERCENTAGE: number = 65;
 
-const AFFAIR_PHASES: GdpPhaseModel[] = [
-  {
-    id: '1',
-    name: 'Nom de la phase',
-    status: GdpPhaseStatusEnum.COMPLETED,
-    description: "Mini description de l'étape",
-  },
-  {
-    id: '2',
-    name: 'Nom de la phase',
-    status: GdpPhaseStatusEnum.ONGOING,
-    description: "Mini description de l'étape",
-  },
-];
+const AFFAIR_PHASES: any = [];
 
-const CLIENT_TEAM: UserModel[] = [
+const CLIENT_TEAM = [
   {
     id: '1',
     first_name: 'first_name',
@@ -117,7 +99,7 @@ const CLIENT_TEAM: UserModel[] = [
     email: 'email',
   },
 ];
-const AFFAIR_TEAM: UserModel[] = [
+const AFFAIR_TEAM = [
   {
     id: '1',
     first_name: 'first_name',
@@ -164,7 +146,7 @@ const AFFAIR_TEAM: UserModel[] = [
   },
 ];
 
-const ACTIVITIES: Activity[] = [
+const ACTIVITIES = [
   {
     creationDate: '10/12/2022',
     label: 'Ajout du fichier preview-facade.png',
@@ -181,7 +163,7 @@ const ACTIVITIES: Activity[] = [
     author: 'Olivier Le Baron',
   },
 ];
-const INVOICES: PythagoreFactureModel[] = [
+const INVOICES = [
   {
     num_facture: '2021-11-011',
     etatreglt_facture: 'Reglee',
@@ -202,7 +184,7 @@ const INVOICES: PythagoreFactureModel[] = [
   },
 ];
 
-const FILES: AssetModel[] = [
+const FILES = [
   {
     id: '1',
     title: 'Titre 1',
@@ -240,7 +222,7 @@ const FILES: AssetModel[] = [
     uploaded_on: '2022-07-21',
   },
 ];
-const STATISTICS: Statistic[] = [
+const STATISTICS = [
   { label: 'Label 1 ', percentage: 65 },
   { label: 'Label 2', percentage: 65 },
 ];
@@ -273,13 +255,13 @@ const Affair = () => {
         <section>
           <Grid type="narrow">
             <ClientTeamWidget
-              users={CLIENT_TEAM || []}
-              clientCompany={PROJECT_BY_ID}
+              users={CLIENT_TEAM as any}
+              clientCompany={PROJECT_BY_ID as any}
               onAddClientClick={() => console.log('open modal ?')}
             />
             <CollaboratorTeamWidget
               type="affair"
-              users={AFFAIR_TEAM || []}
+              users={AFFAIR_TEAM as any}
               companyEntity={AFFAIR_BY_ID.internal_company!}
               onAddCollaboratorClick={() => console.log('open modal ?')}
             />
@@ -288,12 +270,12 @@ const Affair = () => {
         <section>
           <Grid type="narrow">
             <ActivitiesWidget activities={ACTIVITIES || []} />
-            <BillingWidget invoices={INVOICES || []} onConfigureBillingClick={() => console.log('open modal ?')} />
+            <BillingWidget invoices={[]} onConfigureBillingClick={() => console.log('open modal ?')} />
           </Grid>
         </section>
         <section>
           <Grid type="narrow">
-            <FilesWidget files={FILES || []} onNewFileClick={() => console.log('open modal ?')} />
+            <FilesWidget files={[]} onNewFileClick={() => console.log('open modal ?')} />
             <StatisticsWidget statistics={STATISTICS || []} onNewStatisticClick={() => console.log('open modal ?')} />
           </Grid>
         </section>

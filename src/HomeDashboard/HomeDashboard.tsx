@@ -75,7 +75,7 @@ const HomeDashboard = () => {
         </Grid>
       </QuickAccessWidget>
       <ProjectsWidget
-        projects={CURRENT_USER_PROJECTS || []}
+        projects={CURRENT_USER_PROJECTS as any}
         handleNewProjectClick={() => console.log('open modal ?')}
       />
     </div>
