@@ -16,7 +16,7 @@ export enum GdpProjectStatusEnum {
   DELETED = 'deleted',
 }
 
-export type GdpProjectModel = {
+export type GdpProjectsModel = {
   id: string;
   name: string;
   client_company_name: string | null;

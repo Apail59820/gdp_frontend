@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { capitalize } from '../../utils/capitalize';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { ProjectModel } from '../../models/ProjectModel';
-import { CompanyEnum } from '../../models/CompanyEnum';
+import { GdpProjectsModel } from '../../models/GdPModels';
+import { CompanyEnum } from '../../models/UsModels';
 
 interface DataType {
   key: string;
@@ -17,7 +17,7 @@ interface DataType {
 }
 
 type Props = {
-  projects: ProjectModel[];
+  projects: GdpProjectsModel[];
 };
 
 const ProjectsList = ({ projects }: Props) => {
@@ -66,7 +66,7 @@ const ProjectsList = ({ projects }: Props) => {
     Table.EXPAND_COLUMN,
   ];
 
-  const renderProjectDescription = (project: ProjectModel) => (
+  const renderProjectDescription = (project: GdpProjectsModel) => (
     <div>
       {/* TODO */}
       Infos complémentaires ? <br />
@@ -80,20 +80,20 @@ const ProjectsList = ({ projects }: Props) => {
   );
 
   useEffect(() => {
-    const formattedProject: DataType[] = projects.map((project: ProjectModel) => ({
-      key: project.id || '',
-      project_name: (
-        <Link className={styles.projectName} href={`/projects/${project.id}`}>
-          {project.name}
-        </Link>
-      ),
-      client_name: project.client_company_name || '',
-      company_entity: project.company_entity || '',
-      // TODO
-      project_managers: ['manager 1', 'manager 2'],
-      description: renderProjectDescription(project),
-    }));
-    setFormattedData(formattedProject);
+    // const formattedProject: DataType[] = projects.map((project: GdpProjectsModel) => ({
+    //   key: project.id || '',
+    //   project_name: (
+    //     <Link className={styles.projectName} href={`/projects/${project.id}`}>
+    //       {project.name}
+    //     </Link>
+    //   ),
+    //   client_name: project.client_company_name || '',
+    //   company_entity: project.company_entity || '',
+    //   // TODO
+    //   project_managers: ['manager 1', 'manager 2'],
+    //   description: renderProjectDescription(project),
+    // }));
+    // setFormattedData(formattedProject);
   }, [projects]);
 
   return (

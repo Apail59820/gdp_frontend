@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
-import { GdpProjectModel } from '../../models/GestionDeProjets/GdpProjectModel';
+import { GdpProjectsModel } from '../../models/GestionDeProjets/GdpProjectsModel';
 import { ManageItemCard, QuickActionCard } from '@projex/ui';
 import Grid from '../components/Grid/Grid';
 import QuickAccessWidget from '../components/QuickAccessWidget/QuickAccessWidget';
@@ -10,7 +10,7 @@ import ProjectsWidget from '../components/ProjectsWidget/ProjectsWidget';
 const PROFILE_PROGRESS_PERCENTAGE = 65; // TODO
 
 // TODO
-const CURRENT_USER_PROJECTS: Partial<GdpProjectModel>[] = [
+const CURRENT_USER_PROJECTS: Partial<GdpProjectsModel>[] = [
   {
     id: '1',
     name: 'Nom du projet',

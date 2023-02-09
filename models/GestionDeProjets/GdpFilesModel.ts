@@ -1,7 +1,7 @@
 import { GdpAffairModel } from './GdpAffairModel';
 import { GdpPhaseModel } from './GdpPhaseModel';
 import { UsUserModel } from '../UserService/UsUserModel';
-import { GdpProjectModel } from './GdpProjectModel';
+import { GdpProjectsModel } from './GdpProjectsModel';
 import { GdpActivitiesModel } from './GdpActivitiesModel';
 
 export enum GdpFilesStatusEnum {
@@ -53,7 +53,7 @@ export type GdpFilesModel = {
   modified_by: string | UsUserModel | null;
   modified_on: Date | null;
 
-  projects_id: number | GdpProjectModel;
+  projects_id: number | GdpProjectsModel;
   affair_id: number | GdpAffairModel | null;
   phase_id: number | GdpPhaseModel | null;
   activities_id: number[] | GdpActivitiesModel[];

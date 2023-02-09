@@ -1,13 +1,13 @@
 import React from 'react';
 import styles from './ProjectCard.module.scss';
 import { ShadowCard } from '@projex/ui';
-import type { GdpProjectModel } from '../../../models/GestionDeProjets/GdpProjectModel';
+import type { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { capitalize } from '../../../utils/capitalize';
 import defaultImage from '../../../public/default-affair-image.png';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 
 type Props = {
-  project: GdpProjectModel;
+  project: GdpProjectsModel;
   projectManagerName: string;
 };
 

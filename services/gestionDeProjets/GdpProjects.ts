@@ -1,4 +1,4 @@
-import { GdpProjectModel } from '../../models/GdPModels';
+import { GdpProjectsModel } from '../../models/GdPModels';
 import { QueryParameters } from '../../models/DirectusModel';
 import concatenateQueryParameters from '../../utils/queryParamsFormatter';
 import { retrieveToken } from '../auth';
@@ -21,7 +21,7 @@ const defaultFields = [
  */
 export async function getGdpProjects(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<GdpProjectModel>[] }> {
+): Promise<{ status: number; data?: Partial<GdpProjectsModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -62,7 +62,7 @@ export async function getGdpProjects(
 export async function getGdpProjectById(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: Partial<GdpProjectModel> }> {
+): Promise<{ status: number; data?: Partial<GdpProjectsModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -108,8 +108,8 @@ type createFieldsToOmit =
  * @returns Status and data containing gdp project properties.
  */
 export async function createGdpProject(
-  project: Omit<GdpProjectModel, createFieldsToOmit>
-): Promise<{ status: number; data?: Partial<GdpProjectModel> }> {
+  project: Omit<GdpProjectsModel, createFieldsToOmit>
+): Promise<{ status: number; data?: Partial<GdpProjectsModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -169,8 +169,8 @@ type updateFieldsToOmit =
  */
 export async function updateGdpProject(
   id: string,
-  data: Partial<Omit<GdpProjectModel, updateFieldsToOmit>>
-): Promise<{ status: number; data?: Partial<GdpProjectModel>; error?: string }> {
+  data: Partial<Omit<GdpProjectsModel, updateFieldsToOmit>>
+): Promise<{ status: number; data?: Partial<GdpProjectsModel>; error?: string }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -191,7 +191,7 @@ export async function updateGdpProject(
       if (response.status === 200) {
         return response
           .json()
-          .then((responseData: { data: Partial<GdpProjectModel> }) => {
+          .then((responseData: { data: Partial<GdpProjectsModel> }) => {
             return { status: response.status, data: responseData.data };
           })
           .catch((error) => {

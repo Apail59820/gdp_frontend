@@ -2,7 +2,7 @@ import { QueryParameters } from '../models/DirectusModel';
 import concatenateQueryParameters from '../utils/queryParamsFormatter';
 import { retrieveToken } from './auth';
 import getConfig from 'next/config';
-import { GdpProjectModel } from '../models/GdPModels';
+import { GdpProjectsModel } from '../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -16,7 +16,7 @@ const defaultFields = ['*'].join(',');
  */
 export async function getProjects(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<GdpProjectModel>[] }> {
+): Promise<{ status: number; data?: Partial<GdpProjectsModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
 
@@ -57,7 +57,7 @@ export async function getProjects(
 export async function getProject(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: GdpProjectModel }> {
+): Promise<{ status: number; data?: GdpProjectsModel }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
@@ -92,7 +92,7 @@ export async function getProject(
  */
 export async function createProject(
   project: CreateGdpProjectModel
-): Promise<{ status: number; data?: GdpProjectModel }> {
+): Promise<{ status: number; data?: GdpProjectsModel }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -141,7 +141,7 @@ export async function createProject(
 export async function updateProject(
   id: string,
   data: UpdateGdpProjectModel
-): Promise<{ status: number; data?: GdpProjectModel; error?: string }> {
+): Promise<{ status: number; data?: GdpProjectsModel; error?: string }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -162,7 +162,7 @@ export async function updateProject(
       if (response.status === 200) {
         return response
           .json()
-          .then((responseData: { data: GdpProjectModel }) => {
+          .then((responseData: { data: GdpProjectsModel }) => {
             return { status: response.status, data: responseData.data };
           })
           .catch((error) => {

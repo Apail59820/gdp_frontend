@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GdpProjectModel } from '../../models/GestionDeProjets/GdpProjectModel';
+import { GdpProjectsModel } from '../../models/GestionDeProjets/GdpProjectsModel';
 import { AppState } from '../store';
 
-const initialState: Partial<GdpProjectModel>[] = [];
+const initialState: Partial<GdpProjectsModel>[] = [];
 
 const projectsUserSlice = createSlice({
   name: 'projects',
   initialState: initialState,
   reducers: {
-    setProjects: (state, action: PayloadAction<Partial<GdpProjectModel>[]>) => {
+    setProjects: (state, action: PayloadAction<Partial<GdpProjectsModel>[]>) => {
       return action.payload;
     },
   },

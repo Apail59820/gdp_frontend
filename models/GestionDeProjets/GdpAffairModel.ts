@@ -1,7 +1,7 @@
 import { GdpFilesModel } from './GdpFilesModel';
 import { GdpSatisfactionModel } from './GdpSatisfactionModel';
 import { UsUserModel } from '../UserService/UsUserModel';
-import { GdpProjectModel } from './GdpProjectModel';
+import { GdpProjectsModel } from './GdpProjectsModel';
 import { GdpAffairsPythagoreAffairesModel } from './GdpAffairsPythagoreAffairesModel';
 import { UsCompanyEntityModel } from '../UserService/UsCompanyEntityModel';
 import { GdpActivitiesModel } from './GdpActivitiesModel';
@@ -17,7 +17,7 @@ export type GdpAffairModel = {
   date_updated: Date | null;
 
   company_entity: number | UsCompanyEntityModel;
-  projects_id: number | GdpProjectModel;
+  projects_id: number | GdpProjectsModel;
   pythagore_ids: number[] | GdpAffairsPythagoreAffairesModel[];
   affairs_satisfaction: string[] | number[] | GdpSatisfactionModel[];
   affairs_directus_users_ids: number[] | GdpAffairsUsersModel[];

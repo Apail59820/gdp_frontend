@@ -8,7 +8,7 @@ import { GdpPythagoreClientModel } from './GestionDeProjets/GdpPythagoreClientMo
 import { GdpPythagoreAffaireModel } from './GestionDeProjets/GdpPythagoreAffairModel';
 import { GdpProjectsCollaboratorsModel } from './GestionDeProjets/GdpProjectsCollaboratorsModel';
 import { GdpProjectsClientsModel } from './GestionDeProjets/GdpProjectsClientsModel';
-import { GdpProjectModel, GdpProjectStatusEnum, GdpProjectTypesEnum } from './GestionDeProjets/GdpProjectModel';
+import { GdpProjectsModel, GdpProjectStatusEnum, GdpProjectTypesEnum } from './GestionDeProjets/GdpProjectsModel';
 import { GdpPhaseModel, GdpPhaseStatusEnum } from './GestionDeProjets/GdpPhaseModel';
 import { GdpUsersNotificationModel } from './GestionDeProjets/GdpUsersNotificationModel';
 import {
@@ -30,7 +30,7 @@ export type {
   GdpPythagoreAffaireModel,
   GdpProjectsCollaboratorsModel,
   GdpProjectsClientsModel,
-  GdpProjectModel,
+  GdpProjectsModel,
   GdpProjectStatusEnum,
   GdpProjectTypesEnum,
   GdpPhaseModel,

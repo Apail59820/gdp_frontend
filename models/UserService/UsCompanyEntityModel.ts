@@ -5,7 +5,7 @@ import { UsCompanyEntitiesUsersModel } from './UsCompanyEntitiesUsersModel';
 
 export type UsCompanyEntityModel = {
   id: number;
-  name: string | null;
+  name: CompanyEnum | null;
   parameters: any | null;
   siren: string | null;
   phone: string | null;
@@ -23,3 +23,12 @@ export type UsCompanyEntityModel = {
   users: number[] | UsCompanyEntitiesUsersModel[];
   activities_id: number[] | UsActivitiesModel[];
 };
+
+export enum CompanyEnum {
+  GROUPE_PROJEX = 'groupe projex',
+  AMEXIA = 'amexia',
+  DIAGOBAT = 'diagobat',
+  IMPERIUM = 'imperium',
+  PROBIM = 'probim',
+  PROJEX = 'projex',
+}

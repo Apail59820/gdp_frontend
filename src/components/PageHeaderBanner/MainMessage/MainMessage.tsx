@@ -1,12 +1,12 @@
 import React from 'react';
 import styles from './MainMessage.module.scss';
 import { capitalize } from '../../../../utils/capitalize';
-import { GdpProjectModel } from '../../../../models/GestionDeProjets/GdpProjectModel';
+import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';
 import defaultImage from '../../../../public/default-affair-image.png';
 import { ManageItemButton } from '@projex/ui';
 
 export type MainMessageProps = {
-  project: Partial<GdpProjectModel>;
+  project: Partial<GdpProjectsModel>;
   onManageThumbnailClick?: React.MouseEventHandler<HTMLButtonElement>;
   showImage?: boolean;
 };

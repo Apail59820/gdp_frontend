@@ -1,11 +1,11 @@
 import React from 'react';
 import styles from './PageHeaderBanner.module.scss';
-import { GdpProjectModel } from '../../../models/GestionDeProjets/GdpProjectModel';
+import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import MainMessage from './MainMessage/MainMessage';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 
 type Props = {
-  data: string | Partial<GdpProjectModel>;
+  data: string | Partial<GdpProjectsModel>;
 };
 
 const PageHeaderBanner = ({ data }: Props) => {

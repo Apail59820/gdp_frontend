@@ -21,7 +21,7 @@ import StatisticsWidget from '../../../../../src/components/StatisticsWidget/Sta
 import type { Statistic } from '../../../../../src/components/StatisticsCard/StatisticsCard';
 import { capitalize } from '../../../../../utils/capitalize';
 import PhasesWidget from '../../../../../src/components/PhasesWidget/PhasesWidget';
-import { PhaseModel, PhaseStatusEnum } from '../../../../../models/PhaseModel';
+import { GdpPhaseModel, GdpPhaseStatusEnum } from '../../../../../models/GdPModels';
 
 // TODO
 const PROJECT_BY_ID: ProjectModel = {
@@ -56,17 +56,17 @@ const AFFAIR_BY_ID: AffairModel = {
 
 const AFFAIR_PROGRESS_PERCENTAGE: number = 65;
 
-const AFFAIR_PHASES: PhaseModel[] = [
+const AFFAIR_PHASES: GdpPhaseModel[] = [
   {
     id: '1',
     name: 'Nom de la phase',
-    status: PhaseStatusEnum.COMPLETED,
+    status: GdpPhaseStatusEnum.COMPLETED,
     description: "Mini description de l'étape",
   },
   {
     id: '2',
     name: 'Nom de la phase',
-    status: PhaseStatusEnum.ONGOING,
+    status: GdpPhaseStatusEnum.ONGOING,
     description: "Mini description de l'étape",
   },
 ];

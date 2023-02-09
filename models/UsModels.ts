@@ -4,7 +4,7 @@ import { UsClientsCompanyEntitiesUsersModel } from './UserService/UsClientsCompa
 import { UsClientsCompanyInteractionsModel } from './UserService/UsClientsCompanyInteractionsModel';
 import { UsClientsInteractionsModel } from './UserService/UsClientsInteractionsModel';
 import { UsCompanyEntitiesUsersModel } from './UserService/UsCompanyEntitiesUsersModel';
-import { UsCompanyEntityModel } from './UserService/UsCompanyEntityModel';
+import { UsCompanyEntityModel, CompanyEnum } from './UserService/UsCompanyEntityModel';
 import { UsFilesModel } from './UserService/UsFilesModel';
 import { UsUsersNotificationModel } from './UserService/UsUsersNotificationModel';
 import { UsUserModel } from './UserService/UsUserModel';
@@ -22,3 +22,4 @@ export type {
   UsUsersNotificationModel,
   UsUserModel,
 };
+export { CompanyEnum };
