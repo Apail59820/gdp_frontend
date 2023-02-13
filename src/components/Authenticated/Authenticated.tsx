@@ -1,10 +1,12 @@
 import React, { ReactNode, useEffect } from 'react';
-import cookie from 'js-cookie';
 import { useRouter } from 'next/router';
 import { retrieveToken } from '../../../services/auth';
 import { useDispatch } from 'react-redux';
-import { setAuthState } from '../../../store/reducers/authReducer';
+import { setAuthState, setUserProfile } from '../../../store/reducers/authReducer';
 import getConfig from 'next/config';
+import { getMyUsProfile } from '../../../services/userService/UsUsers';
+import { message } from 'antd';
+import { messages } from '../../../constants/messages';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -18,28 +20,39 @@ const Authenticated = ({ children }: Props) => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      if (cookie.get('maia_gestion_projet_token')) {
-        dispatch(setAuthState(true));
-        return;
-      }
       try {
         retrieveToken().then(
           (token) => {
-            if (token) dispatch(setAuthState(true));
-            else {
+            if (token) {
+              dispatch(setAuthState(true));
+              getMyUsProfile().then((res) => {
+                if (res.status === 200 && res.data) {
+                  dispatch(setUserProfile(res.data));
+                  message.success(messages.login.success(publicRuntimeConfig.APP_NAME));
+                } else {
+                  message.error(messages.login.error.general);
+                  dispatch(setUserProfile({}));
+                }
+              });
+            } else {
               dispatch(setAuthState(false));
+              dispatch(setUserProfile({}));
+              message.error(messages.login.error.general);
               const href = window.location.href;
               router.push(publicRuntimeConfig.USER_SERVICE_URL + '/login?r=' + href, undefined, { shallow: true });
             }
           },
           () => {
             dispatch(setAuthState(false));
+            dispatch(setUserProfile({}));
+            message.error(messages.login.error.general);
             const href = window.location.href;
             router.push(publicRuntimeConfig.USER_SERVICE_URL + '/login?r=' + href, undefined, { shallow: true });
           }
         );
       } catch (e) {
         dispatch(setAuthState(false));
+        message.error(messages.login.error.general);
         const href = window.location.href;
         router.push(publicRuntimeConfig.USER_SERVICE_URL + '/login?r=' + href, undefined, { shallow: true });
       }
