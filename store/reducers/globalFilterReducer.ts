@@ -1,35 +1,42 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GlobalFiltersModel } from '../../models/GlobalFiltersModel';
+import { GlobalFilterActionType, GlobalFiltersModel } from '../../models/GlobalFiltersModel';
 import { AppState } from '../store';
 
 const initialState: GlobalFiltersModel = {
   projects: {
     list: [],
-    filter: { filter: {} },
+    queryParameters: {},
+    action: GlobalFilterActionType.ADD,
   },
   affairs: {
     list: [],
-    filter: { limit: '50' },
+    queryParameters: {},
+    action: GlobalFilterActionType.ADD,
   },
   pythagore_affaires: {
     list: [],
-    filter: {},
+    queryParameters: {},
+    action: GlobalFilterActionType.ADD,
   },
   files: {
     list: [],
-    filter: {},
+    queryParameters: {},
+    action: GlobalFilterActionType.ADD,
   },
   satisfaction: {
     list: [],
-    filter: {},
+    queryParameters: {},
+    action: GlobalFilterActionType.ADD,
   },
   clients: {
     list: [],
-    filter: {},
+    queryParameters: {},
+    action: GlobalFilterActionType.ADD,
   },
   collaborators: {
     list: [],
-    filter: {},
+    queryParameters: {},
+    action: GlobalFilterActionType.ADD,
   },
 };
 
@@ -48,5 +55,4 @@ export const { setGlobalFilters } = globalFilterSlice.actions;
 
 export const selectGlobalFilters = (state: AppState) => state.globalFilters;
 
-const globalFilterReducer = globalFilterSlice.reducer;
-export default globalFilterReducer;
+export default globalFilterSlice.reducer;

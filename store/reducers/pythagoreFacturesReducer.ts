@@ -19,6 +19,6 @@ const pythagoreFacturesSlice = createSlice({
 //Reducer
 export const { setPythagoreFactures } = pythagoreFacturesSlice.actions;
 
-export const selectPythagoreFactures = (state: AppState) => state.projects;
+export const selectPythagoreFactures = (state: AppState) => state.pythagoreFactures;
 
 export default pythagoreFacturesSlice.reducer;

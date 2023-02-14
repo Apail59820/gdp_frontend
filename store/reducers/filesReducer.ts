@@ -19,6 +19,6 @@ const filesSlice = createSlice({
 //Reducer
 export const { setFiles } = filesSlice.actions;
 
-export const selectFiles = (state: AppState) => state.projects;
+export const selectFiles = (state: AppState) => state.files;
 
 export default filesSlice.reducer;

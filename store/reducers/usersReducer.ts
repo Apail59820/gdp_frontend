@@ -19,6 +19,6 @@ const usersSlice = createSlice({
 //Reducer
 export const { setUsers } = usersSlice.actions;
 
-export const selectUsers = (state: AppState) => state.projects;
+export const selectUsers = (state: AppState) => state.users;
 
 export default usersSlice.reducer;

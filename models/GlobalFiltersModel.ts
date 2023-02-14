@@ -1,32 +1,44 @@
 import { QueryParameters } from './DirectusModel';
 
+export enum GlobalFilterActionType {
+  ADD = 'add',
+  REPLACE = 'replace',
+}
+
 export type GlobalFiltersModel = {
   projects: {
     list: number[];
-    filter: QueryParameters; // { status: { _eq : "archived" } }
+    queryParameters: QueryParameters; // { status: { _eq : "archived" } }
+    action: GlobalFilterActionType;
   };
   affairs: {
     list: number[];
-    filter: QueryParameters;
+    queryParameters: QueryParameters;
+    action: GlobalFilterActionType;
   };
   pythagore_affaires: {
     list: string[];
-    filter: QueryParameters;
+    queryParameters: QueryParameters;
+    action: GlobalFilterActionType;
   };
   files: {
     list: string[];
-    filter: QueryParameters;
+    queryParameters: QueryParameters;
+    action: GlobalFilterActionType;
   };
   satisfaction: {
     list: number[];
-    filter: QueryParameters;
+    queryParameters: QueryParameters;
+    action: GlobalFilterActionType;
   };
   clients: {
     list: string[];
-    filter: QueryParameters;
+    queryParameters: QueryParameters;
+    action: GlobalFilterActionType;
   };
   collaborators: {
     list: string[];
-    filter: QueryParameters;
+    queryParameters: QueryParameters;
+    action: GlobalFilterActionType;
   };
 };
