@@ -19,6 +19,6 @@ const usersSlice = createSlice({
 //Reducer
 export const { setSatisfactions } = usersSlice.actions;
 
-export const selectSatisfactions = (state: AppState) => state.projects;
+export const selectSatisfactions = (state: AppState) => state.satisfactions;
 
 export default usersSlice.reducer;

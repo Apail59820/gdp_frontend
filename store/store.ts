@@ -1,13 +1,20 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { AnyAction, configureStore, Reducer } from '@reduxjs/toolkit';
 import affairReducer from './reducers/affairsReducer';
 import projectsReducer from './reducers/projectsReducer';
 import globalFilterReducer from './reducers/globalFilterReducer';
-import authReducer from './reducers/authReducer';
+import authReducer, { AuthState } from './reducers/authReducer';
 import pythagoreFacturesReducer from './reducers/pythagoreFacturesReducer';
-import notificationsReducer from './reducers/notificationReducer';
+import notificationsReducer, { notificationsState } from './reducers/notificationReducer';
 import filesReducer from './reducers/filesReducer';
 import usersReducer from './reducers/usersReducer';
 import satisfactionReducer from './reducers/satisfactionReducer';
+import { GlobalFiltersModel } from '../models/GlobalFiltersModel';
+import { GdpProjectsModel } from '../models/GestionDeProjets/GdpProjectsModel';
+import { GdpAffairModel } from '../models/GestionDeProjets/GdpAffairModel';
+import { GdpPythagoreFactureModel } from '../models/GestionDeProjets/GdpPythagoreFactureModel';
+import { GdpFilesModel } from '../models/GestionDeProjets/GdpFilesModel';
+import { UsUserModel } from '../models/UserService/UsUserModel';
+import { GdpSatisfactionModel } from '../models/GestionDeProjets/GdpSatisfactionModel';
 
 export type StateType<T> = {
   data: T[];
@@ -15,8 +22,17 @@ export type StateType<T> = {
   error?: string;
 };
 
-export type StoreStatesType = any;
-export type AppState = any; //TODO
+export type AppState = {
+  auth: AuthState;
+  globalFilters: GlobalFiltersModel;
+  projects: Partial<GdpProjectsModel>[];
+  affairs: Partial<GdpAffairModel>[];
+  pythagoreFactures: Partial<GdpPythagoreFactureModel>[];
+  files: Partial<GdpFilesModel>[];
+  users: Partial<UsUserModel>[];
+  satisfactions: Partial<GdpSatisfactionModel>[];
+  notifications: notificationsState;
+};
 
 export default configureStore({
   reducer: {
@@ -27,7 +43,7 @@ export default configureStore({
     pythagoreFactures: pythagoreFacturesReducer,
     files: filesReducer,
     users: usersReducer,
-    satisfaction: satisfactionReducer,
-    notification: notificationsReducer,
+    satisfactions: satisfactionReducer,
+    notifications: notificationsReducer,
   },
 });

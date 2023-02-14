@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { GdpAffairModel } from '../../models/GdPModels';
-import { StateType } from '../store';
+import { AppState, StateType } from '../store';
 
 const initialState: StateType<Partial<GdpAffairModel>> = {
   data: [],
@@ -21,5 +21,6 @@ const affairSlice = createSlice({
 //Reducer
 export const { setAffairState } = affairSlice.actions;
 
-const affairReducers = affairSlice.reducer;
-export default affairReducers;
+export const selectAffairsState = (state: AppState) => state.affairs;
+
+export default affairSlice.reducer;

@@ -3,7 +3,7 @@ import { AppState } from '../store';
 import { UsUsersNotificationModel } from '../../models/UserService/UsUsersNotificationModel';
 import { GdpUsersNotificationModel } from '../../models/GestionDeProjets/GdpUsersNotificationModel';
 
-type notificationsState = {
+export type notificationsState = {
   userService: Partial<GdpUsersNotificationModel>[];
   gestionDeProjets: Partial<UsUsersNotificationModel>[];
 };
