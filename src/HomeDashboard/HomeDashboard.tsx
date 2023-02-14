@@ -1,7 +1,8 @@
 import React from 'react';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
-import { GdpProjectsModel } from '../../models/GestionDeProjets/GdpProjectsModel';
+import { GdpProjectsModel } from '../../models/GdPModels';
+import { GdpProjectStatusEnum, GdpProjectTypesEnum } from '../../models/GestionDeProjets/GdpProjectsModel';
 import { ManageItemCard, QuickActionCard } from '@projex/ui';
 import Grid from '../components/Grid/Grid';
 import QuickAccessWidget from '../components/QuickAccessWidget/QuickAccessWidget';
@@ -15,29 +16,14 @@ const CURRENT_USER_PROJECTS: Partial<GdpProjectsModel>[] = [
     id: '1',
     name: 'Nom du projet',
     client_company_name: 'Nom du client',
-    client_info: undefined,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
+    client_info: 'frefer',
+    address: 'hrthert',
+    zip_code: 'gtrgtr',
+    city: 'hyhytyt',
+    country: 'gtgrtgtr',
     // image: undefined,
-    status: undefined,
-    project_type: undefined,
-    company_entity: 1,
-    affairs: undefined,
-  },
-  {
-    id: '2',
-    name: 'Nom du projet',
-    client_company_name: 'Nom du client',
-    client_info: undefined,
-    address: undefined,
-    zip_code: undefined,
-    city: undefined,
-    country: undefined,
-    // image: undefined,
-    status: undefined,
-    project_type: undefined,
+    status: GdpProjectStatusEnum.ACTIVE,
+    project_type: GdpProjectTypesEnum.CO_TRAITANCE,
     company_entity: 1,
     affairs: undefined,
   },

@@ -5,7 +5,7 @@ import { ManageItemCard } from '@projex/ui';
 import Grid from '../Grid/Grid';
 import { Section } from '@projex/ui';
 import PhaseCard from '../PhaseCard/PhaseCard';
-import { GdpPhaseModel } from '../../../models/GestionDeProjets/GdpPhaseModel';
+import type { GdpPhaseModel } from '../../../models/GestionDeProjets/GdpPhaseModel';
 
 type Props = {
   phases: GdpPhaseModel[];
@@ -26,7 +26,7 @@ const PhasesWidget = ({ phases, onNewPhaseClick, allPhasesPageHref }: Props) => 
       }
     >
       <Grid>
-        {phases.map((phase) => (
+        {phases.map((phase: GdpPhaseModel) => (
           <PhaseCard key={phase.id} phase={phase} onKebabMenuClick={() => console.log('handle click ?')} />
         ))}
         <div className={styles.manageItemCardContainer}>

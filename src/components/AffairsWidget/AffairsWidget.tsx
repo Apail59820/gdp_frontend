@@ -2,11 +2,11 @@ import React from 'react';
 import styles from './AffairsWidget.module.scss';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { ManageItemCard } from '@projex/ui';
 import AffairCard from '../AffairCard/AffairCard';
 import Grid from '../Grid/Grid';
 import { Section } from '@projex/ui';
-import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 
 type Props = {
   affairs: GdpAffairModel[];
@@ -27,7 +27,7 @@ const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref }: Props)
       }
     >
       <Grid>
-        {affairs.map((affair) => (
+        {affairs.map((affair: GdpAffairModel) => (
           <Link key={affair.id} href={`${router.asPath}/affairs/${affair.id}`}>
             {/* TODO Handle onClick */}
             <AffairCard affair={affair} onKebabMenuClick={() => console.log('handle click ?')} />

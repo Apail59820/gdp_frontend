@@ -40,11 +40,11 @@ const PageHeaderBanner = ({ data }: Props) => {
       ) : (
         <>
           <MainMessage project={data} onManageThumbnailClick={() => console.log('open modal ?')} />
-          {/*<img*/}
-          {/*  className={styles.logo}*/}
-          {/*  src={getImagesByCompany(data.company_entity).logo}*/}
-          {/*  alt={`Logo de ${data.company_entity}`}*/}
-          {/*/>*/}
+          <img
+            className={styles.logo}
+            src={getImagesByCompany(typeof data.company_entity === 'string' ? data.company_entity['name'] : '').logo}
+            alt={`Logo de ${data.company_entity}`}
+          />
         </>
       )}
     </div>
