@@ -19,7 +19,11 @@ const MainMessage = ({ project, showImage = true, onManageThumbnailClick }: Main
           {project ? (
             <div className={styles.imageContainer}>
               {/* // TODO Revoir image */}
-              <img className={styles.image} src={defaultImage.src} alt="Image illustrant le projet" />
+              <img
+                className={styles.image}
+                src={defaultImage.src ? defaultImage.src : ''}
+                alt="Image illustrant le projet"
+              />
               <div className={styles.editImageButton}>
                 <ManageItemButton
                   label="Modifier la vignette"

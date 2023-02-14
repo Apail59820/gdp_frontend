@@ -3,11 +3,12 @@ import styles from './TeamCard.module.scss';
 import { ShadowCard } from '@projex/ui';
 import Link from 'next/link';
 import defaultImage from '../../../public/patrice.png';
+import { UsUserModel } from '../../../models/UsModels';
 import { Tooltip } from 'antd';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 import UserInformations from '../UserInformations/UserInformations';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
-import { UsUserModel } from '../../../models/UserService/UsUserModel';
+import Image from 'next/image';
 
 export type TeamCardProps = {
   users: UsUserModel[];
@@ -29,14 +30,14 @@ const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClic
             <UserInformations user={currentUser} />
           </div>
           <ul className={styles.usersIconsContainer}>
-            {users.slice(0, maxIcon).map((user) => (
+            {users.slice(0, maxIcon).map((user: UsUserModel) => (
               <li key={user.id} className={styles.user} onClick={() => setCurrentUser(user)}>
                 <Tooltip title={`${user.first_name} ${user.last_name}`}>
                   <div className={styles.userIcon}>
-                    {/*<img*/}
-                    {/*  src={user.avatar || getImagesByCompany(user.company).picto}*/}
-                    {/*  alt={`Photo de ${user.first_name} ${user.last_name}`}*/}
-                    {/*/>*/}
+                    <Image
+                      src={user.avatar || getImagesByCompany(user.company!).picto}
+                      alt={`Photo de ${user.first_name} ${user.last_name}`}
+                    />
                   </div>
                 </Tooltip>
               </li>

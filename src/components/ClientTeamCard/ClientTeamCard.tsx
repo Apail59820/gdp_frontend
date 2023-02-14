@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './ClientTeamCard.module.scss';
-import TeamCard, { TeamCardProps } from '../TeamCard/TeamCard';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
+import TeamCard, { TeamCardProps } from '../TeamCard/TeamCard';
 
 export type ClientTeamCardProps = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
   clientCompany: GdpProjectsModel;

@@ -20,13 +20,8 @@ import defaultImage from '../public/patrice.png';
 
 import { CompanyEnum } from '../models/UsModels';
 
-export const getImagesByCompany = (company?: CompanyEnum | string): { logo: string; picto: string } => {
-  if (typeof company !== 'string')
-    return {
-      logo: defaultImage.src,
-      picto: defaultImage.src,
-    };
-  switch (company?.toLowerCase()) {
+export const getImagesByCompany = (company: string): { logo: string; picto: string } => {
+  switch (typeof company === 'string' ? company.toLowerCase() : '') {
     case CompanyEnum.AMEXIA:
       return {
         logo: logoAmexia.src,

@@ -1,10 +1,10 @@
 import React from 'react';
 import styles from './UsersWidget.module.scss';
+import { UsUserModel } from '../../../models/UsModels';
 import { ManageItemCard } from '@projex/ui';
 import { Section } from '@projex/ui';
 import Grid from '../Grid/Grid';
 import UserCard from '../UserCard/UserCard';
-import { UsUserModel } from '../../../models/UserService/UsUserModel';
 
 type Props = {
   users: UsUserModel[];

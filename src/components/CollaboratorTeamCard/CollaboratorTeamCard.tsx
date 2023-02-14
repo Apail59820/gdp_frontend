@@ -2,10 +2,10 @@ import React from 'react';
 import styles from './CollaboratorTeamCard.module.scss';
 import TeamCard, { TeamCardProps } from '../TeamCard/TeamCard';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
-import { CompanyEnum } from '../../../models/UserService/UsCompanyEntityModel';
+import { CompanyEnum, UsCompanyEntityModel } from '../../../models/UsModels';
 
 export type CollaboratorTeamCardProps = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
-  companyEntity: CompanyEnum;
+  companyEntity: CompanyEnum | string;
 };
 
 const CollaboratorTeamCard = (props: CollaboratorTeamCardProps) => {

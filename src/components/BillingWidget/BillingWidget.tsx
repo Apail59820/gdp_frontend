@@ -3,9 +3,9 @@ import React from 'react';
 import Grid from '../Grid/Grid';
 import InvoiceCard from '../InvoiceCard/InvoiceCard';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
+import type { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
 import { Section } from '@projex/ui';
 import { useRouter } from 'next/router';
-import { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
 
 type Props = {
   invoices: GdpPythagoreFactureModel[];
@@ -33,7 +33,7 @@ const BillingWidget = ({ invoices, max = 3, onConfigureBillingClick, allInvoices
     >
       {invoices.length > 0 ? (
         <Grid type="narrow">
-          {invoices.slice(0, max).map((invoice) => (
+          {invoices.slice(0, max).map((invoice: GdpPythagoreFactureModel) => (
             <InvoiceCard key={invoice.num_facture} invoice={invoice} />
           ))}
           <ManageItemCard type="edit" label="Configurer la facturation" onClick={onConfigureBillingClick} />
