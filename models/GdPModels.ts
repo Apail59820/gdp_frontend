@@ -5,7 +5,7 @@ import { GdpAffairsUsersModel } from './GestionDeProjets/GdpAffairsUsersModel';
 import { GdpSatisfactionModel } from './GestionDeProjets/GdpSatisfactionModel';
 import { GdpPythagoreFactureModel } from './GestionDeProjets/GdpPythagoreFactureModel';
 import { GdpPythagoreClientModel } from './GestionDeProjets/GdpPythagoreClientModel';
-import { GdpPythagoreAffaireModel } from './GestionDeProjets/GdpPythagoreAffairModel';
+import { GdpPythagoreAffaireModel } from './GestionDeProjets/GdpPythagoreAffaireModel';
 import { GdpProjectsCollaboratorsModel } from './GestionDeProjets/GdpProjectsCollaboratorsModel';
 import { GdpProjectsClientsModel } from './GestionDeProjets/GdpProjectsClientsModel';
 import { GdpProjectsModel, GdpProjectStatusEnum, GdpProjectTypesEnum } from './GestionDeProjets/GdpProjectsModel';

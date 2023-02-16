@@ -6,37 +6,37 @@ const initialState: GlobalFiltersModel = {
   projects: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.ADD,
+    action: GlobalFilterActionType.REPLACE,
   },
   affairs: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.ADD,
+    action: GlobalFilterActionType.REPLACE,
   },
-  pythagore_affaires: {
+  pythagore_factures: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.ADD,
+    action: GlobalFilterActionType.REPLACE,
   },
   files: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.ADD,
+    action: GlobalFilterActionType.REPLACE,
   },
   satisfaction: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.ADD,
+    action: GlobalFilterActionType.REPLACE,
   },
   clients: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.ADD,
+    action: GlobalFilterActionType.REPLACE,
   },
   collaborators: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.ADD,
+    action: GlobalFilterActionType.REPLACE,
   },
 };
 

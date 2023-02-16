@@ -22,21 +22,21 @@ export function compileGlobalFiltersToProjectFilter(_globalFilters: GlobalFilter
   if (affairsFilterRule != null) filterRules.push(affairsFilterRule);
 
   //projects that contains affairs that are linked to these pythagore_affaires
-  const pythagoreAffairesFilterRule = compileFilter(
+  const pythagoreFacturesFilterRule = compileFilter(
     _globalFilters,
-    'pythagore_affaires',
+    'pythagore_factures',
     {
       affairs_ids: {
-        pythagore_ids: { pythagore_affaires_id: { _in: _globalFilters.pythagore_affaires.list } },
+        pythagore_ids: { pythagore_affaires_id: { _in: _globalFilters.pythagore_factures.list } },
       },
     },
     {
       affairs_ids: {
-        pythagore_ids: { pythagore_affaires_id: _globalFilters.pythagore_affaires.queryParameters.filter },
+        pythagore_ids: { pythagore_affaires_id: _globalFilters.pythagore_factures.queryParameters.filter },
       },
     }
   );
-  if (pythagoreAffairesFilterRule != null) filterRules.push(pythagoreAffairesFilterRule);
+  if (pythagoreFacturesFilterRule != null) filterRules.push(pythagoreFacturesFilterRule);
 
   //projects that contains at least one of these files
   const filesFilterRule = compileFilter(
