@@ -13,7 +13,7 @@ const defaultFields = ['*'].join(',');
  * @param props Object containing query parameters.
  * @returns List all items that exist in gdp pythagore affairs.
  */
-export async function getGdpPythagoreAffairs(
+export async function getGdpPythagoreAffaires(
   props: QueryParameters = {}
 ): Promise<{ status: number; data?: Partial<GdpPythagoreAffaireModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
@@ -53,7 +53,7 @@ export async function getGdpPythagoreAffairs(
  * @param fields list of fields to retrieve.
  * @returns Promise containing the request status and the gdp pythagore affair corresponding to the id
  */
-export async function getGdpPythagoreAffair(
+export async function getGdpPythagoreAffaire(
   id: number,
   fields = defaultFields
 ): Promise<{ status: number; data?: Partial<GdpPythagoreAffaireModel> }> {

@@ -1,14 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '../store';
-import { GdpPythagoreFactureModel } from '../../models/GestionDeProjets/GdpPythagoreFactureModel';
+import { GdpPythagoreAffaireModel } from '../../models/GdPModels';
 
-const initialState: Partial<GdpPythagoreFactureModel>[] = [];
+const initialState: Partial<GdpPythagoreAffaireModel>[] = [];
 
-const pythagoreFacturesSlice = createSlice({
-  name: 'pythagoreFactures',
+const pythagoreAffairesSlice = createSlice({
+  name: 'pythagoreAffaires',
   initialState: initialState,
   reducers: {
-    setPythagoreFactures: (state, action: PayloadAction<Partial<GdpPythagoreFactureModel>[]>) => {
+    setPythagoreAffaires: (state, action: PayloadAction<Partial<GdpPythagoreAffaireModel>[]>) => {
       return action.payload;
     },
   },
@@ -17,8 +17,8 @@ const pythagoreFacturesSlice = createSlice({
 //Action
 
 //Reducer
-export const { setPythagoreFactures } = pythagoreFacturesSlice.actions;
+export const { setPythagoreAffaires } = pythagoreAffairesSlice.actions;
 
-export const selectPythagoreFactures = (state: AppState) => state.pythagoreFactures;
+export const selectPythagoreAffaires = (state: AppState) => state.pythagoreAffaires;
 
-export default pythagoreFacturesSlice.reducer;
+export default pythagoreAffairesSlice.reducer;

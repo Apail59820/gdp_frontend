@@ -1,4 +1,4 @@
-import { AnyAction, configureStore, Reducer } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import affairReducer from './reducers/affairsReducer';
 import projectsReducer from './reducers/projectsReducer';
 import globalFilterReducer from './reducers/globalFilterReducer';
@@ -11,23 +11,17 @@ import satisfactionReducer from './reducers/satisfactionReducer';
 import { GlobalFiltersModel } from '../models/GlobalFiltersModel';
 import { GdpProjectsModel } from '../models/GestionDeProjets/GdpProjectsModel';
 import { GdpAffairModel } from '../models/GestionDeProjets/GdpAffairModel';
-import { GdpPythagoreFactureModel } from '../models/GestionDeProjets/GdpPythagoreFactureModel';
 import { GdpFilesModel } from '../models/GestionDeProjets/GdpFilesModel';
 import { UsUserModel } from '../models/UserService/UsUserModel';
 import { GdpSatisfactionModel } from '../models/GestionDeProjets/GdpSatisfactionModel';
-
-export type StateType<T> = {
-  data: T[];
-  loading: boolean;
-  error?: string;
-};
+import { GdpPythagoreAffaireModel } from '../models/GdPModels';
 
 export type AppState = {
   auth: AuthState;
   globalFilters: GlobalFiltersModel;
   projects: Partial<GdpProjectsModel>[];
   affairs: Partial<GdpAffairModel>[];
-  pythagoreFactures: Partial<GdpPythagoreFactureModel>[];
+  pythagoreAffaires: Partial<GdpPythagoreAffaireModel>[];
   files: Partial<GdpFilesModel>[];
   users: Partial<UsUserModel>[];
   satisfactions: Partial<GdpSatisfactionModel>[];
@@ -40,7 +34,7 @@ export default configureStore({
     globalFilters: globalFilterReducer,
     projects: projectsReducer,
     affairs: affairReducer,
-    pythagoreFactures: pythagoreFacturesReducer,
+    pythagoreAffaires: pythagoreFacturesReducer,
     files: filesReducer,
     users: usersReducer,
     satisfactions: satisfactionReducer,

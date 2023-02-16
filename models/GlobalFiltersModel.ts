@@ -16,7 +16,7 @@ export type GlobalFiltersModel = {
     queryParameters: QueryParameters;
     action: GlobalFilterActionType;
   };
-  pythagore_factures: {
+  pythagore_affaires: {
     list: string[];
     queryParameters: QueryParameters;
     action: GlobalFilterActionType;

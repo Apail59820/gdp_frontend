@@ -24,15 +24,15 @@ export function compileGlobalFiltersToProjectFilter(_globalFilters: GlobalFilter
   //projects that contains affairs that are linked to these pythagore_affaires
   const pythagoreFacturesFilterRule = compileFilter(
     _globalFilters,
-    'pythagore_factures',
+    'pythagore_affaires',
     {
       affairs_ids: {
-        pythagore_ids: { pythagore_affaires_id: { _in: _globalFilters.pythagore_factures.list } },
+        pythagore_ids: { pythagore_affaires_id: { _in: _globalFilters.pythagore_affaires.list } },
       },
     },
     {
       affairs_ids: {
-        pythagore_ids: { pythagore_affaires_id: _globalFilters.pythagore_factures.queryParameters.filter },
+        pythagore_ids: { pythagore_affaires_id: _globalFilters.pythagore_affaires.queryParameters.filter },
       },
     }
   );
