@@ -10,6 +10,10 @@ import { compileGlobalFiltersToProjectFilter } from './filterCompilers/projects'
 import { getGdpAffairs } from '../../services/gestionDeProjets/GdpAffairs';
 import { selectAffairs, setAffairs } from '../../store/reducers/affairsReducer';
 import { compileGlobalFiltersToAffairsFilter } from './filterCompilers/affairs';
+import { selectPythagoreAffaires, setPythagoreAffaires } from '../../store/reducers/pythagoreFacturesReducer';
+import { getGdpPythagoreFactures } from '../../services/gestionDeProjets/GdpPythagoreFactures';
+import { compileGlobalFiltersToPythagoreAffairesFilter } from './filterCompilers/pythagore_factures';
+import { getGdpPythagoreAffaires } from '../../services/gestionDeProjets/GdpPythagoreAffairs';
 
 type Props = {
   children: ReactNode;
@@ -20,6 +24,7 @@ export function RetrieveGlobalData({ children }: Props) {
   const globalFilters = useSelector<AppState, GlobalFiltersModel>(selectGlobalFilters);
   const projects = useSelector(selectProjects);
   const affairs = useSelector(selectAffairs);
+  const factures = useSelector(selectPythagoreAffaires);
 
   const updateProjects = useCallback(
     async (_globalFilters: GlobalFiltersModel) => {
@@ -56,9 +61,28 @@ export function RetrieveGlobalData({ children }: Props) {
     [dispatch, affairs]
   );
 
+  const updatePythagoreAffaires = useCallback(
+    async (_globalFilters: GlobalFiltersModel) => {
+      const filterRules = compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters);
+      const pythagoreAffairesResponses = await getGdpPythagoreAffaires({
+        limit: '20',
+        offset: '0',
+        ..._globalFilters.pythagore_affaires.queryParameters,
+        filter: { _or: filterRules },
+      });
+      if (isRequestSuccessful(pythagoreAffairesResponses.status) && pythagoreAffairesResponses.data) {
+        if (_globalFilters.pythagore_affaires.action == GlobalFilterActionType.REPLACE)
+          dispatch(setPythagoreAffaires(pythagoreAffairesResponses.data));
+        else dispatch(setPythagoreAffaires([...factures, ...pythagoreAffairesResponses.data]));
+      }
+    },
+    [dispatch, factures]
+  );
+
   useEffect(() => {
     updateProjects(globalFilters);
     updateAffairs(globalFilters);
+    updatePythagoreAffaires(globalFilters);
   }, [globalFilters]);
 
   return <>{children}</>;

@@ -13,7 +13,7 @@ const initialState: GlobalFiltersModel = {
     queryParameters: {},
     action: GlobalFilterActionType.REPLACE,
   },
-  pythagore_factures: {
+  pythagore_affaires: {
     list: [],
     queryParameters: {},
     action: GlobalFilterActionType.REPLACE,

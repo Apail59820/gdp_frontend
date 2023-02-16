@@ -24,12 +24,12 @@ export function compileGlobalFiltersToAffairsFilter(_globalFilters: GlobalFilter
   //affairs that are linked to these pythagore_affaires
   const pythagoreFacturesFilterRule = compileFilter(
     _globalFilters,
-    'pythagore_factures',
+    'pythagore_affaires',
     {
-      pythagore_ids: { pythagore_affaires_id: { _in: _globalFilters.pythagore_factures.list } },
+      pythagore_ids: { pythagore_affaires_id: { _in: _globalFilters.pythagore_affaires.list } },
     },
     {
-      pythagore_ids: { pythagore_affaires_id: _globalFilters.pythagore_factures.queryParameters.filter },
+      pythagore_ids: { pythagore_affaires_id: _globalFilters.pythagore_affaires.queryParameters.filter },
     }
   );
   if (pythagoreFacturesFilterRule != null) filterRules.push(pythagoreFacturesFilterRule);
