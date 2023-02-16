@@ -1,4 +1,4 @@
-import { GdpPythagoreAffaireModel } from './GdpPythagoreAffairModel';
+import { GdpPythagoreAffaireModel } from './GdpPythagoreAffaireModel';
 import { GdpAffairModel } from './GdpAffairModel';
 import { GdpActivitiesModel } from './GdpActivitiesModel';
 

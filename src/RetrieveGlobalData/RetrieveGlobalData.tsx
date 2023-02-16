@@ -7,6 +7,9 @@ import { AppState } from '../../store/store';
 import { selectProjects, setProjects } from '../../store/reducers/projectsReducer';
 import { isRequestSuccessful } from '../../utils/isRequestSuccessful';
 import { compileGlobalFiltersToProjectFilter } from './filterCompilers/projects';
+import { getGdpAffairs } from '../../services/gestionDeProjets/GdpAffairs';
+import { selectAffairs, setAffairs } from '../../store/reducers/affairsReducer';
+import { compileGlobalFiltersToAffairsFilter } from './filterCompilers/affairs';
 
 type Props = {
   children: ReactNode;
@@ -16,6 +19,7 @@ export function RetrieveGlobalData({ children }: Props) {
   const dispatch = useDispatch();
   const globalFilters = useSelector<AppState, GlobalFiltersModel>(selectGlobalFilters);
   const projects = useSelector(selectProjects);
+  const affairs = useSelector(selectAffairs);
 
   const updateProjects = useCallback(
     async (_globalFilters: GlobalFiltersModel) => {
@@ -35,9 +39,27 @@ export function RetrieveGlobalData({ children }: Props) {
     [dispatch, projects]
   );
 
+  const updateAffairs = useCallback(
+    async (_globalFilters: GlobalFiltersModel) => {
+      const filterRules = compileGlobalFiltersToAffairsFilter(_globalFilters);
+      const affairsResponse = await getGdpAffairs({
+        limit: '20',
+        offset: '0',
+        ..._globalFilters.affairs.queryParameters,
+        filter: { _or: filterRules },
+      });
+      if (isRequestSuccessful(affairsResponse.status) && affairsResponse.data) {
+        if (_globalFilters.affairs.action == GlobalFilterActionType.REPLACE) dispatch(setAffairs(affairsResponse.data));
+        else dispatch(setAffairs([...affairs, ...affairsResponse.data]));
+      }
+    },
+    [dispatch, affairs]
+  );
+
   useEffect(() => {
     updateProjects(globalFilters);
-  }, [globalFilters, updateProjects]);
+    updateAffairs(globalFilters);
+  }, [globalFilters]);
 
   return <>{children}</>;
 }
