@@ -33,8 +33,8 @@ export type GdpProjectsModel = {
   user_updated: string | UsUserModel | null;
   date_updated: Date | null;
 
-  projects_directus_users_clients_ids: number[] | GdpProjectsCollaboratorsModel[];
-  projects_directus_users_collaborators_ids: number[] | GdpProjectsClientsModel[];
+  projects_directus_users_clients_ids: string[] | GdpProjectsClientsModel[];
+  projects_directus_users_collaborators_ids: string[] | GdpProjectsCollaboratorsModel[];
   company_entity: number | UsCompanyEntityModel;
   files: string[] | GdpAffairModel[];
   affairs: number[] | GdpAffairModel[];
