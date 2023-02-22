@@ -41,4 +41,8 @@ export type GlobalFiltersModel = {
     queryParameters: QueryParameters;
     action: GlobalFilterActionType;
   };
+  company_entities: {
+    list: number[];
+    queryParameters: QueryParameters;
+  };
 };

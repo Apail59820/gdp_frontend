@@ -38,6 +38,10 @@ const initialState: GlobalFiltersModel = {
     queryParameters: {},
     action: GlobalFilterActionType.REPLACE,
   },
+  company_entities: {
+    list: [],
+    queryParameters: {},
+  },
 };
 
 const globalFilterSlice = createSlice({
