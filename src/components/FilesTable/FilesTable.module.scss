@@ -1,0 +1,35 @@
+.imageAndTitle {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-weight: bold;
+  font-size: 1rem;
+  img {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+}
+.list {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 2rem;
+  list-style: none;
+  li {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    cursor: pointer;
+    img {
+      height: 1.25rem;
+    }
+  }
+}
+
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .5rem;
+  margin-top: .5rem;
+}

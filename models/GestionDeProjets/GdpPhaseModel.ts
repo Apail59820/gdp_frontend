@@ -9,7 +9,7 @@ export enum GdpPhaseStatusEnum {
 }
 
 export type GdpPhaseModel = {
-  id: string;
+  id: number;
 
   user_created: string | UsUserModel;
   date_created: Date;

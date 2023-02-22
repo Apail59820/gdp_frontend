@@ -13,7 +13,7 @@ const defaultFields = ['*'].join(',');
  * @param props Object containing query parameters.
  * @returns List all items that exist in us files.
  */
-export async function getUsFiles(
+export async function getGdpFiles(
   props: QueryParameters = {}
 ): Promise<{ status: number; data?: Partial<GdpFilesModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
@@ -51,7 +51,7 @@ export async function getUsFiles(
  * @returns Promise containing the request status and the gdp file corresponding to the id
  */
 export async function getGdpFile(
-  id: number,
+  id: string,
   fields = defaultFields
 ): Promise<{ status: number; data?: Partial<GdpFilesModel> }> {
   const token = await retrieveToken();
