@@ -80,6 +80,43 @@ export async function getGdpFile(
 }
 
 /**
+ * Retrieve gdp  files
+ * @returns Promise containing the request status and the gdp file corresponding to the id
+ * @param props queryParams
+ */
+export async function getGdpFiles(
+  props: QueryParameters = {}
+): Promise<{ status: number; data?: Partial<GdpFilesModel>[] }> {
+  if (!props.fields) props.fields = defaultFields;
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+
+  const myHeaders = new Headers({
+    Authorization: `Bearer ${token}`,
+  });
+
+  const myInit: RequestInit = {
+    method: 'GET',
+    headers: myHeaders,
+    mode: 'cors',
+    cache: 'default',
+  };
+
+  return fetch(
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/files?${concatenateQueryParameters(props)}`,
+    myInit
+  ).then((res) => {
+    if (res.status === 200) {
+      return res.json().then((responseData) => {
+        return { status: res.status, data: responseData.data };
+      });
+    } else {
+      return { status: res.status };
+    }
+  });
+}
+
+/**
  * @description Download an asset/file from the server.
  *
  * @return an object with the request STATUS and the file url as DATA

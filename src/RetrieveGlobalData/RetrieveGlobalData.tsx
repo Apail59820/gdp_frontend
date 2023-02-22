@@ -14,8 +14,11 @@ import { getGdpAffairs } from '../../services/gestionDeProjets/GdpAffairs';
 import { selectAffairs, setAffairs } from '../../store/reducers/affairsReducer';
 import { compileGlobalFiltersToAffairsFilter } from './filterCompilers/affairs';
 import { selectPythagoreAffaires, setPythagoreAffaires } from '../../store/reducers/pythagoreFacturesReducer';
-import { compileGlobalFiltersToPythagoreAffairesFilter } from './filterCompilers/pythagore_factures';
+import { compileGlobalFiltersToPythagoreAffairesFilter } from './filterCompilers/pythagore_affaires';
 import { getGdpPythagoreAffaires } from '../../services/gestionDeProjets/GdpPythagoreAffairs';
+import { getGdpFiles } from '../../services/gestionDeProjets/GdpFiles';
+import { selectFiles, setFiles } from '../../store/reducers/filesReducer';
+import { compileGlobalFiltersToFilesFilter } from './filterCompilers/files';
 
 type Props = {
   children: ReactNode;
@@ -28,6 +31,7 @@ export function RetrieveGlobalData({ children }: Props) {
   const satisfaction = useSelector(selectSatisfactions);
   const affairs = useSelector(selectAffairs);
   const factures = useSelector(selectPythagoreAffaires);
+  const files = useSelector(selectFiles);
 
   const updateProjects = useCallback(
     async (_globalFilters: GlobalFiltersModel) => {
@@ -99,11 +103,30 @@ export function RetrieveGlobalData({ children }: Props) {
     [dispatch, factures]
   );
 
+  const updateFiles = useCallback(
+    async (_globalFilters: GlobalFiltersModel) => {
+      const filterRules = compileGlobalFiltersToFilesFilter(_globalFilters);
+      const FilesResponses = await getGdpFiles({
+        limit: '20',
+        offset: '0',
+        ..._globalFilters.pythagore_affaires.queryParameters,
+        filter: { _or: filterRules },
+      });
+      if (isRequestSuccessful(FilesResponses.status) && FilesResponses.data) {
+        if (_globalFilters.pythagore_affaires.action == GlobalFilterActionType.REPLACE)
+          dispatch(setFiles(FilesResponses.data));
+        else dispatch(setFiles([...files, ...FilesResponses.data]));
+      }
+    },
+    [dispatch, factures]
+  );
+
   useEffect(() => {
     updateProjects(globalFilters);
     updateSatisfaction(globalFilters);
     updateAffairs(globalFilters);
     updatePythagoreAffaires(globalFilters);
+    updateFiles(globalFilters);
   }, [globalFilters]);
 
   return <>{children}</>;
