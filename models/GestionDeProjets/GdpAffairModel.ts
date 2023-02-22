@@ -6,6 +6,7 @@ import { GdpAffairsPythagoreAffairesModel } from './GdpAffairsPythagoreAffairesM
 import { UsCompanyEntityModel } from '../UserService/UsCompanyEntityModel';
 import { GdpActivitiesModel } from './GdpActivitiesModel';
 import { GdpAffairsUsersModel } from './GdpAffairsUsersModel';
+import { GdpPhaseModel } from './GdpPhaseModel';
 
 export type GdpAffairModel = {
   id: number;
@@ -18,6 +19,7 @@ export type GdpAffairModel = {
 
   company_entity: number | UsCompanyEntityModel;
   projects_id: number | GdpProjectsModel;
+  affairs_phases: number[] | GdpPhaseModel[];
   pythagore_ids: number[] | GdpAffairsPythagoreAffairesModel[];
   affairs_satisfaction: string[] | number[] | GdpSatisfactionModel[];
   affairs_directus_users_ids: number[] | GdpAffairsUsersModel[];
