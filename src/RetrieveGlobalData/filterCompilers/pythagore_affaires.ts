@@ -29,7 +29,7 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: Gl
     _globalFilters,
     'pythagore_affaires',
     { num_affaire: { _in: _globalFilters.pythagore_affaires.list } },
-    { num_affaire: { _in: _globalFilters.pythagore_affaires.queryParameters.filter } }
+    _globalFilters.pythagore_affaires.queryParameters.filter
   );
   if (pythagoreAffairesFilterRule != null) filterRules.push(pythagoreAffairesFilterRule);
 
