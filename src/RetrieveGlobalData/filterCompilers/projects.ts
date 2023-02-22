@@ -16,7 +16,7 @@ export function compileGlobalFiltersToProjectFilter(_globalFilters: GlobalFilter
   const companyEntitiesFilterRule = compileFilter(_globalFilters, 'company_entities', {
     company_entity: { _in: _globalFilters.company_entities.list },
   });
-  if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
+  if (projectsFilterRule != null) filterRules.push(companyEntitiesFilterRule);
 
   //projects contains at least one of the affairs
   const affairsFilterRule = compileFilter(
