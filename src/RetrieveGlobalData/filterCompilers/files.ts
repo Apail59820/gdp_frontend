@@ -12,7 +12,7 @@ export function compileGlobalFiltersToFilesFilter(_globalFilters: GlobalFiltersM
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
 
-  //files of company_entities
+  //files of company_entities.
   const companyEntitiesFilterRule = compileFilter(_globalFilters, 'company_entities', {
     projects_id: { company_entity: _globalFilters.company_entities.list },
   });
