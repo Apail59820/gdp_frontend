@@ -7,11 +7,13 @@ import { AppState } from '../../store/store';
 import { selectProjects, setProjects } from '../../store/reducers/projectsReducer';
 import { isRequestSuccessful } from '../../utils/isRequestSuccessful';
 import { compileGlobalFiltersToProjectFilter } from './filterCompilers/projects';
+import { compileGlobalFiltersToSatisfactionFilter } from './filterCompilers/satisfaction';
+import { getGdpSatisfactions } from '../../services/gestionDeProjets/GdpAffairsSatisfaction';
+import { selectSatisfactions, setSatisfactions } from '../../store/reducers/satisfactionReducer';
 import { getGdpAffairs } from '../../services/gestionDeProjets/GdpAffairs';
 import { selectAffairs, setAffairs } from '../../store/reducers/affairsReducer';
 import { compileGlobalFiltersToAffairsFilter } from './filterCompilers/affairs';
 import { selectPythagoreAffaires, setPythagoreAffaires } from '../../store/reducers/pythagoreFacturesReducer';
-import { getGdpPythagoreFactures } from '../../services/gestionDeProjets/GdpPythagoreFactures';
 import { compileGlobalFiltersToPythagoreAffairesFilter } from './filterCompilers/pythagore_factures';
 import { getGdpPythagoreAffaires } from '../../services/gestionDeProjets/GdpPythagoreAffairs';
 
@@ -23,6 +25,7 @@ export function RetrieveGlobalData({ children }: Props) {
   const dispatch = useDispatch();
   const globalFilters = useSelector<AppState, GlobalFiltersModel>(selectGlobalFilters);
   const projects = useSelector(selectProjects);
+  const satisfaction = useSelector(selectSatisfactions);
   const affairs = useSelector(selectAffairs);
   const factures = useSelector(selectPythagoreAffaires);
 
@@ -44,6 +47,23 @@ export function RetrieveGlobalData({ children }: Props) {
     [dispatch, projects]
   );
 
+  const updateSatisfaction = useCallback(
+    async (_globalFilters: GlobalFiltersModel) => {
+      const filterRules = compileGlobalFiltersToSatisfactionFilter(_globalFilters);
+      const satisfactionResponse = await getGdpSatisfactions({
+        limit: '20',
+        offset: '0',
+        ..._globalFilters.satisfaction.queryParameters,
+        filter: { _or: filterRules },
+      });
+      if (isRequestSuccessful(satisfactionResponse.status) && satisfactionResponse.data) {
+        if (_globalFilters.satisfaction.action == GlobalFilterActionType.REPLACE)
+          dispatch(setSatisfactions(satisfactionResponse.data));
+        else dispatch(setSatisfactions([...satisfaction, ...satisfactionResponse.data]));
+      }
+    },
+    [dispatch, satisfaction]
+  );
   const updateAffairs = useCallback(
     async (_globalFilters: GlobalFiltersModel) => {
       const filterRules = compileGlobalFiltersToAffairsFilter(_globalFilters);
@@ -81,6 +101,7 @@ export function RetrieveGlobalData({ children }: Props) {
 
   useEffect(() => {
     updateProjects(globalFilters);
+    updateSatisfaction(globalFilters);
     updateAffairs(globalFilters);
     updatePythagoreAffaires(globalFilters);
   }, [globalFilters]);
