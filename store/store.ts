@@ -15,6 +15,8 @@ import { GdpFilesModel } from '../models/GestionDeProjets/GdpFilesModel';
 import { UsUserModel } from '../models/UserService/UsUserModel';
 import { GdpSatisfactionModel } from '../models/GestionDeProjets/GdpSatisfactionModel';
 import { GdpPythagoreAffaireModel } from '../models/GdPModels';
+import { UsCompanyEntityModel } from '../models/UserService/UsCompanyEntityModel';
+import companyEntitiesReducer from './reducers/companyEntitiesReducer';
 
 export type AppState = {
   auth: AuthState;
@@ -26,6 +28,7 @@ export type AppState = {
   users: Partial<UsUserModel>[];
   satisfactions: Partial<GdpSatisfactionModel>[];
   notifications: notificationsState;
+  companyEntities: Partial<UsCompanyEntityModel>[];
 };
 
 export default configureStore({
@@ -39,5 +42,6 @@ export default configureStore({
     users: usersReducer,
     satisfactions: satisfactionReducer,
     notifications: notificationsReducer,
+    companyEntities: companyEntitiesReducer,
   },
 });
