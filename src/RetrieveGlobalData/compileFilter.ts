@@ -4,8 +4,8 @@ import { queryParameterContainsFilter } from '../../utils/queryParametersContain
 /**
  * @param globalFilters global filters current Data
  * @param globalFilterKey key of the list filter to use.
- * @param listFilter a filter rule that translate globalFilters list of a objects
- * @param queryFilter a filter rule that translate globalFilters filters (queryParams.filters) of a objects
+ * @param listFilter a filter rule that translate globalFilters list of an objects
+ * @param queryFilter a filter rule that translate globalFilters filters (queryParams.filters) of an objects
  */
 export function compileFilter(
   globalFilters: GlobalFiltersModel,
