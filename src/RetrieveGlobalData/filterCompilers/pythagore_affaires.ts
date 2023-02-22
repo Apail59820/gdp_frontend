@@ -15,6 +15,12 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: Gl
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
 
+  //company_entities of pythagore_affairs
+  const companyEntitiesFilterRule = compileFilter(_globalFilters, 'company_entities', {
+    company_entities: [_globalFilters.pythagore_affaires.list],
+  });
+  if (companyEntitiesFilterRule != null) filterRules.push(companyEntitiesFilterRule);
+
   //factures of these affairs
   const affairsFilterRule = compileFilter(
     _globalFilters,

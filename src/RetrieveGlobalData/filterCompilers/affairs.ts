@@ -12,6 +12,12 @@ export function compileGlobalFiltersToAffairsFilter(_globalFilters: GlobalFilter
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
 
+  //affairs of company_entities
+  const companyEntitiesFilterRule = compileFilter(_globalFilters, 'company_entities', {
+    company_entity: { _in: _globalFilters.company_entities.list },
+  });
+  if (companyEntitiesFilterRule != null) filterRules.push(companyEntitiesFilterRule);
+
   //affairs
   const affairsFilterRule = compileFilter(
     _globalFilters,
