@@ -1,0 +1,251 @@
+import React, { useEffect, useState } from 'react';
+import { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
+import styles from './ExpandedBillingInfo.module.scss';
+import { Button } from '@projex/ui';
+import { DateTime, Interval } from 'luxon';
+import { message, Modal } from 'antd';
+import getConfig from 'next/config';
+import { InvoiceStateEnum } from './BillingTable';
+import { useSelector } from 'react-redux';
+import { selectUserProfile } from '../../../store/reducers/authReducer';
+import { createGdpEmailLogs } from '../../../services/gestionDeProjets/GdpEmailsLogs';
+import { messages } from '../../../constants/messages';
+import { GdpAffairsUsersModel } from '../../../models/GestionDeProjets/GdpAffairsUsersModel';
+
+const { publicRuntimeConfig } = getConfig();
+
+type props = {
+  billing: GdpPythagoreFactureModel;
+  colorClassName: string;
+  invoiceState: InvoiceStateEnum;
+};
+
+const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) => {
+  const {
+    num_facture,
+    montant_totalht_facture,
+    montant_totalttc_facture,
+    reglement_cumuleht_facture,
+    reglement_cumulettc_facture,
+    soldettc_facture,
+    soldeht_facture,
+    emails_logs,
+    num_affaire,
+    etatreglt_facture,
+    date_echeance_facture,
+  } = billing;
+
+  const [clientsEmails, setClientsEmails] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [typeRelance, setTypeRelance] = useState<'manual' | 'auto'>('manual');
+  const [timeSinceLastMail, setTimeSinceLastMail] = useState<number | null>(0);
+  const [userCanSendMail, setUserCanSendMail] = useState<boolean>(false);
+
+  const myUser = useSelector(selectUserProfile);
+
+  const isCollaborator = myUser?.role == publicRuntimeConfig.ROLE_ADMIN_ID;
+
+  const TIME_BETWEEN_FACTURES_EMAILS_ALERTS =
+    publicRuntimeConfig.DIGITAL_SOLUTIONS_TIME_BETWEEN_FACTURES_EMAILS_ALERTS || 72;
+
+  async function retrieveFacturesEmailsAlerts() {
+    if (emails_logs && emails_logs.length > 0 && typeof emails_logs[0] !== 'number') {
+      setTimeSinceLastMail(
+        Interval.fromDateTimes(DateTime.fromJSDate(emails_logs[0].date_created), DateTime.now()).length('hours')
+      );
+    } else setTimeSinceLastMail(null);
+  }
+
+  async function declareManualFactureEmailAlert() {
+    const subject = `Relance paiement facture ${num_facture}`;
+    const body = `Bonjour%2C%0D%0A%0D%0ANous%20vous%20informons%20que%20votre%20facture%2C%20numéro%20"${num_facture}"%20arrivée%20à%20échéance%20le%20${date_echeance_facture}%2C%20d'un%20montant%20de%20${soldeht_facture}%20€HT%20soit%20${soldettc_facture}%20€TTC%20%20n'a%20pas%20été%20réglée.`;
+    window.open(`mailto:${clientsEmails?.join(',')}?subject=${subject}&body=${body}`, '_blank');
+    const factureEmailAlertResponse = await createGdpEmailLogs({
+      subject: subject,
+      content: body,
+      facture_id: num_facture,
+      recipients: clientsEmails,
+      status: 'draft',
+      type: 'invoice_manual_alert',
+    });
+    if (factureEmailAlertResponse.status == 200) {
+      message.success(messages.reminder.success);
+      setTimeSinceLastMail(0);
+    } else message.error(messages.reminder.error);
+  }
+
+  async function sendAutomaticFactureEmailAlert() {
+    const factureEmailAlertResponse = await createGdpEmailLogs({
+      subject: `Votre relance Digital Solutions pour la facture ${num_facture}`,
+      content: `Ce message est une relance automatique car une facture est en attente de régularisation. Nous vous informons
+        que votre facture ${num_facture}, arrivée à échéance le ${date_echeance_facture}, d'un montant de ${soldeht_facture} €HT soit ${soldettc_facture} €TTC est en
+        attente de paiement. Nous vous remercions par avance pour la régularisation de cette facture et restons à
+        votre entière disposition. Si le versement a été effectué dans l'intervalle de ce mail, merci de ne pas tenir compte
+        de cette relance. A très vite sur votre espace ${publicRuntimeConfig.APP_NAME}. Cordialement,Groupe Projex`,
+      facture_id: num_facture,
+      recipients: clientsEmails,
+      status: 'draft',
+      type: 'invoice_manual_alert',
+    });
+    if (factureEmailAlertResponse.status == 200) {
+      message.success(messages.reminder.success);
+      setTimeSinceLastMail(0);
+    } else message.error(messages.reminder.error);
+  }
+
+  const getButtonColor = () =>
+    invoiceState === 'late' ? 'alert' : invoiceState === 'soonToExpire' ? 'warning' : 'primary';
+
+  useEffect(() => {
+    if (num_facture && isCollaborator) {
+      retrieveFacturesEmailsAlerts();
+    }
+    if (num_affaire && typeof num_affaire !== 'string' && isCollaborator) {
+      if (
+        typeof num_affaire.affairs_id[0] !== 'number' &&
+        typeof num_affaire.affairs_id[0].affairs_id !== 'number' &&
+        typeof num_affaire.affairs_id[0].affairs_id.projects_id !== 'number'
+      ) {
+        const users: GdpAffairsUsersModel[] = [];
+        num_affaire.affairs_id[0].affairs_id.affairs_directus_users_ids.forEach((adu) => {
+          if (typeof adu !== 'number') users.push(adu);
+        });
+        setUserCanSendMail(
+          users.filter((adu: GdpAffairsUsersModel) => adu.directus_users_id === myUser?.id).length > 0
+        );
+        const projectsDirectusUsersClients =
+          num_affaire.affairs_id[0].affairs_id.projects_id.projects_directus_users_clients_ids;
+        const clientsResponse: string[] = [];
+        projectsDirectusUsersClients.forEach((pduc) => {
+          if (typeof pduc !== 'string' && typeof pduc.directus_users_id !== 'string')
+            clientsResponse.push(pduc.directus_users_id.email);
+        });
+        setClientsEmails(clientsResponse);
+      } else message.error('Une erreur est survenue lors du chargement de la liste des clients.');
+    }
+  }, []);
+
+  return (
+    <div className={styles.globalContainer}>
+      <div className={styles.container}>
+        <div className={styles.amountContainer}>
+          {(montant_totalht_facture || montant_totalttc_facture) && (
+            <div>
+              {montant_totalht_facture && (
+                <span>
+                  Montant total HT <span className={colorClassName}>{montant_totalht_facture} €</span>
+                </span>
+              )}
+              {montant_totalttc_facture && (
+                <span>
+                  Montant total TTC <span className={colorClassName}>{montant_totalttc_facture} €</span>
+                </span>
+              )}
+            </div>
+          )}
+          {(reglement_cumuleht_facture || reglement_cumulettc_facture) && (
+            <div>
+              {reglement_cumuleht_facture && (
+                <span>
+                  Règlement cumulé HT <span className={colorClassName}>{reglement_cumuleht_facture} €</span>
+                </span>
+              )}
+              {reglement_cumulettc_facture && (
+                <span>
+                  Règlement cumulé TTC <span className={colorClassName}>{reglement_cumulettc_facture} €</span>
+                </span>
+              )}
+            </div>
+          )}
+          {(soldeht_facture || soldettc_facture) && (
+            <div>
+              {soldeht_facture && (
+                <span>
+                  Solde HT <span className={colorClassName}>{soldeht_facture} €</span>
+                </span>
+              )}
+              {soldettc_facture && (
+                <span>
+                  Solde TTC <span className={colorClassName}>{soldettc_facture} €</span>
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        <div>
+          <b>Derniere relance:</b>{' '}
+          {`${
+            (emails_logs &&
+              typeof emails_logs[0] !== 'number' &&
+              DateTime.fromJSDate(emails_logs[0].date_created).toLocaleString()) ??
+            'Non définie'
+          }`}
+        </div>
+        <div className={styles.buttonContainer}>
+          {etatreglt_facture !== 'Reglee' && isCollaborator && userCanSendMail && (
+            <>
+              <Modal open={isModalOpen} footer={null} closable={true} onCancel={() => setIsModalOpen(false)}>
+                <div className={styles.modalBody}>
+                  <b>
+                    Voulez-vous vraiment relancer {typeRelance === 'manual' ? 'manuellement' : 'automatiquement'} le
+                    client ?
+                  </b>
+                  <p>
+                    {typeRelance == 'manual'
+                      ? "Votre service de messagerie va s'ouvrir, un template sera écrit pour vous mais vous pourrez le modifier si besoin."
+                      : 'Nous enverrons un message déjà écrit pour vous.'}
+                  </p>
+                  <div className={styles.modalButtons}>
+                    <Button
+                      small
+                      onClick={() => {
+                        {
+                          typeRelance == 'manual' ? declareManualFactureEmailAlert() : sendAutomaticFactureEmailAlert();
+                        }
+                      }}
+                    >
+                      Envoyer une
+                      {typeRelance == 'manual' ? ' relance manuelle' : ' relance automatique'}
+                    </Button>
+                    <Button small style={'alert'} onClick={() => setIsModalOpen(false)}>
+                      Annuler
+                    </Button>
+                  </div>
+                </div>
+              </Modal>
+              <Button
+                small
+                style={getButtonColor()}
+                onClick={() => {
+                  setIsModalOpen(true);
+                  setTypeRelance('manual');
+                }}
+              >
+                Relancer le client manuellement
+              </Button>
+              <Button
+                small
+                disabled={
+                  emails_logs && timeSinceLastMail !== null && timeSinceLastMail < TIME_BETWEEN_FACTURES_EMAILS_ALERTS
+                }
+                onClick={() => {
+                  setIsModalOpen(true);
+                  setTypeRelance('auto');
+                }}
+              >
+                Relancer le client automatiquement
+                <br />
+                {timeSinceLastMail == null || timeSinceLastMail > TIME_BETWEEN_FACTURES_EMAILS_ALERTS
+                  ? publicRuntimeConfig.APP_NAME
+                  : `désactivée (derniere relance il y a moins de ${TIME_BETWEEN_FACTURES_EMAILS_ALERTS} heures)`}
+              </Button>
+            </>
+          )}
+          {/* Pas opérationnel pour le moment <Button small>Télécharger la facture</Button>*/}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ExpandedBillingInfo;
