@@ -48,11 +48,17 @@ export function compileGlobalFiltersToSatisfactionFilter(_globalFilters: GlobalF
   );
   if (filesFilterRule != null) filterRules.push(filesFilterRule);
 
-  //satisfaction of company_entities
-  const companyEntitiesFilterRule = compileFilter(_globalFilters, 'company_entities', {
+  //satisfaction affairs of company_entities
+  const companyEntitiesAffairsFilterRule = compileFilter(_globalFilters, 'company_entities', {
     affairs_id: { company_entity: _globalFilters.company_entities.list },
   });
-  if (companyEntitiesFilterRule != null) filterRules.push(companyEntitiesFilterRule);
+  if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
+
+  //satisfaction projects of company_entities
+  const companyEntitiesProjectsFilterRule = compileFilter(_globalFilters, 'company_entities', {
+    projects_id: { company_entity: _globalFilters.company_entities.list },
+  });
+  if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
 
   // satisfaction that contains at least one of these clients
   const clientsFilterRule = compileFilter(

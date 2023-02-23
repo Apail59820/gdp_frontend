@@ -12,11 +12,17 @@ export function compileGlobalFiltersToFilesFilter(_globalFilters: GlobalFiltersM
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
 
-  //files of company_entities.
-  const companyEntitiesFilterRule = compileFilter(_globalFilters, 'company_entities', {
+  //files of company_entities by projects.
+  const companyEntitiesProjectsFilterRule = compileFilter(_globalFilters, 'company_entities', {
     projects_id: { company_entity: _globalFilters.company_entities.list },
   });
-  if (companyEntitiesFilterRule != null) filterRules.push(companyEntitiesFilterRule);
+  if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
+
+  //files of company_entities by affairs.
+  const companyEntitiesAffairsFilterRule = compileFilter(_globalFilters, 'company_entities', {
+    affairs_id: { company_entity: _globalFilters.company_entities.list },
+  });
+  if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
 
   //projects contains at least one of the affairs
   const affairsFilterRule = compileFilter(

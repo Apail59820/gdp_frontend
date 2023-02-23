@@ -13,10 +13,16 @@ export function compileGlobalFiltersToAffairsFilter(_globalFilters: GlobalFilter
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
 
   //affairs of company_entities
-  const companyEntitiesFilterRule = compileFilter(_globalFilters, 'company_entities', {
+  const companyEntitiesAffairsFilterRule = compileFilter(_globalFilters, 'company_entities', {
     company_entity: { _in: _globalFilters.company_entities.list },
   });
-  if (companyEntitiesFilterRule != null) filterRules.push(companyEntitiesFilterRule);
+  if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
+
+  //projects of company_entities
+  const companyEntitiesProjectsFilterRule = compileFilter(_globalFilters, 'company_entities', {
+    projects_id: { company_entity: _globalFilters.company_entities.list },
+  });
+  if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
 
   //affairs
   const affairsFilterRule = compileFilter(

@@ -18,6 +18,12 @@ export function compileGlobalFiltersToProjectFilter(_globalFilters: GlobalFilter
   });
   if (projectsFilterRule != null) filterRules.push(companyEntitiesFilterRule);
 
+  //affairs by projects of company_entities
+  const companyEntitiesAffairsFilterRule = compileFilter(_globalFilters, 'company_entities', {
+    affairs_id: { company_entity: _globalFilters.company_entities.list },
+  });
+  if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
+
   //projects contains at least one of the affairs
   const affairsFilterRule = compileFilter(
     _globalFilters,

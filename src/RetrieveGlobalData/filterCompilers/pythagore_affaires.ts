@@ -15,11 +15,17 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: Gl
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
 
-  //company_entities of pythagore_affairs
-  const companyEntitiesFilterRule = compileFilter(_globalFilters, 'company_entities', {
-    company_entities: [_globalFilters.pythagore_affaires.list],
+  //company_entities of pythagore_affairs by project
+  const companyEntitiesProjectsFilterRule = compileFilter(_globalFilters, 'company_entities', {
+    projects_id: { company_entity: _globalFilters.pythagore_affaires.list },
   });
-  if (companyEntitiesFilterRule != null) filterRules.push(companyEntitiesFilterRule);
+  if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
+
+  //company_entities of pythagore_affairs by affairs
+  const companyEntitiesAffairsFilterRule = compileFilter(_globalFilters, 'company_entities', {
+    affairs_id: { company_entity: _globalFilters.pythagore_affaires.list },
+  });
+  if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
 
   //factures of these affairs
   const affairsFilterRule = compileFilter(
