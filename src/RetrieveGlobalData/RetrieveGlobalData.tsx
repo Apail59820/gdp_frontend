@@ -19,6 +19,8 @@ import { getGdpPythagoreAffaires } from '../../services/gestionDeProjets/GdpPyth
 import { getGdpFiles } from '../../services/gestionDeProjets/GdpFiles';
 import { selectFiles, setFiles } from '../../store/reducers/filesReducer';
 import { compileGlobalFiltersToFilesFilter } from './filterCompilers/files';
+import { getUsCompanyEntities } from '../../services/userService/UsCompanyEntities';
+import { selectCompanyEntities, setCompanyEntities } from '../../store/reducers/companyEntitiesReducer';
 
 type Props = {
   children: ReactNode;
@@ -32,6 +34,7 @@ export function RetrieveGlobalData({ children }: Props) {
   const affairs = useSelector(selectAffairs);
   const factures = useSelector(selectPythagoreAffaires);
   const files = useSelector(selectFiles);
+  const companyEntities = useSelector(selectCompanyEntities);
 
   const updateProjects = useCallback(
     async (_globalFilters: GlobalFiltersModel) => {
@@ -121,12 +124,30 @@ export function RetrieveGlobalData({ children }: Props) {
     [dispatch, factures]
   );
 
+  const updateCompagnyEntities = useCallback(
+    async (_globalFilters: GlobalFiltersModel) => {
+      const filterRules = compileGlobalFiltersToFilesFilter(_globalFilters);
+      const CompagnyEntitiesResponses = await getUsCompanyEntities({
+        limit: '20',
+        offset: '0',
+        ..._globalFilters.company_entities.queryParameters,
+        filter: { _or: filterRules },
+      });
+      if (isRequestSuccessful(CompagnyEntitiesResponses.status) && CompagnyEntitiesResponses.data) {
+        if (_globalFilters.company_entities) dispatch(setCompanyEntities(CompagnyEntitiesResponses.data));
+        else dispatch(setCompanyEntities([...companyEntities, ...CompagnyEntitiesResponses.data]));
+      }
+    },
+    [dispatch, factures]
+  );
+
   useEffect(() => {
     updateProjects(globalFilters);
     updateSatisfaction(globalFilters);
     updateAffairs(globalFilters);
     updatePythagoreAffaires(globalFilters);
     updateFiles(globalFilters);
+    updateCompagnyEntities(globalFilters);
   }, [globalFilters]);
 
   return <>{children}</>;

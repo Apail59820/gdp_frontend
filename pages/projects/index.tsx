@@ -8,6 +8,8 @@ import ProjectCard from '../../src/components/ProjectCard/ProjectCard';
 import ProjectsList from '../../src/ProjectsList/ProjectsList';
 import { GdpProjectsModel } from '../../models/GestionDeProjets/GdpProjectsModel';
 import { CompanyEnum } from '../../models/UsModels';
+import { selectCompanyEntities } from '../../store/reducers/companyEntitiesReducer';
+import { useSelector } from 'react-redux';
 
 const PROJECTS: GdpProjectsModel[] = [];
 
@@ -76,7 +78,6 @@ const DATA: DataCategory[] = [
 const Projects = () => {
   const [filtersSelection, setFiltersSelection] = useState<SelectedValues>([]);
   const [showFilters, setShowFilters] = useState<boolean>(false);
-
   const [displayOption, setDisplayOption] = useState<string>('grid');
 
   const displayAsGrid = (): React.ReactNode => (
