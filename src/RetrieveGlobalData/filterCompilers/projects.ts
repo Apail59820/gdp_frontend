@@ -13,15 +13,21 @@ export function compileGlobalFiltersToProjectFilter(_globalFilters: GlobalFilter
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
 
   //projects of company_entities
-  const companyEntitiesFilterRule = compileFilter(_globalFilters, 'company_entities', {
-    company_entity: { _in: _globalFilters.company_entities.list },
-  });
+  const companyEntitiesFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { company_entity: { _in: _globalFilters.company_entities.list } },
+    { company_entity: _globalFilters.company_entities.queryParameters.filter }
+  );
   if (projectsFilterRule != null) filterRules.push(companyEntitiesFilterRule);
 
   //affairs by projects of company_entities
-  const companyEntitiesAffairsFilterRule = compileFilter(_globalFilters, 'company_entities', {
-    affairs_id: { company_entity: _globalFilters.company_entities.list },
-  });
+  const companyEntitiesAffairsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { affairs_id: { company_entity: { _in: _globalFilters.company_entities.list } } },
+    { affairs_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } }
+  );
   if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
 
   //projects contains at least one of the affairs

@@ -3,7 +3,7 @@ import { compileFilter } from '../compileFilter';
 
 export function compileGlobalFiltersToAffairsCollaboratorsFilter(_globalFilters: GlobalFiltersModel) {
   const filterRules: any[] = [];
-  //projets that contains at least one of the clients
+  //affairsUsers of projects
   const projectsFilterRule = compileFilter(
     _globalFilters,
     'projects',
@@ -12,7 +12,7 @@ export function compileGlobalFiltersToAffairsCollaboratorsFilter(_globalFilters:
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
 
-  //clients contains at least one of the affairs
+  //AffairsUsers of affairs
   const affairsFilterRule = compileFilter(
     _globalFilters,
     'affairs',
@@ -21,7 +21,25 @@ export function compileGlobalFiltersToAffairsCollaboratorsFilter(_globalFilters:
   );
   if (affairsFilterRule != null) filterRules.push(affairsFilterRule);
 
-  //clients that contains affairs that are linked to these pythagore_affaires
+  //AffairsUsers linked to projects of company entities
+  const companyEntitiesProjectsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { affairs_id: { projects_id: { company_entity: { _in: _globalFilters.company_entities.list } } } },
+    { affairs_id: { projects_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } } }
+  );
+  if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
+
+  //ProjectsUsers linked to affairs of company entities
+  const companyEntitiesAffairsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { affairs_id: { company_entity: { _in: _globalFilters.company_entities.list } } },
+    { affairs_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } }
+  );
+  if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
+
+  //AffairsUsers of PythagoreAffaires
   const pythagoreFacturesFilterRule = compileFilter(
     _globalFilters,
     'pythagore_affaires',
@@ -38,7 +56,7 @@ export function compileGlobalFiltersToAffairsCollaboratorsFilter(_globalFilters:
   );
   if (pythagoreFacturesFilterRule != null) filterRules.push(pythagoreFacturesFilterRule);
 
-  //clients that contains at least one of these files
+  //AffairsUsers of files
   const filesFilterRule = compileFilter(
     _globalFilters,
     'files',
@@ -47,7 +65,7 @@ export function compileGlobalFiltersToAffairsCollaboratorsFilter(_globalFilters:
   );
   if (filesFilterRule != null) filterRules.push(filesFilterRule);
 
-  //Clients of projects of these collaborators
+  //Clients of projects of these affairsUsers
   const clientsFilterRule = compileFilter(_globalFilters, 'clients', {
     affairs_id: {
       projects_id: {
@@ -57,8 +75,8 @@ export function compileGlobalFiltersToAffairsCollaboratorsFilter(_globalFilters:
   });
   if (clientsFilterRule != null) filterRules.push(clientsFilterRule);
 
-  //Collaborators in the list.
-  //Note: Maybe we should add collaborators that have some affair/project in common with the list
+  //AffairsUsers in collaborators list.
+  //Note: I added affairsUsers that have common projects or affairs with theses.
   const collaboratorsClientsFilterRule = compileFilter(_globalFilters, 'collaborators', {
     _or: [
       { directus_users_id: { _in: _globalFilters.collaborators.list } },
@@ -71,6 +89,13 @@ export function compileGlobalFiltersToAffairsCollaboratorsFilter(_globalFilters:
           },
         },
       },
+      {
+        affairs_id: {
+          affairs_directus_users_ids: {
+            directus_users_id: { _in: _globalFilters.collaborators.list },
+          },
+        },
+      },
     ],
   });
   if (collaboratorsClientsFilterRule != null) filterRules.push(collaboratorsClientsFilterRule);
@@ -79,7 +104,7 @@ export function compileGlobalFiltersToAffairsCollaboratorsFilter(_globalFilters:
 
 export function compileGlobalFiltersToProjectsCollaboratorsFilter(_globalFilters: GlobalFiltersModel) {
   const filterRules: any[] = [];
-  //projets that contains at least one of the clients
+  //ProjectsUsers of these projects
   const projectsFilterRule = compileFilter(
     _globalFilters,
     'projects',
@@ -88,7 +113,7 @@ export function compileGlobalFiltersToProjectsCollaboratorsFilter(_globalFilters
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
 
-  //clients contains at least one of the affairs
+  //ProjectsUsers of these affairs
   const affairsFilterRule = compileFilter(
     _globalFilters,
     'affairs',
@@ -97,7 +122,25 @@ export function compileGlobalFiltersToProjectsCollaboratorsFilter(_globalFilters
   );
   if (affairsFilterRule != null) filterRules.push(affairsFilterRule);
 
-  //clients that contains affairs that are linked to these pythagore_affaires
+  //ProjectsUsers linked to projects of company entities
+  const companyEntitiesProjectsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { projects_id: { company_entity: { _in: _globalFilters.company_entities.list } } },
+    { projects_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } }
+  );
+  if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
+
+  //ProjectsUsers linked to affairs of company entities
+  const companyEntitiesAffairsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { projects_id: { affairs_ids: { company_entity: { _in: _globalFilters.company_entities.list } } } },
+    { projects_id: { affairs_ids: { company_entity: _globalFilters.company_entities.queryParameters.filter } } }
+  );
+  if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
+
+  //ProjectsUsers that contains affairs that are linked to these pythagore_affaires
   const pythagoreFacturesFilterRule = compileFilter(
     _globalFilters,
     'pythagore_affaires',
@@ -118,7 +161,7 @@ export function compileGlobalFiltersToProjectsCollaboratorsFilter(_globalFilters
   );
   if (pythagoreFacturesFilterRule != null) filterRules.push(pythagoreFacturesFilterRule);
 
-  //clients that contains at least one of these files
+  //ProjectsUsers that are linked to at least one of these files
   const filesFilterRule = compileFilter(
     _globalFilters,
     'files',
@@ -127,22 +170,28 @@ export function compileGlobalFiltersToProjectsCollaboratorsFilter(_globalFilters
   );
   if (filesFilterRule != null) filterRules.push(filesFilterRule);
 
-  //Clients of projects of these collaborators
+  //ProjectsUsers of projects of these clients
   const clientsFilterRule = compileFilter(_globalFilters, 'clients', {
     projects_id: {
       projects_directus_users_clients_ids: { directus_users_id: { _in: _globalFilters.clients.list } },
     },
   });
   if (clientsFilterRule != null) filterRules.push(clientsFilterRule);
-
   //Collaborators in the list.
-  //Note: Maybe we should add collaborators that have some affair/project in common with the list
+  //Note: I added ProjectsUsers of projects and affairs of collaborators in the list.
   const collaboratorsClientsFilterRule = compileFilter(_globalFilters, 'collaborators', {
     _or: [
       { directus_users_id: { _in: _globalFilters.collaborators.list } },
       {
         projects_id: {
           projects_directus_users_collaborators_ids: { directus_users_id: { _in: _globalFilters.collaborators.list } },
+        },
+      },
+      {
+        projects_id: {
+          affairs_ids: {
+            affairs_directus_users_ids: { directus_users_id: { _in: _globalFilters.collaborators.list } },
+          },
         },
       },
     ],

@@ -207,18 +207,12 @@ export function RetrieveGlobalData({ children }: Props) {
     [dispatch, users]
   );
 
-  const updateCompagnyEntities = useCallback(
+  const updateCompanyEntities = useCallback(
     async (_globalFilters: GlobalFiltersModel) => {
-      const filterRules = compileGlobalFiltersToFilesFilter(_globalFilters);
-      const CompagnyEntitiesResponses = await getUsCompanyEntities({
-        limit: '20',
-        offset: '0',
-        ..._globalFilters.company_entities.queryParameters,
-        filter: { _or: filterRules },
-      });
-      if (isRequestSuccessful(CompagnyEntitiesResponses.status) && CompagnyEntitiesResponses.data) {
-        if (_globalFilters.company_entities) dispatch(setCompanyEntities(CompagnyEntitiesResponses.data));
-        else dispatch(setCompanyEntities([...companyEntities, ...CompagnyEntitiesResponses.data]));
+      const CompanyEntitiesResponses = await getUsCompanyEntities();
+      if (isRequestSuccessful(CompanyEntitiesResponses.status) && CompanyEntitiesResponses.data) {
+        if (_globalFilters.company_entities) dispatch(setCompanyEntities(CompanyEntitiesResponses.data));
+        else dispatch(setCompanyEntities([...companyEntities, ...CompanyEntitiesResponses.data]));
       }
     },
     [dispatch, companyEntities]
@@ -232,6 +226,10 @@ export function RetrieveGlobalData({ children }: Props) {
     updateFiles(globalFilters);
     updateUsers(globalFilters);
   }, [globalFilters]);
+
+  useEffect(() => {
+    updateCompanyEntities(globalFilters);
+  }, []);
 
   return <>{children}</>;
 }

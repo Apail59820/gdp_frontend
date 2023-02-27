@@ -34,7 +34,7 @@ export function compileGlobalFiltersToSatisfactionFilter(_globalFilters: GlobalF
   const pythagoreAffairesFilterRule = compileFilter(
     _globalFilters,
     'pythagore_affaires',
-    { affairs_id: { pythagore_affaires_id: { affairs_id: _globalFilters.pythagore_affaires.list } } },
+    { affairs_id: { pythagore_affaires_id: { affairs_id: { _in: _globalFilters.pythagore_affaires.list } } } },
     { affairs_id: { pythagore_affaires_id: { affairs_id: _globalFilters.pythagore_affaires.queryParameters.filter } } }
   );
   if (pythagoreAffairesFilterRule != null) filterRules.push(pythagoreAffairesFilterRule);
@@ -43,21 +43,27 @@ export function compileGlobalFiltersToSatisfactionFilter(_globalFilters: GlobalF
   const filesFilterRule = compileFilter(
     _globalFilters,
     'files',
-    { affairs_id: { projects_id: { files: _globalFilters.files.list } } },
+    { affairs_id: { projects_id: { files: { _in: _globalFilters.files.list } } } },
     { affairs_id: { projects_id: { files: _globalFilters.files.queryParameters.filter } } }
   );
   if (filesFilterRule != null) filterRules.push(filesFilterRule);
 
   //satisfaction affairs of company_entities
-  const companyEntitiesAffairsFilterRule = compileFilter(_globalFilters, 'company_entities', {
-    affairs_id: { company_entity: _globalFilters.company_entities.list },
-  });
+  const companyEntitiesAffairsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { affairs_id: { company_entity: { _in: _globalFilters.company_entities.list } } },
+    { affairs_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } }
+  );
   if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
 
   //satisfaction projects of company_entities
-  const companyEntitiesProjectsFilterRule = compileFilter(_globalFilters, 'company_entities', {
-    projects_id: { company_entity: _globalFilters.company_entities.list },
-  });
+  const companyEntitiesProjectsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { affairs_id: { projects_id: { company_entity: { _in: _globalFilters.company_entities.list } } } },
+    { affairs_id: { projects_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } } }
+  );
   if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
 
   // satisfaction that contains at least one of these clients
@@ -67,7 +73,9 @@ export function compileGlobalFiltersToSatisfactionFilter(_globalFilters: GlobalF
     {
       affairs_id: {
         projects_id: {
-          projects_directus_users_clients_ids: { affairs_id: { directus_users_id: _globalFilters.clients.list } },
+          projects_directus_users_clients_ids: {
+            affairs_id: { directus_users_id: { _in: _globalFilters.clients.list } },
+          },
         },
       },
     },
@@ -91,7 +99,7 @@ export function compileGlobalFiltersToSatisfactionFilter(_globalFilters: GlobalF
       affairs_id: {
         projects_id: {
           projects_directus_users_collaborators_ids: {
-            affairs_id: { directus_users_id: _globalFilters.collaborators.list },
+            affairs_id: { directus_users_id: { _in: _globalFilters.collaborators.list } },
           },
         },
       },

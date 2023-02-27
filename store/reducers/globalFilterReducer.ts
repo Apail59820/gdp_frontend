@@ -42,6 +42,11 @@ const initialState: GlobalFiltersModel = {
     list: [],
     queryParameters: {},
   },
+  clients_company_entities: {
+    list: [],
+    queryParameters: {},
+    action: GlobalFilterActionType.REPLACE,
+  },
 };
 
 const globalFilterSlice = createSlice({

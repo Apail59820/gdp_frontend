@@ -10,21 +10,35 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: Gl
     'projects',
     { affairs_id: { affairs_id: { projects_id: { _in: _globalFilters.projects.list } } } },
     {
-      affairs_id: { affairs_id: { projects_id: { _in: _globalFilters.projects.queryParameters.filter } } },
+      affairs_id: { affairs_id: { projects_id: _globalFilters.projects.queryParameters.filter } },
     }
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
 
-  //company_entities of pythagore_affairs by project
-  const companyEntitiesProjectsFilterRule = compileFilter(_globalFilters, 'company_entities', {
-    projects_id: { company_entity: _globalFilters.pythagore_affaires.list },
-  });
+  //factures linked to a company entity through a project
+  const companyEntitiesProjectsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    {
+      affairs_id: {
+        affairs_id: { projects_id: { company_entity: { _in: _globalFilters.company_entities.list } } },
+      },
+    },
+    {
+      affairs_id: {
+        affairs_id: { projects_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } },
+      },
+    }
+  );
   if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
 
-  //company_entities of pythagore_affairs by affairs
-  const companyEntitiesAffairsFilterRule = compileFilter(_globalFilters, 'company_entities', {
-    affairs_id: { company_entity: _globalFilters.pythagore_affaires.list },
-  });
+  //factures linked to a company entity through an affair
+  const companyEntitiesAffairsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { affairs_id: { affairs_id: { company_entity: { _in: _globalFilters.company_entities.list } } } },
+    { affairs_id: { affairs_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } } }
+  );
   if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
 
   //factures of these affairs
@@ -32,7 +46,7 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: Gl
     _globalFilters,
     'affairs',
     { affairs_id: { affairs_id: { _in: _globalFilters.affairs.list } } },
-    { affairs_id: { affairs_id: { _in: _globalFilters.affairs.queryParameters.filter } } }
+    { affairs_id: { affairs_id: _globalFilters.affairs.queryParameters.filter } }
   );
   if (affairsFilterRule != null) filterRules.push(affairsFilterRule);
 
@@ -41,7 +55,7 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: Gl
     _globalFilters,
     'pythagore_affaires',
     { num_affaire: { _in: _globalFilters.pythagore_affaires.list } },
-    _globalFilters.pythagore_affaires.queryParameters.filter
+    { num_affaire: _globalFilters.pythagore_affaires.queryParameters.filter }
   );
   if (pythagoreAffairesFilterRule != null) filterRules.push(pythagoreAffairesFilterRule);
 

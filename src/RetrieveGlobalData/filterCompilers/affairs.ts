@@ -8,20 +8,26 @@ export function compileGlobalFiltersToAffairsFilter(_globalFilters: GlobalFilter
     _globalFilters,
     'projects',
     { projects_id: { _in: _globalFilters.projects.list } },
-    { projects_id: { _in: _globalFilters.projects.queryParameters.filter } }
+    { projects_id: _globalFilters.projects.queryParameters.filter }
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
 
   //affairs of company_entities
-  const companyEntitiesAffairsFilterRule = compileFilter(_globalFilters, 'company_entities', {
-    company_entity: { _in: _globalFilters.company_entities.list },
-  });
+  const companyEntitiesAffairsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { company_entity: { _in: _globalFilters.company_entities.list } },
+    { company_entity: _globalFilters.company_entities.queryParameters.filter }
+  );
   if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
 
   //projects of company_entities
-  const companyEntitiesProjectsFilterRule = compileFilter(_globalFilters, 'company_entities', {
-    projects_id: { company_entity: _globalFilters.company_entities.list },
-  });
+  const companyEntitiesProjectsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { projects_id: { company_entity: { _in: _globalFilters.company_entities.list } } },
+    { projects_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } }
+  );
   if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
 
   //affairs
