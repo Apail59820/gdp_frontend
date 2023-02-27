@@ -138,7 +138,7 @@ export function RetrieveGlobalData({ children }: Props) {
         else dispatch(setCompanyEntities([...companyEntities, ...CompagnyEntitiesResponses.data]));
       }
     },
-    [dispatch, factures]
+    [dispatch, companyEntities]
   );
 
   useEffect(() => {
