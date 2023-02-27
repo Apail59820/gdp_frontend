@@ -31,6 +31,11 @@ import { getGdpAffairsUsers } from '../../services/gestionDeProjets/GdpAffairsUs
 import { getGdpProjectsUsersCollaborators } from '../../services/gestionDeProjets/GdpProjectsUsersCollaborators';
 import { getUsCompanyEntities } from '../../services/userService/UsCompanyEntities';
 import { selectCompanyEntities, setCompanyEntities } from '../../store/reducers/companyEntitiesReducer';
+import {
+  selectClientsCompanyEntities,
+  setClientsCompanyEntities,
+} from '../../store/reducers/clientsCompanyEntitiesReducer';
+import { getUsClientsCompanyEntities } from '../../services/userService/UsClientsCompanyEntities';
 
 type Props = {
   children: ReactNode;
@@ -46,6 +51,7 @@ export function RetrieveGlobalData({ children }: Props) {
   const files = useSelector(selectFiles);
   const companyEntities = useSelector(selectCompanyEntities);
   const users = useSelector(selectUsers);
+  const clientsCompanyEntities = useSelector(selectClientsCompanyEntities);
 
   const updateProjects = useCallback(
     async (_globalFilters: GlobalFiltersModel) => {
@@ -135,7 +141,7 @@ export function RetrieveGlobalData({ children }: Props) {
     [dispatch, files]
   );
 
-  const updateUsers = useCallback(
+  const updateUsersAndClientsCompanyEntities = useCallback(
     async (_globalFilters: GlobalFiltersModel) => {
       const clientsFilterRule = compileGlobalFiltersToClientsFilter(_globalFilters);
       const clientsListResponse = getGdpProjectsUsersClients({
@@ -167,6 +173,10 @@ export function RetrieveGlobalData({ children }: Props) {
         projectsCollaboratorsListResponse,
         affairsCollaboratorsListResponse,
       ]);
+      const clientsArrays: string[] =
+        isRequestSuccessful(UsersListResponses[0].status) && UsersListResponses[0].data
+          ? UsersListResponses[0].data.map((item: any) => item.directus_users_id)
+          : [];
       UsersListResponses.forEach((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
           res.data.forEach((item: any) => {
@@ -176,6 +186,25 @@ export function RetrieveGlobalData({ children }: Props) {
         }
       });
 
+      //update clientsCompanyEntities
+      if (clientsArrays.length > 0) {
+        const clientsCompanyEntitiesResponse = await getUsClientsCompanyEntities({
+          filter: {
+            users: {
+              directus_users_id: {
+                _in: clientsArrays,
+              },
+            },
+          },
+        });
+        if (isRequestSuccessful(clientsCompanyEntitiesResponse.status) && clientsCompanyEntitiesResponse.data) {
+          if (_globalFilters.clients_company_entities.action == GlobalFilterActionType.REPLACE)
+            dispatch(setClientsCompanyEntities(clientsCompanyEntitiesResponse.data));
+          else dispatch(setClientsCompanyEntities([...clientsCompanyEntities, ...clientsCompanyEntitiesResponse.data]));
+        }
+      }
+
+      //update users
       const UsersResponse =
         usersList.length > 0
           ? await getUsUsers({
@@ -224,7 +253,7 @@ export function RetrieveGlobalData({ children }: Props) {
     updateAffairs(globalFilters);
     updatePythagoreAffaires(globalFilters);
     updateFiles(globalFilters);
-    updateUsers(globalFilters);
+    updateUsersAndClientsCompanyEntities(globalFilters);
   }, [globalFilters]);
 
   useEffect(() => {
