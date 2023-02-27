@@ -6,7 +6,16 @@ import getConfig from 'next/config';
 
 const { publicRuntimeConfig } = getConfig();
 
-const defaultFields = ['*', 'company_entity.*', 'pythagore_ids.*'].join(',');
+const defaultFields = [
+  '*',
+  'company_entity.*',
+  'pythagore_ids.*',
+  'affairs_directus_users_ids.id',
+  'affairs_directus_users_ids.affairs_id',
+  'affairs_directus_users_ids.directus_users_id',
+  'affairs_directus_users_ids.show_notifications',
+  'affairs_directus_users_ids.project_manager',
+].join(',');
 
 /**
  * Retrieve GdpAffairs respecting the query parameters.
