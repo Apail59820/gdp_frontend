@@ -11,11 +11,12 @@ export function compileFilter(
   globalFilters: GlobalFiltersModel,
   globalFilterKey: keyof GlobalFiltersModel,
   listFilter: any,
-  queryFilter: any
+  queryFilter?: any
 ) {
   const rules: any[] = [];
   if (globalFilters[globalFilterKey].list.length > 0) rules.push(listFilter);
-  if (queryParameterContainsFilter(globalFilters[globalFilterKey].queryParameters)) rules.push(queryFilter);
+  if (queryFilter && queryParameterContainsFilter(globalFilters[globalFilterKey].queryParameters))
+    rules.push(queryFilter);
   if (rules.length > 0) return { _and: rules };
   else return null;
 }
