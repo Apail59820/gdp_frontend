@@ -7,9 +7,9 @@ import Grid from '../../src/components/Grid/Grid';
 import ProjectCard from '../../src/components/ProjectCard/ProjectCard';
 import ProjectsList from '../../src/ProjectsList/ProjectsList';
 import { GdpProjectsModel } from '../../models/GestionDeProjets/GdpProjectsModel';
-import { CompanyEnum } from '../../models/UsModels';
-
-const PROJECTS: GdpProjectsModel[] = [];
+import { useSelector } from 'react-redux';
+import { selectProjects } from '../../store/reducers/projectsReducer';
+import Link from 'next/link';
 
 const DATA: DataCategory[] = [
   {
@@ -79,15 +79,19 @@ const Projects = () => {
 
   const [displayOption, setDisplayOption] = useState<string>('grid');
 
+  const projects: Partial<GdpProjectsModel>[] = useSelector(selectProjects);
+
   const displayAsGrid = (): React.ReactNode => (
     <Grid>
-      {PROJECTS.map((project: GdpProjectsModel) => (
-        <ProjectCard key={project.id} project={project} projectManagerName={'Manager'} />
+      {projects.map((project) => (
+        <Link key={project.id} href={`/projects/${project.id}`}>
+          <ProjectCard project={project} projectManagerName={'Manager'} />
+        </Link>
       ))}
     </Grid>
   );
 
-  const displayAsList = (): React.ReactNode => <ProjectsList projects={PROJECTS} />;
+  const displayAsList = (): React.ReactNode => <ProjectsList projects={projects} />;
 
   return (
     <div className="page">
@@ -99,7 +103,6 @@ const Projects = () => {
             filtersSelection={filtersSelection}
           />
         </div>
-        <div>Autres select ?</div>
       </FilterBar>
       {showFilters ? <Filters data={DATA} filtersSelection={filtersSelection} onSubmit={setFiltersSelection} /> : null}
       <div className={styles.projectsPage}>

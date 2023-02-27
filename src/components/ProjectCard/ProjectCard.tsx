@@ -7,7 +7,7 @@ import defaultImage from '../../../public/default-affair-image.png';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 
 type Props = {
-  project: GdpProjectsModel;
+  project: Partial<GdpProjectsModel>;
   projectManagerName: string;
 };
 
