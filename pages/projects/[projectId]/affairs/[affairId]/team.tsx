@@ -1,4 +1,7 @@
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { GdpAffairModel } from '../../../../../models/GdPModels';
+import { getGdpAffair } from '../../../../../services/gestionDeProjets/GdpAffairs';
 import TeamPage from '../../../../../src/TeamPage/TeamPage';
 
 // TODO
@@ -17,26 +20,32 @@ const PROJECT_BY_ID: any = {
   company_entity: 'CompanyEnum.DIAGOBAT',
   affairs: undefined,
 };
-const AFFAIR_BY_ID: any = {
-  id: '1',
-  user_created: undefined,
-  date_created: undefined,
-  user_updated: undefined,
-  date_updated: undefined,
-  name: "Nom de l'affaire",
-  pythagore_ids: undefined,
-  status: 'AffairStatusEnum.ACTIVE',
-  user_access: undefined,
-  affairs_satisfaction: undefined,
-};
-
-const CLIENT_TEAM: any[] = [];
-const PROJECT_TEAM: any[] = [];
 
 const Team = () => {
-  return (
-    <TeamPage project={PROJECT_BY_ID} affair={AFFAIR_BY_ID} clientTeam={CLIENT_TEAM} collaboratorTeam={PROJECT_TEAM} />
-  );
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
+  const { affairId } = router.query;
+
+  useEffect(() => {
+    if (affairId && typeof affairId == 'string') {
+      setIsLoading(true);
+      getGdpAffair(+affairId)
+        .then((res) => {
+          if (res.status === 200 && res.data) setAffair(res.data);
+        })
+        .catch((e) => {
+          // eslint-disable-next-line no-console
+          console.error(e);
+          setAffair({});
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [affairId]);
+
+  return <TeamPage project={PROJECT_BY_ID} affair={affair} />;
 };
 
 export default Team;

@@ -17,12 +17,12 @@ const ClientTeamWidget = (props: Props) => {
     <Section
       title="Équipe client"
       link={
-        props.users.length > 0
+        props.users?.length > 0
           ? { label: 'Voir la fiche client', href: clientTeamPageHref || `${router.asPath}/client` }
           : undefined
       }
     >
-      {props.users.length > 0 ? (
+      {props.users?.length > 0 ? (
         <ClientTeamCard
           {...props}
           allUsersPageHref={clientTeamPageHref || `${router.asPath}/client`}

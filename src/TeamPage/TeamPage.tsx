@@ -1,23 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '../../styles/Team.module.scss';
 import { Breadcrumb } from '@projex/ui';
-import { GdpProjectsModel, GdpAffairModel } from '../../models/GdPModels';
+import {
+  GdpProjectsModel,
+  GdpAffairModel,
+  GdpProjectsClientsModel,
+  GdpProjectsCollaboratorsModel,
+} from '../../models/GdPModels';
 import { CompanyEnum, UsUserModel } from '../../models/UsModels';
 import ClientTeamWidget from '../components/ClientTeamWidget/ClientTeamWidget';
 import CollaboratorTeamWidget from '../components/CollaboratorTeamWidget/CollaboratorTeamWidget';
 import Grid from '../components/Grid/Grid';
 import PageHeaderBanner from '../components/PageHeaderBanner/PageHeaderBanner';
 import UsersWidget from '../components/UsersWidget/UsersWidget';
+import { getGdpProjectsUsersClients } from '../../services/gestionDeProjets/GdpProjectsUsersClients';
+
 type Props = {
-  project: GdpProjectsModel;
-  affair?: GdpAffairModel;
-  clientTeam: UsUserModel[];
-  collaboratorTeam: UsUserModel[];
+  project: Partial<GdpProjectsModel>;
+  affair?: Partial<GdpAffairModel>;
 };
 
-const TeamPage = ({ project, affair, clientTeam, collaboratorTeam }: Props) => {
-  // TODO
-  const MANAGERS: UsUserModel[] = [...collaboratorTeam].slice(0, 1);
+const TeamPage = ({ project, affair }: Props) => {
+  const clientTeam = (project.projects_directus_users_clients_ids as GdpProjectsClientsModel[])?.map(
+    (client) => client.directus_users_id
+  ) as UsUserModel[];
+  const collaboratorTeam = (project.projects_directus_users_collaborators_ids as GdpProjectsCollaboratorsModel[])?.map(
+    (collaborator) => collaborator.directus_users_id
+  ) as UsUserModel[];
 
   return (
     <div className="page">
@@ -30,7 +39,7 @@ const TeamPage = ({ project, affair, clientTeam, collaboratorTeam }: Props) => {
         <section>
           <Grid type="narrow">
             <ClientTeamWidget
-              users={clientTeam || []}
+              users={clientTeam}
               clientCompany={project}
               clientTeamPageHref="/client?"
               onAddClientClick={() => console.log('open modal ?')}
@@ -43,7 +52,8 @@ const TeamPage = ({ project, affair, clientTeam, collaboratorTeam }: Props) => {
           </Grid>
         </section>
         <UsersWidget
-          users={MANAGERS}
+          // TODO
+          users={[]}
           label={`Responsables ${affair ? "de l'affaire" : 'du projet'}`}
           addUserLabel="Ajouter un responsable"
           onNewUserClick={() => console.log('open modal ?')}
