@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from '../../styles/Team.module.scss';
 import { Breadcrumb } from '@projex/ui';
 import {
@@ -7,13 +7,12 @@ import {
   GdpProjectsClientsModel,
   GdpProjectsCollaboratorsModel,
 } from '../../models/GdPModels';
-import { CompanyEnum, UsUserModel } from '../../models/UsModels';
+import { UsUserModel } from '../../models/UsModels';
 import ClientTeamWidget from '../components/ClientTeamWidget/ClientTeamWidget';
 import CollaboratorTeamWidget from '../components/CollaboratorTeamWidget/CollaboratorTeamWidget';
 import Grid from '../components/Grid/Grid';
 import PageHeaderBanner from '../components/PageHeaderBanner/PageHeaderBanner';
 import UsersWidget from '../components/UsersWidget/UsersWidget';
-import { getGdpProjectsUsersClients } from '../../services/gestionDeProjets/GdpProjectsUsersClients';
 
 type Props = {
   project: Partial<GdpProjectsModel>;
@@ -26,6 +25,11 @@ const TeamPage = ({ project, affair }: Props) => {
   ) as UsUserModel[];
   const collaboratorTeam = (project.projects_directus_users_collaborators_ids as GdpProjectsCollaboratorsModel[])?.map(
     (collaborator) => collaborator.directus_users_id
+  ) as UsUserModel[];
+  const managerTeam = (project.projects_directus_users_collaborators_ids as GdpProjectsCollaboratorsModel[])?.map(
+    (collaborator) => {
+      if (collaborator.project_manager) return collaborator.directus_users_id;
+    }
   ) as UsUserModel[];
 
   return (
@@ -52,8 +56,7 @@ const TeamPage = ({ project, affair }: Props) => {
           </Grid>
         </section>
         <UsersWidget
-          // TODO
-          users={[]}
+          users={managerTeam || []}
           label={`Responsables ${affair ? "de l'affaire" : 'du projet'}`}
           addUserLabel="Ajouter un responsable"
           onNewUserClick={() => console.log('open modal ?')}

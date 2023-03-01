@@ -7,6 +7,7 @@ export type GdpProjectsCollaboratorsModel = {
   show_notifications: boolean;
 
   projects_id: number | GdpProjectsModel;
+  project_manager: boolean;
   directus_users_id: string | UsUserModel;
   activities_id: number[] | GdpActivitiesModel[];
 };

@@ -1,51 +1,57 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { GdpAffairModel } from '../../../../../models/GdPModels';
+import { GdpAffairModel, GdpProjectsModel } from '../../../../../models/GdPModels';
 import { getGdpAffair } from '../../../../../services/gestionDeProjets/GdpAffairs';
+import { getGdpProjectById } from '../../../../../services/gestionDeProjets/GdpProjects';
 import TeamPage from '../../../../../src/TeamPage/TeamPage';
-
-// TODO
-const PROJECT_BY_ID: any = {
-  id: '1',
-  name: 'Nom du projet',
-  client_company_name: 'Nom du client',
-  client_info: undefined,
-  address: undefined,
-  zip_code: undefined,
-  city: undefined,
-  country: undefined,
-  image: 'ok',
-  status: undefined,
-  project_type: undefined,
-  company_entity: 'CompanyEnum.DIAGOBAT',
-  affairs: undefined,
-};
 
 const Team = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
-  const { affairId } = router.query;
+
+  const { projectId, affairId } = router.query;
 
   useEffect(() => {
-    if (affairId && typeof affairId == 'string') {
+    if (projectId && typeof projectId == 'string') {
       setIsLoading(true);
-      getGdpAffair(+affairId)
+      getGdpProjectById(
+        +projectId,
+        [
+          'id',
+          'name',
+          'company_entity.*',
+          'projects_directus_users_clients_ids.*',
+          'projects_directus_users_collaborators_ids.*',
+          'affairs.*',
+          'status',
+        ].join(',')
+      )
         .then((res) => {
-          if (res.status === 200 && res.data) setAffair(res.data);
+          if (res.status === 200 && res.data) setProject(res.data);
+          else router.push('/404', undefined, { shallow: true });
         })
         .catch((e) => {
           // eslint-disable-next-line no-console
           console.error(e);
-          setAffair({});
+          setProject({});
         })
         .finally(() => {
           setIsLoading(false);
         });
     }
-  }, [affairId]);
+  }, [router, projectId, affairId]);
 
-  return <TeamPage project={PROJECT_BY_ID} affair={affair} />;
+  useEffect(() => {
+    if (affairId && typeof affairId == 'string') {
+      const affair = (project.affairs as GdpAffairModel[])?.find((affair) => affair.id === +affairId);
+      if (!affair) router.push('/404', undefined, { shallow: true });
+      else setAffair(affair);
+    }
+  }, [router, project, affairId]);
+
+  return <TeamPage project={project} affair={affair} />;
 };
 
 export default Team;

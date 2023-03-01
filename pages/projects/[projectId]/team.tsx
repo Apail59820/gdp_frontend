@@ -33,9 +33,20 @@ const Team = () => {
   useEffect(() => {
     if (projectId && typeof projectId == 'string') {
       setIsLoading(true);
-      getGdpProjectById(+projectId)
+      getGdpProjectById(
+        +projectId,
+        [
+          'id',
+          'name',
+          'company_entity.*',
+          'projects_directus_users_clients_ids.*',
+          'projects_directus_users_collaborators_ids.*',
+          'status',
+        ].join(',')
+      )
         .then((res) => {
           if (res.status === 200 && res.data) setProject(res.data);
+          else router.push('/404', undefined, { shallow: true });
         })
         .catch((e) => {
           // eslint-disable-next-line no-console
@@ -46,7 +57,7 @@ const Team = () => {
           setIsLoading(false);
         });
     }
-  }, [projectId]);
+  }, [router, projectId]);
 
   return <TeamPage project={project} />;
 };
