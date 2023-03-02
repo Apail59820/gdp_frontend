@@ -5,19 +5,19 @@ import { capitalize } from '../../utils/capitalize';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { GdpProjectsModel } from '../../models/GdPModels';
-import { CompanyEnum } from '../../models/UsModels';
+import { CompanyEnum, UsCompanyEntityModel } from '../../models/UsModels';
 
 interface DataType {
   key: string;
   project_name: React.ReactNode;
   client_name: string;
-  company_entity: string;
+  company_entity?: number | UsCompanyEntityModel;
   project_managers: string[];
   description: React.ReactNode;
 }
 
 type Props = {
-  projects: GdpProjectsModel[];
+  projects: Partial<GdpProjectsModel>[];
 };
 
 const ProjectsList = ({ projects }: Props) => {
@@ -66,34 +66,47 @@ const ProjectsList = ({ projects }: Props) => {
     Table.EXPAND_COLUMN,
   ];
 
-  const renderProjectDescription = (project: GdpProjectsModel) => (
-    <div>
-      {/* TODO */}
-      Infos complémentaires ? <br />
-      Chef de projet <br />
-      Nombre d&apos;affaires ?<br />
-      Société <br />
+  const renderProjectDescription = (project: Partial<GdpProjectsModel>) => (
+    <>
+      {project.address ? (
+        <>
+          <span>{project.address}</span>
+          <br />
+        </>
+      ) : null}
+      {project.city ? (
+        <>
+          <span>{project.city}</span>
+          <br />
+        </>
+      ) : null}
+      {project.country ? (
+        <>
+          <span>{project.country}</span>
+          <br />
+        </>
+      ) : null}
       <Link className={`text-small ${styles.seeTheProjectLink}`} href={`/projects/${project.id}`}>
         Voir le projet
       </Link>
-    </div>
+    </>
   );
 
   useEffect(() => {
-    // const formattedProject: DataType[] = projects.map((project: GdpProjectsModel) => ({
-    //   key: project.id || '',
-    //   project_name: (
-    //     <Link className={styles.projectName} href={`/projects/${project.id}`}>
-    //       {project.name}
-    //     </Link>
-    //   ),
-    //   client_name: project.client_company_name || '',
-    //   company_entity: project.company_entity || '',
-    //   // TODO
-    //   project_managers: ['manager 1', 'manager 2'],
-    //   description: renderProjectDescription(project),
-    // }));
-    // setFormattedData(formattedProject);
+    const formattedProject: DataType[] = projects.map((project) => ({
+      key: project.id || '',
+      project_name: (
+        <Link className={styles.projectName} href={`/projects/${project.id}`}>
+          {project.name}
+        </Link>
+      ),
+      client_name: project.client_company_name || '',
+      company_entity: project.company_entity,
+      // TODO
+      project_managers: ['manager 1', 'manager 2'],
+      description: renderProjectDescription(project),
+    }));
+    setFormattedData(formattedProject);
   }, [projects]);
 
   return (
@@ -103,8 +116,6 @@ const ProjectsList = ({ projects }: Props) => {
         expandedRowRender: (record) => <p style={{ margin: 0 }}>{record.description}</p>,
       }}
       columns={columns}
-      // TODO
-      loading={false}
       pagination={false}
     />
   );
