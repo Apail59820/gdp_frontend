@@ -1,7 +1,10 @@
 import { GlobalFiltersModel } from '../../../models/GlobalFiltersModel';
 import { compileFilter } from '../compileFilter';
 
-export function compileGlobalFiltersToSatisfactionFilter(_globalFilters: GlobalFiltersModel) {
+export function compileGlobalFiltersToSatisfactionFilter(
+  _globalFilters: GlobalFiltersModel,
+  additionalClients: string[] = []
+) {
   const filterRules: any[] = [];
   //satisfaction:
   const satisfactionFilterRule = compileFilter(
@@ -74,7 +77,7 @@ export function compileGlobalFiltersToSatisfactionFilter(_globalFilters: GlobalF
       affairs_id: {
         projects_id: {
           projects_directus_users_clients_ids: {
-            affairs_id: { directus_users_id: { _in: _globalFilters.clients.list } },
+            directus_users_id: { _in: Array.from(new Set([..._globalFilters.clients.list, ...additionalClients])) },
           },
         },
       },
@@ -83,11 +86,12 @@ export function compileGlobalFiltersToSatisfactionFilter(_globalFilters: GlobalF
       affairs_id: {
         projects_id: {
           projects_directus_users_clients_ids: {
-            affairs_id: { directus_users_id: _globalFilters.clients.queryParameters.filter },
+            directus_users_id: _globalFilters.clients.queryParameters.filter,
           },
         },
       },
-    }
+    },
+    additionalClients
   );
   if (clientsFilterRule != null) filterRules.push(clientsFilterRule);
 
@@ -99,7 +103,7 @@ export function compileGlobalFiltersToSatisfactionFilter(_globalFilters: GlobalF
       affairs_id: {
         projects_id: {
           projects_directus_users_collaborators_ids: {
-            affairs_id: { directus_users_id: { _in: _globalFilters.collaborators.list } },
+            directus_users_id: { _in: _globalFilters.collaborators.list },
           },
         },
       },
@@ -108,7 +112,7 @@ export function compileGlobalFiltersToSatisfactionFilter(_globalFilters: GlobalF
       affairs_id: {
         projects_id: {
           projects_directus_users_collaborators_ids: {
-            affairs_id: { directus_users_id: _globalFilters.collaborators.queryParameters.filter },
+            directus_users_id: _globalFilters.collaborators.queryParameters.filter,
           },
         },
       },

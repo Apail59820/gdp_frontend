@@ -1,7 +1,10 @@
 import { GlobalFiltersModel } from '../../../models/GlobalFiltersModel';
 import { compileFilter } from '../compileFilter';
 
-export function compileGlobalFiltersToAffairsFilter(_globalFilters: GlobalFiltersModel) {
+export function compileGlobalFiltersToAffairsFilter(
+  _globalFilters: GlobalFiltersModel,
+  additionalClients: string[] = []
+) {
   const filterRules: any[] = [];
   //affairs of projects
   const projectsFilterRule = compileFilter(
@@ -69,13 +72,18 @@ export function compileGlobalFiltersToAffairsFilter(_globalFilters: GlobalFilter
     _globalFilters,
     'clients',
     {
-      projects_id: { projects_directus_users_clients_ids: { directus_users_id: { _in: _globalFilters.clients.list } } },
+      projects_id: {
+        projects_directus_users_clients_ids: {
+          directus_users_id: { _in: Array.from(new Set([..._globalFilters.clients.list, ...additionalClients])) },
+        },
+      },
     },
     {
       projects_id: {
         projects_directus_users_clients_ids: { directus_users_id: _globalFilters.clients.queryParameters.filter },
       },
-    }
+    },
+    additionalClients
   );
   if (clientsFilterRule != null) filterRules.push(clientsFilterRule);
 

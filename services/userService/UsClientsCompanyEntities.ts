@@ -32,9 +32,7 @@ export async function getUsClientsCompanyEntities(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/clients_company_entities?${concatenateQueryParameters(
-      props
-    )}`,
+    `${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_entities?${concatenateQueryParameters(props)}`,
     myInit
   )
     .then((res) => {

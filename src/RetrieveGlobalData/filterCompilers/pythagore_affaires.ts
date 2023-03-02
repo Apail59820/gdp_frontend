@@ -1,7 +1,10 @@
 import { GlobalFiltersModel } from '../../../models/GlobalFiltersModel';
 import { compileFilter } from '../compileFilter';
 
-export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: GlobalFiltersModel) {
+export function compileGlobalFiltersToPythagoreAffairesFilter(
+  _globalFilters: GlobalFiltersModel,
+  additionalClients: string[] = []
+) {
   // num_affaire.affairs_id.affairs_id.projects_id.*
   const filterRules: any[] = [];
   //factures linked to a project through affairs:
@@ -80,7 +83,9 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: Gl
       affairs_id: {
         affairs_id: {
           projects_id: {
-            projects_directus_users_clients_ids: { directus_users_id: { _in: _globalFilters.clients.list } },
+            projects_directus_users_clients_ids: {
+              directus_users_id: { _in: Array.from(new Set([..._globalFilters.clients.list, ...additionalClients])) },
+            },
           },
         },
       },
@@ -93,7 +98,8 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: Gl
           },
         },
       },
-    }
+    },
+    additionalClients
   );
   if (clientsFilterRule != null) filterRules.push(clientsFilterRule);
 

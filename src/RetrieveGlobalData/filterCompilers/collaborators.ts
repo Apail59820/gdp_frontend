@@ -1,7 +1,10 @@
 import { GlobalFiltersModel } from '../../../models/GlobalFiltersModel';
 import { compileFilter } from '../compileFilter';
 
-export function compileGlobalFiltersToAffairsCollaboratorsFilter(_globalFilters: GlobalFiltersModel) {
+export function compileGlobalFiltersToAffairsCollaboratorsFilter(
+  _globalFilters: GlobalFiltersModel,
+  additionalClients: string[] = []
+) {
   const filterRules: any[] = [];
   //affairsUsers of projects
   const projectsFilterRule = compileFilter(
@@ -66,13 +69,21 @@ export function compileGlobalFiltersToAffairsCollaboratorsFilter(_globalFilters:
   if (filesFilterRule != null) filterRules.push(filesFilterRule);
 
   //Clients of projects of these affairsUsers
-  const clientsFilterRule = compileFilter(_globalFilters, 'clients', {
-    affairs_id: {
-      projects_id: {
-        projects_directus_users_clients_ids: { directus_users_id: { _in: _globalFilters.clients.list } },
+  const clientsFilterRule = compileFilter(
+    _globalFilters,
+    'clients',
+    {
+      affairs_id: {
+        projects_id: {
+          projects_directus_users_clients_ids: {
+            directus_users_id: { _in: Array.from(new Set([..._globalFilters.clients.list, ...additionalClients])) },
+          },
+        },
       },
     },
-  });
+    undefined,
+    additionalClients
+  );
   if (clientsFilterRule != null) filterRules.push(clientsFilterRule);
 
   //AffairsUsers in collaborators list.
@@ -102,7 +113,10 @@ export function compileGlobalFiltersToAffairsCollaboratorsFilter(_globalFilters:
   return filterRules;
 }
 
-export function compileGlobalFiltersToProjectsCollaboratorsFilter(_globalFilters: GlobalFiltersModel) {
+export function compileGlobalFiltersToProjectsCollaboratorsFilter(
+  _globalFilters: GlobalFiltersModel,
+  additionalClients: string[] = []
+) {
   const filterRules: any[] = [];
   //ProjectsUsers of these projects
   const projectsFilterRule = compileFilter(
@@ -171,11 +185,19 @@ export function compileGlobalFiltersToProjectsCollaboratorsFilter(_globalFilters
   if (filesFilterRule != null) filterRules.push(filesFilterRule);
 
   //ProjectsUsers of projects of these clients
-  const clientsFilterRule = compileFilter(_globalFilters, 'clients', {
-    projects_id: {
-      projects_directus_users_clients_ids: { directus_users_id: { _in: _globalFilters.clients.list } },
+  const clientsFilterRule = compileFilter(
+    _globalFilters,
+    'clients',
+    {
+      projects_id: {
+        projects_directus_users_clients_ids: {
+          directus_users_id: { _in: Array.from(new Set([..._globalFilters.clients.list, ...additionalClients])) },
+        },
+      },
     },
-  });
+    undefined,
+    additionalClients
+  );
   if (clientsFilterRule != null) filterRules.push(clientsFilterRule);
   //Collaborators in the list.
   //Note: I added ProjectsUsers of projects and affairs of collaborators in the list.
