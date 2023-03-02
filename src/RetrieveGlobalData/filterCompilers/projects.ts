@@ -19,14 +19,14 @@ export function compileGlobalFiltersToProjectFilter(_globalFilters: GlobalFilter
     { company_entity: { _in: _globalFilters.company_entities.list } },
     { company_entity: _globalFilters.company_entities.queryParameters.filter }
   );
-  if (projectsFilterRule != null) filterRules.push(companyEntitiesFilterRule);
+  if (companyEntitiesFilterRule != null) filterRules.push(companyEntitiesFilterRule);
 
   //affairs by projects of company_entities
   const companyEntitiesAffairsFilterRule = compileFilter(
     _globalFilters,
     'company_entities',
-    { affairs_id: { company_entity: { _in: _globalFilters.company_entities.list } } },
-    { affairs_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } }
+    { affairs_ids: { company_entity: { _in: _globalFilters.company_entities.list } } },
+    { affairs_ids: { company_entity: _globalFilters.company_entities.queryParameters.filter } }
   );
   if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
 

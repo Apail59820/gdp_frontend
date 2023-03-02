@@ -23,7 +23,7 @@ export function compileGlobalFiltersToFilesFilter(_globalFilters: GlobalFiltersM
 
   //files of company_entities by affairs.
   const companyEntitiesAffairsFilterRule = compileFilter(_globalFilters, 'company_entities', {
-    affairs_id: { company_entity: { _in: _globalFilters.company_entities.list } },
+    affair_id: { company_entity: { _in: _globalFilters.company_entities.list } },
   });
   if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
 
