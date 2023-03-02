@@ -33,7 +33,7 @@ const PHASES = [
     description: 'description',
   },
   {
-    id: 3,
+    id: 2,
     name: 'Name 2',
     order: 2,
     status: 'pending',
