@@ -3,7 +3,7 @@ import { compileFilter } from '../compileFilter';
 
 export function compileGlobalFiltersToClientsFilter(_globalFilters: GlobalFiltersModel) {
   const filterRules: any[] = [];
-  //projets that contains at least one of the clients
+  //clients of these projects
   const projectsFilterRule = compileFilter(
     _globalFilters,
     'projects',
@@ -20,6 +20,24 @@ export function compileGlobalFiltersToClientsFilter(_globalFilters: GlobalFilter
     { projects_id: { affairs_ids: _globalFilters.affairs.queryParameters.filter } }
   );
   if (affairsFilterRule != null) filterRules.push(affairsFilterRule);
+
+  //clients linked to projects of company entities
+  const companyEntitiesProjectsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { projects_id: { company_entity: { _in: _globalFilters.company_entities.list } } },
+    { projects_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } }
+  );
+  if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
+
+  //clients linked to affairs of company entities
+  const companyEntitiesAffairsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { projects_id: { affairs_ids: { company_entity: { _in: _globalFilters.company_entities.list } } } },
+    { projects_id: { affairs_ids: { company_entity: _globalFilters.company_entities.queryParameters.filter } } }
+  );
+  if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
 
   //clients that contains affairs that are linked to these pythagore_affaires
   const pythagoreFacturesFilterRule = compileFilter(

@@ -32,9 +32,9 @@ export async function getUsClientsCompanyEntitiesUsers(
   };
 
   return fetch(
-    `${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_entities_users?${concatenateQueryParameters(
-      props
-    )}`,
+    `${
+      publicRuntimeConfig.USER_SERVICE_API_URL
+    }/items/clients_company_entities_directus_users?${concatenateQueryParameters(props)}`,
     myInit
   )
     .then((res) => {
@@ -74,7 +74,7 @@ export async function getUsClientCompanyEntityUser(
   };
 
   return fetch(
-    `${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_entities_users/${id}?fields=${fields}`,
+    `${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_entities_directus_users/${id}?fields=${fields}`,
     myInit
   ).then((res) => {
     if (res.status === 200) {
@@ -111,7 +111,7 @@ export async function createUsClientCompanyEntityUser(
     body: JSON.stringify(clientCompanyEntityUser),
   };
 
-  return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_entities_users`, myInit)
+  return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_entities_directus_users`, myInit)
     .then((response) => {
       if (response.status === 200 || response.status === 204) {
         return response
@@ -169,7 +169,10 @@ export async function updateUsClientCompanyEntityUser(
     body: JSON.stringify(data),
   };
 
-  return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_entities_users/${id}`, myInit)
+  return fetch(
+    `${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_entities_directus_users/${id}`,
+    myInit
+  )
     .then((response) => {
       if (response.status === 200) {
         return response

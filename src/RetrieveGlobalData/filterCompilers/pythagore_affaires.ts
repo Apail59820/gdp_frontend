@@ -1,7 +1,10 @@
 import { GlobalFiltersModel } from '../../../models/GlobalFiltersModel';
 import { compileFilter } from '../compileFilter';
 
-export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: GlobalFiltersModel) {
+export function compileGlobalFiltersToPythagoreAffairesFilter(
+  _globalFilters: GlobalFiltersModel,
+  additionalClients: string[] = []
+) {
   // num_affaire.affairs_id.affairs_id.projects_id.*
   const filterRules: any[] = [];
   //factures linked to a project through affairs:
@@ -10,17 +13,43 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: Gl
     'projects',
     { affairs_id: { affairs_id: { projects_id: { _in: _globalFilters.projects.list } } } },
     {
-      affairs_id: { affairs_id: { projects_id: { _in: _globalFilters.projects.queryParameters.filter } } },
+      affairs_id: { affairs_id: { projects_id: _globalFilters.projects.queryParameters.filter } },
     }
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
+
+  //factures linked to a company entity through a project
+  const companyEntitiesProjectsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    {
+      affairs_id: {
+        affairs_id: { projects_id: { company_entity: { _in: _globalFilters.company_entities.list } } },
+      },
+    },
+    {
+      affairs_id: {
+        affairs_id: { projects_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } },
+      },
+    }
+  );
+  if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
+
+  //factures linked to a company entity through an affair
+  const companyEntitiesAffairsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { affairs_id: { affairs_id: { company_entity: { _in: _globalFilters.company_entities.list } } } },
+    { affairs_id: { affairs_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } } }
+  );
+  if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
 
   //factures of these affairs
   const affairsFilterRule = compileFilter(
     _globalFilters,
     'affairs',
     { affairs_id: { affairs_id: { _in: _globalFilters.affairs.list } } },
-    { affairs_id: { affairs_id: { _in: _globalFilters.affairs.queryParameters.filter } } }
+    { affairs_id: { affairs_id: _globalFilters.affairs.queryParameters.filter } }
   );
   if (affairsFilterRule != null) filterRules.push(affairsFilterRule);
 
@@ -29,7 +58,7 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: Gl
     _globalFilters,
     'pythagore_affaires',
     { num_affaire: { _in: _globalFilters.pythagore_affaires.list } },
-    _globalFilters.pythagore_affaires.queryParameters.filter
+    { num_affaire: _globalFilters.pythagore_affaires.queryParameters.filter }
   );
   if (pythagoreAffairesFilterRule != null) filterRules.push(pythagoreAffairesFilterRule);
 
@@ -54,7 +83,9 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: Gl
       affairs_id: {
         affairs_id: {
           projects_id: {
-            projects_directus_users_clients_ids: { directus_users_id: { _in: _globalFilters.clients.list } },
+            projects_directus_users_clients_ids: {
+              directus_users_id: { _in: Array.from(new Set([..._globalFilters.clients.list, ...additionalClients])) },
+            },
           },
         },
       },
@@ -67,7 +98,8 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters: Gl
           },
         },
       },
-    }
+    },
+    additionalClients
   );
   if (clientsFilterRule != null) filterRules.push(clientsFilterRule);
 

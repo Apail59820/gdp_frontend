@@ -41,4 +41,13 @@ export type GlobalFiltersModel = {
     queryParameters: QueryParameters;
     action: GlobalFilterActionType;
   };
+  company_entities: {
+    list: number[];
+    queryParameters: QueryParameters;
+  };
+  clients_company_entities: {
+    list: number[];
+    queryParameters: QueryParameters;
+    action: GlobalFilterActionType;
+  };
 };

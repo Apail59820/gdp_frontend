@@ -16,6 +16,6 @@ export type UsClientsCompanyEntitiesUsersModel = {
   date_updated: Date | null;
 
   clients_company_entities_id: number | UsClientsCompanyEntitiesModel;
-  directus_users_id: number | UsUserModel;
+  directus_users_id: string | UsUserModel;
   activities_id: number[] | UsActivitiesModel[];
 };
