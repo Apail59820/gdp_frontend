@@ -85,7 +85,14 @@ export async function getGdpAffairPhase(
   });
 }
 
-type createFieldsToOmit = 'id' | 'user_created' | 'date_created' | 'user_updated' | 'date_updated' | 'activities_id';
+type createFieldsToOmit =
+  | 'id'
+  | 'user_created'
+  | 'date_created'
+  | 'user_updated'
+  | 'date_updated'
+  | 'activities_id'
+  | 'trigger_survey';
 /**
  * Create a gdpAffairPhase.
  * @param project Object containing gdpAffairPhase properties.
@@ -148,7 +155,7 @@ type updateFieldsToOmit =
  * @returns Status and updated gdpAffairPhase properties.
  */
 export async function updateGdpAffairPhase(
-  id: string,
+  id: number,
   data: Partial<Omit<GdpPhaseModel, updateFieldsToOmit>>
 ): Promise<{ status: number; data?: Partial<GdpPhaseModel>; error?: string }> {
   const token = await retrieveToken();
