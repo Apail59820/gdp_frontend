@@ -36,7 +36,7 @@ import {
   setClientsCompanyEntities,
 } from '../../store/reducers/clientsCompanyEntitiesReducer';
 import { getUsClientsCompanyEntities } from '../../services/userService/UsClientsCompanyEntities';
-import { getUsClientsCompanyEntitiesUsers } from '../../services/userService/UsClientsCompanyEntitiesUsers';
+import { RetrieveClientsOfClientsCompanyEntities } from './RetrieveClientsOfClientsCompanyEntities';
 
 type Props = {
   children: ReactNode;
@@ -244,7 +244,7 @@ export function RetrieveGlobalData({ children }: Props) {
         else dispatch(setUsers([...users, ...UsersResponse.data]));
       }
     },
-    [dispatch, users]
+    [dispatch, users, clientsCompanyEntities]
   );
 
   const updateCompanyEntities = useCallback(
@@ -269,29 +269,9 @@ export function RetrieveGlobalData({ children }: Props) {
 
   useEffect(() => {
     //retrieve clients linked to clientsCompanyEntities
-    const OrRules: any[] = [];
-    if (globalFilters.clients_company_entities.list.length > 0)
-      OrRules.push({
-        clients_company_entities_id: {
-          _in: globalFilters.clients_company_entities.list,
-        },
-      });
-    if (globalFilters.clients_company_entities.queryParameters.filter)
-      OrRules.push(globalFilters.clients_company_entities.queryParameters.filter);
-    if (OrRules.length > 0)
-      getUsClientsCompanyEntitiesUsers({
-        fields: 'directus_users_id',
-        filter: { _or: OrRules },
-      }).then((clientsCompanyUsersRes) => {
-        const clientsOfClientsCompanyEntities: string[] = [];
-        if (isRequestSuccessful(clientsCompanyUsersRes.status) && clientsCompanyUsersRes.data) {
-          clientsOfClientsCompanyEntities.push(
-            ...clientsCompanyUsersRes.data.map((item) => item.directus_users_id as string)
-          );
-        }
-        updateAll(clientsOfClientsCompanyEntities);
-      });
-    else updateAll();
+    RetrieveClientsOfClientsCompanyEntities(globalFilters).then((clients) => {
+      updateAll(clients);
+    });
   }, [globalFilters]);
 
   useEffect(() => {

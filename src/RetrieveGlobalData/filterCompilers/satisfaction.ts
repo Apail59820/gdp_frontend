@@ -37,8 +37,12 @@ export function compileGlobalFiltersToSatisfactionFilter(
   const pythagoreAffairesFilterRule = compileFilter(
     _globalFilters,
     'pythagore_affaires',
-    { affairs_id: { pythagore_affaires_id: { affairs_id: { _in: _globalFilters.pythagore_affaires.list } } } },
-    { affairs_id: { pythagore_affaires_id: { affairs_id: _globalFilters.pythagore_affaires.queryParameters.filter } } }
+    { affairs_id: { pythagore_ids: { pythagore_affaires_id: { _in: _globalFilters.pythagore_affaires.list } } } },
+    {
+      affairs_id: {
+        pythagore_ids: { pythagore_affaires_id: _globalFilters.pythagore_affaires.queryParameters.filter },
+      },
+    }
   );
   if (pythagoreAffairesFilterRule != null) filterRules.push(pythagoreAffairesFilterRule);
 
