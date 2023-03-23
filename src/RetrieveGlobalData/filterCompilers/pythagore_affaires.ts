@@ -5,9 +5,8 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(
   _globalFilters: GlobalFiltersModel,
   additionalClients: string[] = []
 ) {
-  // num_affaire.affairs_id.affairs_id.projects_id.*
   const filterRules: any[] = [];
-  //factures linked to a project through affairs:
+  //Pythagore affaires linked to a project through affairs:
   const projectsFilterRule = compileFilter(
     _globalFilters,
     'projects',
@@ -18,7 +17,7 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
 
-  //factures linked to a company entity through a project
+  //Pythagore affaires linked to a company entity through a project
   const companyEntitiesProjectsFilterRule = compileFilter(
     _globalFilters,
     'company_entities',
@@ -35,7 +34,7 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(
   );
   if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
 
-  //factures linked to a company entity through an affair
+  //Pythagore affaires linked to a company entity through an affair
   const companyEntitiesAffairsFilterRule = compileFilter(
     _globalFilters,
     'company_entities',
@@ -44,7 +43,7 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(
   );
   if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
 
-  //factures of these affairs
+  //Pythagore affaires of these affairs
   const affairsFilterRule = compileFilter(
     _globalFilters,
     'affairs',
@@ -53,16 +52,16 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(
   );
   if (affairsFilterRule != null) filterRules.push(affairsFilterRule);
 
-  //factures
+  //Pythagore affaires
   const pythagoreAffairesFilterRule = compileFilter(
     _globalFilters,
     'pythagore_affaires',
-    { num_affaire: { _in: _globalFilters.pythagore_affaires.list } },
-    { num_affaire: _globalFilters.pythagore_affaires.queryParameters.filter }
+    { numero_affaire: { _in: _globalFilters.pythagore_affaires.list } },
+    { numero_affaire: _globalFilters.pythagore_affaires.queryParameters.filter }
   );
   if (pythagoreAffairesFilterRule != null) filterRules.push(pythagoreAffairesFilterRule);
 
-  //factures that are linked to the same project as these files
+  //pythagore affaires that are linked to the same project as these files
   //Je ne sais pas si ça a du sens. A vous de voir
   const filesFilterRule = compileFilter(
     _globalFilters,
@@ -75,7 +74,7 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(
   //satisfaction
   //je ne sais pas si ça a un sens ? De toute façon, on ne peut pas encore setup ce filtre
 
-  //Pythagore Factures that contains at least one of these clients
+  //Pythagore affaires that contains at least one of these clients
   const clientsFilterRule = compileFilter(
     _globalFilters,
     'clients',
@@ -103,7 +102,7 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(
   );
   if (clientsFilterRule != null) filterRules.push(clientsFilterRule);
 
-  //Pythagore Factures that contains at least one of these Collaborators
+  //Pythagore affaires that contains at least one of these Collaborators
   const collaboratorsProjectsFilterRule = compileFilter(
     _globalFilters,
     'collaborators',
@@ -132,7 +131,7 @@ export function compileGlobalFiltersToPythagoreAffairesFilter(
   );
   if (collaboratorsProjectsFilterRule != null) filterRules.push(collaboratorsProjectsFilterRule);
 
-  //Pythagore Factures that contains at least one of these Collaborators in its affairs
+  //Pythagore affaires that contains at least one of these Collaborators in its affairs
   const collaboratorsAffairsFilterRule = compileFilter(
     _globalFilters,
     'collaborators',

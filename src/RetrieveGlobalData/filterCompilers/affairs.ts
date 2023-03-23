@@ -43,7 +43,7 @@ export function compileGlobalFiltersToAffairsFilter(
   if (affairsFilterRule != null) filterRules.push(affairsFilterRule);
 
   //affairs that are linked to these pythagore_affaires
-  const pythagoreFacturesFilterRule = compileFilter(
+  const pythagoreAffairesFilterRule = compileFilter(
     _globalFilters,
     'pythagore_affaires',
     {
@@ -53,7 +53,7 @@ export function compileGlobalFiltersToAffairsFilter(
       pythagore_ids: { pythagore_affaires_id: _globalFilters.pythagore_affaires.queryParameters.filter },
     }
   );
-  if (pythagoreFacturesFilterRule != null) filterRules.push(pythagoreFacturesFilterRule);
+  if (pythagoreAffairesFilterRule != null) filterRules.push(pythagoreAffairesFilterRule);
 
   //affairs that contains at least one of these files, checked in projects
   const filesFilterRule = compileFilter(

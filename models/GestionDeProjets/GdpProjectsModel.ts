@@ -17,7 +17,7 @@ export enum GdpProjectStatusEnum {
 }
 
 export type GdpProjectsModel = {
-  id: string;
+  id: number;
   name: string;
   client_company_name: string | null;
   client_info: string | null;
