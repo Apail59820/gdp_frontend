@@ -171,7 +171,7 @@ type updateFieldsToOmit =
  * @returns Status and updated GdpAffair properties.
  */
 export async function updateGdpAffair(
-  id: string,
+  id: number,
   data: Partial<Omit<GdpAffairModel, updateFieldsToOmit>>
 ): Promise<{ status: number; data?: Partial<GdpAffairModel>; error?: string }> {
   const token = await retrieveToken();
