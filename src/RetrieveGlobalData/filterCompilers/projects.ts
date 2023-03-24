@@ -1,7 +1,10 @@
 import { GlobalFiltersModel } from '../../../models/GlobalFiltersModel';
 import { compileFilter } from '../compileFilter';
 
-export function compileGlobalFiltersToProjectFilter(_globalFilters: GlobalFiltersModel) {
+export function compileGlobalFiltersToProjectFilter(
+  _globalFilters: GlobalFiltersModel,
+  additionalClients: string[] = []
+) {
   const filterRules: any[] = [];
   //projects:
   const projectsFilterRule = compileFilter(
@@ -11,6 +14,24 @@ export function compileGlobalFiltersToProjectFilter(_globalFilters: GlobalFilter
     _globalFilters.projects.queryParameters.filter
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
+
+  //projects of company_entities
+  const companyEntitiesFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { company_entity: { _in: _globalFilters.company_entities.list } },
+    { company_entity: _globalFilters.company_entities.queryParameters.filter }
+  );
+  if (companyEntitiesFilterRule != null) filterRules.push(companyEntitiesFilterRule);
+
+  //affairs by projects of company_entities
+  const companyEntitiesAffairsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { affairs_ids: { company_entity: { _in: _globalFilters.company_entities.list } } },
+    { affairs_ids: { company_entity: _globalFilters.company_entities.queryParameters.filter } }
+  );
+  if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
 
   //projects contains at least one of the affairs
   const affairsFilterRule = compileFilter(
@@ -55,11 +76,14 @@ export function compileGlobalFiltersToProjectFilter(_globalFilters: GlobalFilter
     _globalFilters,
     'clients',
     {
-      projects_directus_users_clients_ids: { directus_users_id: { _in: _globalFilters.clients.list } },
+      projects_directus_users_clients_ids: {
+        directus_users_id: { _in: Array.from(new Set([..._globalFilters.clients.list, ...additionalClients])) },
+      },
     },
     {
       projects_directus_users_clients_ids: { directus_users_id: _globalFilters.clients.queryParameters.filter },
-    }
+    },
+    additionalClients
   );
   if (clientsFilterRule != null) filterRules.push(clientsFilterRule);
 

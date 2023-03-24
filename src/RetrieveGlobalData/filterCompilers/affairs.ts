@@ -1,16 +1,37 @@
 import { GlobalFiltersModel } from '../../../models/GlobalFiltersModel';
 import { compileFilter } from '../compileFilter';
 
-export function compileGlobalFiltersToAffairsFilter(_globalFilters: GlobalFiltersModel) {
+export function compileGlobalFiltersToAffairsFilter(
+  _globalFilters: GlobalFiltersModel,
+  additionalClients: string[] = []
+) {
   const filterRules: any[] = [];
   //affairs of projects
   const projectsFilterRule = compileFilter(
     _globalFilters,
     'projects',
     { projects_id: { _in: _globalFilters.projects.list } },
-    { projects_id: { _in: _globalFilters.projects.queryParameters.filter } }
+    { projects_id: _globalFilters.projects.queryParameters.filter }
   );
   if (projectsFilterRule != null) filterRules.push(projectsFilterRule);
+
+  //affairs of company_entities
+  const companyEntitiesAffairsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { company_entity: { _in: _globalFilters.company_entities.list } },
+    { company_entity: _globalFilters.company_entities.queryParameters.filter }
+  );
+  if (companyEntitiesAffairsFilterRule != null) filterRules.push(companyEntitiesAffairsFilterRule);
+
+  //projects of company_entities
+  const companyEntitiesProjectsFilterRule = compileFilter(
+    _globalFilters,
+    'company_entities',
+    { projects_id: { company_entity: { _in: _globalFilters.company_entities.list } } },
+    { projects_id: { company_entity: _globalFilters.company_entities.queryParameters.filter } }
+  );
+  if (companyEntitiesProjectsFilterRule != null) filterRules.push(companyEntitiesProjectsFilterRule);
 
   //affairs
   const affairsFilterRule = compileFilter(
@@ -22,7 +43,7 @@ export function compileGlobalFiltersToAffairsFilter(_globalFilters: GlobalFilter
   if (affairsFilterRule != null) filterRules.push(affairsFilterRule);
 
   //affairs that are linked to these pythagore_affaires
-  const pythagoreFacturesFilterRule = compileFilter(
+  const pythagoreAffairesFilterRule = compileFilter(
     _globalFilters,
     'pythagore_affaires',
     {
@@ -32,7 +53,7 @@ export function compileGlobalFiltersToAffairsFilter(_globalFilters: GlobalFilter
       pythagore_ids: { pythagore_affaires_id: _globalFilters.pythagore_affaires.queryParameters.filter },
     }
   );
-  if (pythagoreFacturesFilterRule != null) filterRules.push(pythagoreFacturesFilterRule);
+  if (pythagoreAffairesFilterRule != null) filterRules.push(pythagoreAffairesFilterRule);
 
   //affairs that contains at least one of these files, checked in projects
   const filesFilterRule = compileFilter(
@@ -51,13 +72,18 @@ export function compileGlobalFiltersToAffairsFilter(_globalFilters: GlobalFilter
     _globalFilters,
     'clients',
     {
-      projects_id: { projects_directus_users_clients_ids: { directus_users_id: { _in: _globalFilters.clients.list } } },
+      projects_id: {
+        projects_directus_users_clients_ids: {
+          directus_users_id: { _in: Array.from(new Set([..._globalFilters.clients.list, ...additionalClients])) },
+        },
+      },
     },
     {
       projects_id: {
         projects_directus_users_clients_ids: { directus_users_id: _globalFilters.clients.queryParameters.filter },
       },
-    }
+    },
+    additionalClients
   );
   if (clientsFilterRule != null) filterRules.push(clientsFilterRule);
 

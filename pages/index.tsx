@@ -4,6 +4,7 @@ import PageHeaderBanner from '../src/components/PageHeaderBanner/PageHeaderBanne
 import { TabBar } from '@projex/ui';
 import HomeDashboard from '../src/HomeDashboard/HomeDashboard';
 import HomeUpdates from '../src/HomeUpdates/HomeUpdates';
+import GlobalFilters from '../src/components/GlobalFiltersComponents/GlobalFilters';
 
 type Tab = {
   label: string;

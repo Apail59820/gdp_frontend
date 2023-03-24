@@ -1,0 +1,12 @@
+.footer {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  &.confirmDelete {
+    flex-direction: row-reverse;
+    margin-top: 1rem;
+  }
+  .span {
+    margin-left: auto;
+  }
+}

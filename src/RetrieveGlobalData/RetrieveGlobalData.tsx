@@ -29,6 +29,14 @@ import {
 } from './filterCompilers/collaborators';
 import { getGdpAffairsUsers } from '../../services/gestionDeProjets/GdpAffairsUsers';
 import { getGdpProjectsUsersCollaborators } from '../../services/gestionDeProjets/GdpProjectsUsersCollaborators';
+import { getUsCompanyEntities } from '../../services/userService/UsCompanyEntities';
+import { selectCompanyEntities, setCompanyEntities } from '../../store/reducers/companyEntitiesReducer';
+import {
+  selectClientsCompanyEntities,
+  setClientsCompanyEntities,
+} from '../../store/reducers/clientsCompanyEntitiesReducer';
+import { getUsClientsCompanyEntities } from '../../services/userService/UsClientsCompanyEntities';
+import { RetrieveClientsOfClientsCompanyEntities } from './RetrieveClientsOfClientsCompanyEntities';
 
 type Props = {
   children: ReactNode;
@@ -42,11 +50,13 @@ export function RetrieveGlobalData({ children }: Props) {
   const affairs = useSelector(selectAffairs);
   const factures = useSelector(selectPythagoreAffaires);
   const files = useSelector(selectFiles);
+  const companyEntities = useSelector(selectCompanyEntities);
   const users = useSelector(selectUsers);
+  const clientsCompanyEntities = useSelector(selectClientsCompanyEntities);
 
   const updateProjects = useCallback(
-    async (_globalFilters: GlobalFiltersModel) => {
-      const filterRules = compileGlobalFiltersToProjectFilter(_globalFilters);
+    async (_globalFilters: GlobalFiltersModel, additionalClients: string[] = []) => {
+      const filterRules = compileGlobalFiltersToProjectFilter(_globalFilters, additionalClients);
       const projectsResponse = await getGdpProjects({
         limit: '20',
         offset: '0',
@@ -63,8 +73,8 @@ export function RetrieveGlobalData({ children }: Props) {
   );
 
   const updateSatisfaction = useCallback(
-    async (_globalFilters: GlobalFiltersModel) => {
-      const filterRules = compileGlobalFiltersToSatisfactionFilter(_globalFilters);
+    async (_globalFilters: GlobalFiltersModel, additionalClients: string[] = []) => {
+      const filterRules = compileGlobalFiltersToSatisfactionFilter(_globalFilters, additionalClients);
       const satisfactionResponse = await getGdpSatisfactions({
         limit: '20',
         offset: '0',
@@ -80,8 +90,8 @@ export function RetrieveGlobalData({ children }: Props) {
     [dispatch, satisfaction]
   );
   const updateAffairs = useCallback(
-    async (_globalFilters: GlobalFiltersModel) => {
-      const filterRules = compileGlobalFiltersToAffairsFilter(_globalFilters);
+    async (_globalFilters: GlobalFiltersModel, additionalClients: string[] = []) => {
+      const filterRules = compileGlobalFiltersToAffairsFilter(_globalFilters, additionalClients);
       const affairsResponse = await getGdpAffairs({
         limit: '20',
         offset: '0',
@@ -97,8 +107,8 @@ export function RetrieveGlobalData({ children }: Props) {
   );
 
   const updatePythagoreAffaires = useCallback(
-    async (_globalFilters: GlobalFiltersModel) => {
-      const filterRules = compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters);
+    async (_globalFilters: GlobalFiltersModel, additionalClients: string[] = []) => {
+      const filterRules = compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters, additionalClients);
       const pythagoreAffairesResponses = await getGdpPythagoreAffaires({
         limit: '20',
         offset: '0',
@@ -115,8 +125,8 @@ export function RetrieveGlobalData({ children }: Props) {
   );
 
   const updateFiles = useCallback(
-    async (_globalFilters: GlobalFiltersModel) => {
-      const filterRules = compileGlobalFiltersToFilesFilter(_globalFilters);
+    async (_globalFilters: GlobalFiltersModel, additionalClients: string[] = []) => {
+      const filterRules = compileGlobalFiltersToFilesFilter(_globalFilters, additionalClients);
       const FilesResponses = await getGdpFiles({
         limit: '20',
         offset: '0',
@@ -132,8 +142,8 @@ export function RetrieveGlobalData({ children }: Props) {
     [dispatch, files]
   );
 
-  const updateUsers = useCallback(
-    async (_globalFilters: GlobalFiltersModel) => {
+  const updateUsersAndClientsCompanyEntities = useCallback(
+    async (_globalFilters: GlobalFiltersModel, additionalClients: string[] = []) => {
       const clientsFilterRule = compileGlobalFiltersToClientsFilter(_globalFilters);
       const clientsListResponse = getGdpProjectsUsersClients({
         fields: 'directus_users_id',
@@ -142,7 +152,10 @@ export function RetrieveGlobalData({ children }: Props) {
         filter: { _or: clientsFilterRule },
       });
 
-      const projectsCollaboratorsFilterRule = compileGlobalFiltersToProjectsCollaboratorsFilter(_globalFilters);
+      const projectsCollaboratorsFilterRule = compileGlobalFiltersToProjectsCollaboratorsFilter(
+        _globalFilters,
+        additionalClients
+      );
       const projectsCollaboratorsListResponse = getGdpProjectsUsersCollaborators({
         fields: 'directus_users_id',
         limit: _globalFilters.collaborators.queryParameters.limit || '20',
@@ -150,7 +163,10 @@ export function RetrieveGlobalData({ children }: Props) {
         filter: { _or: projectsCollaboratorsFilterRule },
       });
 
-      const affairsCollaboratorsFilterRule = compileGlobalFiltersToAffairsCollaboratorsFilter(_globalFilters);
+      const affairsCollaboratorsFilterRule = compileGlobalFiltersToAffairsCollaboratorsFilter(
+        _globalFilters,
+        additionalClients
+      );
       const affairsCollaboratorsListResponse = getGdpAffairsUsers({
         fields: 'directus_users_id',
         limit: _globalFilters.collaborators.queryParameters.limit || '20',
@@ -164,15 +180,42 @@ export function RetrieveGlobalData({ children }: Props) {
         projectsCollaboratorsListResponse,
         affairsCollaboratorsListResponse,
       ]);
+      const clientsArrays: string[] =
+        isRequestSuccessful(UsersListResponses[0].status) && UsersListResponses[0].data
+          ? UsersListResponses[0].data.map((item) => item.directus_users_id as string)
+          : [];
       UsersListResponses.forEach((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
-          res.data.forEach((item: any) => {
-            if (item.directus_users_id && !usersList.includes(item.directus_users_id))
-              usersList.push(item.directus_users_id);
+          res.data.forEach((item) => {
+            if (item.directus_users_id && !usersList.includes(item.directus_users_id as string))
+              usersList.push(item.directus_users_id as string);
           });
         }
       });
 
+      additionalClients.forEach((id) => {
+        if (!usersList.includes(id)) usersList.push(id);
+      });
+
+      //update clientsCompanyEntities
+      if (clientsArrays.length > 0 || _globalFilters.clients_company_entities.list.length > 0) {
+        const orRules: any[] = [];
+        if (clientsArrays.length > 0) orRules.push({ users: { directus_users_id: { _in: clientsArrays } } });
+        if (_globalFilters.clients_company_entities.list.length > 0)
+          orRules.push({ id: { _in: _globalFilters.clients_company_entities.list } });
+        const clientsCompanyEntitiesResponse = await getUsClientsCompanyEntities({
+          filter: {
+            _or: orRules,
+          },
+        });
+        if (isRequestSuccessful(clientsCompanyEntitiesResponse.status) && clientsCompanyEntitiesResponse.data) {
+          if (_globalFilters.clients_company_entities.action == GlobalFilterActionType.REPLACE)
+            dispatch(setClientsCompanyEntities(clientsCompanyEntitiesResponse.data));
+          else dispatch(setClientsCompanyEntities([...clientsCompanyEntities, ...clientsCompanyEntitiesResponse.data]));
+        }
+      }
+
+      //update users
       const UsersResponse =
         usersList.length > 0
           ? await getUsUsers({
@@ -201,17 +244,39 @@ export function RetrieveGlobalData({ children }: Props) {
         else dispatch(setUsers([...users, ...UsersResponse.data]));
       }
     },
-    [dispatch, users]
+    [dispatch, users, clientsCompanyEntities]
   );
 
+  const updateCompanyEntities = useCallback(
+    async (_globalFilters: GlobalFiltersModel) => {
+      const CompanyEntitiesResponses = await getUsCompanyEntities();
+      if (isRequestSuccessful(CompanyEntitiesResponses.status) && CompanyEntitiesResponses.data) {
+        if (_globalFilters.company_entities) dispatch(setCompanyEntities(CompanyEntitiesResponses.data));
+        else dispatch(setCompanyEntities([...companyEntities, ...CompanyEntitiesResponses.data]));
+      }
+    },
+    [dispatch, companyEntities]
+  );
+
+  function updateAll(additionalClients: string[] = []) {
+    updateProjects(globalFilters, additionalClients);
+    updateSatisfaction(globalFilters, additionalClients);
+    updateAffairs(globalFilters, additionalClients);
+    updatePythagoreAffaires(globalFilters, additionalClients);
+    updateFiles(globalFilters, additionalClients);
+    updateUsersAndClientsCompanyEntities(globalFilters, additionalClients);
+  }
+
   useEffect(() => {
-    updateProjects(globalFilters);
-    updateSatisfaction(globalFilters);
-    updateAffairs(globalFilters);
-    updatePythagoreAffaires(globalFilters);
-    updateFiles(globalFilters);
-    updateUsers(globalFilters);
+    //retrieve clients linked to clientsCompanyEntities
+    RetrieveClientsOfClientsCompanyEntities(globalFilters).then((clients) => {
+      updateAll(clients);
+    });
   }, [globalFilters]);
+
+  useEffect(() => {
+    updateCompanyEntities(globalFilters);
+  }, []);
 
   return <>{children}</>;
 }

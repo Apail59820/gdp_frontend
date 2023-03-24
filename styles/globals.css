@@ -3,6 +3,9 @@ body {
   height: 100vh;
   background-color: white;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
 }
 
 #__next {
@@ -21,6 +24,8 @@ body {
 }
 
 #main {
+  height: 0;
+  width: 100%;
   flex-grow: 1;
   display: flex;
 }
@@ -38,12 +43,13 @@ body {
 }
 
 #main > #content {
+  width: 0;
   flex-grow: 1;
-  max-height: calc(100vh - 3.375rem);
   overflow: hidden;
 }
 
 .page {
-  max-height: 100%;
-  overflow: scroll;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
 }
