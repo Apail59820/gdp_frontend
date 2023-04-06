@@ -4,7 +4,7 @@ import { Button, ShadowCard, Input } from '@projex/ui';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectGlobalFilters, setGlobalFilters } from '../../../../store/reducers/globalFilterReducer';
 import { AppState } from '../../../../store/store';
-import { GlobalFilterActionType, GlobalFiltersModel } from '../../../../models/GlobalFiltersModel';
+import { GlobalFiltersModel } from '../../../../models/GlobalFiltersModel';
 import { getGdpProjects } from '../../../../services/gestionDeProjets/GdpProjects';
 import { getGdpAffairs } from '../../../../services/gestionDeProjets/GdpAffairs';
 import { getUsUsers } from '../../../../services/userService/UsUsers';
@@ -175,9 +175,9 @@ const GlobalFiltersDataSelector = () => {
   }, [companyEntities]);
 
   useEffect(() => {
-    if (data[currentCategoryTab].values.length === 0 && searchInput[currentCategoryTab] === '')
+    if (isDropdownOpen && data[currentCategoryTab].values.length === 0 && searchInput[currentCategoryTab] === '')
       retrieveCategoryValues(data[currentCategoryTab].name.singular, searchInput[currentCategoryTab]);
-  }, [currentCategoryTab]);
+  }, [currentCategoryTab, isDropdownOpen]);
 
   async function retrieveCategoryValues(categoryName: string, searchInput: string) {
     let response;
@@ -318,7 +318,6 @@ const GlobalFiltersDataSelector = () => {
         ),
         listWithNames:
           selectedValues.find((category) => category.name.singular === CategoryEnum.PROJECTS)?.values || [],
-        action: GlobalFilterActionType.REPLACE,
       },
       affairs: {
         ...globalFilters.affairs,
@@ -326,7 +325,6 @@ const GlobalFiltersDataSelector = () => {
           (item) => item.key as number
         ),
         listWithNames: selectedValues.find((category) => category.name.singular === CategoryEnum.AFFAIRS)?.values || [],
-        action: GlobalFilterActionType.REPLACE,
       },
       pythagore_affaires: {
         ...globalFilters.pythagore_affaires,
@@ -335,17 +333,19 @@ const GlobalFiltersDataSelector = () => {
         ).map((item) => item.key as string),
         listWithNames:
           selectedValues.find((category) => category.name.singular === CategoryEnum.PYTHAGORE_AFFAIRE)?.values || [],
-        action: GlobalFilterActionType.REPLACE,
       },
-      files: { ...globalFilters.files, action: GlobalFilterActionType.REPLACE },
-      satisfaction: { ...globalFilters.satisfaction, action: GlobalFilterActionType.REPLACE },
+      files: {
+        ...globalFilters.files,
+      },
+      satisfaction: {
+        ...globalFilters.satisfaction,
+      },
       clients: {
         ...globalFilters.clients,
         list: (selectedValues.find((category) => category.name.singular === CategoryEnum.CLIENTS)?.values || []).map(
           (item) => item.key as string
         ),
         listWithNames: selectedValues.find((category) => category.name.singular === CategoryEnum.CLIENTS)?.values || [],
-        action: GlobalFilterActionType.REPLACE,
       },
       collaborators: {
         ...globalFilters.collaborators,
@@ -354,7 +354,6 @@ const GlobalFiltersDataSelector = () => {
         ).map((item) => item.key as string),
         listWithNames:
           selectedValues.find((category) => category.name.singular === CategoryEnum.COLLABORATORS)?.values || [],
-        action: GlobalFilterActionType.REPLACE,
       },
       company_entities: {
         ...globalFilters.company_entities,
@@ -373,7 +372,6 @@ const GlobalFiltersDataSelector = () => {
         listWithNames:
           selectedValues.find((category) => category.name.singular === CategoryEnum.CLIENT_COMPANY_ENTITIES)?.values ||
           [],
-        action: GlobalFilterActionType.REPLACE,
       },
     };
     dispatch(setGlobalFilters(newGlobalFilters));
