@@ -1,5 +1,10 @@
 import { QueryParameters } from './DirectusModel';
 
+export enum GlobalFilterActionType {
+  ADD = 'add',
+  REPLACE = 'replace',
+}
+
 export type GlobalFiltersModel = {
   projects: {
     list: number[];

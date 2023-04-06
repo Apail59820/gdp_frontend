@@ -102,7 +102,7 @@ const ProjectsPage = ({
           isNewDataLoading = true;
           setLazyLoadingState({
             limit: lazyLoadingState.limit,
-            offset: projects.length + 1,
+            offset: projects.length,
             action: 'APPEND',
           });
           setTimeout(() => {
@@ -138,7 +138,7 @@ const ProjectsPage = ({
           <div className={styles.InputContainer}>
             <Select
               label={'Filtrer par statut'}
-              nullOptionText={'Tous les statut'}
+              nullOptionText={'Tous les statuts'}
               options={[
                 { value: GdpProjectStatusEnum.ACTIVE, text: GdpProjectStatusEnum.ACTIVE },
                 { value: GdpProjectStatusEnum.ARCHIVED, text: GdpProjectStatusEnum.ARCHIVED },

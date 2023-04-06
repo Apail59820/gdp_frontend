@@ -1,5 +1,6 @@
 import { GdpPythagoreClientModel } from './GdpPythagoreClientModel';
 import { GdpAffairsPythagoreAffairesModel } from './GdpAffairsPythagoreAffairesModel';
+import { GdpPythagoreFactureModel } from './GdpPythagoreFactureModel';
 
 export type GdpPythagoreAffaireModel = {
   numero_affaire: string;
@@ -9,4 +10,5 @@ export type GdpPythagoreAffaireModel = {
 
   code_client: string | GdpPythagoreClientModel | null;
   affairs_id: number[] | GdpAffairsPythagoreAffairesModel[];
+  pythagore_factures_ids: number[] | GdpPythagoreFactureModel[];
 };

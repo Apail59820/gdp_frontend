@@ -2,6 +2,17 @@ import { GdpPythagoreAffaireModel } from './GdpPythagoreAffaireModel';
 import { GdpPythagoreClientModel } from './GdpPythagoreClientModel';
 import { GdpEmailsLogsModel } from './GdpEmailsLogsModel';
 
+export enum GdPPythagoreFactureReglement {
+  NON_REGLEE = 'NonReglee',
+  REGLEE = 'Reglee',
+  REGLEMENT_PARTIEL = 'RegltPartiel',
+}
+
+export enum GdPPythagoreFactureStatut {
+  ECHUE = 'Echue',
+  NON_ECHUE = 'NonEchue',
+}
+
 export type GdpPythagoreFactureModel = {
   num_facture: string;
   libelle_affaire: string | null;
@@ -14,8 +25,8 @@ export type GdpPythagoreFactureModel = {
   soldeht_facture: number | null;
   soldettc_facture: number | null;
   type_facture: 'Avoir' | 'Facture' | null;
-  statut_facture: 'Echue' | 'NonEchue' | null;
-  etatreglt_facture: 'NonReglee' | 'Reglee' | 'RegltPartiel' | null;
+  statut_facture: GdPPythagoreFactureStatut | null;
+  etatreglt_facture: GdPPythagoreFactureReglement | null;
   nom_fichierpdf_facture: string | null;
 
   emails_logs?: number[] | GdpEmailsLogsModel[];

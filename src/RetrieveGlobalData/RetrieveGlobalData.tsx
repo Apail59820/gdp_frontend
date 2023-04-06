@@ -14,11 +14,11 @@ import { getGdpAffairs } from '../../services/gestionDeProjets/GdpAffairs';
 import { selectAffairs, setAffairs, setAffairsCount } from '../../store/reducers/affairsReducer';
 import { compileGlobalFiltersToAffairsFilter } from './filterCompilers/affairs';
 import {
-  selectPythagoreAffaires,
-  setPythagoreAffaires,
-  setPythagoreAffairesCount,
+  selectPythagoreFactures,
+  setPythagoreFactures,
+  setPythagoreFacturesCount,
 } from '../../store/reducers/pythagoreFacturesReducer';
-import { compileGlobalFiltersToPythagoreAffairesFilter } from './filterCompilers/pythagore_affaires';
+import { compileGlobalFiltersToPythagoreFacturesFilter } from './filterCompilers/pythagore_affaires';
 import { getGdpPythagoreAffaires } from '../../services/gestionDeProjets/GdpPythagoreAffairs';
 import { getGdpFiles } from '../../services/gestionDeProjets/GdpFiles';
 import { selectFiles, setFiles, setFilesCount } from '../../store/reducers/filesReducer';
@@ -42,6 +42,7 @@ import {
 import { getUsClientsCompanyEntities } from '../../services/userService/UsClientsCompanyEntities';
 import { RetrieveClientsOfClientsCompanyEntities } from './RetrieveClientsOfClientsCompanyEntities';
 import getConfig from 'next/config';
+import { getGdpPythagoreFactures } from '../../services/gestionDeProjets/GdpPythagoreFactures';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -55,7 +56,7 @@ export function RetrieveGlobalData({ children }: Props) {
   const projects = useSelector(selectProjects);
   const satisfaction = useSelector(selectSatisfactions);
   const affairs = useSelector(selectAffairs);
-  const factures = useSelector(selectPythagoreAffaires);
+  const factures = useSelector(selectPythagoreFactures);
   const files = useSelector(selectFiles);
   const companyEntities = useSelector(selectCompanyEntities);
   const users = useSelector(selectUsers);
@@ -128,28 +129,28 @@ export function RetrieveGlobalData({ children }: Props) {
     [dispatch, affairs]
   );
 
-  const updatePythagoreAffaires = useCallback(
+  const updatePythagoreFactures = useCallback(
     async (_globalFilters: GlobalFiltersModel, additionalClients: string[] = []) => {
-      const filterRules = compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters, additionalClients);
-      const pythagoreAffairesResponses = await getGdpPythagoreAffaires({
+      const filterRules = compileGlobalFiltersToPythagoreFacturesFilter(_globalFilters, additionalClients);
+      const pythagoreAffairesResponses = await getGdpPythagoreFactures({
         limit: publicRuntimeConfig.FACTURES_GLOBAL_CHUNK_SIZE,
         offset: '0',
         ..._globalFilters.pythagore_affaires.queryParameters,
         filter: { _or: filterRules },
       });
       if (isRequestSuccessful(pythagoreAffairesResponses.status) && pythagoreAffairesResponses.data)
-        dispatch(setPythagoreAffaires(pythagoreAffairesResponses.data));
+        dispatch(setPythagoreFactures(pythagoreAffairesResponses.data));
 
-      const pythagoreAffairesCountResponse = await getGdpPythagoreAffaires({
+      const pythagoreAffairesCountResponse = await getGdpPythagoreFactures({
         ..._globalFilters.pythagore_affaires.queryParameters,
         limit: undefined,
         offset: undefined,
-        aggregate: { count: 'numero_affaire' },
+        aggregate: { count: 'num_facture' },
         filter: { _or: filterRules },
       });
       if (isRequestSuccessful(pythagoreAffairesCountResponse.status) && pythagoreAffairesCountResponse.data) {
         dispatch(
-          setPythagoreAffairesCount(parseInt((pythagoreAffairesCountResponse.data as any)[0].count.numero_affaire))
+          setPythagoreFacturesCount(parseInt((pythagoreAffairesCountResponse.data as any)[0].count.num_facture))
         );
       }
     },
@@ -295,7 +296,7 @@ export function RetrieveGlobalData({ children }: Props) {
     updateProjects(globalFilters, additionalClients);
     updateSatisfaction(globalFilters, additionalClients);
     updateAffairs(globalFilters, additionalClients);
-    updatePythagoreAffaires(globalFilters, additionalClients);
+    updatePythagoreFactures(globalFilters, additionalClients);
     updateFiles(globalFilters, additionalClients);
     updateUsersAndClientsCompanyEntities(globalFilters, additionalClients);
   }
