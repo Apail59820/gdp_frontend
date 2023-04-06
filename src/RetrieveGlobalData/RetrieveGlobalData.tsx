@@ -2,22 +2,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectGlobalFilters } from '../../store/reducers/globalFilterReducer';
 import { ReactNode, useCallback, useEffect } from 'react';
 import { getGdpProjects } from '../../services/gestionDeProjets/GdpProjects';
-import { GlobalFilterActionType, GlobalFiltersModel } from '../../models/GlobalFiltersModel';
+import { GlobalFiltersModel } from '../../models/GlobalFiltersModel';
 import { AppState } from '../../store/store';
-import { selectProjects, setProjects } from '../../store/reducers/projectsReducer';
+import { selectProjects, setProjects, setProjectsCount } from '../../store/reducers/projectsReducer';
 import { isRequestSuccessful } from '../../utils/isRequestSuccessful';
 import { compileGlobalFiltersToProjectFilter } from './filterCompilers/projects';
 import { compileGlobalFiltersToSatisfactionFilter } from './filterCompilers/satisfaction';
 import { getGdpSatisfactions } from '../../services/gestionDeProjets/GdpAffairsSatisfaction';
 import { selectSatisfactions, setSatisfactions } from '../../store/reducers/satisfactionReducer';
 import { getGdpAffairs } from '../../services/gestionDeProjets/GdpAffairs';
-import { selectAffairs, setAffairs } from '../../store/reducers/affairsReducer';
+import { selectAffairs, setAffairs, setAffairsCount } from '../../store/reducers/affairsReducer';
 import { compileGlobalFiltersToAffairsFilter } from './filterCompilers/affairs';
-import { selectPythagoreAffaires, setPythagoreAffaires } from '../../store/reducers/pythagoreFacturesReducer';
+import {
+  selectPythagoreAffaires,
+  setPythagoreAffaires,
+  setPythagoreAffairesCount,
+} from '../../store/reducers/pythagoreFacturesReducer';
 import { compileGlobalFiltersToPythagoreAffairesFilter } from './filterCompilers/pythagore_affaires';
 import { getGdpPythagoreAffaires } from '../../services/gestionDeProjets/GdpPythagoreAffairs';
 import { getGdpFiles } from '../../services/gestionDeProjets/GdpFiles';
-import { selectFiles, setFiles } from '../../store/reducers/filesReducer';
+import { selectFiles, setFiles, setFilesCount } from '../../store/reducers/filesReducer';
 import { compileGlobalFiltersToFilesFilter } from './filterCompilers/files';
 import { compileGlobalFiltersToClientsFilter } from './filterCompilers/clients';
 import { getUsUsers } from '../../services/userService/UsUsers';
@@ -37,6 +41,9 @@ import {
 } from '../../store/reducers/clientsCompanyEntitiesReducer';
 import { getUsClientsCompanyEntities } from '../../services/userService/UsClientsCompanyEntities';
 import { RetrieveClientsOfClientsCompanyEntities } from './RetrieveClientsOfClientsCompanyEntities';
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
 
 type Props = {
   children: ReactNode;
@@ -57,17 +64,26 @@ export function RetrieveGlobalData({ children }: Props) {
   const updateProjects = useCallback(
     async (_globalFilters: GlobalFiltersModel, additionalClients: string[] = []) => {
       const filterRules = compileGlobalFiltersToProjectFilter(_globalFilters, additionalClients);
+
       const projectsResponse = await getGdpProjects({
-        limit: '20',
-        offset: '0',
         ..._globalFilters.projects.queryParameters,
+        limit: publicRuntimeConfig.PROJECTS_GLOBAL_CHUNK_SIZE,
+        offset: '0',
         filter: { _or: filterRules },
       });
       if (isRequestSuccessful(projectsResponse.status) && projectsResponse.data) {
-        if (_globalFilters.projects.action == GlobalFilterActionType.REPLACE)
-          dispatch(setProjects(projectsResponse.data));
-        else dispatch(setProjects([...projects, ...projectsResponse.data]));
+        dispatch(setProjects(projectsResponse.data));
       }
+
+      const projectsCountResponse = await getGdpProjects({
+        ..._globalFilters.projects.queryParameters,
+        limit: undefined,
+        offset: undefined,
+        aggregate: { count: 'id' },
+        filter: { _or: filterRules },
+      });
+      if (isRequestSuccessful(projectsCountResponse.status) && projectsCountResponse.data)
+        dispatch(setProjectsCount(parseInt((projectsCountResponse.data as any)[0].count.id)));
     },
     [dispatch, projects]
   );
@@ -76,16 +92,13 @@ export function RetrieveGlobalData({ children }: Props) {
     async (_globalFilters: GlobalFiltersModel, additionalClients: string[] = []) => {
       const filterRules = compileGlobalFiltersToSatisfactionFilter(_globalFilters, additionalClients);
       const satisfactionResponse = await getGdpSatisfactions({
-        limit: '20',
-        offset: '0',
         ..._globalFilters.satisfaction.queryParameters,
+        limit: publicRuntimeConfig.SATISFACTION_GLOBAL_CHUNK_SIZE,
+        offset: '0',
         filter: { _or: filterRules },
       });
-      if (isRequestSuccessful(satisfactionResponse.status) && satisfactionResponse.data) {
-        if (_globalFilters.satisfaction.action == GlobalFilterActionType.REPLACE)
-          dispatch(setSatisfactions(satisfactionResponse.data));
-        else dispatch(setSatisfactions([...satisfaction, ...satisfactionResponse.data]));
-      }
+      if (isRequestSuccessful(satisfactionResponse.status) && satisfactionResponse.data)
+        dispatch(setSatisfactions(satisfactionResponse.data));
     },
     [dispatch, satisfaction]
   );
@@ -93,15 +106,24 @@ export function RetrieveGlobalData({ children }: Props) {
     async (_globalFilters: GlobalFiltersModel, additionalClients: string[] = []) => {
       const filterRules = compileGlobalFiltersToAffairsFilter(_globalFilters, additionalClients);
       const affairsResponse = await getGdpAffairs({
-        limit: '20',
-        offset: '0',
         ..._globalFilters.affairs.queryParameters,
+        limit: publicRuntimeConfig.AFFAIRS_GLOBAL_CHUNK_SIZE,
+        offset: '0',
         filter: { _or: filterRules },
       });
       if (isRequestSuccessful(affairsResponse.status) && affairsResponse.data) {
-        if (_globalFilters.affairs.action == GlobalFilterActionType.REPLACE) dispatch(setAffairs(affairsResponse.data));
-        else dispatch(setAffairs([...affairs, ...affairsResponse.data]));
+        dispatch(setAffairs(affairsResponse.data));
       }
+
+      const affairsCountResponse = await getGdpAffairs({
+        ..._globalFilters.affairs.queryParameters,
+        limit: undefined,
+        offset: undefined,
+        aggregate: { count: 'id' },
+        filter: { _or: filterRules },
+      });
+      if (isRequestSuccessful(affairsCountResponse.status) && affairsCountResponse.data)
+        dispatch(setAffairsCount(parseInt((affairsCountResponse.data as any)[0].count.id)));
     },
     [dispatch, affairs]
   );
@@ -110,15 +132,25 @@ export function RetrieveGlobalData({ children }: Props) {
     async (_globalFilters: GlobalFiltersModel, additionalClients: string[] = []) => {
       const filterRules = compileGlobalFiltersToPythagoreAffairesFilter(_globalFilters, additionalClients);
       const pythagoreAffairesResponses = await getGdpPythagoreAffaires({
-        limit: '20',
+        limit: publicRuntimeConfig.FACTURES_GLOBAL_CHUNK_SIZE,
         offset: '0',
         ..._globalFilters.pythagore_affaires.queryParameters,
         filter: { _or: filterRules },
       });
-      if (isRequestSuccessful(pythagoreAffairesResponses.status) && pythagoreAffairesResponses.data) {
-        if (_globalFilters.pythagore_affaires.action == GlobalFilterActionType.REPLACE)
-          dispatch(setPythagoreAffaires(pythagoreAffairesResponses.data));
-        else dispatch(setPythagoreAffaires([...factures, ...pythagoreAffairesResponses.data]));
+      if (isRequestSuccessful(pythagoreAffairesResponses.status) && pythagoreAffairesResponses.data)
+        dispatch(setPythagoreAffaires(pythagoreAffairesResponses.data));
+
+      const pythagoreAffairesCountResponse = await getGdpPythagoreAffaires({
+        ..._globalFilters.pythagore_affaires.queryParameters,
+        limit: undefined,
+        offset: undefined,
+        aggregate: { count: 'numero_affaire' },
+        filter: { _or: filterRules },
+      });
+      if (isRequestSuccessful(pythagoreAffairesCountResponse.status) && pythagoreAffairesCountResponse.data) {
+        dispatch(
+          setPythagoreAffairesCount(parseInt((pythagoreAffairesCountResponse.data as any)[0].count.numero_affaire))
+        );
       }
     },
     [dispatch, factures]
@@ -128,15 +160,22 @@ export function RetrieveGlobalData({ children }: Props) {
     async (_globalFilters: GlobalFiltersModel, additionalClients: string[] = []) => {
       const filterRules = compileGlobalFiltersToFilesFilter(_globalFilters, additionalClients);
       const FilesResponses = await getGdpFiles({
-        limit: '20',
-        offset: '0',
         ..._globalFilters.pythagore_affaires.queryParameters,
+        limit: publicRuntimeConfig.FILES_GLOBAL_CHUNK_SIZE,
+        offset: '0',
         filter: { _or: filterRules },
       });
-      if (isRequestSuccessful(FilesResponses.status) && FilesResponses.data) {
-        if (_globalFilters.pythagore_affaires.action == GlobalFilterActionType.REPLACE)
-          dispatch(setFiles(FilesResponses.data));
-        else dispatch(setFiles([...files, ...FilesResponses.data]));
+      if (isRequestSuccessful(FilesResponses.status) && FilesResponses.data) dispatch(setFiles(FilesResponses.data));
+
+      const FilesCountResponse = await getGdpFiles({
+        ..._globalFilters.pythagore_affaires.queryParameters,
+        limit: undefined,
+        offset: undefined,
+        aggregate: { count: 'id' },
+        filter: { _or: filterRules },
+      });
+      if (isRequestSuccessful(FilesCountResponse.status) && FilesCountResponse.data) {
+        dispatch(setFilesCount(parseInt((FilesCountResponse.data as any)[0].count.id)));
       }
     },
     [dispatch, files]
@@ -147,8 +186,8 @@ export function RetrieveGlobalData({ children }: Props) {
       const clientsFilterRule = compileGlobalFiltersToClientsFilter(_globalFilters);
       const clientsListResponse = getGdpProjectsUsersClients({
         fields: 'directus_users_id',
-        limit: _globalFilters.clients.queryParameters.limit || '20',
-        offset: _globalFilters.clients.queryParameters.offset || '0',
+        limit: publicRuntimeConfig.CLIENTS_GLOBAL_CHUNK_SIZE,
+        offset: '0',
         filter: { _or: clientsFilterRule },
       });
 
@@ -158,8 +197,8 @@ export function RetrieveGlobalData({ children }: Props) {
       );
       const projectsCollaboratorsListResponse = getGdpProjectsUsersCollaborators({
         fields: 'directus_users_id',
-        limit: _globalFilters.collaborators.queryParameters.limit || '20',
-        offset: _globalFilters.collaborators.queryParameters.offset || '0',
+        limit: publicRuntimeConfig.COLLABORATORS_GLOBAL_CHUNK_SIZE,
+        offset: '0',
         filter: { _or: projectsCollaboratorsFilterRule },
       });
 
@@ -169,8 +208,8 @@ export function RetrieveGlobalData({ children }: Props) {
       );
       const affairsCollaboratorsListResponse = getGdpAffairsUsers({
         fields: 'directus_users_id',
-        limit: _globalFilters.collaborators.queryParameters.limit || '20',
-        offset: _globalFilters.collaborators.queryParameters.offset || '0',
+        limit: publicRuntimeConfig.COLLABORATORS_GLOBAL_CHUNK_SIZE,
+        offset: '0',
         filter: { _or: affairsCollaboratorsFilterRule },
       });
 
@@ -208,19 +247,16 @@ export function RetrieveGlobalData({ children }: Props) {
             _or: orRules,
           },
         });
-        if (isRequestSuccessful(clientsCompanyEntitiesResponse.status) && clientsCompanyEntitiesResponse.data) {
-          if (_globalFilters.clients_company_entities.action == GlobalFilterActionType.REPLACE)
-            dispatch(setClientsCompanyEntities(clientsCompanyEntitiesResponse.data));
-          else dispatch(setClientsCompanyEntities([...clientsCompanyEntities, ...clientsCompanyEntitiesResponse.data]));
-        }
+        if (isRequestSuccessful(clientsCompanyEntitiesResponse.status) && clientsCompanyEntitiesResponse.data)
+          dispatch(setClientsCompanyEntities(clientsCompanyEntitiesResponse.data));
       }
 
       //update users
       const UsersResponse =
         usersList.length > 0
           ? await getUsUsers({
-              limit: _globalFilters.clients.queryParameters.limit || '20',
-              offset: _globalFilters.clients.queryParameters.offset || '0',
+              limit: undefined,
+              offset: undefined,
               filter: { id: { _in: usersList } },
               // filter: {
               //   _and: [
@@ -239,10 +275,7 @@ export function RetrieveGlobalData({ children }: Props) {
               // },
             })
           : { status: 200, data: [] };
-      if (isRequestSuccessful(UsersResponse.status) && UsersResponse.data) {
-        if (_globalFilters.clients.action == GlobalFilterActionType.REPLACE) dispatch(setUsers(UsersResponse.data));
-        else dispatch(setUsers([...users, ...UsersResponse.data]));
-      }
+      if (isRequestSuccessful(UsersResponse.status) && UsersResponse.data) dispatch(setUsers(UsersResponse.data));
     },
     [dispatch, users, clientsCompanyEntities]
   );

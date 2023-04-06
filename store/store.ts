@@ -1,20 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit';
-import affairReducer from './reducers/affairsReducer';
-import projectsReducer from './reducers/projectsReducer';
+import affairReducer, { AffairsState } from './reducers/affairsReducer';
+import projectsReducer, { ProjectsState } from './reducers/projectsReducer';
 import globalFilterReducer from './reducers/globalFilterReducer';
 import authReducer, { AuthState } from './reducers/authReducer';
-import pythagoreFacturesReducer from './reducers/pythagoreFacturesReducer';
+import pythagoreFacturesReducer, { PythagoreAffairesState } from './reducers/pythagoreFacturesReducer';
 import notificationsReducer, { notificationsState } from './reducers/notificationReducer';
-import filesReducer from './reducers/filesReducer';
+import filesReducer, { FilesState } from './reducers/filesReducer';
 import usersReducer from './reducers/usersReducer';
 import satisfactionReducer from './reducers/satisfactionReducer';
 import { GlobalFiltersModel } from '../models/GlobalFiltersModel';
-import { GdpProjectsModel } from '../models/GestionDeProjets/GdpProjectsModel';
-import { GdpAffairModel } from '../models/GestionDeProjets/GdpAffairModel';
-import { GdpFilesModel } from '../models/GestionDeProjets/GdpFilesModel';
 import { UsUserModel } from '../models/UserService/UsUserModel';
 import { GdpSatisfactionModel } from '../models/GestionDeProjets/GdpSatisfactionModel';
-import { GdpPythagoreAffaireModel } from '../models/GdPModels';
 import { UsCompanyEntityModel } from '../models/UserService/UsCompanyEntityModel';
 import companyEntitiesReducer from './reducers/companyEntitiesReducer';
 import { UsClientsCompanyEntitiesModel } from '../models/UserService/UsClientsCompanyEntitiesModel';
@@ -23,10 +19,10 @@ import clientsCompanyEntitiesReducer from './reducers/clientsCompanyEntitiesRedu
 export type AppState = {
   auth: AuthState;
   globalFilters: GlobalFiltersModel;
-  projects: Partial<GdpProjectsModel>[];
-  affairs: Partial<GdpAffairModel>[];
-  pythagoreAffaires: Partial<GdpPythagoreAffaireModel>[];
-  files: Partial<GdpFilesModel>[];
+  projects: ProjectsState;
+  affairs: AffairsState;
+  pythagoreAffaires: PythagoreAffairesState;
+  files: FilesState;
   users: Partial<UsUserModel>[];
   satisfactions: Partial<GdpSatisfactionModel>[];
   notifications: notificationsState;
@@ -40,7 +36,7 @@ export default configureStore({
     globalFilters: globalFilterReducer,
     projects: projectsReducer,
     affairs: affairReducer,
-    pythagoreAffaires: pythagoreFacturesReducer,
+    pythagoreAffaires: pythagoreFacturesReducer, //TODO Get Factures but with PythagoreAffaires in globalFilters
     files: filesReducer,
     users: usersReducer,
     satisfactions: satisfactionReducer,
