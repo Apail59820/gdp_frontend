@@ -8,14 +8,14 @@ import styles from './BillingTable.module.scss';
 import ExpandedBillingInfo from './ExpandedBillingInfo';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 
-interface DataType extends GdpPythagoreFactureModel {
+interface DataType extends Partial<GdpPythagoreFactureModel> {
   key: React.Key;
   paymentText: string;
   invoiceState: InvoiceStateEnum;
 }
 
 type props = {
-  data: GdpPythagoreFactureModel[];
+  factures: Partial<GdpPythagoreFactureModel>[];
   displayAdditionnalInfo?: boolean; // Sert à afficher num_affaire et num_client pour les filtres globaux
 };
 
@@ -26,10 +26,10 @@ export enum InvoiceStateEnum {
   PAID = 'paid',
 }
 
-const BillingTable = ({ data, displayAdditionnalInfo }: props) => {
+const BillingTable = ({ factures, displayAdditionnalInfo }: props) => {
   const [formattedData, setFormattedData] = useState<DataType[]>([]);
 
-  const getDaysLeft = (invoice: GdpPythagoreFactureModel) => {
+  const getDaysLeft = (invoice: Partial<GdpPythagoreFactureModel>) => {
     const timeLeft = new Date(invoice.date_echeance_facture as string).getTime() - new Date().getTime();
     return parseInt((timeLeft / (1000 * 60 * 60 * 24)).toFixed(0));
   };
@@ -47,7 +47,7 @@ const BillingTable = ({ data, displayAdditionnalInfo }: props) => {
     }
   };
 
-  const displayPaymentText = (invoiceState: InvoiceStateEnum, invoice: GdpPythagoreFactureModel) => {
+  const displayPaymentText = (invoiceState: InvoiceStateEnum, invoice: Partial<GdpPythagoreFactureModel>) => {
     switch (invoiceState) {
       case InvoiceStateEnum.LATE:
         return `+ ${Math.abs(getDaysLeft(invoice))} jour${Math.abs(getDaysLeft(invoice)) > 1 ? 's' : ''}`;
@@ -83,7 +83,7 @@ const BillingTable = ({ data, displayAdditionnalInfo }: props) => {
       dataIndex: 'num_facture',
       key: 'num_facture',
       sorter: (a: DataType, b: DataType) => {
-        if (a.num_facture === b.num_facture) return 0;
+        if (!a.num_facture || !b.num_facture || a.num_facture === b.num_facture) return 0;
         return a.num_facture > b.num_facture ? 1 : -1;
       },
       className: styles.billingTable,
@@ -197,7 +197,7 @@ const BillingTable = ({ data, displayAdditionnalInfo }: props) => {
     const tmp: DataType[] = [];
     const warningDelayTrigger = 15 * 24 * 60 * 60 * 1000; // 15 days
     const now = new Date().getTime();
-    data.map((facture, index) => {
+    factures.map((facture, index) => {
       let invoiceState;
       const dueDate = new Date(facture.date_echeance_facture as string).getTime();
       const fifteenDaysBeforeDueDate = dueDate - warningDelayTrigger;
@@ -217,7 +217,7 @@ const BillingTable = ({ data, displayAdditionnalInfo }: props) => {
       });
     });
     setFormattedData(tmp);
-  }, [data]);
+  }, [factures]);
 
   return (
     <Table

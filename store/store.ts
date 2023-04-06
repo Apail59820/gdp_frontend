@@ -3,7 +3,7 @@ import affairReducer, { AffairsState } from './reducers/affairsReducer';
 import projectsReducer, { ProjectsState } from './reducers/projectsReducer';
 import globalFilterReducer from './reducers/globalFilterReducer';
 import authReducer, { AuthState } from './reducers/authReducer';
-import pythagoreFacturesReducer, { PythagoreAffairesState } from './reducers/pythagoreFacturesReducer';
+import pythagoreFacturesReducer, { PythagoreFacturesState } from './reducers/pythagoreFacturesReducer';
 import notificationsReducer, { notificationsState } from './reducers/notificationReducer';
 import filesReducer, { FilesState } from './reducers/filesReducer';
 import usersReducer from './reducers/usersReducer';
@@ -21,7 +21,7 @@ export type AppState = {
   globalFilters: GlobalFiltersModel;
   projects: ProjectsState;
   affairs: AffairsState;
-  pythagoreAffaires: PythagoreAffairesState;
+  pythagoreFactures: PythagoreFacturesState;
   files: FilesState;
   users: Partial<UsUserModel>[];
   satisfactions: Partial<GdpSatisfactionModel>[];
@@ -36,7 +36,7 @@ export default configureStore({
     globalFilters: globalFilterReducer,
     projects: projectsReducer,
     affairs: affairReducer,
-    pythagoreAffaires: pythagoreFacturesReducer, //TODO Get Factures but with PythagoreAffaires in globalFilters
+    pythagoreFactures: pythagoreFacturesReducer, //Info: we store Factures but with PythagoreAffaires in globalFilters
     files: filesReducer,
     users: usersReducer,
     satisfactions: satisfactionReducer,
