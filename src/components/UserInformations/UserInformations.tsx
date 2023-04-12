@@ -7,7 +7,7 @@ import { CompanyEnum } from '../../../models/UsModels';
 import Link from 'next/link';
 
 export type UserInformationsProps = {
-  user: UsUserModel;
+  user: Partial<UsUserModel>;
 };
 
 const UserInformations = ({ user }: UserInformationsProps) => {

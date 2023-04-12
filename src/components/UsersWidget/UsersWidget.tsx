@@ -7,7 +7,7 @@ import Grid from '../Grid/Grid';
 import UserCard from '../UserCard/UserCard';
 
 type Props = {
-  users: UsUserModel[];
+  users: Partial<UsUserModel>[];
   label?: string;
   addUserLabel?: string;
   onNewUserClick: React.MouseEventHandler<HTMLButtonElement>;
@@ -17,7 +17,7 @@ const UsersWidget = ({ users, label, addUserLabel, onNewUserClick }: Props) => {
   return (
     <Section title={label || 'Les utilisateurs'}>
       <Grid>
-        {users?.map((user: UsUserModel) => (
+        {users?.map((user: Partial<UsUserModel>) => (
           <UserCard user={user} onKebabMenuClick={() => console.log('handle click ?')} />
         ))}
         <div className={styles.manageItemCardContainer}>

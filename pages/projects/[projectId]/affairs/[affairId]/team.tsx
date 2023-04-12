@@ -14,42 +14,43 @@ const Team = () => {
   const { projectId, affairId } = router.query;
 
   useEffect(() => {
-    if (projectId && typeof projectId == 'string') {
-      setIsLoading(true);
-      getGdpProjectById(
-        +projectId,
-        [
-          'id',
-          'name',
-          'company_entity.*',
-          'projects_directus_users_clients_ids.*',
-          'projects_directus_users_collaborators_ids.*',
-          'affairs.*',
-          'status',
-        ].join(',')
-      )
-        .then((res) => {
-          if (res.status === 200 && res.data) setProject(res.data);
-          else router.push('/404', undefined, { shallow: true });
-        })
-        .catch((e) => {
-          // eslint-disable-next-line no-console
-          console.error(e);
-          setProject({});
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
+    if (!projectId || typeof projectId !== 'string') return;
+
+    setIsLoading(true);
+
+    getGdpProjectById(
+      +projectId,
+      [
+        'id',
+        'name',
+        'company_entity.*',
+        'projects_directus_users_clients_ids.*',
+        'projects_directus_users_collaborators_ids.*',
+        'affairs.*',
+        'status',
+      ].join(',')
+    )
+      .then((res) => {
+        if (res.status === 200 && res.data) setProject(res.data);
+        else router.push('/404', undefined, { shallow: true });
+      })
+      .catch((e) => {
+        // eslint-disable-next-line no-console
+        console.error(e);
+        setProject({});
+      })
+      .finally(() => setIsLoading(false));
   }, [router, projectId, affairId]);
 
   useEffect(() => {
-    if (affairId && typeof affairId == 'string') {
-      const affair = (project.affairs as GdpAffairModel[])?.find((affair) => affair.id === +affairId);
-      if (!affair) router.push('/404', undefined, { shallow: true });
-      else setAffair(affair);
-    }
+    if (!affairId || typeof affairId !== 'string') return;
+
+    const affair = (project.affairs as GdpAffairModel[])?.find((affair) => affair.id === +affairId);
+    if (!affair) router.push('/404', undefined, { shallow: true });
+    else setAffair(affair);
   }, [router, project, affairId]);
+
+  if (isLoading) return null;
 
   return <TeamPage project={project} affair={affair} />;
 };
