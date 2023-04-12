@@ -30,8 +30,7 @@ const Team = () => {
     )
       .then((res) => {
         if (res.status === 200 && res.data) setProject(res.data);
-        else console.log(res);
-        // else router.push('/404', undefined, { shallow: true });
+        else setProject({});
       })
       .catch((e) => {
         // eslint-disable-next-line no-console
