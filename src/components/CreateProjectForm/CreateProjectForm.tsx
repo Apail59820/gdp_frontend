@@ -12,7 +12,7 @@ import { createGdpProject, updateGdpProject } from '../../../services/gestionDeP
 import { messages } from '../../../constants/messages';
 
 type CreateProjectFormProps = {
-  project?: GdpProjectsModel;
+  project?: Partial<GdpProjectsModel>;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -21,7 +21,7 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
   const companyEntities: Partial<UsCompanyEntityModel>[] = useSelector(selectCompanyEntities);
   const clientsCompanyEntities: Partial<UsClientsCompanyEntitiesModel>[] = useSelector(selectClientsCompanyEntities);
   const onFinish = (values: any) => {
-    if (project) {
+    if (project && project.id) {
       updateGdpProject(project.id, {
         name: values.projectName,
         client_company_name: values.clientEntity,
