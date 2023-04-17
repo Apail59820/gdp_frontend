@@ -21,16 +21,21 @@ type Props = {
 
 const TeamPage = ({ project, affair }: Props) => {
   const clientTeam = (project.projects_directus_users_clients_ids as GdpProjectsClientsModel[])?.map(
-    (client) => client.directus_users_id
-  ) as UsUserModel[];
+    (client) => client.directus_users_id as UsUserModel
+  );
   const collaboratorTeam = (project.projects_directus_users_collaborators_ids as GdpProjectsCollaboratorsModel[])?.map(
-    (collaborator) => collaborator.directus_users_id
-  ) as UsUserModel[];
+    (collaborator) => collaborator.directus_users_id as UsUserModel
+  );
   const managerTeam = (project.projects_directus_users_collaborators_ids as GdpProjectsCollaboratorsModel[])?.map(
     (collaborator) => {
       if (collaborator.project_manager) return collaborator.directus_users_id;
     }
   ) as UsUserModel[];
+
+  console.log('clientTeam ' + clientTeam);
+  console.log('collaboratorTeam ' + collaboratorTeam);
+  console.log('managerTeam ' + managerTeam);
+  console.log(project);
 
   return (
     <div className="page">

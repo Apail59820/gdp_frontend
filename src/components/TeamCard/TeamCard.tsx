@@ -34,8 +34,8 @@ const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClic
               <li key={user.id} className={styles.user} onClick={() => setCurrentUser(user)}>
                 <Tooltip title={`${user.first_name} ${user.last_name}`}>
                   <div className={styles.userIcon}>
-                    <Image
-                      src={user.avatar || getImagesByCompany(user.company!).picto}
+                    <img
+                      src={getImagesByCompany(user.company!).picto}
                       alt={`Photo de ${user.first_name} ${user.last_name}`}
                     />
                   </div>

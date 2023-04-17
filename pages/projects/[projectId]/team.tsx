@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { GdpProjectsModel } from '../../../models/GdPModels';
+import { GdpProjectStatusEnum, GdpProjectTypesEnum, GdpProjectsModel } from '../../../models/GdPModels';
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
 import TeamPage from '../../../src/TeamPage/TeamPage';
 
@@ -42,7 +42,34 @@ const Team = () => {
 
   if (isLoading) return null;
 
-  return <TeamPage project={project} />;
+  const PROJECT: Partial<GdpProjectsModel> = {
+    id: 1,
+    name: 'Name',
+    client_company_name: 'client company name',
+    client_info: 'Client info',
+    address: 'address',
+    zip_code: 'zip code',
+    city: 'city',
+    country: 'country',
+    projects_directus_users_clients_ids: [
+      {
+        id: '1',
+        show_notifications: true,
+
+        projects_id: 1,
+        directus_users_id: {
+          id: '1',
+          email: 'email',
+          first_name: 'first_name',
+          last_name: 'last_name',
+          number: 'number',
+        },
+        activities_id: [1],
+      },
+    ],
+  };
+
+  return <TeamPage project={PROJECT} />;
 };
 
 export default Team;

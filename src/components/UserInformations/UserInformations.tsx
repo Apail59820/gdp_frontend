@@ -4,6 +4,7 @@ import { UsUserModel } from '../../../models/UsModels';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 import { capitalize } from '../../../utils/capitalize';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export type UserInformationsProps = {
   user: Partial<UsUserModel>;
