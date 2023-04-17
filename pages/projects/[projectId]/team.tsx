@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { GdpProjectStatusEnum, GdpProjectTypesEnum, GdpProjectsModel } from '../../../models/GdPModels';
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
 import TeamPage from '../../../src/TeamPage/TeamPage';
+import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
 
 const Team = () => {
   const router = useRouter();
@@ -30,7 +31,7 @@ const Team = () => {
       ].join(',')
     )
       .then((res) => {
-        if (res.status === 200 && res.data) setProject(res.data);
+        if (isRequestSuccessful(res.status) && res.data) setProject(res.data);
         else setProject({});
       })
       .catch((e) => {
