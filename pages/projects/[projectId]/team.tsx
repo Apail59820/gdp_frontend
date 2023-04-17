@@ -26,6 +26,7 @@ const Team = () => {
         'projects_directus_users_clients_ids.*',
         'projects_directus_users_collaborators_ids.*',
         'status',
+        'affairs.affairs_directus_users_ids.directus_users_id',
       ].join(',')
     )
       .then((res) => {
@@ -65,6 +66,58 @@ const Team = () => {
           number: 'number',
         },
         activities_id: [1],
+      },
+    ],
+    projects_directus_users_collaborators_ids: [
+      {
+        id: '2',
+        show_notifications: true,
+        project_manager: true,
+
+        projects_id: 1,
+        directus_users_id: {
+          id: '2',
+          email: 'email',
+          first_name: 'manager',
+          last_name: 'last_name',
+          number: 'number',
+        },
+        activities_id: [1],
+      },
+      {
+        id: '3',
+        show_notifications: true,
+        project_manager: false,
+
+        projects_id: 1,
+        directus_users_id: {
+          id: '3',
+          email: 'email',
+          first_name: 'not manager',
+          last_name: 'last_name',
+          number: 'number',
+        },
+        activities_id: [1],
+      },
+    ],
+    affairs: [
+      {
+        affairs_directus_users_ids: [
+          {
+            id: '5',
+            show_notifications: true,
+            project_manager: true,
+            affairs_id: 1,
+            directus_users_id: {
+              id: '5',
+              email: 'email',
+              first_name: 'affair collaborator',
+              last_name: 'last_name',
+              number: 'number',
+            },
+            activities_id: [1],
+          },
+        ],
       },
     ],
   };

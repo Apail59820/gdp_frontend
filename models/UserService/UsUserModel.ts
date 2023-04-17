@@ -11,6 +11,7 @@ export type UsUserModel = {
   last_name: string | null;
   title: string | null;
   description: string | null;
+  // avatar: number;
   number: string | null;
   status: string;
   role: string;

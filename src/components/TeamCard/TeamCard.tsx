@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import styles from './TeamCard.module.scss';
 import { ShadowCard } from '@projex/ui';
 import Link from 'next/link';
-import defaultImage from '../../../public/patrice.png';
 import { UsUserModel } from '../../../models/UsModels';
 import { Tooltip } from 'antd';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 import UserInformations from '../UserInformations/UserInformations';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
-import Image from 'next/image';
 
 export type TeamCardProps = {
   users: UsUserModel[];
@@ -34,8 +32,9 @@ const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClic
               <li key={user.id} className={styles.user} onClick={() => setCurrentUser(user)}>
                 <Tooltip title={`${user.first_name} ${user.last_name}`}>
                   <div className={styles.userIcon}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={getImagesByCompany(user.company!).picto}
+                      src={getImagesByCompany(user.company).picto}
                       alt={`Photo de ${user.first_name} ${user.last_name}`}
                     />
                   </div>

@@ -8,6 +8,6 @@ export type GdpAffairsUsersModel = {
   project_manager: boolean;
 
   affairs_id: number | GdpAffairModel;
-  directus_users_id: string | UsUserModel;
+  directus_users_id: string | Partial<UsUserModel>;
   activities_id: number[] | GdpActivitiesModel[];
 };

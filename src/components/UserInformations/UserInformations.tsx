@@ -4,7 +4,6 @@ import { UsUserModel } from '../../../models/UsModels';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 import { capitalize } from '../../../utils/capitalize';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export type UserInformationsProps = {
   user: Partial<UsUserModel>;
@@ -32,9 +31,10 @@ const UserInformations = ({ user }: UserInformationsProps) => {
   return (
     <div className={styles.userInformations}>
       {/* TODO Render user profile picture */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className={styles.image}
-        src={getImagesByCompany(user.company!).picto}
+        src={getImagesByCompany(user.company).picto}
         alt={`Photo de ${user.first_name} ${user.last_name}`}
       />
       <div className={styles.informationsContainer}>

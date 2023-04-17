@@ -9,7 +9,6 @@ const Team = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
-  const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
 
   const { projectId, affairId } = router.query;
 
@@ -26,8 +25,8 @@ const Team = () => {
         'company_entity.*',
         'projects_directus_users_clients_ids.*',
         'projects_directus_users_collaborators_ids.*',
-        'affairs.*',
         'status',
+        'affairs.affairs_directus_users_ids.directus_users_id',
       ].join(',')
     )
       .then((res) => {
@@ -42,17 +41,9 @@ const Team = () => {
       .finally(() => setIsLoading(false));
   }, [router, projectId, affairId]);
 
-  useEffect(() => {
-    if (!affairId || typeof affairId !== 'string') return;
-
-    const affair = (project.affairs as GdpAffairModel[])?.find((affair) => affair.id === +affairId);
-    if (!affair) setAffair({});
-    else setAffair(affair);
-  }, [router, project, affairId]);
-
   if (isLoading) return null;
 
-  return <TeamPage project={project} affair={affair} />;
+  return <TeamPage project={project} />;
 };
 
 export default Team;
