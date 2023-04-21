@@ -44,7 +44,7 @@ const Home = () => {
 
   return (
     <div className="page">
-      <PageHeaderBanner data={userFullName ? `Bonjour, ${userFullName}` : ''} />
+      <PageHeaderBanner data={userFullName ? `Bonjour, ${userFullName}` : 'Bonjour'} />
       <div className={styles.homePage}>
         <TabBar tabs={tabs.map((tab) => tab.label)} currentTab={currentTab} setCurrentTab={setCurrentTab} />
         {tabs.find((tab) => tab.label === currentTab)?.content}
