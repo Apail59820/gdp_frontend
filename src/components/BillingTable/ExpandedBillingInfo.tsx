@@ -11,6 +11,18 @@ import { selectUserProfile } from '../../../store/reducers/authReducer';
 import { createGdpEmailLogs } from '../../../services/gestionDeProjets/GdpEmailsLogs';
 import { messages } from '../../../constants/messages';
 import { GdpAffairsUsersModel } from '../../../models/GestionDeProjets/GdpAffairsUsersModel';
+import { getGdpPythagoreAffaire } from '../../../services/gestionDeProjets/GdpPythagoreAffairs';
+import { GdpPythagoreAffaireModel } from '../../../models/GestionDeProjets/GdpPythagoreAffaireModel';
+import { getGdpAffair } from '../../../services/gestionDeProjets/GdpAffairs';
+import {
+  getGdpAffairPythagoreAffair,
+  getGdpAffairsPythagoreAffairs,
+} from '../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
+import { getUsUsers } from '../../../services/userService/UsUsers';
+import { getGdpAffairsUsers } from '../../../services/gestionDeProjets/GdpAffairsUsers';
+import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
+import { GdpProjectsClientsModel } from '../../../models/GestionDeProjets/GdpProjectsClientsModel';
+import { getGdpProjectsUsersClients } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -43,8 +55,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
 
   const myUser = useSelector(selectUserProfile);
 
-  const isCollaborator = myUser?.role == publicRuntimeConfig.ROLE_ADMIN_ID;
-
+  const isCollaborator = myUser?.role == publicRuntimeConfig.ROLE_COLLABORATOR_ID;
   const TIME_BETWEEN_FACTURES_EMAILS_ALERTS =
     publicRuntimeConfig.DIGITAL_SOLUTIONS_TIME_BETWEEN_FACTURES_EMAILS_ALERTS || 72;
 
@@ -98,34 +109,171 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
   const getButtonColor = () =>
     invoiceState === 'late' ? 'alert' : invoiceState === 'soonToExpire' ? 'warning' : 'primary';
 
+  /*useEffect(() => {
+    if (num_facture && isCollaborator) {
+      retrieveFacturesEmailsAlerts();
+    }
+    if (num_affaire && isCollaborator) {
+      if (typeof num_affaire == 'string') {
+        getGdpPythagoreAffaire(num_affaire).then((res) => {
+          if (res.status === 200 && res.data) {
+            if (
+              res.data.affairs_id &&
+              typeof res.data.affairs_id[0] !== 'number' &&
+              typeof res.data.affairs_id[0].affairs_id !== 'number' &&
+              typeof res.data.affairs_id[0].affairs_id.projects_id !== 'number'
+            ) {
+              const users: GdpAffairsUsersModel[] = [];
+              res.data.affairs_id[0].affairs_id.affairs_directus_users_ids.forEach((adu) => {
+                if (typeof adu !== 'number') users.push(adu);
+              });
+              setUserCanSendMail(
+                users.filter((adu: GdpAffairsUsersModel) => adu.directus_users_id === myUser?.id).length > 0
+              );
+              const projectsDirectusUsersClients =
+                res.data.affairs_id[0].affairs_id.projects_id.projects_directus_users_clients_ids;
+              const clientsResponse: string[] = [];
+              projectsDirectusUsersClients.forEach((pduc) => {
+                if (typeof pduc !== 'string' && typeof pduc.directus_users_id !== 'string')
+                  clientsResponse.push(pduc.directus_users_id.email);
+              });
+              setClientsEmails(clientsResponse);
+            } else message.error('Une erreur est survenue lors du chargement de la liste des clients.');
+          }
+        });
+      } else {
+        if (
+          typeof num_affaire.affairs_id[0] !== 'number' &&
+          typeof num_affaire.affairs_id[0].affairs_id !== 'number' &&
+          typeof num_affaire.affairs_id[0].affairs_id.projects_id !== 'number'
+        ) {
+          const users: GdpAffairsUsersModel[] = [];
+          num_affaire.affairs_id[0].affairs_id.affairs_directus_users_ids.forEach((adu) => {
+            if (typeof adu !== 'number') users.push(adu);
+          });
+          setUserCanSendMail(
+            users.filter((adu: GdpAffairsUsersModel) => adu.directus_users_id === myUser?.id).length > 0
+          );
+          const projectsDirectusUsersClients =
+            num_affaire.affairs_id[0].affairs_id.projects_id.projects_directus_users_clients_ids;
+          const clientsResponse: string[] = [];
+          projectsDirectusUsersClients.forEach((pduc) => {
+            if (typeof pduc !== 'string' && typeof pduc.directus_users_id !== 'string')
+              clientsResponse.push(pduc.directus_users_id.email);
+          });
+          setClientsEmails(clientsResponse);
+        } else message.error('Une erreur est survenue lors du chargement de la liste des clients.');
+      }
+    }
+  }, []);*/
+
   useEffect(() => {
     if (num_facture && isCollaborator) {
       retrieveFacturesEmailsAlerts();
     }
-    if (num_affaire && typeof num_affaire !== 'string' && isCollaborator) {
-      if (
-        typeof num_affaire.affairs_id[0] !== 'number' &&
-        typeof num_affaire.affairs_id[0].affairs_id !== 'number' &&
-        typeof num_affaire.affairs_id[0].affairs_id.projects_id !== 'number'
-      ) {
-        const users: GdpAffairsUsersModel[] = [];
-        num_affaire.affairs_id[0].affairs_id.affairs_directus_users_ids.forEach((adu) => {
-          if (typeof adu !== 'number') users.push(adu);
-        });
-        setUserCanSendMail(
-          users.filter((adu: GdpAffairsUsersModel) => adu.directus_users_id === myUser?.id).length > 0
-        );
-        const projectsDirectusUsersClients =
-          num_affaire.affairs_id[0].affairs_id.projects_id.projects_directus_users_clients_ids;
-        const clientsResponse: string[] = [];
-        projectsDirectusUsersClients.forEach((pduc) => {
-          if (typeof pduc !== 'string' && typeof pduc.directus_users_id !== 'string')
-            clientsResponse.push(pduc.directus_users_id.email);
-        });
-        setClientsEmails(clientsResponse);
-      } else message.error('Une erreur est survenue lors du chargement de la liste des clients.');
+  }, [num_facture, isCollaborator]);
+
+  useEffect(() => {
+    async function fetchData() {
+      if (num_affaire && isCollaborator) {
+        try {
+          let res;
+          if (typeof num_affaire === 'string') {
+            res = await getGdpPythagoreAffaire(num_affaire);
+          } else {
+            res = { data: num_affaire };
+          }
+          if (res.status === 200 && res.data) {
+            if (res.data.affairs_id && res.data.affairs_id[0] && typeof res.data.affairs_id[0] === 'number') {
+              const affair = await getGdpAffairPythagoreAffair(res.data.affairs_id[0]).then((res) => {
+                if (res.status === 200 && res.data && res.data.affairs_id && typeof res.data.affairs_id !== 'number')
+                  return res.data.affairs_id;
+              });
+              if (affair) {
+                const users: Partial<GdpAffairsUsersModel>[] = [];
+                const usersId: number[] = [];
+                affair.affairs_directus_users_ids.forEach((adu) => {
+                  if (typeof adu !== 'number') {
+                    users.push(adu);
+                  } else {
+                    usersId.push(adu);
+                  }
+                });
+                if (usersId.length > 0) {
+                  const usersResponse = await getGdpAffairsUsers({ filter: { directus_users_id: { _in: usersId } } });
+                  if (usersResponse.status === 200 && usersResponse.data) {
+                    usersResponse.data.forEach((user) => {
+                      users.push(user);
+                    });
+                  }
+                }
+                console.log('users', users);
+                setUserCanSendMail(
+                  users.filter((adu: Partial<GdpAffairsUsersModel>) => adu.directus_users_id === myUser?.id).length > 0
+                );
+                if (affair.projects_id) {
+                  const projectsDirectusUsersClients: Array<string | GdpProjectsClientsModel> = [];
+                  if (typeof affair.projects_id !== 'number') {
+                    affair.projects_id.projects_directus_users_clients_ids.forEach((user) =>
+                      projectsDirectusUsersClients.push(user)
+                    );
+                  } else {
+                    getGdpProjectById(affair.projects_id).then((res) => {
+                      if (res.status === 200 && res.data && res.data.projects_directus_users_clients_ids) {
+                        res.data.projects_directus_users_clients_ids.forEach((user) => {
+                          projectsDirectusUsersClients.push(user);
+                        });
+                      }
+                    });
+                  }
+                  const clientsResponse: string[] = [];
+                  const pducIds: string[] = [];
+                  const clientsId: string[] = [];
+                  projectsDirectusUsersClients.forEach((pduc) => {
+                    if (typeof pduc !== 'string') {
+                      if (typeof pduc.directus_users_id !== 'string') {
+                        clientsResponse.push(pduc.directus_users_id.email);
+                      } else {
+                        clientsId.push(pduc.directus_users_id);
+                      }
+                    } else {
+                      pducIds.push(pduc);
+                    }
+                  });
+                  if (pducIds.length > 0) {
+                    const pducResponse = await getGdpProjectsUsersClients({ filter: { id: { _in: pducIds } } });
+                    if (pducResponse.status === 200 && pducResponse.data) {
+                      pducResponse.data.forEach((pduc) => {
+                        if (pduc.directus_users_id) {
+                          if (typeof pduc.directus_users_id !== 'string') {
+                            clientsResponse.push(pduc.directus_users_id.email);
+                          } else {
+                            clientsId.push(pduc.directus_users_id);
+                          }
+                        }
+                      });
+                    }
+                  }
+                  if (clientsId.length > 0) {
+                    const response = await getUsUsers({ filter: { id: { _in: clientsId } } });
+                    if (response.status === 200 && response.data) {
+                      response.data.forEach((client) => {
+                        if (client.email) clientsResponse.push(client.email);
+                      });
+                    }
+                  }
+                  setClientsEmails(clientsResponse);
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
     }
-  }, []);
+    fetchData();
+  }, [num_affaire, isCollaborator, myUser]);
 
   return (
     <div className={styles.globalContainer}>

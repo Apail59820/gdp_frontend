@@ -27,6 +27,7 @@ const Authenticated = ({ children }: Props) => {
               dispatch(setAuthState(true));
               getMyUsProfile().then((res) => {
                 if (res.status === 200 && res.data) {
+                  console.log('res.data', res.data);
                   dispatch(setUserProfile(res.data));
                   message.success(messages.login.success(publicRuntimeConfig.APP_NAME));
                 } else {
