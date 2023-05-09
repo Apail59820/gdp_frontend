@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import { GdpProjectsModel } from '../../models/GdPModels';
@@ -7,39 +7,70 @@ import { ManageItemCard, QuickActionCard } from '@projex/ui';
 import Grid from '../components/Grid/Grid';
 import QuickAccessWidget from '../components/QuickAccessWidget/QuickAccessWidget';
 import ProjectsWidget from '../components/ProjectsWidget/ProjectsWidget';
+import {
+  getGdpProjectUserClientById,
+  getGdpProjectsUsersClients,
+} from '../../services/gestionDeProjets/GdpProjectsUsersClients';
+import { useSelector } from 'react-redux';
+import type { AppState } from '../../store/store';
+import { getGdpProjectsUsersCollaborators } from '../../services/gestionDeProjets/GdpProjectsUsersCollaborators';
+import getConfig from 'next/config';
+import { QueryParameters } from '../../models/DirectusModel';
+import { isRequestSuccessful } from '../../utils/isRequestSuccessful';
+
+const { publicRuntimeConfig } = getConfig();
 
 const PROFILE_PROGRESS_PERCENTAGE = 65; // TODO
 
-// TODO
-const CURRENT_USER_PROJECTS: Partial<GdpProjectsModel>[] = [
-  {
-    id: '1',
-    name: 'Nom du projet',
-    client_company_name: 'Nom du client',
-    client_info: 'frefer',
-    address: 'hrthert',
-    zip_code: 'gtrgtr',
-    city: 'hyhytyt',
-    country: 'gtgrtgtr',
-    // image: undefined,
-    status: GdpProjectStatusEnum.ACTIVE,
-    project_type: GdpProjectTypesEnum.CO_TRAITANCE,
-    company_entity: 1,
-    affairs: undefined,
-  },
-];
-
 const HomeDashboard = () => {
+  const userProfile = useSelector((state: AppState) => state.auth.userProfile);
+
+  const [currentUsersProjects, setCurrentUsersProjects] = useState<Partial<GdpProjectsModel>[]>([]);
+
+  useEffect(
+    function retrieveCurrentUsersProjects() {
+      if (!userProfile || !userProfile.role || !userProfile.id) return;
+
+      const queryParameters: QueryParameters = {
+        filter: {
+          directus_users_id: {
+            _eq: userProfile.id,
+          },
+        },
+        fields: ['id', 'projects_id.*', 'directus_users_id'].join(','),
+        limit: 6,
+      };
+
+      const isCurrentUsersRoleClient = userProfile.role === publicRuntimeConfig.ROLE_CLIENT_ID;
+
+      if (isCurrentUsersRoleClient) {
+        getGdpProjectsUsersClients(queryParameters).then((result) => {
+          if (isRequestSuccessful(result.status) && result.data) {
+            const projects = result.data.map(
+              (projectClients) => projectClients.projects_id as Partial<GdpProjectsModel>
+            );
+            setCurrentUsersProjects(projects);
+          }
+        });
+      } else {
+        getGdpProjectsUsersCollaborators(queryParameters).then((result) => {
+          if (isRequestSuccessful(result.status) && result.data) {
+            console.log(result.data);
+            const projects = result.data.map(
+              (projectCollaborators) => projectCollaborators.projects_id as Partial<GdpProjectsModel>
+            );
+            setCurrentUsersProjects(projects);
+          }
+        });
+      }
+    },
+    [userProfile]
+  );
+
   return (
     <div className={styles.homeDashboard}>
       <QuickAccessWidget>
         <Grid>
-          {/*{CURRENT_USER_PROJECTS.map((project: GdpProjectModel) => (*/}
-          {/*  <Link href={`/projects/${project.id}`}>*/}
-          {/*    <ProjectCard key={project.id} project={project} projectManagerName={'Chef de projet'} />*/}
-          {/*  </Link>*/}
-          {/*))}*/}
-          {/* TODO Handle onClick */}
           <ManageItemCard label="Nouveau projet" onClick={() => console.log('open modal ?')} />
           <QuickActionCard
             title="Créez un nouveau projet"
@@ -60,10 +91,7 @@ const HomeDashboard = () => {
           </QuickActionCard>
         </Grid>
       </QuickAccessWidget>
-      <ProjectsWidget
-        projects={CURRENT_USER_PROJECTS as any}
-        handleNewProjectClick={() => console.log('open modal ?')}
-      />
+      <ProjectsWidget projects={currentUsersProjects} handleNewProjectClick={() => console.log('open modal ?')} />
     </div>
   );
 };
