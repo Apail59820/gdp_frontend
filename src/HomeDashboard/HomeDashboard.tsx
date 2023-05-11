@@ -2,15 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import { GdpProjectsModel } from '../../models/GdPModels';
-import { GdpProjectStatusEnum, GdpProjectTypesEnum } from '../../models/GestionDeProjets/GdpProjectsModel';
 import { ManageItemCard, QuickActionCard } from '@projex/ui';
 import Grid from '../components/Grid/Grid';
 import QuickAccessWidget from '../components/QuickAccessWidget/QuickAccessWidget';
 import ProjectsWidget from '../components/ProjectsWidget/ProjectsWidget';
-import {
-  getGdpProjectUserClientById,
-  getGdpProjectsUsersClients,
-} from '../../services/gestionDeProjets/GdpProjectsUsersClients';
+import { getGdpProjectsUsersClients } from '../../services/gestionDeProjets/GdpProjectsUsersClients';
 import { useSelector } from 'react-redux';
 import type { AppState } from '../../store/store';
 import { getGdpProjectsUsersCollaborators } from '../../services/gestionDeProjets/GdpProjectsUsersCollaborators';
@@ -20,12 +16,11 @@ import { isRequestSuccessful } from '../../utils/isRequestSuccessful';
 
 const { publicRuntimeConfig } = getConfig();
 
-const PROFILE_PROGRESS_PERCENTAGE = 65; // TODO
-
 const HomeDashboard = () => {
   const userProfile = useSelector((state: AppState) => state.auth.userProfile);
 
   const [currentUsersProjects, setCurrentUsersProjects] = useState<Partial<GdpProjectsModel>[]>([]);
+  const [areCurrentUsersProjectsLoading, setAreCurrentUsersProjectsLoading] = useState(true);
 
   useEffect(
     function retrieveCurrentUsersProjects() {
@@ -43,6 +38,7 @@ const HomeDashboard = () => {
 
       const isCurrentUsersRoleClient = userProfile.role === publicRuntimeConfig.ROLE_CLIENT_ID;
 
+      setAreCurrentUsersProjectsLoading(true);
       if (isCurrentUsersRoleClient) {
         getGdpProjectsUsersClients(queryParameters).then((result) => {
           if (isRequestSuccessful(result.status) && result.data) {
@@ -55,7 +51,6 @@ const HomeDashboard = () => {
       } else {
         getGdpProjectsUsersCollaborators(queryParameters).then((result) => {
           if (isRequestSuccessful(result.status) && result.data) {
-            console.log(result.data);
             const projects = result.data.map(
               (projectCollaborators) => projectCollaborators.projects_id as Partial<GdpProjectsModel>
             );
@@ -63,15 +58,33 @@ const HomeDashboard = () => {
           }
         });
       }
+      setAreCurrentUsersProjectsLoading(false);
     },
     [userProfile]
   );
+
+  const getProfileCompletionPercentage = (): number => {
+    if (!userProfile) return 0;
+    const { id, role, status, ...ownDataThatTheUserCanEdit } = userProfile;
+
+    const ownDataThatTheUserCanEditCount = Object.keys(ownDataThatTheUserCanEdit).length;
+    const ownDataThatTheUserHasCompletedCount = Object.values(ownDataThatTheUserCanEdit).filter((data) => {
+      if (typeof data === 'object') return data?.length;
+      return data !== null;
+    }).length;
+
+    const percentageOfCompletion = (
+      (ownDataThatTheUserHasCompletedCount / ownDataThatTheUserCanEditCount) *
+      100
+    ).toFixed(1);
+
+    return +percentageOfCompletion;
+  };
 
   return (
     <div className={styles.homeDashboard}>
       <QuickAccessWidget>
         <Grid>
-          <ManageItemCard label="Nouveau projet" onClick={() => console.log('open modal ?')} />
           <QuickActionCard
             title="Créez un nouveau projet"
             button={{ label: 'Ajouter un projet', onClick: () => console.log('open modal ?'), icon: <PlusOutlined /> }}
@@ -80,7 +93,7 @@ const HomeDashboard = () => {
           </QuickActionCard>
           <QuickActionCard
             title="Complétez votre profil"
-            progress={PROFILE_PROGRESS_PERCENTAGE}
+            progress={getProfileCompletionPercentage()}
             button={{
               label: 'Ajouter des informations',
               onClick: () => console.log('open modal ?'),
@@ -91,7 +104,11 @@ const HomeDashboard = () => {
           </QuickActionCard>
         </Grid>
       </QuickAccessWidget>
-      <ProjectsWidget projects={currentUsersProjects} handleNewProjectClick={() => console.log('open modal ?')} />
+      <ProjectsWidget
+        projects={currentUsersProjects}
+        isLoading={areCurrentUsersProjectsLoading}
+        handleNewProjectClick={() => console.log('open modal ?')}
+      />
     </div>
   );
 };
