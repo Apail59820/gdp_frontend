@@ -46,11 +46,11 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
       });
     }
     const project = projects.filter((project) => project.id === projectId)[0];
-    const relationId: number[] = [];
+    const relationId: string[] = [];
     const userId: string[] = [];
     const tmpInitCollaborators: Partial<UsUserModel>[] = [];
     project?.projects_directus_users_collaborators_ids?.forEach((relation) => {
-      if (typeof relation === 'number') {
+      if (typeof relation === 'string') {
         relationId.push(relation);
       } else {
         if (typeof relation.directus_users_id === 'string') {
@@ -120,7 +120,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
     const project = projects.filter((project) => project.id === projectId)[0];
     if (project) {
       project.projects_directus_users_collaborators_ids?.forEach((relation) => {
-        if (typeof relation !== 'number') {
+        if (typeof relation !== 'string') {
           if (typeof relation.directus_users_id !== 'string') {
             const rduId = relation.directus_users_id;
             if (valuesToDelete.some((manager) => manager.id === rduId.id)) {
