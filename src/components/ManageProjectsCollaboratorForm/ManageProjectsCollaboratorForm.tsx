@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Form, message, Modal, Select } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { Button } from '@projex/ui';
@@ -46,11 +46,11 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
       });
     }
     const project = projects.filter((project) => project.id === projectId)[0];
-    const relationId: string[] = [];
+    const relationId: number[] = [];
     const userId: string[] = [];
     const tmpInitCollaborators: Partial<UsUserModel>[] = [];
     project?.projects_directus_users_collaborators_ids?.forEach((relation) => {
-      if (typeof relation === 'string') {
+      if (typeof relation === 'number') {
         relationId.push(relation);
       } else {
         if (typeof relation.directus_users_id === 'string') {
@@ -82,7 +82,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
     }
   }, [projects]);
 
-  useEffect(() => {
+  useCallback(() => {
     setUsers([...users, ...initalCollaborators.filter((collaborator) => !users.includes(collaborator))]);
     setSelectedUsers([...initalCollaborators.map((collaborator) => collaborator.id)]);
   }, [initalCollaborators]);
@@ -120,7 +120,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
     const project = projects.filter((project) => project.id === projectId)[0];
     if (project) {
       project.projects_directus_users_collaborators_ids?.forEach((relation) => {
-        if (typeof relation !== 'string') {
+        if (typeof relation !== 'number') {
           if (typeof relation.directus_users_id !== 'string') {
             const rduId = relation.directus_users_id;
             if (valuesToDelete.some((manager) => manager.id === rduId.id)) {
