@@ -140,7 +140,11 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
       if (valuesToAdd.length > 0) {
         // Ajout des collaborateurs
         createGdpProjectUserCollaborator(
-          valuesToAdd.map((value: any) => ({ projects_id: projectId, directus_users_id: value.collaborator }))
+          valuesToAdd.map((value: any) => ({
+            projects_id: projectId,
+            directus_users_id: value.collaborator,
+            project_manager: false,
+          }))
         ).then((res) => {
           if (res.status === 200) {
             message.success(`Les modifications ont bien été prises en compte.`);
