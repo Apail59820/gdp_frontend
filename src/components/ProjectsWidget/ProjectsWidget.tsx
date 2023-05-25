@@ -6,21 +6,27 @@ import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsMo
 import Grid from '../Grid/Grid';
 import ProjectCard from '../ProjectCard/ProjectCard';
 import { Section } from '@projex/ui';
+import { LoadingOutlined } from '@ant-design/icons';
 
 type Props = {
   projects: Partial<GdpProjectsModel>[];
+  isLoading?: boolean;
   handleNewProjectClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const ProjectsWidget = ({ projects, handleNewProjectClick }: Props) => {
+const ProjectsWidget = ({ projects, isLoading = false, handleNewProjectClick }: Props) => {
   return (
     <Section title="Mes projets" link={{ label: 'Voir tous les projets', href: '/projects' }}>
       <Grid>
-        {projects.map((project) => (
-          <Link key={project.id} href={`/projects/${project.id}`}>
-            <ProjectCard project={project} projectManagerName={'Chef de projet'} />
-          </Link>
-        ))}
+        {isLoading ? (
+          <LoadingOutlined />
+        ) : (
+          projects.map((project) => (
+            <Link key={project.id} href={`/projects/${project.id}`}>
+              <ProjectCard project={project} projectManagerName={'Chef de projet'} />
+            </Link>
+          ))
+        )}
         <div className={styles.manageItemCardContainer}>
           <ManageItemCard label="Nouveau projet" onClick={handleNewProjectClick} />
         </div>
