@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import { GdpProjectsModel } from '../../models/GdPModels';
-import { ManageItemCard, QuickActionCard } from '@projex/ui';
+import { QuickActionCard } from '@projex/ui';
 import Grid from '../components/Grid/Grid';
 import QuickAccessWidget from '../components/QuickAccessWidget/QuickAccessWidget';
 import ProjectsWidget from '../components/ProjectsWidget/ProjectsWidget';
@@ -13,6 +13,7 @@ import { getGdpProjectsUsersCollaborators } from '../../services/gestionDeProjet
 import getConfig from 'next/config';
 import { QueryParameters } from '../../models/DirectusModel';
 import { isRequestSuccessful } from '../../utils/isRequestSuccessful';
+import CreateProjectForm from '../components/CreateProjectForm/CreateProjectForm';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -21,6 +22,8 @@ const HomeDashboard = () => {
 
   const [currentUsersProjects, setCurrentUsersProjects] = useState<Partial<GdpProjectsModel>[]>([]);
   const [areCurrentUsersProjectsLoading, setAreCurrentUsersProjectsLoading] = useState(true);
+
+  const [isCreateNewProjectModalOpen, setIsCreateNewProjectModalOpen] = useState(false);
 
   useEffect(
     function retrieveCurrentUsersProjects() {
@@ -87,16 +90,21 @@ const HomeDashboard = () => {
         <Grid>
           <QuickActionCard
             title="Créez un nouveau projet"
-            button={{ label: 'Ajouter un projet', onClick: () => console.log('open modal ?'), icon: <PlusOutlined /> }}
+            button={{
+              label: 'Ajouter un projet',
+              onClick: () => setIsCreateNewProjectModalOpen(true),
+              icon: <PlusOutlined />,
+            }}
           >
             Créer un nouveau projet dés maintenant
           </QuickActionCard>
+          <CreateProjectForm isOpen={isCreateNewProjectModalOpen} setIsOpen={setIsCreateNewProjectModalOpen} />
           <QuickActionCard
             title="Complétez votre profil"
             progress={getProfileCompletionPercentage()}
             button={{
               label: 'Ajouter des informations',
-              onClick: () => console.log('open modal ?'),
+              href: publicRuntimeConfig.USER_SERVICE_URL + `/users/${userProfile?.id}`,
               icon: <PlusOutlined />,
             }}
           >
@@ -107,7 +115,7 @@ const HomeDashboard = () => {
       <ProjectsWidget
         projects={currentUsersProjects}
         isLoading={areCurrentUsersProjectsLoading}
-        handleNewProjectClick={() => console.log('open modal ?')}
+        handleNewProjectClick={() => setIsCreateNewProjectModalOpen(true)}
       />
     </div>
   );
