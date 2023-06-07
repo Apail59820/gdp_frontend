@@ -4,7 +4,7 @@ import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsMo
 import TeamCard, { TeamCardProps } from '../TeamCard/TeamCard';
 
 export type ClientTeamCardProps = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
-  clientCompany: GdpProjectsModel;
+  clientCompany: Partial<GdpProjectsModel>;
 };
 
 const ClientTeamCard = (props: ClientTeamCardProps) => {

@@ -17,7 +17,9 @@ const FilesWidget = ({ files, max, onNewFileClick, allFilesPageHref }: Props) =>
       link={
         files.length > 0
           ? {
-              label: `Voir le${files.length > 1 ? `s ${files.length}` : ''} fichier${files.length > 1 ? 's' : ''}`,
+              label: `Voir ${files.length > 1 ? `tous les ${files.length}` : 'le'} fichier${
+                files.length > 1 ? 's' : ''
+              }`,
               href: allFilesPageHref || `${router.asPath}/files`,
             }
           : undefined
