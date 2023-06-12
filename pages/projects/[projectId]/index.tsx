@@ -49,7 +49,7 @@ const Project = () => {
   const [isCreateProjectFormOpen, setIsCreateProjectFormOpen] = React.useState<boolean>(false);
 
   const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
-  const progessPercentage = useMemo(() => {
+  const progressPercentage = useMemo(() => {
     const requiredProps = ['name', 'client_company_name', 'client_info', 'address', 'zip_code', 'city', 'country'];
     const propsDefined = requiredProps.reduce(
       (count, prop) => count + (project && project[prop as keyof Partial<GdpProjectsModel>] ? 1 : 0),
@@ -354,7 +354,7 @@ const Project = () => {
               >
                 Vous pouvez associer les numéros Pythagore aux affaires correspondantes
               </QuickActionCard>
-              <QuickActionCard title="Complétez le projet" progress={progessPercentage}>
+              <QuickActionCard title="Complétez le projet" progress={progressPercentage}>
                 Remplissez les informations du projet pour le compléter
               </QuickActionCard>
             </Grid>
