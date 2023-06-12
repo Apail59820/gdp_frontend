@@ -12,12 +12,7 @@ import { createGdpEmailLogs } from '../../../services/gestionDeProjets/GdpEmails
 import { messages } from '../../../constants/messages';
 import { GdpAffairsUsersModel } from '../../../models/GestionDeProjets/GdpAffairsUsersModel';
 import { getGdpPythagoreAffaire } from '../../../services/gestionDeProjets/GdpPythagoreAffairs';
-import { GdpPythagoreAffaireModel } from '../../../models/GestionDeProjets/GdpPythagoreAffaireModel';
-import { getGdpAffair } from '../../../services/gestionDeProjets/GdpAffairs';
-import {
-  getGdpAffairPythagoreAffair,
-  getGdpAffairsPythagoreAffairs,
-} from '../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
+import { getGdpAffairPythagoreAffair } from '../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
 import { getUsUsers } from '../../../services/userService/UsUsers';
 import { getGdpAffairsUsers } from '../../../services/gestionDeProjets/GdpAffairsUsers';
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
@@ -109,64 +104,6 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
   const getButtonColor = () =>
     invoiceState === 'late' ? 'alert' : invoiceState === 'soonToExpire' ? 'warning' : 'primary';
 
-  /*useEffect(() => {
-    if (num_facture && isCollaborator) {
-      retrieveFacturesEmailsAlerts();
-    }
-    if (num_affaire && isCollaborator) {
-      if (typeof num_affaire == 'string') {
-        getGdpPythagoreAffaire(num_affaire).then((res) => {
-          if (res.status === 200 && res.data) {
-            if (
-              res.data.affairs_id &&
-              typeof res.data.affairs_id[0] !== 'number' &&
-              typeof res.data.affairs_id[0].affairs_id !== 'number' &&
-              typeof res.data.affairs_id[0].affairs_id.projects_id !== 'number'
-            ) {
-              const users: GdpAffairsUsersModel[] = [];
-              res.data.affairs_id[0].affairs_id.affairs_directus_users_ids.forEach((adu) => {
-                if (typeof adu !== 'number') users.push(adu);
-              });
-              setUserCanSendMail(
-                users.filter((adu: GdpAffairsUsersModel) => adu.directus_users_id === myUser?.id).length > 0
-              );
-              const projectsDirectusUsersClients =
-                res.data.affairs_id[0].affairs_id.projects_id.projects_directus_users_clients_ids;
-              const clientsResponse: string[] = [];
-              projectsDirectusUsersClients.forEach((pduc) => {
-                if (typeof pduc !== 'string' && typeof pduc.directus_users_id !== 'string')
-                  clientsResponse.push(pduc.directus_users_id.email);
-              });
-              setClientsEmails(clientsResponse);
-            } else message.error('Une erreur est survenue lors du chargement de la liste des clients.');
-          }
-        });
-      } else {
-        if (
-          typeof num_affaire.affairs_id[0] !== 'number' &&
-          typeof num_affaire.affairs_id[0].affairs_id !== 'number' &&
-          typeof num_affaire.affairs_id[0].affairs_id.projects_id !== 'number'
-        ) {
-          const users: GdpAffairsUsersModel[] = [];
-          num_affaire.affairs_id[0].affairs_id.affairs_directus_users_ids.forEach((adu) => {
-            if (typeof adu !== 'number') users.push(adu);
-          });
-          setUserCanSendMail(
-            users.filter((adu: GdpAffairsUsersModel) => adu.directus_users_id === myUser?.id).length > 0
-          );
-          const projectsDirectusUsersClients =
-            num_affaire.affairs_id[0].affairs_id.projects_id.projects_directus_users_clients_ids;
-          const clientsResponse: string[] = [];
-          projectsDirectusUsersClients.forEach((pduc) => {
-            if (typeof pduc !== 'string' && typeof pduc.directus_users_id !== 'string')
-              clientsResponse.push(pduc.directus_users_id.email);
-          });
-          setClientsEmails(clientsResponse);
-        } else message.error('Une erreur est survenue lors du chargement de la liste des clients.');
-      }
-    }
-  }, []);*/
-
   useEffect(() => {
     if (num_facture && isCollaborator) {
       retrieveFacturesEmailsAlerts();
@@ -207,7 +144,6 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
                     });
                   }
                 }
-                console.log('users', users);
                 setUserCanSendMail(
                   users.filter((adu: Partial<GdpAffairsUsersModel>) => adu.directus_users_id === myUser?.id).length > 0
                 );
