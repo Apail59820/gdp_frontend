@@ -8,6 +8,10 @@ import {
   GdpActivitiesModel,
 } from '../../../models/GestionDeProjets/GdpActivitiesModel';
 import { DateTime } from 'luxon';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUsers, setUsers } from '../../../store/reducers/usersReducer';
+import { get } from 'js-cookie';
+import { getUsUser, getUsUsers } from '../../../services/userService/UsUsers';
 
 /*export type Activity = {
   creationDate: string;
@@ -20,6 +24,8 @@ type ActivitiesWidgetProps = {
 };
 
 const ActivitiesWidget = ({ activities }: ActivitiesWidgetProps) => {
+  const users = useSelector(selectUsers);
+  const dispatch = useDispatch();
   const renderLabel = (activity: Partial<GdpActivitiesModel>): string => {
     if (activity.collection === ActivitiesCollectionEnum.Project) {
       switch (activity.action) {
@@ -51,15 +57,33 @@ const ActivitiesWidget = ({ activities }: ActivitiesWidgetProps) => {
   const formattedActivities: Activity[] = useMemo(
     () =>
       activities.map((activity) => {
+        let author = 'Inconnu';
+        if (activity.user_created) {
+          if (typeof activity.user_created === 'string') {
+            const user = users.find((user) => user.id === activity.user_created);
+            if (user) {
+              author = `${user.first_name} ${user.last_name}`;
+            } else {
+              getUsUser(activity.user_created).then((user) => {
+                if (user && user.data) {
+                  author = `${user.data.first_name} ${user.data.last_name}`;
+                  dispatch(setUsers([...users, user.data]));
+                }
+              });
+            }
+          } else {
+            author = `${activity.user_created.first_name} ${activity.user_created.last_name}`;
+          }
+        }
         return {
           creationDate: DateTime.fromISO(activity.date_created as string)
             .setLocale('fr')
             .toLocaleString(),
           label: renderLabel(activity),
-          author: 'Test Author',
+          author: author,
         };
       }),
-    [activities]
+    [activities, dispatch, users]
   );
 
   return (

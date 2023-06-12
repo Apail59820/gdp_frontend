@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../../../styles/Project.module.scss';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { Breadcrumb, QuickActionCard } from '@projex/ui';
+import { Breadcrumb, Button, QuickActionCard } from '@projex/ui';
 import Grid from '../../../src/components/Grid/Grid';
 import PageHeaderBanner from '../../../src/components/PageHeaderBanner/PageHeaderBanner';
 import QuickAccessWidget from '../../../src/components/QuickAccessWidget/QuickAccessWidget';
@@ -35,6 +35,8 @@ import { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPy
 import AffairsWidget from '../../../src/components/AffairsWidget/AffairsWidget';
 import { getGdpPythagoreFactures } from '../../../services/gestionDeProjets/GdpPythagoreFactures';
 import { getGdpAffairsPythagoreAffairs } from '../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
+import penIcon from '../../../public/pen.svg';
+import CreateProjectForm from '../../../src/components/CreateProjectForm/CreateProjectForm';
 
 const Project = () => {
   const router = useRouter();
@@ -43,7 +45,8 @@ const Project = () => {
   const projects = useSelector(selectProjects);
   const affairs = useSelector(selectAffairs);
 
-  const [isCreateAffairFormOpen, setIsCreateAffairFormOpen] = React.useState(false);
+  const [isCreateAffairFormOpen, setIsCreateAffairFormOpen] = React.useState<boolean>(false);
+  const [isCreateProjectFormOpen, setIsCreateProjectFormOpen] = React.useState<boolean>(false);
 
   const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
   const progessPercentage = useMemo(() => {
@@ -312,7 +315,17 @@ const Project = () => {
         <PageHeaderBanner data={project} />
         <div className={styles.projectPage}>
           <Breadcrumb dynamicRoutesLabel={[project.name!]} />
-          <h1 className={styles.title}>Le projet</h1>
+          <div className={styles.titleContainer}>
+            <h1 className={styles.title}>Le projet</h1>
+            <Button icon={<EditOutlined />} onClick={() => setIsCreateProjectFormOpen(true)}>
+              Modifier le projet
+            </Button>
+            <CreateProjectForm
+              isOpen={isCreateProjectFormOpen}
+              setIsOpen={setIsCreateProjectFormOpen}
+              project={project}
+            />
+          </div>
           <QuickAccessWidget>
             <Grid>
               <QuickActionCard
@@ -346,7 +359,7 @@ const Project = () => {
               </QuickActionCard>
             </Grid>
           </QuickAccessWidget>
-          <AffairsWidget affairs={projectAffairs} onNewAffairClick={() => console.log('open modal ?')} />
+          <AffairsWidget affairs={projectAffairs} onNewAffairClick={() => setIsCreateAffairFormOpen(true)} />
           <section>
             <Grid type="narrow">
               <ClientTeamWidget
