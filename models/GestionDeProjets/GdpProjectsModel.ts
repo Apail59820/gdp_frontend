@@ -37,6 +37,6 @@ export type GdpProjectsModel = {
   projects_directus_users_collaborators_ids: string[] | GdpProjectsCollaboratorsModel[];
   company_entity: number | UsCompanyEntityModel;
   files: string[] | GdpAffairModel[];
-  affairs: number[] | GdpAffairModel[];
+  affairs_ids: number[] | GdpAffairModel[];
   activities_id: number[] | GdpActivitiesModel[];
 };
