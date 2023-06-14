@@ -1,13 +1,16 @@
-import { RecentActivitiesCard } from '@projex/ui';
 import React from 'react';
 import { Section } from '@projex/ui';
-import type { RecentActivitiesProps } from '@projex/ui/dist/components/molecules/RecentActivities/RecentActivities';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
+import { RecentActivitiesProps } from '../RecentActivities/RecentActivities';
+import RecentActivitiesCard from '../RecentActivitiesCard/RecentActivitiesCard';
+import { GdpActivitiesModel } from '../../../models/GdPModels';
 
-const ActivitiesWidget = ({ activities }: RecentActivitiesProps) => {
+const ActivitiesWidget = ({ activities }: { activities: GdpActivitiesModel[] }) => {
+  console.log(activities);
+
   return (
     <Section title="Activités récentes">
-      {activities.length ? (
+      {activities?.length ? (
         <RecentActivitiesCard activities={activities} />
       ) : (
         <ConfigureWidget descriptionText="Aucune activité récente" />

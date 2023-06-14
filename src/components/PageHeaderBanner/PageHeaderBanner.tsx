@@ -5,8 +5,7 @@ import MainMessage from './MainMessage/MainMessage';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 
 type Props = {
-  data: any;
-  // data: string | Partial<GdpProjectsModel>;
+  data: string | Partial<GdpProjectsModel>;
 };
 
 const PageHeaderBanner = ({ data }: Props) => {
@@ -14,19 +13,19 @@ const PageHeaderBanner = ({ data }: Props) => {
     if (typeof data === 'string') return '';
 
     // switch (data?.company_entity) {
-    // case CompanyEnum.AMEXIA:
-    //   return styles.amexia;
-    // case CompanyEnum.DIAGOBAT:
-    //   return styles.diagobat;
-    // case CompanyEnum.IMPERIUM:
-    //   return styles.imperium;
-    // case CompanyEnum.PROBIM:
-    //   return styles.probim;
-    // case CompanyEnum.PROJEX:
-    //   return styles.projex;
-    // default:
+    //   case CompanyEnum.AMEXIA:
+    //     return styles.amexia;
+    //   case CompanyEnum.DIAGOBAT:
+    //     return styles.diagobat;
+    //   case CompanyEnum.IMPERIUM:
+    //     return styles.imperium;
+    //   case CompanyEnum.PROBIM:
+    //     return styles.probim;
+    //   case CompanyEnum.PROJEX:
+    //     return styles.projex;
+    //   default:
     return styles.groupeProjex;
-    // };
+    // }
   };
 
   return (
