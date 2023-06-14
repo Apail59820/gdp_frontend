@@ -9,6 +9,7 @@ import { Breadcrumb, Grid, Section } from '@projex/ui';
 import styles from '../../../styles/Project.module.scss';
 import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
 import { getGdpSatisfactions } from '../../../services/gestionDeProjets/GdpAffairsSatisfaction';
+import SatisfactionCard from '../../../src/components/SatisfactionCard/SatisfactionCard';
 
 const ProjectSatisfaction = () => {
   const router = useRouter();
@@ -55,12 +56,7 @@ const ProjectSatisfaction = () => {
         <section>
           <Grid type={'narrow'}>
             <Section title={'Projet global'}>
-              {/* Mettre le SatisfactionWidget ici */}
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-              ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-              fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-              mollit anim id est laborum.
+              <SatisfactionCard satisfactions={projectSatisfactions} />
             </Section>
             <Section title={'Questionnaires de satisfaction récents'}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
