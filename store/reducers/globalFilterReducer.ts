@@ -1,46 +1,39 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { GlobalFilterActionType, GlobalFiltersModel } from '../../models/GlobalFiltersModel';
+import { GlobalFiltersModel } from '../../models/GlobalFiltersModel';
 import { AppState } from '../store';
 
 let initialState: GlobalFiltersModel = {
   projects: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.REPLACE,
     listWithNames: [],
   },
   affairs: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.REPLACE,
     listWithNames: [],
   },
   pythagore_affaires: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.REPLACE,
     listWithNames: [],
   },
   files: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.REPLACE,
   },
   satisfaction: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.REPLACE,
   },
   clients: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.REPLACE,
     listWithNames: [],
   },
   collaborators: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.REPLACE,
     listWithNames: [],
   },
   company_entities: {
@@ -51,7 +44,6 @@ let initialState: GlobalFiltersModel = {
   clients_company_entities: {
     list: [],
     queryParameters: {},
-    action: GlobalFilterActionType.REPLACE,
     listWithNames: [],
   },
 };

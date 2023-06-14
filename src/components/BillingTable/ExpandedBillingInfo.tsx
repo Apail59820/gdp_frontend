@@ -15,7 +15,7 @@ import { GdpAffairsUsersModel } from '../../../models/GestionDeProjets/GdpAffair
 const { publicRuntimeConfig } = getConfig();
 
 type props = {
-  billing: GdpPythagoreFactureModel;
+  billing: Partial<GdpPythagoreFactureModel>;
   colorClassName: string;
   invoiceState: InvoiceStateEnum;
 };
@@ -57,6 +57,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
   }
 
   async function declareManualFactureEmailAlert() {
+    if (!num_facture) return;
     const subject = `Relance paiement facture ${num_facture}`;
     const body = `Bonjour%2C%0D%0A%0D%0ANous%20vous%20informons%20que%20votre%20facture%2C%20numéro%20"${num_facture}"%20arrivée%20à%20échéance%20le%20${date_echeance_facture}%2C%20d'un%20montant%20de%20${soldeht_facture}%20€HT%20soit%20${soldettc_facture}%20€TTC%20%20n'a%20pas%20été%20réglée.`;
     window.open(`mailto:${clientsEmails?.join(',')}?subject=${subject}&body=${body}`, '_blank');
@@ -75,6 +76,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
   }
 
   async function sendAutomaticFactureEmailAlert() {
+    if (!num_facture) return;
     const factureEmailAlertResponse = await createGdpEmailLogs({
       subject: `Votre relance Digital Solutions pour la facture ${num_facture}`,
       content: `Ce message est une relance automatique car une facture est en attente de régularisation. Nous vous informons
@@ -175,10 +177,12 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
         <div>
           <b>Derniere relance:</b>{' '}
           {`${
-            (emails_logs &&
-              typeof emails_logs[0] !== 'number' &&
-              DateTime.fromJSDate(emails_logs[0].date_created).toLocaleString()) ??
-            'Non définie'
+            emails_logs &&
+            emails_logs.length > 0 &&
+            typeof emails_logs[0] !== 'number' &&
+            DateTime.fromJSDate(emails_logs[0].date_created).toLocaleString()
+              ? DateTime.fromJSDate(emails_logs[0].date_created).toLocaleString()
+              : 'Aucune relance déclarée'
           }`}
         </div>
         <div className={styles.buttonContainer}>

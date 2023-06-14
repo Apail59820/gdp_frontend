@@ -5,8 +5,8 @@ export type QueryParameters = {
   sort?: string;
   fields?: string;
   search?: string;
-  limit?: string;
-  offset?: string;
+  limit?: string | number;
+  offset?: string | number;
   page?: string;
   deep?: string;
   meta?: string;

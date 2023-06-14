@@ -8,8 +8,7 @@ export enum GlobalFilterActionType {
 export type GlobalFiltersModel = {
   projects: {
     list: number[];
-    queryParameters: QueryParameters; // { status: { _eq : "archived" } }
-    action: GlobalFilterActionType;
+    queryParameters: QueryParameters;
     listWithNames: {
       name: string;
       key: string | number;
@@ -18,7 +17,6 @@ export type GlobalFiltersModel = {
   affairs: {
     list: number[];
     queryParameters: QueryParameters;
-    action: GlobalFilterActionType;
     listWithNames: {
       name: string;
       key: string | number;
@@ -27,7 +25,6 @@ export type GlobalFiltersModel = {
   pythagore_affaires: {
     list: string[];
     queryParameters: QueryParameters;
-    action: GlobalFilterActionType;
     listWithNames: {
       name: string;
       key: string | number;
@@ -36,17 +33,14 @@ export type GlobalFiltersModel = {
   files: {
     list: string[];
     queryParameters: QueryParameters;
-    action: GlobalFilterActionType;
   };
   satisfaction: {
     list: number[];
     queryParameters: QueryParameters;
-    action: GlobalFilterActionType;
   };
   clients: {
     list: string[];
     queryParameters: QueryParameters;
-    action: GlobalFilterActionType;
     listWithNames: {
       name: string;
       key: string | number;
@@ -55,7 +49,6 @@ export type GlobalFiltersModel = {
   collaborators: {
     list: string[];
     queryParameters: QueryParameters;
-    action: GlobalFilterActionType;
     listWithNames: {
       name: string;
       key: string | number;
@@ -72,7 +65,6 @@ export type GlobalFiltersModel = {
   clients_company_entities: {
     list: number[];
     queryParameters: QueryParameters;
-    action: GlobalFilterActionType;
     listWithNames: {
       name: string;
       key: string | number;

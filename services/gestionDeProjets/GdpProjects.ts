@@ -100,7 +100,14 @@ type createFieldsToOmit =
   | 'projects_directus_users_collaborators_ids'
   | 'files'
   | 'affairs'
-  | 'activities_id';
+  | 'activities_id'
+  | 'address'
+  | 'zip_code'
+  | 'city'
+  | 'country'
+  | 'client_info'
+  | 'status'
+  | 'project_type';
 
 /**
  * Create a gdp Project.
@@ -168,7 +175,7 @@ type updateFieldsToOmit =
  * @returns Status and updated gdp project properties.
  */
 export async function updateGdpProject(
-  id: string,
+  id: string | number,
   data: Partial<Omit<GdpProjectsModel, updateFieldsToOmit>>
 ): Promise<{ status: number; data?: Partial<GdpProjectsModel>; error?: string }> {
   const token = await retrieveToken();
