@@ -25,38 +25,9 @@ import { useRouter } from 'next/router';
 import { isRequestSuccessful } from '../../../../../utils/isRequestSuccessful';
 import { getGdpAffairsUsers } from '../../../../../services/gestionDeProjets/GdpAffairsUsers';
 import ActivitiesWidget from '../../../../../src/components/ActivitiesWidget/ActivitiesWidget';
-
-// TODO
-const PROJECT_BY_ID: GdpProjectsModel = {
-  id: 1,
-  name: 'Nom du projet',
-  client_company_name: 'Nom du client',
-  client_info: null,
-  address: null,
-  zip_code: null,
-  city: null,
-  country: null,
-};
+import { getUsUsers } from '../../../../../services/userService/UsUsers';
 
 const AFFAIR_PROGRESS_PERCENTAGE: number = 65;
-
-const ACTIVITIES = [
-  {
-    creationDate: '10/12/2022',
-    label: 'Ajout du fichier preview-facade.png',
-    author: 'Olivier Le Baron',
-  },
-  {
-    creationDate: '10/12/2022',
-    label: 'Ajout du fichier preview-facade.png',
-    author: 'Olivier Le Baron',
-  },
-  {
-    creationDate: '10/12/2022',
-    label: 'Ajout du fichier preview-facade.png',
-    author: 'Olivier Le Baron',
-  },
-];
 
 const STATISTICS: Statistic[] = [
   { label: 'Label 1 ', percentage: 65 },
@@ -100,7 +71,26 @@ const Affair = () => {
       getGdpAffairsUsers({ filter: { affairs_id: affair.id } })
         .then((response) => {
           if (isRequestSuccessful(response.status) && response.data) {
-            setUsers(response.data);
+            const userIds = response.data.map((user) => user.directus_users_id as string);
+
+            getUsUsers({
+              filter: {
+                id: {
+                  _in: userIds,
+                },
+              },
+            }).then((response2) => {
+              if (isRequestSuccessful(response2.status) && response2.data) {
+                const formattedUsers = response.data?.map((user) => {
+                  return {
+                    ...user,
+                    directus_users_id: response2.data?.find((userFound) => userFound.id === user.directus_users_id),
+                  };
+                });
+
+                setUsers(formattedUsers || []);
+              }
+            });
           }
         })
         // eslint-disable-next-line no-console
@@ -108,9 +98,6 @@ const Affair = () => {
     },
     [affair]
   );
-
-  console.log(affair);
-  console.log(users);
 
   return (
     <div className="page">
@@ -157,7 +144,7 @@ const Affair = () => {
           <Grid type="narrow">
             <ClientTeamWidget
               users={[]}
-              clientCompany={PROJECT_BY_ID}
+              clientCompany={affair.projects_id as GdpProjectsModel}
               onAddClientClick={() => console.log('open modal ?')}
             />
             <CollaboratorTeamWidget

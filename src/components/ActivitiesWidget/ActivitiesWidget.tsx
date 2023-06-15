@@ -6,8 +6,6 @@ import RecentActivitiesCard from '../RecentActivitiesCard/RecentActivitiesCard';
 import { GdpActivitiesModel } from '../../../models/GdPModels';
 
 const ActivitiesWidget = ({ activities }: { activities: GdpActivitiesModel[] }) => {
-  console.log(activities);
-
   return (
     <Section title="Activités récentes">
       {activities?.length ? (
