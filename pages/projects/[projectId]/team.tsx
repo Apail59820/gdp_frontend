@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { GdpProjectStatusEnum, GdpProjectTypesEnum, GdpProjectsModel } from '../../../models/GdPModels';
+import { GdpProjectsModel } from '../../../models/GdPModels';
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
 import TeamPage from '../../../src/TeamPage/TeamPage';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';

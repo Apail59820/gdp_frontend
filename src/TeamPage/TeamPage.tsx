@@ -35,7 +35,7 @@ const TeamPage = ({ project }: Props) => {
     })
     .filter((manager) => manager) as UsUserModel[];
 
-  const affairsCollaborators = project.affairs
+  const affairsCollaborators = project.affairs_ids
     ?.map((affair) =>
       (affair as GdpAffairModel).affairs_directus_users_ids?.map(
         (user) => (user as GdpAffairsUsersModel).directus_users_id as UsUserModel
@@ -57,19 +57,22 @@ const TeamPage = ({ project }: Props) => {
               users={projectClients || []}
               clientCompany={project}
               clientTeamPageHref="/client?"
+              // TODO implement modal DSMS-287
               onAddClientClick={() => console.log('open modal ?')}
             />
             <CollaboratorTeamWidget
               users={projectManagers || []}
               companyEntity={typeof project.company_entity === 'string' ? project.company_entity['name'] : ''}
+              // TODO implement modal DSMS-287
               onAddCollaboratorClick={() => console.log('open modal ?')}
             />
           </Grid>
         </section>
         <UsersWidget
           users={allProjectCollaboratorIncludingAffairs || []}
-          label="Tous les collaborateurs  du projet"
+          label="Tous les collaborateurs du projet"
           addUserLabel="Ajouter un collaborateur"
+          // TODO implement modal DSMS-287
           onNewUserClick={() => console.log('open modal ?')}
         />
       </div>
