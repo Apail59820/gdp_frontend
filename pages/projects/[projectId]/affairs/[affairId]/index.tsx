@@ -88,7 +88,7 @@ const Affair = () => {
                   };
                 });
 
-                setUsers(formattedUsers || []);
+                setUsers(formattedUsers);
               }
             });
           }
