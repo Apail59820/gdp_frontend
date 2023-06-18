@@ -18,3 +18,11 @@ export type GdpSatisfactionModel = {
   affairs_phases_id: number | GdpPhaseModel;
   activities_id?: number[] | GdpActivitiesModel[];
 };
+
+export type CreateGdpSatisfactionModel = {
+  affairs_id: number | GdpAffairModel;
+  affairs_phases_id: number | GdpPhaseModel;
+  score_soft_skills: number;
+  score_hard_skills: number;
+  comment: string | null;
+};
