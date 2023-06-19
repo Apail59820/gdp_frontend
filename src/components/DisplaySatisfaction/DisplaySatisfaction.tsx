@@ -139,7 +139,7 @@ const DisplaySatisfaction = ({ isOpen, setIsOpen, satisfaction }: DisplaySatisfa
         <DisplaySatisfactionSkill type={'score_soft_skills'} indexSatisfaction={satisfaction.score_soft_skills} />
         <div className={styles.headerInfos}>
           <span>
-            {DateTime.fromJSDate(satisfaction.date_created as Date)
+            {DateTime.fromISO(satisfaction.date_created as string)
               .setLocale('fr')
               .toLocaleString()}
           </span>
