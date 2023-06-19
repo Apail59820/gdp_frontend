@@ -4,12 +4,12 @@ import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsMo
 import TeamCard, { TeamCardProps } from '../TeamCard/TeamCard';
 
 export type ClientTeamCardProps = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
-  clientCompany: GdpProjectsModel;
+  clientCompany: Partial<GdpProjectsModel>;
 };
 
 const ClientTeamCard = (props: ClientTeamCardProps) => {
   const { clientCompany } = props;
-
+  /* TODO: fetch client company entity to retrieve informations */
   const aside = (
     <section className={styles.clientCompanyDetails}>
       <h4 className={styles.title}>{clientCompany.client_company_name}</h4>

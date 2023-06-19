@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styles from './TeamCard.module.scss';
 import { ShadowCard } from '@projex/ui';
 import Link from 'next/link';
-import defaultImage from '../../../public/patrice.png';
 import { UsUserModel } from '../../../models/UsModels';
 import { Tooltip } from 'antd';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
@@ -11,7 +10,7 @@ import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 import Image from 'next/image';
 
 export type TeamCardProps = {
-  users: UsUserModel[];
+  users: Partial<UsUserModel>[];
   maxIcon?: number;
   allUsersPageHref: string;
   aside: React.ReactNode;
@@ -19,7 +18,7 @@ export type TeamCardProps = {
 };
 
 const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClick }: TeamCardProps) => {
-  const [currentUser, setCurrentUser] = useState<UsUserModel>(users[0]);
+  const [currentUser, setCurrentUser] = useState<Partial<UsUserModel>>(users[0]);
 
   return (
     <ShadowCard>
@@ -30,11 +29,12 @@ const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClic
             <UserInformations user={currentUser} />
           </div>
           <ul className={styles.usersIconsContainer}>
-            {users.slice(0, maxIcon).map((user: UsUserModel) => (
+            {users.slice(0, maxIcon).map((user: Partial<UsUserModel>) => (
               <li key={user.id} className={styles.user} onClick={() => setCurrentUser(user)}>
                 <Tooltip title={`${user.first_name} ${user.last_name}`}>
                   <div className={styles.userIcon}>
                     <Image
+                      fill={true}
                       src={user.avatar || getImagesByCompany(user.company!).picto}
                       alt={`Photo de ${user.first_name} ${user.last_name}`}
                     />
