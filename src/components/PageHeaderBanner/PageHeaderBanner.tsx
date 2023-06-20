@@ -1,40 +1,55 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from './PageHeaderBanner.module.scss';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import MainMessage from './MainMessage/MainMessage';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
+import { useSelector } from 'react-redux';
+import { selectCompanyEntities } from '../../../store/reducers/companyEntitiesReducer';
+import { CompanyEnum } from '../../../models/UserService/UsCompanyEntityModel';
 
 type Props = {
-  data: any;
-  // data: string | Partial<GdpProjectsModel>;
+  data: Partial<GdpProjectsModel> | string;
 };
 
 const PageHeaderBanner = ({ data }: Props) => {
-  const getColorByCompany = () => {
-    if (typeof data === 'string') return '';
+  const companyEntities = useSelector(selectCompanyEntities);
 
-    // switch (data?.company_entity) {
-    // case CompanyEnum.AMEXIA:
-    //   return styles.amexia;
-    // case CompanyEnum.DIAGOBAT:
-    //   return styles.diagobat;
-    // case CompanyEnum.IMPERIUM:
-    //   return styles.imperium;
-    // case CompanyEnum.PROBIM:
-    //   return styles.probim;
-    // case CompanyEnum.PROJEX:
-    //   return styles.projex;
-    // default:
-    return styles.groupeProjex;
-    // };
-  };
+  const [projectCompanyEntity, setProjectCompanyEntity] = useState<string>('Entité inconnue');
+
+  const getColorByCompany = useMemo(() => {
+    switch (projectCompanyEntity) {
+      case CompanyEnum.AMEXIA:
+        return styles.amexia;
+      case CompanyEnum.DIAGOBAT:
+        return styles.diagobat;
+      case CompanyEnum.IMPERIUM:
+        return styles.imperium;
+      case CompanyEnum.PROBIM:
+        return styles.probim;
+      case CompanyEnum.PROJEX:
+        return styles.projex;
+      default:
+        return styles.groupeProjex;
+    }
+  }, [projectCompanyEntity]);
+
+  // useEffect to fetch affair company entity
+  useEffect(() => {
+    if (typeof data === 'string') return;
+    if (data.company_entity) {
+      if (typeof data.company_entity === 'number') {
+        const companyEntity = companyEntities.find((companyEntity) => companyEntity.id === data.company_entity);
+        if (companyEntity && companyEntity.name) setProjectCompanyEntity(companyEntity.name);
+        else setProjectCompanyEntity('Entité inconnue');
+      } else {
+        if (data.company_entity.name) setProjectCompanyEntity(data.company_entity.name);
+        else setProjectCompanyEntity('Entité inconnue');
+      }
+    } else setProjectCompanyEntity('Entité inconnue');
+  }, [companyEntities, data]);
 
   return (
-    <div
-      className={`${styles.pageHeaderBanner} ${
-        typeof data !== 'string' && data?.company_entity ? getColorByCompany() : ''
-      }`}
-    >
+    <div className={`${styles.pageHeaderBanner} ${getColorByCompany}`}>
       {typeof data === 'string' ? (
         <MainMessage project={{ name: data }} showImage={false} />
       ) : (
@@ -42,8 +57,8 @@ const PageHeaderBanner = ({ data }: Props) => {
           <MainMessage project={data} onManageThumbnailClick={() => console.log('open modal ?')} />
           <img
             className={styles.logo}
-            src={getImagesByCompany(typeof data.company_entity === 'string' ? data.company_entity['name'] : '').logo}
-            alt={`Logo de ${data.company_entity}`}
+            src={getImagesByCompany(projectCompanyEntity).logo}
+            alt={`Logo de ${projectCompanyEntity}`}
           />
         </>
       )}
