@@ -10,9 +10,9 @@ export type GdpSatisfactionModel = {
   comment: string | null;
 
   user_created: string | UsUserModel;
-  date_created: Date;
+  date_created: string;
   user_updated: string | UsUserModel | null;
-  date_updated: Date | null;
+  date_updated: string | null;
 
   affairs_id: number | GdpAffairModel;
   affairs_phases_id: number | GdpPhaseModel;
