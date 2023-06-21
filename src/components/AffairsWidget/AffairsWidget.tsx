@@ -9,7 +9,7 @@ import Grid from '../Grid/Grid';
 import { Section } from '@projex/ui';
 
 type Props = {
-  affairs: GdpAffairModel[];
+  affairs: Partial<GdpAffairModel>[];
   onNewAffairClick: React.MouseEventHandler<HTMLButtonElement>;
   allAffairsPageHref?: string;
 };
@@ -27,7 +27,7 @@ const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref }: Props)
       }
     >
       <Grid>
-        {affairs.map((affair: GdpAffairModel) => (
+        {affairs.map((affair: Partial<GdpAffairModel>) => (
           <Link key={affair.id} href={`${router.asPath}/affairs/${affair.id}`}>
             {/* TODO Handle onClick */}
             <AffairCard affair={affair} onKebabMenuClick={() => console.log('handle click ?')} />

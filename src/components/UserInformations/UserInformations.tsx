@@ -7,11 +7,11 @@ import { CompanyEnum } from '../../../models/UsModels';
 import Link from 'next/link';
 
 export type UserInformationsProps = {
-  user: UsUserModel;
+  user: Partial<UsUserModel>;
 };
 
 const UserInformations = ({ user }: UserInformationsProps) => {
-  const { first_name, last_name, role, company, number, email } = user;
+  const { first_name, last_name, title, company, number, email } = user;
 
   const getColorByCompany = () => {
     // switch (company?.toLowerCase()) {
@@ -36,7 +36,7 @@ const UserInformations = ({ user }: UserInformationsProps) => {
       {/* TODO Render user profile picture */}
       <img
         className={styles.image}
-        src={getImagesByCompany(user.company!).picto}
+        src={user.avatar ?? getImagesByCompany(user.company!).picto}
         alt={`Photo de ${user.first_name} ${user.last_name}`}
       />
       <div className={styles.informationsContainer}>
@@ -46,8 +46,8 @@ const UserInformations = ({ user }: UserInformationsProps) => {
           </h4>
         </Link>
         <span className={`${styles.job} ${getColorByCompany()}`}>
-          {role ? capitalize(role) : ''}
-          {role && company ? ' — ' : ''}
+          {title ? capitalize(title) : ''}
+          {title && company ? ' — ' : ''}
           {company ? capitalize(company) : ''}
         </span>
         <ul className={`small ${styles.informations}`}>
