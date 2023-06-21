@@ -10,4 +10,5 @@ export type GdpProjectsCollaboratorsModel = {
   projects_id: number | GdpProjectsModel;
   directus_users_id: string | UsUserModel;
   activities_id: number[] | GdpActivitiesModel[];
+  project_manager: boolean;
 };
