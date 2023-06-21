@@ -1,10 +1,10 @@
 import React from 'react';
 import styles from './ClientTeamCard.module.scss';
-import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import TeamCard, { TeamCardProps } from '../TeamCard/TeamCard';
+import { UsClientsCompanyEntitiesModel } from '../../../models/UserService/UsClientsCompanyEntitiesModel';
 
 export type ClientTeamCardProps = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
-  clientCompany: Partial<GdpProjectsModel>;
+  clientCompany: Partial<UsClientsCompanyEntitiesModel>;
 };
 
 const ClientTeamCard = (props: ClientTeamCardProps) => {
@@ -12,7 +12,7 @@ const ClientTeamCard = (props: ClientTeamCardProps) => {
   /* TODO: fetch client company entity to retrieve informations */
   const aside = (
     <section className={styles.clientCompanyDetails}>
-      <h4 className={styles.title}>{clientCompany.client_company_name}</h4>
+      <h4 className={styles.title}>{clientCompany.name}</h4>
       <address className={styles.coordinates}>
         {clientCompany.address} <br />
         {clientCompany.zip_code} <br />

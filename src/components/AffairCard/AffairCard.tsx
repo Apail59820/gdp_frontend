@@ -10,7 +10,7 @@ import { getGdpAffairsPhases } from '../../../services/gestionDeProjets/GdpPhase
 import { useSelector } from 'react-redux';
 import { selectCompanyEntities } from '../../../store/reducers/companyEntitiesReducer';
 import { selectUsers } from '../../../store/reducers/usersReducer';
-import { getUsUser, getUsUsers } from '../../../services/userService/UsUsers';
+import { getUsUser } from '../../../services/userService/UsUsers';
 import { getGdpAffairsUsers } from '../../../services/gestionDeProjets/GdpAffairsUsers';
 
 type Props = {
@@ -41,8 +41,8 @@ const AffairCard = ({ affair, onKebabMenuClick }: Props) => {
   );
 
   const completedAffairPhasesPercentage = useMemo(() => {
-    // Si on a 0 phases, on considère que l'affaire est à 100%
-    if (affairPhasesCount === 0) return 100;
+    // Si on a 0 phases, on considère que l'affaire est à 0%
+    if (affairPhasesCount === 0) return 0;
     return Math.floor((completedAffairPhasesCount / affairPhasesCount) * 100);
   }, [completedAffairPhasesCount, affairPhasesCount]);
 
