@@ -13,12 +13,12 @@ import styles from './PreviewSatisfactionsList.module.scss';
 import DisplaySatisfaction from '../DisplaySatisfaction/DisplaySatisfaction';
 
 interface PreviewSatisfactionsListProps {
-  satisfactions: GdpSatisfactionModel[];
+  satisfactions: Partial<GdpSatisfactionModel>[];
 }
 
 interface PreviewSatisfactionProps {
-  satisfaction: GdpSatisfactionModel;
-  handleClick: (satisfaction: GdpSatisfactionModel) => void;
+  satisfaction: Partial<GdpSatisfactionModel>;
+  handleClick: (satisfaction: Partial<GdpSatisfactionModel>) => void;
 }
 
 const PreviewSatisfaction = ({ satisfaction, handleClick }: PreviewSatisfactionProps) => {
@@ -42,7 +42,7 @@ const PreviewSatisfaction = ({ satisfaction, handleClick }: PreviewSatisfactionP
           } else setAuthor({ first_name: 'Utilisateur', last_name: 'Inconnu' });
         });
       }
-    } else setAuthor(satisfaction.user_created);
+    } else setAuthor(satisfaction.user_created ?? { first_name: 'Utilisateur', last_name: 'Inconnu' });
   }, [satisfaction.user_created, users]);
 
   useEffect(() => {
@@ -57,12 +57,16 @@ const PreviewSatisfaction = ({ satisfaction, handleClick }: PreviewSatisfactionP
           } else setAffair({ name: 'Affaire inconnue' });
         });
       }
-    } else setAffair(satisfaction.affairs_id);
+    } else setAffair(satisfaction.affairs_id ?? { name: 'Affaire inconnue' });
   }, [affairs, satisfaction.affairs_id]);
 
   return (
     <div className={styles.item} onClick={() => handleClick(satisfaction)}>
-      <span>{DateTime.fromISO(satisfaction.date_created.toString()).setLocale('fr').toLocaleString()}</span>
+      <span>
+        {satisfaction.date_created
+          ? DateTime.fromISO(satisfaction.date_created.toString()).setLocale('fr').toLocaleString()
+          : 'Date inconnue'}
+      </span>
       <b>{affair.name}</b>
       <span>par {fullName}</span>
     </div>
@@ -70,10 +74,10 @@ const PreviewSatisfaction = ({ satisfaction, handleClick }: PreviewSatisfactionP
 };
 
 const PreviewSatisfactionsList = ({ satisfactions }: PreviewSatisfactionsListProps) => {
-  const [openModal, setOpenModal] = useState<number>(3);
+  const [openModal, setOpenModal] = useState<number>(-1);
 
-  const handleClick = (satisfaction: GdpSatisfactionModel) => {
-    setOpenModal(satisfaction.id);
+  const handleClick = (satisfaction: Partial<GdpSatisfactionModel>) => {
+    if (satisfaction.id) setOpenModal(satisfaction.id);
   };
 
   const handleClose = () => {
