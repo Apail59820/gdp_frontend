@@ -3,7 +3,7 @@ import styles from './InvoiceCard.module.scss';
 import { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
 
 type Props = {
-  invoice: GdpPythagoreFactureModel;
+  invoice: Partial<GdpPythagoreFactureModel>;
 };
 
 const InvoiceCard = ({ invoice }: Props) => {
@@ -14,8 +14,7 @@ const InvoiceCard = ({ invoice }: Props) => {
 
   const getDaysCountUntilDueDate = (): number => {
     const difference = new Date(date_echeance_facture!).getTime() - new Date().getTime();
-    const totalDays = Math.ceil(difference / (1000 * 3600 * 24));
-    return totalDays;
+    return Math.ceil(difference / (1000 * 3600 * 24));
   };
 
   const isTheDueDateComingSoon: boolean = getDaysCountUntilDueDate() <= MAX_DAYS_BEFORE_SOON_TO_EXPIRE_STATUS;
