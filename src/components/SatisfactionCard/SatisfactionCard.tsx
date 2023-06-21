@@ -6,9 +6,10 @@ import { DateTime } from 'luxon';
 
 interface SatisfactionCardProps {
   satisfactions: Partial<GdpSatisfactionModel>[];
+  reverse?: boolean;
 }
 
-const SatisfactionCard = ({ satisfactions }: SatisfactionCardProps) => {
+const SatisfactionCard = ({ satisfactions, reverse }: SatisfactionCardProps) => {
   const total = 4;
 
   const score =
@@ -23,12 +24,17 @@ const SatisfactionCard = ({ satisfactions }: SatisfactionCardProps) => {
     ...new Map(satisfactions.map((satisfaction) => [satisfaction.user_created, satisfaction])).values(),
   ].length;
 
-  const lastComment = satisfactions.sort(
-    (a, b) => new Date(b.date_created as Date).getTime() - new Date(a.date_created as Date).getTime()
-  )[0];
+  const lastComment =
+    satisfactions.length > 0
+      ? satisfactions.sort((a, b) => {
+          if (!a.date_created || !b.date_created) return 0;
+          return new Date(b.date_created).getTime() - new Date(a.date_created).getTime();
+        })[0]
+      : satisfactions[0];
+
   return (
     <ShadowCard>
-      <div className={styles.container}>
+      <div className={`${styles.container} ${reverse && styles.reverse}`}>
         <ProgressBarRounded
           percentage={isNaN((score / total) * 100) ? 0 : (score / total) * 100}
           text={`${score} / ${total}`}
@@ -49,11 +55,11 @@ const SatisfactionCard = ({ satisfactions }: SatisfactionCardProps) => {
           </span>
           <span>
             Date du dernier commentaire :{' '}
-            <b>
-              {DateTime.fromISO((lastComment.date_created as Date).toString())
-                .setLocale('fr')
-                .toLocaleString()}
-            </b>
+            {lastComment && lastComment.date_created ? (
+              <b>{DateTime.fromISO(lastComment.date_created.toString()).setLocale('fr').toLocaleString()}</b>
+            ) : (
+              <b>Date inconnue</b>
+            )}
           </span>
         </div>
       </div>
