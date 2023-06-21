@@ -11,7 +11,7 @@ import { Button } from '@projex/ui';
 
 interface DisplaySatisfactionProps {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  handleClose: () => void;
   satisfaction: Partial<GdpSatisfactionModel>;
 }
 
@@ -100,7 +100,7 @@ const DisplaySatisfactionSkill = ({
   );
 };
 
-const DisplaySatisfaction = ({ isOpen, setIsOpen, satisfaction }: DisplaySatisfactionProps) => {
+const DisplaySatisfaction = ({ isOpen, handleClose, satisfaction }: DisplaySatisfactionProps) => {
   const users = useSelector(selectUsers);
   const [author, setAuthor] = useState<Partial<UsUserModel>>({});
 
@@ -126,10 +126,10 @@ const DisplaySatisfaction = ({ isOpen, setIsOpen, satisfaction }: DisplaySatisfa
     <Modal
       open={isOpen}
       closable
-      onCancel={() => setIsOpen(false)}
+      onCancel={handleClose}
       title={'Satisfaction'}
       footer={
-        <Button small onClick={() => setIsOpen(false)}>
+        <Button small onClick={handleClose}>
           Fermer
         </Button>
       }

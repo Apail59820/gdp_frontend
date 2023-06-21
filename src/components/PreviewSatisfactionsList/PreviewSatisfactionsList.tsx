@@ -10,19 +10,23 @@ import { selectAffairs } from '../../../store/reducers/affairsReducer';
 import { getUsUser } from '../../../services/userService/UsUsers';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import styles from './PreviewSatisfactionsList.module.scss';
+import DisplaySatisfaction from '../DisplaySatisfaction/DisplaySatisfaction';
 
 interface PreviewSatisfactionsListProps {
   satisfactions: GdpSatisfactionModel[];
 }
 
-const PreviewSatisfaction = (satisfaction: GdpSatisfactionModel) => {
+interface PreviewSatisfactionProps {
+  satisfaction: GdpSatisfactionModel;
+  handleClick: (satisfaction: GdpSatisfactionModel) => void;
+}
+
+const PreviewSatisfaction = ({ satisfaction, handleClick }: PreviewSatisfactionProps) => {
   const users = useSelector(selectUsers);
   const affairs = useSelector(selectAffairs);
 
   const [author, setAuthor] = useState<Partial<UsUserModel>>({ first_name: 'Utilisateur', last_name: 'Inconnu' });
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({ name: 'Affaire inconnue' });
-
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const fullName = `${author.first_name} ${author.last_name}`;
 
@@ -56,18 +60,8 @@ const PreviewSatisfaction = (satisfaction: GdpSatisfactionModel) => {
     } else setAffair(satisfaction.affairs_id);
   }, [affairs, satisfaction.affairs_id]);
 
-  const handleClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleClose = () => {
-    setIsModalOpen(false);
-  };
-
-  // TODO: Add modal when merged
-
   return (
-    <div className={styles.item} onClick={handleClick}>
+    <div className={styles.item} onClick={() => handleClick(satisfaction)}>
       <span>{DateTime.fromISO(satisfaction.date_created.toString()).setLocale('fr').toLocaleString()}</span>
       <b>{affair.name}</b>
       <span>par {fullName}</span>
@@ -76,12 +70,27 @@ const PreviewSatisfaction = (satisfaction: GdpSatisfactionModel) => {
 };
 
 const PreviewSatisfactionsList = ({ satisfactions }: PreviewSatisfactionsListProps) => {
+  const [openModal, setOpenModal] = useState<number>(3);
+
+  const handleClick = (satisfaction: GdpSatisfactionModel) => {
+    setOpenModal(satisfaction.id);
+  };
+
+  const handleClose = () => {
+    setOpenModal(-1);
+  };
+
   return (
     <ShadowCard>
       <div className={styles.container}>
         {satisfactions.map((satisfaction) => (
           <React.Fragment key={satisfaction.id}>
-            <PreviewSatisfaction {...satisfaction} />
+            <PreviewSatisfaction satisfaction={satisfaction} handleClick={handleClick} />
+            <DisplaySatisfaction
+              isOpen={openModal === satisfaction.id}
+              handleClose={handleClose}
+              satisfaction={satisfaction}
+            />
             <hr className={styles.separator} />
           </React.Fragment>
         ))}

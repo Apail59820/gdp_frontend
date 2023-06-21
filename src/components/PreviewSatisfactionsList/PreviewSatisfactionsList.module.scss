@@ -19,5 +19,8 @@
         width: 100%;
         border: 1px solid #DDE3EB;
         margin: .5rem 0;
+        &:last-child {
+            display: none;
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 .header {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-evenly;
   gap: 1rem;
 
@@ -18,6 +18,7 @@
   .headerInfos {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
   }
 }
 
