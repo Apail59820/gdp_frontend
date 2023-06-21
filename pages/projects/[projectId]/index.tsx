@@ -11,13 +11,12 @@ import CollaboratorTeamWidget from '../../../src/components/CollaboratorTeamWidg
 import ActivitiesWidget from '../../../src/components/ActivitiesWidget/ActivitiesWidget';
 import BillingWidget from '../../../src/components/BillingWidget/BillingWidget';
 import FilesWidget from '../../../src/components/FilesWidget/FilesWidget';
-import StatisticsWidget from '../../../src/components/StatisticsWidget/StatisticsWidget';
-import { useSelector } from 'react-redux';
-import { selectProjects } from '../../../store/reducers/projectsReducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectProjects, setProjects } from '../../../store/reducers/projectsReducer';
 import { useRouter } from 'next/router';
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
-import { selectAffairs } from '../../../store/reducers/affairsReducer';
+import { selectAffairs, setAffairs } from '../../../store/reducers/affairsReducer';
 import { getGdpAffairs } from '../../../services/gestionDeProjets/GdpAffairs';
 import CreateAffairForm from '../../../src/components/CreateAffairForm/CreateAffairForm';
 import { GdpProjectsClientsModel } from '../../../models/GestionDeProjets/GdpProjectsClientsModel';
@@ -35,15 +34,25 @@ import { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPy
 import AffairsWidget from '../../../src/components/AffairsWidget/AffairsWidget';
 import { getGdpPythagoreFactures } from '../../../services/gestionDeProjets/GdpPythagoreFactures';
 import { getGdpAffairsPythagoreAffairs } from '../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
-import penIcon from '../../../public/pen.svg';
 import CreateProjectForm from '../../../src/components/CreateProjectForm/CreateProjectForm';
+import SatisfactionWidget from '../../../src/components/SatisfactionWidget/SatisfactionWidget';
+import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
+import { getGdpSatisfactions } from '../../../services/gestionDeProjets/GdpAffairsSatisfaction';
+import {
+  selectClientsCompanyEntities,
+  setClientsCompanyEntities,
+} from '../../../store/reducers/clientsCompanyEntitiesReducer';
+import { UsClientsCompanyEntitiesModel } from '../../../models/UserService/UsClientsCompanyEntitiesModel';
+import { getUsClientCompanyEntity } from '../../../services/userService/UsClientsCompanyEntities';
 
 const Project = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const projectId = parseInt(router.query.projectId as string);
 
   const projects = useSelector(selectProjects);
   const affairs = useSelector(selectAffairs);
+  const clientCompanies = useSelector(selectClientsCompanyEntities);
 
   const [isCreateAffairFormOpen, setIsCreateAffairFormOpen] = React.useState<boolean>(false);
   const [isCreateProjectFormOpen, setIsCreateProjectFormOpen] = React.useState<boolean>(false);
@@ -72,13 +81,20 @@ const Project = () => {
 
   const [projectInvoices, setProjectInvoices] = useState<Partial<GdpPythagoreFactureModel>[]>([]);
 
+  const [projectSatisfactions, setProjectSatisfactions] = useState<Partial<GdpSatisfactionModel>[]>([]);
+
+  const [projectClientCompany, setProjectClientCompany] = useState<Partial<UsClientsCompanyEntitiesModel>>({});
+
   useEffect(() => {
     if (projectId) {
       if (projects.filter((project) => project.id === projectId).length > 0) {
         return setProject(projects.filter((project) => project.id === projectId)[0]);
       } else {
         getGdpProjectById(projectId).then((res) => {
-          if (res.status === 200 && res.data) setProject(res.data);
+          if (res.status === 200 && res.data) {
+            setProject(res.data);
+            dispatch(setProjects([...projects, res.data]));
+          }
         });
       }
       if (project.company_entity) {
@@ -94,7 +110,7 @@ const Project = () => {
         }
       } else setProjectCompanyEntityName('Inconnue');
     } else setProject({});
-  }, [project.company_entity, projectId, projects]);
+  }, [dispatch, project.company_entity, projectId, projects]);
 
   useEffect(() => {
     const affairsIds = project?.affairs_ids;
@@ -124,12 +140,13 @@ const Project = () => {
       }).then((res) => {
         if (res.status === 200 && res.data) {
           tmpAffairs.push(...res.data);
+          dispatch(setAffairs([...affairs, ...res.data]));
         }
       });
     }
 
     setProjectAffairs(tmpAffairs);
-  }, [affairs, project]);
+  }, [affairs, dispatch, project]);
 
   useEffect(() => {
     const relationIds = project?.projects_directus_users_clients_ids;
@@ -309,6 +326,42 @@ const Project = () => {
     } else setProjectInvoices([]);
   }, [projectAffairs]);
 
+  useEffect(() => {
+    if (project && project.affairs_ids && project.affairs_ids.length > 0) {
+      getGdpSatisfactions({
+        filter: {
+          affairs_id: { _in: project.affairs_ids },
+        },
+      }).then((res) => {
+        if (res.status === 200 && res.data) setProjectSatisfactions(res.data);
+        else setProjectSatisfactions([]);
+      });
+    } else {
+      setProjectSatisfactions([]);
+    }
+  }, [project]);
+
+  useEffect(() => {
+    if (project.clients_company_entity) {
+      if (typeof project.clients_company_entity === 'number') {
+        const clientCompany = clientCompanies.find(
+          (clientCompany) => clientCompany.id === project.clients_company_entity
+        );
+        if (clientCompany) setProjectClientCompany(clientCompany);
+        else {
+          getUsClientCompanyEntity(project.clients_company_entity).then((res) => {
+            if (res.status === 200 && res.data) {
+              setProjectClientCompany(res.data);
+              dispatch(setClientsCompanyEntities([...clientCompanies, res.data]));
+            } else setProjectClientCompany({});
+          });
+        }
+      } else {
+        setProjectClientCompany(project.clients_company_entity);
+      }
+    }
+  }, [clientCompanies, dispatch, project.clients_company_entity]);
+
   return (
     project && (
       <div className="page">
@@ -364,7 +417,7 @@ const Project = () => {
             <Grid type="narrow">
               <ClientTeamWidget
                 users={projectClients}
-                clientCompany={project}
+                clientCompany={projectClientCompany}
                 onAddClientClick={() => console.log('open modal ?')}
               />
               <CollaboratorTeamWidget
@@ -383,7 +436,7 @@ const Project = () => {
           <section>
             <Grid type="narrow">
               <FilesWidget files={files} onNewFileClick={() => console.log('open modal ?')} />
-              <StatisticsWidget statistics={[]} onNewStatisticClick={() => console.log('open modal ?')} />
+              <SatisfactionWidget satisfactions={projectSatisfactions} />
             </Grid>
           </section>
         </div>

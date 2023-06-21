@@ -3,6 +3,7 @@ import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisf
 import { Section } from '@projex/ui';
 import { useRouter } from 'next/router';
 import SatisfactionCard from '../SatisfactionCard/SatisfactionCard';
+import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 
 interface SatisfactionWidgetProps {
   satisfactions: Partial<GdpSatisfactionModel>[];
@@ -20,7 +21,8 @@ const SatisfactionWidget = ({ satisfactions, allSatisfactionsPageHref }: Satisfa
         href: allSatisfactionsPageHref ?? `${router.asPath}/satisfaction`,
       }}
     >
-      <SatisfactionCard satisfactions={satisfactions} />
+      {satisfactions.length > 0 && <SatisfactionCard satisfactions={satisfactions} />}
+      {satisfactions.length === 0 && <ConfigureWidget descriptionText={'Aucune donnée de satisfaction disponible.'} />}
     </Section>
   );
 };

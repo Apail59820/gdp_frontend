@@ -7,7 +7,7 @@ export enum ActivitiesCollectionEnum {
   AffairSatisfaction = 'affair_satisfaction',
   AffairFile = 'affair_file',
   AffairPhase = 'affair_phase',
-  Project = 'project',
+  Project = 'projects',
   ProjectDirectusUsersClient = 'projects_directus_users_clients',
   ProjectDirectusUsersCollaborator = 'projects_directus_users_collaborators',
 }

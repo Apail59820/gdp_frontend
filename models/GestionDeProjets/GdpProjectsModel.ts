@@ -4,6 +4,7 @@ import { UsCompanyEntityModel } from '../UserService/UsCompanyEntityModel';
 import { GdpActivitiesModel } from './GdpActivitiesModel';
 import { GdpProjectsCollaboratorsModel } from './GdpProjectsCollaboratorsModel';
 import { GdpProjectsClientsModel } from './GdpProjectsClientsModel';
+import { UsClientsCompanyEntitiesModel } from '../UserService/UsClientsCompanyEntitiesModel';
 
 export enum GdpProjectTypesEnum {
   CO_TRAITANCE = 'co-traitance',
@@ -20,6 +21,7 @@ export type GdpProjectsModel = {
   id: number;
   name: string;
   client_company_name: string | null;
+  clients_company_entity: number | UsClientsCompanyEntitiesModel | null;
   client_info: string | null;
   address: string | null;
   zip_code: string | null;
