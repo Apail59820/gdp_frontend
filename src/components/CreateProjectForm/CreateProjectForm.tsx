@@ -1,5 +1,5 @@
-import React from 'react';
-import { Form, Input, message, Modal, Select } from 'antd';
+import React, { useState } from 'react';
+import { Empty, Form, Input, message, Modal, Select } from 'antd';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { UsCompanyEntityModel } from '../../../models/UserService/UsCompanyEntityModel';
 import { Button } from '@projex/ui';
@@ -10,6 +10,8 @@ import { UsClientsCompanyEntitiesModel } from '../../../models/UserService/UsCli
 import styles from './CreateProjectForm.module.scss';
 import { createGdpProject, updateGdpProject } from '../../../services/gestionDeProjets/GdpProjects';
 import { messages } from '../../../constants/messages';
+import { QueryParameters } from '../../../models/DirectusModel';
+import { getUsClientsCompanyEntities } from '../../../services/userService/UsClientsCompanyEntities';
 
 type CreateProjectFormProps = {
   project?: Partial<GdpProjectsModel>;
@@ -17,10 +19,21 @@ type CreateProjectFormProps = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+interface FormProps {
+  projectName: string;
+  clientEntity: string;
+  entity: number;
+}
+
 const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProps) => {
   const companyEntities: Partial<UsCompanyEntityModel>[] = useSelector(selectCompanyEntities);
-  const clientsCompanyEntities: Partial<UsClientsCompanyEntitiesModel>[] = useSelector(selectClientsCompanyEntities);
-  const onFinish = (values: any) => {
+  const [clientsCompanyEntities, setClientsCompanyEntities] = useState<Partial<UsClientsCompanyEntitiesModel>[]>(
+    useSelector(selectClientsCompanyEntities)
+  );
+
+  let timeout: ReturnType<typeof setTimeout> | null;
+
+  const onFinish = (values: FormProps) => {
     if (project && project.id) {
       updateGdpProject(project.id, {
         name: values.projectName,
@@ -46,6 +59,26 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
         }
       });
     }
+  };
+
+  const fetchData = async (
+    getter: (queryParameters: QueryParameters) => any,
+    queryParams: QueryParameters,
+    setter: React.Dispatch<React.SetStateAction<any>>
+  ) => {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+    const getData = () => {
+      getter(queryParams).then((res: { status: number; data: any }) => {
+        if (res.status === 200 && res.data) {
+          setter(res.data);
+        }
+      });
+    };
+
+    timeout = setTimeout(getData, 300);
   };
 
   return (
@@ -90,18 +123,39 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
           rules={[
             {
               required: true,
-              message: 'Veuillez selectionner un client.',
+              message: 'Veuillez selectionner une société cliente.',
             },
           ]}
         >
           <Select
-            placeholder={'Sélectionnez le client de votre projet'}
+            showSearch
+            showArrow={false}
+            filterOption={false}
+            placeholder={'Sélectionnez la société cliente de votre projet'}
             options={clientsCompanyEntities.map((entity: Partial<UsClientsCompanyEntitiesModel>) => {
               return {
                 label: entity.name?.toUpperCase(),
-                value: entity.id,
+                value: entity.name,
               };
             })}
+            onSearch={(value) => {
+              if (value.length > 2) {
+                fetchData(
+                  getUsClientsCompanyEntities,
+                  {
+                    filter: {
+                      name: {
+                        _starts_with: value,
+                      },
+                    },
+                  },
+                  setClientsCompanyEntities
+                );
+              }
+            }}
+            notFoundContent={
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucune société cliente trouvée.'} />
+            }
           />
         </Form.Item>
         <Form.Item
@@ -119,7 +173,7 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
             placeholder={"Sélectionnez l'entité liée à votre projet"}
             options={companyEntities.map((entity: Partial<UsCompanyEntityModel>) => {
               return {
-                label: entity.name,
+                label: entity.name?.toUpperCase(),
                 value: entity.id,
               };
             })}

@@ -94,7 +94,9 @@ type createFieldsToOmit = 'id' | 'activities_id';
  * @returns Status and data containing gdp affair pythagore affair properties.
  */
 export async function createGdpAffairPythagoreAffair(
-  project: Omit<GdpAffairsPythagoreAffairesModel, createFieldsToOmit>
+  project:
+    | Omit<GdpAffairsPythagoreAffairesModel, createFieldsToOmit>
+    | Omit<GdpAffairsPythagoreAffairesModel, createFieldsToOmit>[]
 ): Promise<{ status: number; data?: Partial<GdpAffairsPythagoreAffairesModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });

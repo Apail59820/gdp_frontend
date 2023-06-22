@@ -1,72 +1,43 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import styles from './AffairCard.module.scss';
-import { GdpAffairModel, GdpAffairsUsersModel, GdpPhaseModel } from '../../../models/GdPModels';
 import { ProgressBar, ShadowCard } from '@projex/ui';
-import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
-import { getImagesByCompany } from '../../../utils/getImagesByCompany';
+import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
+import styles from '../AffairCard/AffairCard.module.scss';
 import { capitalize } from '../../../utils/capitalize';
 import Image from 'next/image';
-import { getGdpAffairsPhases } from '../../../services/gestionDeProjets/GdpPhases';
+import { getImagesByCompany } from '../../../utils/getImagesByCompany';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectCompanyEntities } from '../../../store/reducers/companyEntitiesReducer';
 import { selectUsers } from '../../../store/reducers/usersReducer';
+import { GdpAffairsUsersModel } from '../../../models/GestionDeProjets/GdpAffairsUsersModel';
 import { getUsUser } from '../../../services/userService/UsUsers';
 import { getGdpAffairsUsers } from '../../../services/gestionDeProjets/GdpAffairsUsers';
+import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
 
-type Props = {
+interface PreviewAffairSatisfactionCardProps {
   affair: Partial<GdpAffairModel>;
-  onKebabMenuClick: React.MouseEventHandler<HTMLButtonElement>;
-};
+  satisfactions: Partial<GdpSatisfactionModel>[];
+}
 
-const AffairCard = ({ affair, onKebabMenuClick }: Props) => {
-  const { name } = affair;
+const PreviewAffairSatisfactionCard = ({ affair, satisfactions }: PreviewAffairSatisfactionCardProps) => {
+  const total = 4;
 
   const companyEntities = useSelector(selectCompanyEntities);
   const users = useSelector(selectUsers);
 
-  const [affairPhases, setAffairPhases] = useState<Partial<GdpPhaseModel>[]>([]);
-
   const [affairCompanyEntity, setAffairCompanyEntity] = useState<string>('Entité inconnue');
-
   const [affairManager, setAffairManager] = useState<string>('Manager inconnu');
 
-  const affairPhasesCount: number = useMemo(() => {
-    if (affair.affairs_phases) return affair.affairs_phases?.length;
-    return 0;
-  }, [affair.affairs_phases]);
+  const score =
+    satisfactions.reduce(
+      (acc, satisfaction) => acc + (satisfaction.score_hard_skills ? satisfaction.score_hard_skills : 0),
+      0
+    ) / satisfactions.length;
 
-  const completedAffairPhasesCount: number = useMemo(
-    () => affairPhases.filter((affairPhase) => affairPhase.status === 'completed').length,
-    [affairPhases]
-  );
-
-  const completedAffairPhasesPercentage = useMemo(() => {
-    // Si on a 0 phases, on considère que l'affaire est à 0%
-    if (affairPhasesCount === 0) return 0;
-    return Math.floor((completedAffairPhasesCount / affairPhasesCount) * 100);
-  }, [completedAffairPhasesCount, affairPhasesCount]);
-
-  // useEffect to fetch affair phases
-  useEffect(() => {
-    if (affair.affairs_phases) {
-      const tmpPhases: Partial<GdpPhaseModel>[] = [];
-      const phasesIdToFetch: number[] = [];
-      affair.affairs_phases.forEach((phase) => {
-        if (typeof phase === 'number') phasesIdToFetch.push(phase);
-        else tmpPhases.push(phase);
-      });
-      if (phasesIdToFetch.length > 0) {
-        getGdpAffairsPhases({
-          filter: {
-            id: { _in: phasesIdToFetch },
-          },
-        }).then((res) => {
-          if (res.status === 200 && res.data) setAffairPhases([...tmpPhases, ...res.data]);
-          else setAffairPhases([...tmpPhases]);
-        });
-      }
-    } else setAffairPhases([]);
-  }, [affair.affairs_phases]);
+  const getColor = () => {
+    if (score <= total / 3) return 'alert';
+    if (score >= total / 3 && score <= (total / 3) * 2) return 'warning';
+    if (score >= (total / 3) * 2) return 'ok';
+  };
 
   // useEffect to fetch affair company entity
   useEffect(() => {
@@ -149,7 +120,7 @@ const AffairCard = ({ affair, onKebabMenuClick }: Props) => {
     <ShadowCard>
       <div className={styles.affairCard}>
         <div className={styles.body}>
-          <h4 className={styles.title}>{name ? capitalize(name) : 'Affaire'}</h4>
+          <h4 className={styles.title}>{affair.name ? capitalize(affair.name) : 'Affaire'}</h4>
           <span>{affairManager}</span>
           <div className={styles.imageContainer}>
             <Image
@@ -160,15 +131,12 @@ const AffairCard = ({ affair, onKebabMenuClick }: Props) => {
           </div>
         </div>
         <div className={styles.footer}>
-          <span>
-            Étapes terminées : {completedAffairPhasesCount}/{affairPhasesCount}
-          </span>
-          <ProgressBar percentage={completedAffairPhasesPercentage} tiny />
+          <span>Satisfaction moyenne de l&apos;affaire</span>
+          <ProgressBar percentage={isNaN((score / total) * 100) ? 0 : (score / total) * 100} color={getColor()} tiny />
         </div>
-        <KebabMenuForCards onClick={onKebabMenuClick} />
       </div>
     </ShadowCard>
   );
 };
 
-export default AffairCard;
+export default PreviewAffairSatisfactionCard;

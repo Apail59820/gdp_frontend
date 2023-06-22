@@ -12,7 +12,7 @@ import { messages } from '../../../constants/messages';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
 
 type props = {
-  project: GdpProjectsModel;
+  project: Partial<GdpProjectsModel>;
   affair?: Partial<GdpAffairModel>;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,16 +28,20 @@ const CreateAffairForm = ({ project, affair, isOpen, setIsOpen }: props) => {
   const companyEntities: Partial<UsCompanyEntityModel>[] = useSelector(selectCompanyEntities);
 
   async function createAffair(values: formValues) {
-    const response = await createGdpAffair({
-      name: values.affairName,
-      company_entity: values.entity,
-      projects_id: project.id,
-      affairs_phases: [],
-    });
-    if (isRequestSuccessful(response.status) && response.data) {
-      message.success(messages.general.success());
-      setIsOpen(false);
-    } else message.error(messages.general.error());
+    if (project.id) {
+      const response = await createGdpAffair({
+        name: values.affairName,
+        company_entity: values.entity,
+        projects_id: project.id,
+        affairs_phases: [],
+      });
+      if (isRequestSuccessful(response.status) && response.data) {
+        message.success(messages.general.success());
+        setIsOpen(false);
+      } else message.error(messages.general.error());
+    } else {
+      message.error('Aucun ID de projet renseigné.');
+    }
   }
 
   async function updateAffair(affairId: number, values: formValues) {
