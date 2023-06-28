@@ -180,12 +180,67 @@ export async function uploadGdpFile(
 }
 
 /**
+ * new Upload With Progress
+ * @param files array of files to upload
+ * @param onUploadProgress function to set the upload progress
+ */
+export async function uploadGdpFilesWithProgress(
+  files: { properties: Partial<Omit<GdpFilesModel, createFieldsToOmit>>; data: Blob | string }[],
+  onUploadProgress?: (progressEvent: ProgressEvent) => void
+): Promise<{ status: number; data?: Partial<GdpFilesModel>[] | Partial<GdpFilesModel> }> {
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+
+  const formData = new FormData();
+  for (const file of files) {
+    for (const prop in file.properties) {
+      formData.append(
+        prop,
+        typeof file.properties[prop as keyof typeof file.properties] === 'string'
+          ? (file.properties[prop as keyof typeof file.properties] as string)
+          : JSON.stringify(file.properties[prop as keyof typeof file.properties])
+      );
+    }
+    formData.append('file', file.data);
+  }
+
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/files`, true);
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+    if (onUploadProgress) {
+      xhr.upload.onprogress = onUploadProgress;
+    }
+    xhr.onload = () => {
+      if (xhr.status !== 200 && xhr.status !== 204) {
+        resolve({ status: 500 });
+      } else {
+        try {
+          const resData: { data: Partial<GdpFilesModel>[] | Partial<GdpFilesModel> } | undefined = JSON.parse(
+            xhr.responseText
+          );
+          if (!resData) {
+            resolve({ status: xhr.status });
+          } else {
+            resolve({ status: xhr.status, data: resData.data });
+          }
+        } catch {
+          resolve({ status: xhr.status });
+        }
+      }
+    };
+    xhr.send(formData);
+  });
+}
+
+/**
  *
  * @param files the files data
  * @param setUploading
  * @return an object with the request STATUS and the file DATA
  */
-export async function uploadGdpFiles(
+export async function uploadGpdFiles(
   files: { properties: Omit<GdpFilesModel, createFieldsToOmit>; data: Blob | string }[],
   setUploading?: (value: React.SetStateAction<boolean>) => void
 ): Promise<{ status: number; data?: Partial<GdpFilesModel>[] }> {
