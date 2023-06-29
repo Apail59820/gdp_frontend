@@ -77,12 +77,8 @@ const Phase = ({ phase }: Props) => {
       </section>
       <article className={styles.body}>
         <div className={styles.main}>
-          <h2 className={styles.title}>Avant Projet Sommaire (APS)</h2>
-          <p className={styles.description}>
-            Sur la base des premières études de diagnostic (esquisses), soit l&apos;architecte, soit le maître
-            d&apos;œuvre d&apos;un bureau d&apos;études va mettre au point une offre de service en rentrant au cœur du
-            processus de construction du bâtiment.
-          </p>
+          <h2 className={styles.title}>{phase.name}</h2>
+          <p className={styles.description}>{phase.description}</p>
           <span className={`text-small ${styles.statistics}`}>› Statistiques de satisfaction disponibles</span>
           <button className={`text-small ${styles.editButton}`}>
             <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
