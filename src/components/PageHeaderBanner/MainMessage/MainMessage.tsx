@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './MainMessage.module.scss';
 import { capitalize } from '../../../../utils/capitalize';
 import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';
@@ -41,7 +41,6 @@ const MainMessage = ({ project, showImage = true, onManageThumbnailClick, resize
     setProjectsNameLength(project.name?.length as number);
     setWindowInnerWidth(window.innerWidth);
     setTextAreaLength((mainMessageTitleRef.current?.clientWidth as number) + 64);
-    setWindowInnerWidth(window.innerWidth);
   }, [project.name]);
 
   useEffect(() => {
@@ -64,7 +63,7 @@ const MainMessage = ({ project, showImage = true, onManageThumbnailClick, resize
       setIsNameTooLong(true);
       setProjectName(`${project.name?.slice(0, Math.round(resizeTitle))?.trim()}...`);
     } else setIsNameTooLong(false);
-  }, [windowInnerWidth, projectsNameLength, entityLogoWidth, textAreaLength]);
+  }, [entityLogoWidth, projectsNameLength, resizeTitle, textAreaLength, windowInnerWidth]);
 
   return (
     <div className={styles.mainMessage}>
@@ -116,5 +115,4 @@ const MainMessage = ({ project, showImage = true, onManageThumbnailClick, resize
     </div>
   );
 };
-// resizeTitle     // resizeTitle + class elipssis
 export default MainMessage;
