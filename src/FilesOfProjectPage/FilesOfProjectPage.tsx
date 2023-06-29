@@ -1,43 +1,47 @@
 import React, { useEffect, useState, useRef } from 'react';
-import styles from './Factures.module.scss';
+import styles from './FilesOfProjectPage.module.scss';
 import { Button, Input, Select } from '@projex/ui';
 import { QueryParameters } from '../../models/DirectusModel';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import { selectCompanyEntities } from '../../store/reducers/companyEntitiesReducer';
-import GlobalFilters from '../components/GlobalFiltersComponents/GlobalFilters';
 import { selectGlobalFilters } from '../../store/reducers/globalFilterReducer';
 import { LazyLoadingStateType } from '../../models/LazyLoadingStateType';
 import getConfig from 'next/config';
-import {
-  GdpPythagoreFactureModel,
-  GdPPythagoreFactureReglement,
-  GdPPythagoreFactureStatut,
-} from '../../models/GestionDeProjets/GdpPythagoreFactureModel';
-import BillingTable from '../components/BillingTable/BillingTable';
+
 import { CompanyEnum } from '../../models/UserService/UsCompanyEntityModel';
+import { GdpAssetDocumentEnum, GdpFilesModel, GdpFilesStatusEnum } from '../../models/GestionDeProjets/GdpFilesModel';
+import DisplayOptionsController from '../components/DisplayOptionsController/DisplayOptionsController';
+import { GdpProjectsModel } from '../../models/GestionDeProjets/GdpProjectsModel';
 
 const { publicRuntimeConfig } = getConfig();
 
-type FacturesFiltersType = {
+type FilesFiltersType = {
   search: string;
-  etat: GdPPythagoreFactureReglement | '';
-  statut: GdPPythagoreFactureStatut | '';
+  document_type: GdpAssetDocumentEnum | '';
+  status: GdpFilesStatusEnum | '';
   company_entity: CompanyEnum | '';
 };
 
+type FilesLevelFilterType = {
+  project_id: number | string | null;
+  affair_id: number | string | null;
+  phase_id: number | string | null;
+};
+
 type Props = {
-  files: Partial<GdpPythagoreFactureModel>[];
+  project: Partial<GdpProjectsModel>;
+  files: Partial<GdpFilesModel>[];
   filesCount: number | null;
   setSpecificFilters: (newFilters: QueryParameters) => void;
   lazyLoadingState: LazyLoadingStateType;
   setLazyLoadingState: (newState: LazyLoadingStateType) => void;
 };
 
-const FacturesFiltersInitialState: FacturesFiltersType = {
+const FilesFiltersInitialState: FilesFiltersType = {
   search: '',
-  statut: '',
-  etat: '',
+  document_type: '',
+  status: '',
   company_entity: '',
 };
 
@@ -46,37 +50,52 @@ let timerSearch: NodeJS.Timeout;
 
 let isNewDataLoading = false;
 
-const FacturesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState, setLazyLoadingState }: Props) => {
+const FilesOfProjectPage = ({
+  project,
+  files,
+  setSpecificFilters,
+  filesCount,
+  lazyLoadingState,
+  setLazyLoadingState,
+}: Props) => {
   const pageRef = useRef<HTMLDivElement>(null);
+
+  const [displayOption, setDisplayOption] = useState<string>('grid');
+  const [FilesLevelFilter, setFilesLevelFilter] = useState<FilesLevelFilterType>({
+    project_id: project.id as number | string,
+    affair_id: null,
+    phase_id: null,
+  });
 
   const globalFilters = useSelector(selectGlobalFilters);
   const companyEntities = useSelector(selectCompanyEntities);
-  const [facturesFilters, setFacturesFilters] = useState<FacturesFiltersType>(FacturesFiltersInitialState);
+  const [filesFilters, setFilesFilters] = useState<FilesFiltersType>(FilesFiltersInitialState);
+
+  console.log('FilesLevelFilter', FilesLevelFilter);
+  console.log('project', project);
 
   function updateSpecificFilters() {
     const filterRules: any[] = [];
     let search: string | undefined = undefined;
-    //Pour search : Il faudrait remplacer certains textes comme "Non réglée" par "nonreglee" pour faciliter la recherche.
-    if (facturesFilters.search.length > 0) search = facturesFilters.search;
-    if (facturesFilters.statut !== '') filterRules.push({ statut_facture: { _eq: facturesFilters.statut } });
-    if (facturesFilters.etat !== '') filterRules.push({ etatreglt_facture: { _eq: facturesFilters.etat } });
-    if (facturesFilters.company_entity !== '')
+    if (filesFilters.search.length > 0) search = filesFilters.search;
+    if (filesFilters.status !== '') filterRules.push({ status: { _eq: filesFilters.status } });
+    if (filesFilters.document_type !== '') filterRules.push({ document_type: { _eq: filesFilters.document_type } });
+    if (filesFilters.company_entity !== '')
       filterRules.push({
         _or: [
           {
-            num_affaire: {
-              affairs_id: {
-                affairs_id: { projects_id: { company_entity: { _eq: facturesFilters.company_entity } } },
-              },
-            },
+            projects_id: { company_entity: { _eq: filesFilters.company_entity } },
           },
           {
-            num_affaire: {
-              affairs_id: { affairs_id: { company_entity: { _eq: facturesFilters.company_entity } } },
-            },
+            affair_id: { company_entity: { _eq: filesFilters.company_entity } },
           },
         ],
       });
+
+    filterRules.push({ projects_id: { _eq: FilesLevelFilter.project_id } });
+    if (FilesLevelFilter.affair_id != null) filterRules.push({ affair_id: { _eq: FilesLevelFilter.affair_id } });
+    if (FilesLevelFilter.phase_id != null) filterRules.push({ phase_id: { _eq: FilesLevelFilter.phase_id } });
+
     const newFilters: QueryParameters = {
       search: search,
       filter: filterRules.length > 0 ? { _and: filterRules } : undefined,
@@ -86,7 +105,7 @@ const FacturesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState,
   }
 
   useEffect(() => {
-    setFacturesFilters(FacturesFiltersInitialState);
+    setFilesFilters(FilesFiltersInitialState);
     updateSpecificFilters();
   }, [globalFilters]);
 
@@ -96,7 +115,7 @@ const FacturesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState,
     timerSearch = setTimeout(() => {
       updateSpecificFilters();
     }, 500);
-  }, [facturesFilters]);
+  }, [filesFilters]);
 
   function onScrollEvent(event: Event) {
     if (pageRef && pageRef.current) {
@@ -128,48 +147,40 @@ const FacturesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState,
 
   return (
     <div className="page" ref={pageRef}>
-      <GlobalFilters />
       <div className={styles.projectsPage}>
-        <h1 className={styles.title}>Toutes les factures</h1>
+        <h1 className={styles.title}>Fichiers</h1>
         <div className={styles.headAndFilters}>
           <div className={styles.InputContainer}>
             <Input
-              label={'Rechercher une facture'}
-              value={facturesFilters.search}
-              setValue={(value) => setFacturesFilters({ ...facturesFilters, search: value })}
+              label={'Rechercher un fichier'}
+              value={filesFilters.search}
+              setValue={(value) => setFilesFilters({ ...filesFilters, search: `${value}` })}
               large={false}
             />
           </div>
           <div className={styles.InputContainer}>
             <Select
-              label={'Filtrer par statut'}
-              nullOptionText={'Tous les statuts'}
+              label={'Filtrer par visibilité'}
+              nullOptionText={'Tous les fichiers'}
               options={[
-                { value: GdPPythagoreFactureStatut.NON_ECHUE, text: GdPPythagoreFactureStatut.NON_ECHUE },
-                { value: GdPPythagoreFactureStatut.ECHUE, text: GdPPythagoreFactureStatut.ECHUE },
+                { value: GdpFilesStatusEnum.VISIBLE, text: 'Partagé aux clients' },
+                { value: GdpFilesStatusEnum.HIDDEN, text: 'Non partagé aux clients' },
               ]}
-              value={facturesFilters.statut}
-              setValue={(value) =>
-                setFacturesFilters({ ...facturesFilters, statut: value as GdPPythagoreFactureStatut })
-              }
+              value={filesFilters.status}
+              setValue={(value) => setFilesFilters({ ...filesFilters, status: value as GdpFilesStatusEnum })}
             />
           </div>
           <div className={styles.InputContainer}>
             <Select
-              label={'Filtrer par états'}
-              nullOptionText={'Tous les états'}
+              label={'Filtrer par type'}
+              nullOptionText={'Tous les documents'}
               options={[
-                { value: GdPPythagoreFactureReglement.REGLEE, text: GdPPythagoreFactureReglement.REGLEE },
-                { value: GdPPythagoreFactureReglement.NON_REGLEE, text: GdPPythagoreFactureReglement.NON_REGLEE },
-                {
-                  value: GdPPythagoreFactureReglement.REGLEMENT_PARTIEL,
-                  text: GdPPythagoreFactureReglement.REGLEMENT_PARTIEL,
-                },
+                { value: GdpAssetDocumentEnum.WRITTEN, text: 'Document écrit' },
+                { value: GdpAssetDocumentEnum.GRAPHIC, text: 'Document graphique' },
+                { value: GdpAssetDocumentEnum.UNKNOWN, text: 'Document inconnu' },
               ]}
-              value={facturesFilters.etat}
-              setValue={(value) =>
-                setFacturesFilters({ ...facturesFilters, etat: value as GdPPythagoreFactureReglement })
-              }
+              value={filesFilters.document_type}
+              setValue={(value) => setFilesFilters({ ...filesFilters, document_type: value as GdpAssetDocumentEnum })}
             />
           </div>
           <div className={styles.InputContainer}>
@@ -177,26 +188,37 @@ const FacturesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState,
               label={'Filtrer par Entité'}
               nullOptionText={'Toutes les entités'}
               options={companyEntities.map((entity) => ({ value: `${entity.id}`, text: entity.name || '' }))}
-              value={facturesFilters.company_entity}
-              setValue={(value) => setFacturesFilters({ ...facturesFilters, company_entity: value as CompanyEnum })}
+              value={filesFilters.company_entity}
+              setValue={(value) => setFilesFilters({ ...filesFilters, company_entity: value as CompanyEnum })}
             />
           </div>
           <div className={styles.headItemContainer}>
             <Button
               style={'text_gray'}
               icon={<DeleteOutlined />}
-              onClick={() => setFacturesFilters(FacturesFiltersInitialState)}
+              onClick={() => setFilesFilters(FilesFiltersInitialState)}
             >
               Réinitialiser les filtres
             </Button>
           </div>
+          <div className={styles.headItemContainer}>
+            <DisplayOptionsController currentOption={displayOption} setCurrentOption={setDisplayOption} />
+          </div>
         </div>
         <div className={styles.content}>
-          <BillingTable factures={files} />
+          {displayOption === 'grid' ? (
+            <div>
+              {files.map((file) => (
+                <div>{file.filename_download}</div>
+              ))}
+            </div>
+          ) : (
+            <div>TABLE</div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default FacturesPage;
+export default FilesOfProjectPage;

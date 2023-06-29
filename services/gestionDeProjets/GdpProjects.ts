@@ -62,9 +62,9 @@ export async function getGdpProjects(
 export async function getGdpProjectById(
   id: number,
   fields = defaultFields
-): Promise<{ status: number; data?: Partial<GdpProjectsModel> }> {
+): Promise<{ status: number; data?: Partial<GdpProjectsModel>; ok: boolean }> {
   const token = await retrieveToken();
-  if (!token) return Promise.resolve({ status: 401 });
+  if (!token) return Promise.resolve({ status: 401, ok: false });
 
   const myHeaders = new Headers({
     Authorization: `Bearer ${token}`,
@@ -81,10 +81,10 @@ export async function getGdpProjectById(
     (res) => {
       if (res.status === 200) {
         return res.json().then((data) => {
-          return { status: res.status, data: data.data };
+          return { status: res.status, data: data.data, ok: res.ok };
         });
       } else {
-        return { status: res.status };
+        return { status: res.status, ok: res.ok };
       }
     }
   );

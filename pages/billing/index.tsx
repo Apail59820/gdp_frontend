@@ -83,9 +83,9 @@ const Factures = () => {
 
   return (
     <FacturesPage
-      factures={factures}
+      files={factures}
       setSpecificFilters={setFacturesQueryParameters}
-      facturesCount={facturesCount}
+      filesCount={facturesCount}
       lazyLoadingState={lazyLoadingState}
       setLazyLoadingState={setLazyLoadingState}
     />
