@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styles from './FilesOfProjectPage.module.scss';
-import { Button, Input, Select } from '@projex/ui';
+import { Button, Input, Select, ShadowCard } from '@projex/ui';
 import { QueryParameters } from '../../models/DirectusModel';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
@@ -13,6 +13,9 @@ import { CompanyEnum } from '../../models/UserService/UsCompanyEntityModel';
 import { GdpAssetDocumentEnum, GdpFilesModel, GdpFilesStatusEnum } from '../../models/GestionDeProjets/GdpFilesModel';
 import DisplayOptionsController from '../components/DisplayOptionsController/DisplayOptionsController';
 import { GdpProjectsModel } from '../../models/GestionDeProjets/GdpProjectsModel';
+import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
+import { GdpPhaseModel } from '../../models/GestionDeProjets/GdpPhaseModel';
+import { useRouter } from 'next/router';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -24,9 +27,24 @@ type FilesFiltersType = {
 };
 
 type FilesLevelFilterType = {
-  project_id: number | string | null;
-  affair_id: number | string | null;
-  phase_id: number | string | null;
+  project: {
+    id: number | string;
+    name: string;
+  };
+  affair: {
+    id: number | string;
+    name: string;
+  } | null;
+  phase: {
+    id: number | string;
+    name: string;
+  } | null;
+};
+
+type FolderType = {
+  id: number | string | null;
+  name: string | null;
+  type: 'affair' | 'phase' | 'back_to_projects' | 'back_to_affairs' | 'back_to_phases';
 };
 
 type Props = {
@@ -59,15 +77,18 @@ const FilesOfProjectPage = ({
   setLazyLoadingState,
 }: Props) => {
   const pageRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const [displayOption, setDisplayOption] = useState<string>('grid');
   const [FilesLevelFilter, setFilesLevelFilter] = useState<FilesLevelFilterType>({
-    project_id: project.id as number | string,
-    affair_id: null,
-    phase_id: null,
+    project: {
+      id: project.id as number,
+      name: project.name as string,
+    },
+    affair: null,
+    phase: null,
   });
 
-  const globalFilters = useSelector(selectGlobalFilters);
   const companyEntities = useSelector(selectCompanyEntities);
   const [filesFilters, setFilesFilters] = useState<FilesFiltersType>(FilesFiltersInitialState);
 
@@ -92,9 +113,13 @@ const FilesOfProjectPage = ({
         ],
       });
 
-    filterRules.push({ projects_id: { _eq: FilesLevelFilter.project_id } });
-    if (FilesLevelFilter.affair_id != null) filterRules.push({ affair_id: { _eq: FilesLevelFilter.affair_id } });
-    if (FilesLevelFilter.phase_id != null) filterRules.push({ phase_id: { _eq: FilesLevelFilter.phase_id } });
+    filterRules.push({ projects_id: { _eq: FilesLevelFilter.project.id } });
+    if (FilesLevelFilter.affair != null && FilesLevelFilter.affair.id != null)
+      filterRules.push({ affair_id: { _eq: FilesLevelFilter.affair.id } });
+    else filterRules.push({ affair_id: { _null: true } });
+    if (FilesLevelFilter.phase != null && FilesLevelFilter.phase.id != null)
+      filterRules.push({ phase_id: { _eq: FilesLevelFilter.phase.id } });
+    else filterRules.push({ phase_id: { _null: true } });
 
     const newFilters: QueryParameters = {
       search: search,
@@ -104,18 +129,13 @@ const FilesOfProjectPage = ({
     setLazyLoadingState({ limit: publicRuntimeConfig.PROJECTS_CHUNK_SIZE, offset: 0, action: 'REPLACE' });
   }
 
-  useEffect(() => {
-    setFilesFilters(FilesFiltersInitialState);
-    updateSpecificFilters();
-  }, [globalFilters]);
-
   //Timeout to avoid too many requests
   useEffect(() => {
     clearTimeout(timerSearch);
     timerSearch = setTimeout(() => {
       updateSpecificFilters();
     }, 500);
-  }, [filesFilters]);
+  }, [filesFilters, FilesLevelFilter]);
 
   function onScrollEvent(event: Event) {
     if (pageRef && pageRef.current) {
@@ -144,6 +164,85 @@ const FilesOfProjectPage = ({
       if (pageRef && pageRef.current) pageRef.current.removeEventListener('scroll', onScrollEvent);
     };
   }, [filesCount, files, lazyLoadingState]);
+
+  function getFolders() {
+    const folders: FolderType[] = [];
+    if (FilesLevelFilter.affair == null) {
+      folders.push({
+        id: null,
+        name: null,
+        type: 'back_to_projects',
+      });
+      if (project.affairs_ids)
+        folders.push(
+          ...project.affairs_ids.map((affair) => ({
+            id: (affair as GdpAffairModel).id,
+            name: (affair as GdpAffairModel).name,
+            type: 'affair' as 'affair',
+          }))
+        );
+    } else if (FilesLevelFilter.phase == null) {
+      folders.push({
+        id: FilesLevelFilter.affair.id,
+        name: FilesLevelFilter.affair.name,
+        type: 'back_to_affairs',
+      });
+      const affair = (project.affairs_ids as GdpAffairModel[]).find(
+        (affair) => affair.id === (FilesLevelFilter.affair as { id: string | number; name: string }).id
+      );
+      if (affair)
+        folders.push(
+          ...(affair.affairs_phases_ids as GdpPhaseModel[]).map((phase) => ({
+            id: (phase as GdpPhaseModel).id,
+            name: (phase as GdpPhaseModel).name,
+            type: 'phase' as 'phase',
+          }))
+        );
+    } else {
+      folders.push({
+        id: FilesLevelFilter.phase.id,
+        name: FilesLevelFilter.phase.name,
+        type: 'back_to_phases',
+      });
+    }
+    return folders;
+  }
+
+  function onFolderClick(folder: FolderType) {
+    if (folder.type === 'back_to_projects') router.push('/files');
+    if (folder.type === 'back_to_affairs')
+      setFilesLevelFilter({
+        project: FilesLevelFilter.project,
+        affair: null,
+        phase: null,
+      });
+    if (folder.type === 'back_to_phases')
+      setFilesLevelFilter({
+        project: FilesLevelFilter.project,
+        affair: FilesLevelFilter.affair,
+        phase: null,
+      });
+    if (folder.type === 'affair' && folder.id != null && folder.name != null) {
+      setFilesLevelFilter({
+        project: FilesLevelFilter.project,
+        affair: {
+          id: folder.id,
+          name: folder.name,
+        },
+        phase: null,
+      });
+    }
+    if (folder.type === 'phase' && folder.id != null && folder.name != null) {
+      setFilesLevelFilter({
+        project: FilesLevelFilter.project,
+        affair: FilesLevelFilter.affair,
+        phase: {
+          id: folder.id,
+          name: folder.name,
+        },
+      });
+    }
+  }
 
   return (
     <div className="page" ref={pageRef}>
@@ -207,9 +306,26 @@ const FilesOfProjectPage = ({
         </div>
         <div className={styles.content}>
           {displayOption === 'grid' ? (
-            <div>
+            <div className={styles.gridDisplay}>
+              {getFolders().map((folder) => (
+                <div className={[styles.folderCard, styles.card].join(' ')} onClick={() => onFolderClick(folder)}>
+                  <ShadowCard>
+                    <div className={styles.cardText}>
+                      <h3>DOSSIER {folder.type}</h3>
+                      <h4>{folder.name}</h4>
+                    </div>
+                  </ShadowCard>
+                </div>
+              ))}
               {files.map((file) => (
-                <div>{file.filename_download}</div>
+                <div className={[styles.fileCard, styles.card].join(' ')}>
+                  <ShadowCard>
+                    <div className={styles.cardText}>
+                      <h3>FICHIER</h3>
+                      <h4>{file.filename_download}</h4>
+                    </div>
+                  </ShadowCard>
+                </div>
               ))}
             </div>
           ) : (

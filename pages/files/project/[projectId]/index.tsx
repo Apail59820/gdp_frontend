@@ -60,7 +60,7 @@ const FilesOfProject = () => {
    */
   useEffect(() => {
     if (projectId == null) return;
-    const fields = ['*', 'affairs_ids.*'].join(',');
+    const fields = ['*', 'affairs_ids.*', 'affairs_ids.affairs_phases_ids.*'].join(',');
     getGdpProjectById(parseInt(projectId as string), fields).then((response) => {
       if (response.ok && response.data) setProject(response.data);
     });
