@@ -18,6 +18,8 @@ import { GdpPhaseModel } from '../../models/GestionDeProjets/GdpPhaseModel';
 import { useRouter } from 'next/router';
 import FilesGridDisplay from '../components/FilesGridDisplay/FilesGridDisplay';
 import { LoadingOutlined } from '@ant-design/icons';
+import UploadFilesFormUploadFilesForm from '../components/filesForms/UploadFilesForm/UploadFilesForm';
+import PageHeaderBanner from '../components/PageHeaderBanner/PageHeaderBanner';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -29,23 +31,14 @@ type FilesFiltersType = {
 };
 
 type FilesLevelFilterType = {
-  project: {
-    id: number | string;
-    name: string;
-  };
-  affair: {
-    id: number | string;
-    name: string;
-  } | null;
-  phase: {
-    id: number | string;
-    name: string;
-  } | null;
+  project: Partial<GdpProjectsModel>;
+  affair?: Partial<GdpAffairModel>;
+  phase?: Partial<GdpPhaseModel>;
 };
 
 export type FolderType = {
-  id: number | string | null;
-  name: string | null;
+  id: number | string | undefined | null;
+  name: string | undefined | null;
   type: 'affair' | 'phase' | 'back_to_projects' | 'back_to_affairs' | 'back_to_phases';
 };
 
@@ -83,12 +76,9 @@ const FilesOfProjectPage = ({
 
   const [displayOption, setDisplayOption] = useState<string>('grid');
   const [FilesLevelFilter, setFilesLevelFilter] = useState<FilesLevelFilterType>({
-    project: {
-      id: project.id as number,
-      name: project.name as string,
-    },
-    affair: null,
-    phase: null,
+    project: project,
+    affair: undefined,
+    phase: undefined,
   });
 
   const companyEntities = useSelector(selectCompanyEntities);
@@ -97,8 +87,7 @@ const FilesOfProjectPage = ({
   //TODO fix loading states. L'affichage n'est pas fluide.
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  console.log('FilesLevelFilter', FilesLevelFilter);
-  console.log('project', project);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
 
   function updateSpecificFilters() {
     const filterRules: any[] = [];
@@ -140,7 +129,7 @@ const FilesOfProjectPage = ({
     timerSearch = setTimeout(() => {
       updateSpecificFilters();
     }, 500);
-  }, [filesFilters, FilesLevelFilter]);
+  }, [filesFilters, FilesLevelFilter, isUploadModalOpen]);
 
   function onScrollEvent(event: Event) {
     if (pageRef && pageRef.current) {
@@ -220,33 +209,29 @@ const FilesOfProjectPage = ({
     if (folder.type === 'back_to_affairs')
       setFilesLevelFilter({
         project: FilesLevelFilter.project,
-        affair: null,
-        phase: null,
+        affair: undefined,
+        phase: undefined,
       });
     if (folder.type === 'back_to_phases')
       setFilesLevelFilter({
         project: FilesLevelFilter.project,
         affair: FilesLevelFilter.affair,
-        phase: null,
+        phase: undefined,
       });
     if (folder.type === 'affair' && folder.id != null && folder.name != null) {
       setFilesLevelFilter({
         project: FilesLevelFilter.project,
-        affair: {
-          id: folder.id,
-          name: folder.name,
-        },
-        phase: null,
+        affair: (project.affairs_ids as GdpAffairModel[])?.find((affair) => affair.id === folder.id),
+        phase: undefined,
       });
     }
     if (folder.type === 'phase' && folder.id != null && folder.name != null) {
       setFilesLevelFilter({
         project: FilesLevelFilter.project,
         affair: FilesLevelFilter.affair,
-        phase: {
-          id: folder.id,
-          name: folder.name,
-        },
+        phase: (FilesLevelFilter.affair?.affairs_phases_ids as GdpPhaseModel[])?.find(
+          (phase) => phase.id === folder.id
+        ),
       });
     }
   }
@@ -254,7 +239,15 @@ const FilesOfProjectPage = ({
   return (
     <div className="page" ref={pageRef}>
       <div className={styles.projectsPage}>
-        <h1 className={styles.title}>Fichiers</h1>
+        <PageHeaderBanner data={project} />
+        <div className={styles.titleBar}>
+          <h1 className={styles.title}>Fichiers</h1>
+          <div className={styles.buttonAddFileContainer}>
+            <Button style={'primary'} onClick={() => setIsUploadModalOpen(true)} small={true}>
+              Ajouter un fichier
+            </Button>
+          </div>
+        </div>
         <div className={styles.headAndFilters}>
           <div className={styles.InputContainer}>
             <Input
@@ -334,6 +327,14 @@ const FilesOfProjectPage = ({
           )}
         </div>
       </div>
+      <UploadFilesFormUploadFilesForm
+        isOpen={isUploadModalOpen}
+        setIsOpen={setIsUploadModalOpen}
+        mode={'files'}
+        project={FilesLevelFilter.project}
+        affair={FilesLevelFilter.affair}
+        phase={FilesLevelFilter.phase}
+      />
     </div>
   );
 };

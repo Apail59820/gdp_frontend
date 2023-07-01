@@ -2,7 +2,7 @@ import styles from './FileInput.module.scss';
 import { Button } from '@projex/ui';
 import React, { InputHTMLAttributes, useRef, useState } from 'react';
 
-export interface PropsTypes extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
+export interface PropsTypes extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'crossOrigin'> {
   onChange: (files: FileList) => void;
 }
 

@@ -136,7 +136,7 @@ const FacturesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState,
             <Input
               label={'Rechercher une facture'}
               value={facturesFilters.search}
-              setValue={(value) => setFacturesFilters({ ...facturesFilters, search: value })}
+              setValue={(value) => setFacturesFilters({ ...facturesFilters, search: `${value}` })}
               large={false}
             />
           </div>

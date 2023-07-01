@@ -5,12 +5,22 @@
   flex-wrap: nowrap;
   gap: 2rem;
 
+  .titleBar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    .buttonAddFileContainer {
+      margin: auto 0;
+    }
+  }
+
   .headAndFilters {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
     border: solid #DDE3EB;
-    border-width: 1px 0px;
+    border-width: 1px 0;
     padding: 1rem 0;
     align-items: center;
 
