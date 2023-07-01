@@ -16,6 +16,8 @@ import { GdpProjectsModel } from '../../models/GestionDeProjets/GdpProjectsModel
 import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel } from '../../models/GestionDeProjets/GdpPhaseModel';
 import { useRouter } from 'next/router';
+import FilesGridDisplay from '../components/FilesGridDisplay/FilesGridDisplay';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -41,7 +43,7 @@ type FilesLevelFilterType = {
   } | null;
 };
 
-type FolderType = {
+export type FolderType = {
   id: number | string | null;
   name: string | null;
   type: 'affair' | 'phase' | 'back_to_projects' | 'back_to_affairs' | 'back_to_phases';
@@ -91,6 +93,9 @@ const FilesOfProjectPage = ({
 
   const companyEntities = useSelector(selectCompanyEntities);
   const [filesFilters, setFilesFilters] = useState<FilesFiltersType>(FilesFiltersInitialState);
+
+  //TODO fix loading states. L'affichage n'est pas fluide.
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   console.log('FilesLevelFilter', FilesLevelFilter);
   console.log('project', project);
@@ -159,6 +164,7 @@ const FilesOfProjectPage = ({
 
   //lazy loading
   useEffect(() => {
+    setIsLoading(false);
     if (pageRef && pageRef.current) pageRef.current.addEventListener('scroll', onScrollEvent);
     return () => {
       if (pageRef && pageRef.current) pageRef.current.removeEventListener('scroll', onScrollEvent);
@@ -170,7 +176,7 @@ const FilesOfProjectPage = ({
     if (FilesLevelFilter.affair == null) {
       folders.push({
         id: null,
-        name: null,
+        name: 'Retour',
         type: 'back_to_projects',
       });
       if (project.affairs_ids)
@@ -184,7 +190,7 @@ const FilesOfProjectPage = ({
     } else if (FilesLevelFilter.phase == null) {
       folders.push({
         id: FilesLevelFilter.affair.id,
-        name: FilesLevelFilter.affair.name,
+        name: 'Retour',
         type: 'back_to_affairs',
       });
       const affair = (project.affairs_ids as GdpAffairModel[]).find(
@@ -201,7 +207,7 @@ const FilesOfProjectPage = ({
     } else {
       folders.push({
         id: FilesLevelFilter.phase.id,
-        name: FilesLevelFilter.phase.name,
+        name: 'Retour',
         type: 'back_to_phases',
       });
     }
@@ -209,6 +215,7 @@ const FilesOfProjectPage = ({
   }
 
   function onFolderClick(folder: FolderType) {
+    setIsLoading(true);
     if (folder.type === 'back_to_projects') router.push('/files');
     if (folder.type === 'back_to_affairs')
       setFilesLevelFilter({
@@ -306,28 +313,22 @@ const FilesOfProjectPage = ({
         </div>
         <div className={styles.content}>
           {displayOption === 'grid' ? (
-            <div className={styles.gridDisplay}>
-              {getFolders().map((folder) => (
-                <div className={[styles.folderCard, styles.card].join(' ')} onClick={() => onFolderClick(folder)}>
-                  <ShadowCard>
-                    <div className={styles.cardText}>
-                      <h3>DOSSIER {folder.type}</h3>
-                      <h4>{folder.name}</h4>
-                    </div>
-                  </ShadowCard>
-                </div>
-              ))}
-              {files.map((file) => (
-                <div className={[styles.fileCard, styles.card].join(' ')}>
-                  <ShadowCard>
-                    <div className={styles.cardText}>
-                      <h3>FICHIER</h3>
-                      <h4>{file.filename_download}</h4>
-                    </div>
-                  </ShadowCard>
-                </div>
-              ))}
-            </div>
+            <FilesGridDisplay
+              files={
+                isLoading
+                  ? []
+                  : files.map((file) => ({
+                      file: file,
+                      onClick: () => console.log('Click'),
+                      type: 'file',
+                    }))
+              }
+              folders={getFolders().map((folder) => ({
+                folder: folder,
+                onClick: () => onFolderClick(folder),
+                type: folder.name === 'Retour' ? 'back' : 'folder',
+              }))}
+            />
           ) : (
             <div>TABLE</div>
           )}

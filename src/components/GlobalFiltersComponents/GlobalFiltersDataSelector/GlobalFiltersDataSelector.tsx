@@ -419,7 +419,7 @@ const GlobalFiltersDataSelector = () => {
                   type="search"
                   value={searchInput[currentCategoryTab]}
                   placeholder={'Rechercher'}
-                  setValue={(value) => onSearchInputChange(value, currentCategoryTab)}
+                  setValue={(value) => onSearchInputChange(`${value}`, currentCategoryTab)}
                 />
               )}
               <ul className={styles.optionsList}>

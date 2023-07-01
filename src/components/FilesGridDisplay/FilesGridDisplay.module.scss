@@ -1,0 +1,18 @@
+.filesGridDisplayContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+
+  .foldersContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+  }
+
+  .filesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+  }
+}
