@@ -16,7 +16,7 @@ import { GdpProjectsModel } from '../../models/GestionDeProjets/GdpProjectsModel
 import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel } from '../../models/GestionDeProjets/GdpPhaseModel';
 import { useRouter } from 'next/router';
-import FilesGridDisplay from '../components/FilesGridDisplay/FilesGridDisplay';
+import FilesGridDisplay, { GridFolderItem } from '../components/FilesGridDisplay/FilesGridDisplay';
 import { LoadingOutlined } from '@ant-design/icons';
 import UploadFilesFormUploadFilesForm from '../components/filesForms/UploadFilesForm/UploadFilesForm';
 import PageHeaderBanner from '../components/PageHeaderBanner/PageHeaderBanner';
@@ -160,27 +160,49 @@ const FilesOfProjectPage = ({
     };
   }, [filesCount, files, lazyLoadingState]);
 
-  function getFolders() {
-    const folders: FolderType[] = [];
+  function getFolders(): GridFolderItem[] {
+    const folders: GridFolderItem[] = [];
     if (FilesLevelFilter.affair == null) {
       folders.push({
-        id: null,
-        name: 'Retour',
-        type: 'back_to_projects',
+        folder: {
+          id: null,
+          name: 'Retour',
+          type: 'back_to_projects',
+        },
+        type: 'back',
+        href: '/files',
       });
       if (project.affairs_ids)
         folders.push(
           ...project.affairs_ids.map((affair) => ({
-            id: (affair as GdpAffairModel).id,
-            name: (affair as GdpAffairModel).name,
-            type: 'affair' as 'affair',
+            folder: {
+              id: (affair as GdpAffairModel).id,
+              name: (affair as GdpAffairModel).name,
+              type: 'affair' as 'affair',
+            },
+            type: 'folder' as 'folder',
+            onClick: () =>
+              onFolderClick({
+                id: (affair as GdpAffairModel).id,
+                name: (affair as GdpAffairModel).name,
+                type: 'affair' as 'affair',
+              }),
           }))
         );
     } else if (FilesLevelFilter.phase == null) {
       folders.push({
-        id: FilesLevelFilter.affair.id,
-        name: 'Retour',
-        type: 'back_to_affairs',
+        folder: {
+          id: FilesLevelFilter.affair?.id,
+          name: 'Retour',
+          type: 'back_to_affairs',
+        },
+        type: 'back',
+        onClick: () =>
+          onFolderClick({
+            id: FilesLevelFilter.affair?.id,
+            name: 'Retour',
+            type: 'back_to_affairs',
+          }),
       });
       const affair = (project.affairs_ids as GdpAffairModel[]).find(
         (affair) => affair.id === (FilesLevelFilter.affair as { id: string | number; name: string }).id
@@ -188,16 +210,34 @@ const FilesOfProjectPage = ({
       if (affair)
         folders.push(
           ...(affair.affairs_phases_ids as GdpPhaseModel[]).map((phase) => ({
-            id: (phase as GdpPhaseModel).id,
-            name: (phase as GdpPhaseModel).name,
-            type: 'phase' as 'phase',
+            folder: {
+              id: (phase as GdpPhaseModel).id,
+              name: (phase as GdpPhaseModel).name,
+              type: 'phase' as 'phase',
+            },
+            type: 'folder' as 'folder',
+            onClick: () =>
+              onFolderClick({
+                id: (phase as GdpPhaseModel).id,
+                name: (phase as GdpPhaseModel).name,
+                type: 'phase' as 'phase',
+              }),
           }))
         );
     } else {
       folders.push({
-        id: FilesLevelFilter.phase.id,
-        name: 'Retour',
-        type: 'back_to_phases',
+        folder: {
+          id: FilesLevelFilter.phase?.id,
+          name: 'Retour',
+          type: 'back_to_phases',
+        },
+        type: 'back',
+        onClick: () =>
+          onFolderClick({
+            id: FilesLevelFilter.phase?.id,
+            name: 'Retour',
+            type: 'back_to_phases',
+          }),
       });
     }
     return folders;
@@ -316,11 +356,7 @@ const FilesOfProjectPage = ({
                       type: 'file',
                     }))
               }
-              folders={getFolders().map((folder) => ({
-                folder: folder,
-                onClick: () => onFolderClick(folder),
-                type: folder.name === 'Retour' ? 'back' : 'folder',
-              }))}
+              folders={getFolders()}
             />
           ) : (
             <div>TABLE</div>

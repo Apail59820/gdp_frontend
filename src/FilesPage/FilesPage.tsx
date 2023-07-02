@@ -195,7 +195,7 @@ const FilesPage = ({
             <>
               <div className={styles.InputContainer}>
                 <Input
-                  label={'Filtrer par nom'}
+                  label={'Rechercher un projet'}
                   value={projectsFilters.name}
                   setValue={(value) => setProjectsFilters({ ...projectsFilters, name: `${value}` })}
                   large={false}
@@ -308,7 +308,7 @@ const FilesPage = ({
                         type: 'project',
                       },
                       type: 'folder',
-                      onClick: () => console.log(project),
+                      href: `/files/project/${project.id}`,
                     }))
               }
             />

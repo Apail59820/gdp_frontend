@@ -6,11 +6,13 @@ import FolderIcon from '../../../public/folder.svg';
 import ArrowLeftLong from '../../../public/arrow-left-long.svg';
 import FileIcon from '../../../public/file.svg';
 import { FolderType } from '../../FilesOfProjectPage/FilesOfProjectPage';
+import Link from 'next/link';
 
 interface PropsInterface {
   key: number;
   type: 'file' | 'folder' | 'back';
-  onClick: () => void;
+  onClick?: () => void;
+  href?: string;
 }
 
 interface PropsFile extends PropsInterface {
@@ -23,7 +25,7 @@ interface PropsFolder extends PropsInterface {
   type: 'folder' | 'back';
 }
 
-const FileOrFolderCard = ({ asset, type, onClick }: PropsFile | PropsFolder) => {
+const FileOrFolderCard = ({ asset, type, onClick, href }: PropsFile | PropsFolder) => {
   const getImage = () => {
     if (type === 'folder') return FolderIcon;
     if (type === 'back') return ArrowLeftLong;
@@ -36,7 +38,16 @@ const FileOrFolderCard = ({ asset, type, onClick }: PropsFile | PropsFolder) => 
 
   const title = type === 'file' ? asset?.title : asset?.name;
 
-  return (
+  return href ? (
+    <Link href={href}>
+      <div className={styles.fileCard} onClick={onClick}>
+        <div className={styles.imageContainer}>
+          <img src={getImage().src} alt="Icon" />
+        </div>
+        <span className={styles.title}>{title}</span>
+      </div>
+    </Link>
+  ) : (
     <div className={styles.fileCard} onClick={onClick}>
       <div className={styles.imageContainer}>
         <img src={getImage().src} alt="Icon" />
