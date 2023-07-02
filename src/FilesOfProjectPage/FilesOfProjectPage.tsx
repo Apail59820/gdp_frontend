@@ -39,7 +39,7 @@ type FilesLevelFilterType = {
 export type FolderType = {
   id: number | string | undefined | null;
   name: string | undefined | null;
-  type: 'affair' | 'phase' | 'back_to_projects' | 'back_to_affairs' | 'back_to_phases';
+  type: 'project' | 'affair' | 'phase' | 'back_to_projects' | 'back_to_affairs' | 'back_to_phases';
 };
 
 type Props = {

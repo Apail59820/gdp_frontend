@@ -9,15 +9,13 @@ import GlobalFilters from '../components/GlobalFiltersComponents/GlobalFilters';
 import { selectGlobalFilters } from '../../store/reducers/globalFilterReducer';
 import { LazyLoadingStateType } from '../../models/LazyLoadingStateType';
 import getConfig from 'next/config';
-import {
-  GdpPythagoreFactureModel,
-  GdPPythagoreFactureReglement,
-  GdPPythagoreFactureStatut,
-} from '../../models/GestionDeProjets/GdpPythagoreFactureModel';
-import BillingTable from '../components/BillingTable/BillingTable';
 import { CompanyEnum } from '../../models/UserService/UsCompanyEntityModel';
 import { GdpAssetDocumentEnum, GdpFilesModel, GdpFilesStatusEnum } from '../../models/GestionDeProjets/GdpFilesModel';
 import DisplayOptionsController from '../components/DisplayOptionsController/DisplayOptionsController';
+import { GdpProjectsModel, GdpProjectStatusEnum } from '../../models/GestionDeProjets/GdpProjectsModel';
+import { Switch } from 'antd';
+import files from '../../pages/files';
+import FilesGridDisplay from '../components/FilesGridDisplay/FilesGridDisplay';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -28,12 +26,10 @@ type FilesFiltersType = {
   company_entity: CompanyEnum | '';
 };
 
-type Props = {
-  files: Partial<GdpFilesModel>[];
-  filesCount: number | null;
-  setSpecificFilters: (newFilters: QueryParameters) => void;
-  lazyLoadingState: LazyLoadingStateType;
-  setLazyLoadingState: (newState: LazyLoadingStateType) => void;
+type ProjectsFiltersType = {
+  name: string;
+  status: GdpProjectStatusEnum | '';
+  company_entity: CompanyEnum | '';
 };
 
 const FilesFiltersInitialState: FilesFiltersType = {
@@ -43,21 +39,56 @@ const FilesFiltersInitialState: FilesFiltersType = {
   company_entity: '',
 };
 
+const projectsFiltersInitialState: ProjectsFiltersType = {
+  name: '',
+  status: GdpProjectStatusEnum.ACTIVE,
+  company_entity: '',
+};
+
+type Props = {
+  projects: Partial<GdpProjectsModel>[];
+  files: Partial<GdpFilesModel>[];
+  projectsCount: number | null;
+  filesCount: number | null;
+  setSpecificProjectsFilters: (newFilters: QueryParameters) => void;
+  setSpecificFilesFilters: (newFilters: QueryParameters) => void;
+  lazyLoadingState: LazyLoadingStateType;
+  setLazyLoadingState: (newState: LazyLoadingStateType) => void;
+};
+
 //prevent search input to trigger multiple requests by cancelling requests while user is typing
 let timerSearch: NodeJS.Timeout;
 
 let isNewDataLoading = false;
 
-const FilesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState, setLazyLoadingState }: Props) => {
+const FilesPage = ({
+  projects,
+  files,
+  setSpecificFilesFilters,
+  setSpecificProjectsFilters,
+  projectsCount,
+  filesCount,
+  lazyLoadingState,
+  setLazyLoadingState,
+}: Props) => {
   const pageRef = useRef<HTMLDivElement>(null);
+
+  const [organizePerProjects, setOrganizePerProjects] = useState<boolean>(false);
 
   const [displayOption, setDisplayOption] = useState<string>('grid');
 
   const globalFilters = useSelector(selectGlobalFilters);
   const companyEntities = useSelector(selectCompanyEntities);
+
   const [filesFilters, setFilesFilters] = useState<FilesFiltersType>(FilesFiltersInitialState);
+  const [projectsFilters, setProjectsFilters] = useState<ProjectsFiltersType>(projectsFiltersInitialState);
 
   function updateSpecificFilters() {
+    updateSpecificFilesFilters();
+    updateSpecificProjectsFilters();
+  }
+
+  function updateSpecificFilesFilters() {
     const filterRules: any[] = [];
     let search: string | undefined = undefined;
     if (filesFilters.search.length > 0) search = filesFilters.search;
@@ -78,33 +109,58 @@ const FilesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState, se
       search: search,
       filter: filterRules.length > 0 ? { _and: filterRules } : undefined,
     };
-    setSpecificFilters(newFilters);
+    setSpecificFilesFilters(newFilters);
     setLazyLoadingState({ limit: publicRuntimeConfig.PROJECTS_CHUNK_SIZE, offset: 0, action: 'REPLACE' });
   }
 
-  useEffect(() => {
+  function updateSpecificProjectsFilters() {
+    const filterRules: any[] = [];
+    if (projectsFilters.name.length > 0) filterRules.push({ name: { _contains: projectsFilters.name } });
+    if (projectsFilters.status !== '') filterRules.push({ status: projectsFilters.status });
+    if (projectsFilters.company_entity !== '') filterRules.push({ company_entity: projectsFilters.company_entity });
+    setSpecificProjectsFilters(filterRules.length > 0 ? { filter: { _and: filterRules } } : {});
+    setLazyLoadingState({ limit: publicRuntimeConfig.PROJECTS_CHUNK_SIZE, offset: 0, action: 'REPLACE' });
+  }
+
+  function resetFilters() {
     setFilesFilters(FilesFiltersInitialState);
+    setProjectsFilters(projectsFiltersInitialState);
     updateSpecificFilters();
+  }
+
+  useEffect(() => {
+    resetFilters();
   }, [globalFilters]);
 
   //Timeout to avoid too many requests
   useEffect(() => {
     clearTimeout(timerSearch);
     timerSearch = setTimeout(() => {
-      updateSpecificFilters();
+      updateSpecificFilesFilters();
     }, 500);
   }, [filesFilters]);
+
+  useEffect(() => {
+    clearTimeout(timerSearch);
+    timerSearch = setTimeout(() => {
+      updateSpecificProjectsFilters();
+    }, 500);
+  }, [projectsFilters]);
 
   function onScrollEvent(event: Event) {
     if (pageRef && pageRef.current) {
       const page = pageRef.current;
       if (page.scrollTop + page.clientHeight >= page.scrollHeight - 400) {
-        if (filesCount && files.length < filesCount && !isNewDataLoading) {
+        if (
+          ((organizePerProjects && projectsCount && projects.length < projectsCount) ||
+            (!organizePerProjects && filesCount && files.length < filesCount)) &&
+          !isNewDataLoading
+        ) {
           //lazy Loading Specific
           isNewDataLoading = true;
           setLazyLoadingState({
             limit: lazyLoadingState.limit,
-            offset: files.length,
+            offset: projects.length,
             action: 'APPEND',
           });
           setTimeout(() => {
@@ -121,62 +177,108 @@ const FilesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState, se
     return () => {
       if (pageRef && pageRef.current) pageRef.current.removeEventListener('scroll', onScrollEvent);
     };
-  }, [filesCount, files, lazyLoadingState]);
+  }, [projectsCount, projects, lazyLoadingState]);
 
   return (
     <div className="page" ref={pageRef}>
       <GlobalFilters />
       <div className={styles.projectsPage}>
-        <h1 className={styles.title}>Fichiers</h1>
+        <div className={styles.titleBar}>
+          <h1 className={styles.title}>Fichiers</h1>
+          <div className={styles.buttonAddFileContainer}>
+            <Switch checked={organizePerProjects} onChange={setOrganizePerProjects} />
+            <label>Organiser par projets</label>
+          </div>
+        </div>
         <div className={styles.headAndFilters}>
-          <div className={styles.InputContainer}>
-            <Input
-              label={'Rechercher un fichier'}
-              value={filesFilters.search}
-              setValue={(value) => setFilesFilters({ ...filesFilters, search: `${value}` })}
-              large={false}
-            />
-          </div>
-          <div className={styles.InputContainer}>
-            <Select
-              label={'Filtrer par visibilité'}
-              nullOptionText={'Tous les fichiers'}
-              options={[
-                { value: GdpFilesStatusEnum.VISIBLE, text: 'Partagé aux clients' },
-                { value: GdpFilesStatusEnum.HIDDEN, text: 'Non partagé aux clients' },
-              ]}
-              value={filesFilters.status}
-              setValue={(value) => setFilesFilters({ ...filesFilters, status: value as GdpFilesStatusEnum })}
-            />
-          </div>
-          <div className={styles.InputContainer}>
-            <Select
-              label={'Filtrer par type'}
-              nullOptionText={'Tous les documents'}
-              options={[
-                { value: GdpAssetDocumentEnum.WRITTEN, text: 'Document écrit' },
-                { value: GdpAssetDocumentEnum.GRAPHIC, text: 'Document graphique' },
-                { value: GdpAssetDocumentEnum.UNKNOWN, text: 'Document inconnu' },
-              ]}
-              value={filesFilters.document_type}
-              setValue={(value) => setFilesFilters({ ...filesFilters, document_type: value as GdpAssetDocumentEnum })}
-            />
-          </div>
-          <div className={styles.InputContainer}>
-            <Select
-              label={'Filtrer par Entité'}
-              nullOptionText={'Toutes les entités'}
-              options={companyEntities.map((entity) => ({ value: `${entity.id}`, text: entity.name || '' }))}
-              value={filesFilters.company_entity}
-              setValue={(value) => setFilesFilters({ ...filesFilters, company_entity: value as CompanyEnum })}
-            />
-          </div>
+          {organizePerProjects ? (
+            <>
+              <div className={styles.InputContainer}>
+                <Input
+                  label={'Filtrer par nom'}
+                  value={projectsFilters.name}
+                  setValue={(value) => setProjectsFilters({ ...projectsFilters, name: `${value}` })}
+                  large={false}
+                />
+              </div>
+              <div className={styles.InputContainer}>
+                <Select
+                  label={'Filtrer par statut'}
+                  nullOptionText={'Tous les statuts'}
+                  options={[
+                    { value: GdpProjectStatusEnum.ACTIVE, text: GdpProjectStatusEnum.ACTIVE },
+                    { value: GdpProjectStatusEnum.ARCHIVED, text: GdpProjectStatusEnum.ARCHIVED },
+                    { value: GdpProjectStatusEnum.DELETED, text: GdpProjectStatusEnum.DELETED },
+                  ]}
+                  value={projectsFilters.status}
+                  setValue={(value) =>
+                    setProjectsFilters({
+                      ...projectsFilters,
+                      status: value as GdpProjectStatusEnum,
+                    })
+                  }
+                />
+              </div>
+              <div className={styles.InputContainer}>
+                <Select
+                  label={'Filtrer par Entité'}
+                  nullOptionText={'Toutes les entités'}
+                  options={companyEntities.map((entity) => ({ value: `${entity.id}`, text: entity.name || '' }))}
+                  value={projectsFilters.company_entity}
+                  setValue={(value) => setProjectsFilters({ ...projectsFilters, company_entity: value as CompanyEnum })}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={styles.InputContainer}>
+                <Input
+                  label={'Rechercher un fichier'}
+                  value={filesFilters.search}
+                  setValue={(value) => setFilesFilters({ ...filesFilters, search: `${value}` })}
+                  large={false}
+                />
+              </div>
+              <div className={styles.InputContainer}>
+                <Select
+                  label={'Filtrer par visibilité'}
+                  nullOptionText={'Tous les fichiers'}
+                  options={[
+                    { value: GdpFilesStatusEnum.VISIBLE, text: 'Partagé aux clients' },
+                    { value: GdpFilesStatusEnum.HIDDEN, text: 'Non partagé aux clients' },
+                  ]}
+                  value={filesFilters.status}
+                  setValue={(value) => setFilesFilters({ ...filesFilters, status: value as GdpFilesStatusEnum })}
+                />
+              </div>
+              <div className={styles.InputContainer}>
+                <Select
+                  label={'Filtrer par type'}
+                  nullOptionText={'Tous les documents'}
+                  options={[
+                    { value: GdpAssetDocumentEnum.WRITTEN, text: 'Document écrit' },
+                    { value: GdpAssetDocumentEnum.GRAPHIC, text: 'Document graphique' },
+                    { value: GdpAssetDocumentEnum.UNKNOWN, text: 'Document inconnu' },
+                  ]}
+                  value={filesFilters.document_type}
+                  setValue={(value) =>
+                    setFilesFilters({ ...filesFilters, document_type: value as GdpAssetDocumentEnum })
+                  }
+                />
+              </div>
+              <div className={styles.InputContainer}>
+                <Select
+                  label={'Filtrer par Entité'}
+                  nullOptionText={'Toutes les entités'}
+                  options={companyEntities.map((entity) => ({ value: `${entity.id}`, text: entity.name || '' }))}
+                  value={filesFilters.company_entity}
+                  setValue={(value) => setFilesFilters({ ...filesFilters, company_entity: value as CompanyEnum })}
+                />
+              </div>
+            </>
+          )}
           <div className={styles.headItemContainer}>
-            <Button
-              style={'text_gray'}
-              icon={<DeleteOutlined />}
-              onClick={() => setFilesFilters(FilesFiltersInitialState)}
-            >
+            <Button style={'text_gray'} icon={<DeleteOutlined />} onClick={resetFilters}>
               Réinitialiser les filtres
             </Button>
           </div>
@@ -186,11 +288,30 @@ const FilesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState, se
         </div>
         <div className={styles.content}>
           {displayOption === 'grid' ? (
-            <div>
-              {files.map((file) => (
-                <div>{file.filename_download}</div>
-              ))}
-            </div>
+            <FilesGridDisplay
+              files={
+                organizePerProjects
+                  ? []
+                  : files.map((file) => ({
+                      file: file,
+                      type: 'file',
+                      onClick: () => console.log(file),
+                    }))
+              }
+              folders={
+                !organizePerProjects
+                  ? []
+                  : projects.map((project) => ({
+                      folder: {
+                        id: project.id,
+                        name: project.name,
+                        type: 'project',
+                      },
+                      type: 'folder',
+                      onClick: () => console.log(project),
+                    }))
+              }
+            />
           ) : (
             <div>TABLE</div>
           )}

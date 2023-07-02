@@ -5,6 +5,18 @@
   flex-wrap: nowrap;
   gap: 2rem;
 
+  .titleBar {
+    width: 100%;
+    display: flex;
+    gap: 2rem;
+
+    .buttonAddFileContainer {
+      display: flex;
+      gap: 1rem;
+      margin: auto 0;
+    }
+  }
+
   .headAndFilters {
     display: flex;
     flex-wrap: wrap;
