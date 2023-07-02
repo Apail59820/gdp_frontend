@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { QueryParameters } from '../../../../models/DirectusModel';
-import { LazyLoadingStateType } from '../../../../models/LazyLoadingStateType';
+import { QueryParameters } from '../../../models/DirectusModel';
+import { LazyLoadingStateType } from '../../../models/LazyLoadingStateType';
 import getConfig from 'next/config';
-import { GdpFilesModel } from '../../../../models/GestionDeProjets/GdpFilesModel';
-import { getGdpFiles } from '../../../../services/gestionDeProjets/GdpFiles';
+import { GdpFilesModel } from '../../../models/GestionDeProjets/GdpFilesModel';
+import { getGdpFiles } from '../../../services/gestionDeProjets/GdpFiles';
 import { useRouter } from 'next/router';
-import FilesOfProjectPage from '../../../../src/FilesOfProjectPage/FilesOfProjectPage';
-import { GdpProjectsModel } from '../../../../models/GdPModels';
-import { getGdpProjectById } from '../../../../services/gestionDeProjets/GdpProjects';
+import FilesOfProjectPage from '../../../src/FilesOfProjectPage/FilesOfProjectPage';
+import { GdpProjectsModel } from '../../../models/GdPModels';
+import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -68,8 +68,6 @@ const FilesOfProject = () => {
 
   useEffect(() => {
     retrieveData();
-    // if (Object.keys(filesQueryParameters).length > 0 || lazyLoadingState.action !== 'REPLACE')
-    // else setFiles([]);
   }, [filesQueryParameters, lazyLoadingState]);
 
   useEffect(() => {

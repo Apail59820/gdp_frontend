@@ -14,7 +14,6 @@ import { GdpAssetDocumentEnum, GdpFilesModel, GdpFilesStatusEnum } from '../../m
 import DisplayOptionsController from '../components/DisplayOptionsController/DisplayOptionsController';
 import { GdpProjectsModel, GdpProjectStatusEnum } from '../../models/GestionDeProjets/GdpProjectsModel';
 import { Switch } from 'antd';
-import files from '../../pages/files';
 import FilesGridDisplay from '../components/FilesGridDisplay/FilesGridDisplay';
 
 const { publicRuntimeConfig } = getConfig();
@@ -308,7 +307,7 @@ const FilesPage = ({
                         type: 'project',
                       },
                       type: 'folder',
-                      href: `/files/project/${project.id}`,
+                      href: `/projects/${project.id}/files`,
                     }))
               }
             />
