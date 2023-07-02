@@ -32,10 +32,13 @@ const FilesGridDisplay = ({ files, folders }: Props) => {
           ))}
         </div>
       )}
-      <div className={styles.filesContainer}>
-        {files.map((file, index) => (
-          <FileOrFolderCard key={index} asset={file.file} onClick={file.onClick} type={file.type} />
-        ))}
+      <div className={styles.filesContainerWithTitle}>
+        <h2>Fichiers</h2>
+        <div className={styles.filesContainer}>
+          {files.map((file, index) => (
+            <FileOrFolderCard key={index} asset={file.file} onClick={file.onClick} type={file.type} />
+          ))}
+        </div>
       </div>
     </div>
   );

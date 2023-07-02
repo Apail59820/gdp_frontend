@@ -10,9 +10,14 @@
     gap: 32px;
   }
 
-  .filesContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 32px;
+  .filesContainerWithTitle {
+    > h2 {
+      margin-bottom: 1rem;
+    }
+    .filesContainer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+    }
   }
 }
