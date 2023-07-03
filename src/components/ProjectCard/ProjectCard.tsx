@@ -76,7 +76,7 @@ const ProjectCard = ({ project, projectManagerName }: Props) => {
               <span>{name ? capitalize(name) : '/'}</span>
             )}
           </h4>
-          <span>{client_company_name ? capitalize(client_company_name) : capitalize(companyEntityName as string)}</span>
+          <span>{client_company_name ? capitalize(client_company_name) : companyEntityName}</span>
           <span>{projectManagerName ? `${projectManagerName}`.toString().toUpperCase() : '(Aucun manager)'}</span>
           {affairs_ids?.length ? (
             <span>
