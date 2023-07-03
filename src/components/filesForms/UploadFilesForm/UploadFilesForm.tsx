@@ -54,8 +54,8 @@ export type fileItemType = {
  */
 export default function UploadFilesFormUploadFilesForm({
   isOpen,
-  mode = 'files',
   setIsOpen,
+  mode = 'files',
   project,
   affair,
   phase,

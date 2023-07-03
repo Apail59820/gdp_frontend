@@ -83,7 +83,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
       name: values.name,
       status: values.status,
       description: values.description,
-      order: affair.affairs_phases.length + 1,
+      order: affair.affairs_phases_ids.length + 1,
     });
     if (isRequestSuccessful(response.status) && response.data) {
       message.success(messages.general.success());

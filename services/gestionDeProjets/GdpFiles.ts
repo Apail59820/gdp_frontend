@@ -15,10 +15,10 @@ const defaultFields = ['*'].join(',');
  */
 export async function getGdpFiles(
   props: QueryParameters = {}
-): Promise<{ status: number; data?: Partial<GdpFilesModel>[] }> {
+): Promise<{ status: number; data?: Partial<GdpFilesModel>[]; ok: boolean }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
-  if (!token) return Promise.resolve({ status: 401 });
+  if (!token) return Promise.resolve({ status: 401, ok: false });
 
   const myHeaders = new Headers({
     Authorization: `Bearer ${token}`,
@@ -37,10 +37,10 @@ export async function getGdpFiles(
   ).then((res) => {
     if (res.status === 200) {
       return res.json().then((responseData) => {
-        return { status: res.status, data: responseData.data };
+        return { status: res.status, data: responseData.data, ok: res.ok };
       });
     } else {
-      return { status: res.status };
+      return { status: res.status, ok: res.ok };
     }
   });
 }

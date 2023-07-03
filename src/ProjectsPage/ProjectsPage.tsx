@@ -131,7 +131,7 @@ const ProjectsPage = ({
             <Input
               label={'Filtrer par nom'}
               value={projectsFilters.name}
-              setValue={(value) => setProjectsFilters({ ...projectsFilters, name: value })}
+              setValue={(value) => setProjectsFilters({ ...projectsFilters, name: `${value}` })}
               large={false}
             />
           </div>
