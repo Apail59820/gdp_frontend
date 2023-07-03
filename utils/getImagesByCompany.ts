@@ -16,8 +16,6 @@ import pictoProbim from '../public/picto-probim.svg';
 import logoProjex from '../public/logo-projex.svg';
 import pictoProjex from '../public/picto-projex.svg';
 
-import defaultImage from '../public/patrice.png';
-
 import { CompanyEnum } from '../models/UsModels';
 
 export const getImagesByCompany = (company: string): { logo: string; picto: string } => {
@@ -53,10 +51,9 @@ export const getImagesByCompany = (company: string): { logo: string; picto: stri
         picto: pictoProjex.src,
       };
     default:
-      //TODO Revoir l'image par défaut
       return {
-        logo: defaultImage.src,
-        picto: defaultImage.src,
+        logo: logoGroupeProjex.src,
+        picto: logoGroupeProjex.src,
       };
   }
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import styles from './PageHeaderBanner.module.scss';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import MainMessage from './MainMessage/MainMessage';
@@ -12,8 +12,8 @@ type Props = {
 };
 
 const PageHeaderBanner = ({ data }: Props) => {
+  const companyEntityLogoRef = useRef<HTMLImageElement>(null);
   const companyEntities = useSelector(selectCompanyEntities);
-
   const [projectCompanyEntity, setProjectCompanyEntity] = useState<string>('Entité inconnue');
 
   const getColorByCompany = useMemo(() => {
@@ -46,17 +46,31 @@ const PageHeaderBanner = ({ data }: Props) => {
         else setProjectCompanyEntity('Entité inconnue');
       }
     } else setProjectCompanyEntity('Entité inconnue');
-  }, [companyEntities, data]);
+  }, [companyEntities, data, companyEntityLogoRef.current?.clientWidth]);
 
   return (
-    <div className={`${styles.pageHeaderBanner} ${getColorByCompany}`}>
+    <div className={`${styles.pageHeaderBanner}  ${getColorByCompany}`}>
       {typeof data === 'string' ? (
-        <MainMessage project={{ name: data }} showImage={false} />
+        <MainMessage
+          project={{ name: data }}
+          showImage={false}
+          resizeTitleProps={{
+            entityLogoWidth: companyEntityLogoRef.current?.clientWidth as number,
+          }}
+        />
       ) : (
         <>
-          <MainMessage project={data} onManageThumbnailClick={() => console.log('open modal ?')} />
+          <MainMessage
+            project={data}
+            onManageThumbnailClick={() => console.log('open modal ?')}
+            resizeTitleProps={{
+              entityLogoWidth: companyEntityLogoRef.current?.clientWidth as number,
+            }}
+          />
           <img
+            ref={companyEntityLogoRef}
             className={styles.logo}
+            data-logo-width={companyEntityLogoRef.current?.clientWidth}
             src={getImagesByCompany(projectCompanyEntity).logo}
             alt={`Logo de ${projectCompanyEntity}`}
           />
