@@ -17,6 +17,7 @@ import { getUsCompanyEntity } from '../../../../../services/userService/UsCompan
 import { getGdpAffair } from '../../../../../services/gestionDeProjets/GdpAffairs';
 import { selectAffairs } from '../../../../../store/reducers/affairsReducer';
 import { getGdpAffairsPhases } from '../../../../../services/gestionDeProjets/GdpPhases';
+import { getGdpFiles } from '../../../../../services/gestionDeProjets/GdpFiles';
 
 const PROJECT_BY_ID = {
   id: '1',
@@ -124,7 +125,6 @@ const Advancement = () => {
   }, [dispatch, project.company_entity, projectId, projects]);
 
   useEffect(() => {
-    console.log(affairId);
     if (affairId) {
       getGdpAffair(affairId).then((res) => {
         if (res.status === 200 && res.data) {
@@ -140,9 +140,8 @@ const Advancement = () => {
         filter: {
           affairs_id: { _in: affairId },
         },
-        fields: '*',
+        fields: 'id,name,order,status,trigger_survey,activities_id,affairs_id,affairs_satisfaction',
       }).then((res) => {
-        console.log('res phases:::', res);
         if (res.status === 200 && res.data) {
           setPhases(res.data);
         }
@@ -165,7 +164,7 @@ const Advancement = () => {
           <div className={styles.phases}>
             {phases.map((phase) => (
               <section className={styles.phaseContainer} key={phase.id}>
-                <Phase phase={phase} />
+                <Phase phase={phase} affair_id={affairId} project_id={projectId} />
               </section>
             ))}
           </div>

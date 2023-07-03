@@ -1,14 +1,35 @@
 import { ProgressBar, Section } from '@projex/ui';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import FilesWidget from '../FilesWidget/FilesWidget';
 import PreviewFilesList from '../PreviewFilesList/PreviewFilesList';
 import styles from './Phase.module.scss';
+import { GdpFilesModel } from '../../../models/GdPModels';
+import { getGdpFiles } from '../../../services/gestionDeProjets/GdpFiles';
 
 type Props = {
   phase: any;
+  affair_id: number;
+  project_id: number;
 };
 
-const Phase = ({ phase }: Props) => {
+const Phase = ({ phase, affair_id, project_id }: Props) => {
+  const [files, setFiles] = useState<Partial<GdpFilesModel>[]>([]);
+
+  useEffect(() => {
+    if (phase.id) {
+      getGdpFiles({
+        filter: {
+          phase_id: { _in: phase.id },
+          _and: [{ affair_id: { _eq: affair_id } }, { projects_id: { _eq: project_id } }],
+        },
+      }).then((res) => {
+        if (res.status === 200 && res.data) {
+          setFiles(res.data);
+        }
+      });
+    }
+  }, [phase]);
+
   const renderStatus = (): JSX.Element => {
     switch (phase.status) {
       case 'completed':
@@ -92,7 +113,7 @@ const Phase = ({ phase }: Props) => {
         </div>
         {/* TODO ne pas afficher si aucun de fichiers associés */}
         <Section title="Fichiers associés" link={{ label: 'Voir tous les fichiers', href: '/' }}>
-          <PreviewFilesList files={[]} max={3} allFilesPageHref={'/'} />
+          <PreviewFilesList files={files} max={3} allFilesPageHref={'/'} />
         </Section>
       </article>
     </div>
