@@ -5,6 +5,7 @@ import PreviewFilesList from '../PreviewFilesList/PreviewFilesList';
 import styles from './Phase.module.scss';
 import { GdpFilesModel } from '../../../models/GdPModels';
 import { getGdpFiles } from '../../../services/gestionDeProjets/GdpFiles';
+import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
 
 type Props = {
   phase: any;
@@ -23,7 +24,7 @@ const Phase = ({ phase, affair_id, project_id }: Props) => {
           _and: [{ affair_id: { _eq: affair_id } }, { projects_id: { _eq: project_id } }],
         },
       }).then((res) => {
-        if (res.status === 200 && res.data) {
+        if (isRequestSuccessful(res.status) && res.data) {
           setFiles(res.data);
         }
       });

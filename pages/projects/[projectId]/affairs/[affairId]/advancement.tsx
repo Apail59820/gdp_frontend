@@ -11,56 +11,15 @@ import { selectGlobalFilters } from '../../../../../store/reducers/globalFilterR
 import { selectProjects, selectProjectsCount, setProjects } from '../../../../../store/reducers/projectsReducer';
 import { globalAgent } from 'http';
 import { useRouter } from 'next/router';
-import { GdpAffairModel, GdpPhaseModel, GdpProjectsModel } from '../../../../../models/GdPModels';
+import { GdpActivitiesModel, GdpAffairModel, GdpPhaseModel, GdpProjectsModel } from '../../../../../models/GdPModels';
 import { getGdpProjectById } from '../../../../../services/gestionDeProjets/GdpProjects';
 import { getUsCompanyEntity } from '../../../../../services/userService/UsCompanyEntities';
 import { getGdpAffair } from '../../../../../services/gestionDeProjets/GdpAffairs';
 import { selectAffairs } from '../../../../../store/reducers/affairsReducer';
 import { getGdpAffairsPhases } from '../../../../../services/gestionDeProjets/GdpPhases';
 import { getGdpFiles } from '../../../../../services/gestionDeProjets/GdpFiles';
-
-const PROJECT_BY_ID = {
-  id: '1',
-  name: 'Nom du projet',
-  client_company_name: 'Nom du client',
-  client_info: undefined,
-  address: undefined,
-  zip_code: undefined,
-  city: undefined,
-  country: undefined,
-  image: 'ok',
-  status: undefined,
-  project_type: undefined,
-  company_entity: CompanyEnum.DIAGOBAT,
-  affairs: undefined,
-};
-
-const PHASES = [
-  {
-    id: 1,
-    name: 'Name 1',
-    order: 1,
-    status: 'completed',
-    trigger_survey: true,
-    description: 'description',
-  },
-  {
-    id: 2,
-    name: 'Name 2',
-    order: 2,
-    status: 'pending',
-    trigger_survey: true,
-    description: 'description',
-  },
-  {
-    id: 3,
-    name: 'Name 3',
-    order: 3,
-    status: 'ongoing',
-    trigger_survey: true,
-    description: 'description',
-  },
-];
+import { isRequestSuccessful } from '../../../../../utils/isRequestSuccessful';
+import { getGdpActivities } from '../../../../../services/gestionDeProjets/GdpActivities';
 
 const ACTIVITIES = [
   {
@@ -81,10 +40,8 @@ const ACTIVITIES = [
 ];
 
 const Advancement = () => {
-  const globalFilters = useSelector(selectGlobalFilters);
   const projects = useSelector(selectProjects);
   const affairs = useSelector(selectAffairs);
-  const globalProjectsCount = useSelector(selectProjectsCount);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -94,6 +51,7 @@ const Advancement = () => {
   const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
   const [phases, setPhases] = useState<Partial<GdpPhaseModel>[]>([]);
+  const [activities, setActivities] = useState<Partial<GdpActivitiesModel>[]>([]);
 
   const [projectCompanyEntityName, setProjectCompanyEntityName] = useState<string>('Inconnue');
 
@@ -103,7 +61,7 @@ const Advancement = () => {
         return setProject(projects.filter((project) => project.id === projectId)[0]);
       } else {
         getGdpProjectById(projectId).then((res) => {
-          if (res.status === 200 && res.data) {
+          if (isRequestSuccessful(res.status) && res.data) {
             setProject(res.data);
             dispatch(setProjects([...projects, res.data]));
           }
@@ -112,7 +70,8 @@ const Advancement = () => {
       if (project.company_entity) {
         if (typeof project.company_entity === 'number') {
           getUsCompanyEntity(project.company_entity).then((res) => {
-            if (res.status === 200 && res.data && res.data.name) setProjectCompanyEntityName(res.data.name);
+            if (isRequestSuccessful(res.status) && res.data && res.data.name)
+              setProjectCompanyEntityName(res.data.name);
             else setProjectCompanyEntityName('Inconnue');
           });
         } else {
@@ -127,7 +86,7 @@ const Advancement = () => {
   useEffect(() => {
     if (affairId) {
       getGdpAffair(affairId).then((res) => {
-        if (res.status === 200 && res.data) {
+        if (isRequestSuccessful(res.status) && res.data) {
           setAffair(res.data);
         }
       });
@@ -142,8 +101,24 @@ const Advancement = () => {
         },
         fields: 'id,name,order,status,trigger_survey,activities_id,affairs_id,affairs_satisfaction',
       }).then((res) => {
-        if (res.status === 200 && res.data) {
+        if (isRequestSuccessful(res.status) && res.data) {
           setPhases(res.data);
+        }
+      });
+    }
+  }, [affairId]);
+
+  useEffect(() => {
+    if (projectId && affairId && phases) {
+      getGdpActivities({
+        filter: {
+          affairs_id: { _eq: affairId },
+        },
+        fields:
+          'id, action, affairs_directus_users_id, affairs_id, affairs_phases_id, affairs_pythagore_affaires_id, affairs_satisfaction_id, collection, content, date_created, directus_files_id, projects_id, users_notifications_id',
+      }).then((res) => {
+        if (isRequestSuccessful(res.status) && res.data) {
+          setActivities(res.data);
         }
       });
     }
@@ -169,7 +144,7 @@ const Advancement = () => {
             ))}
           </div>
           <div className={styles.activitiesWidgetContainer}>
-            <ActivitiesWidget activities={ACTIVITIES || []} />
+            <ActivitiesWidget activities={activities} />
           </div>
         </div>
       </div>
