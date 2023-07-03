@@ -135,6 +135,48 @@ export async function createGdpProjectUserCollaborator(
     });
 }
 
+export async function createGdpProjectUserCollaborators(
+  projectDirectusUserCollaborators: Omit<GdpProjectsCollaboratorsModel, createFieldsToOmit>[]
+): Promise<{ status: number; data?: Partial<GdpProjectsCollaboratorsModel> }> {
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+  const myHeaders = new Headers({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  });
+
+  const myInit: RequestInit = {
+    method: 'POST',
+    headers: myHeaders,
+    mode: 'cors',
+    cache: 'default',
+    body: JSON.stringify(projectDirectusUserCollaborators),
+  };
+
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects_directus_users_collaborators`, myInit)
+    .then((response) => {
+      if (response.status === 200 || response.status === 204) {
+        return response
+          .json()
+          .then((responseData) => {
+            return { status: response.status, data: responseData.data };
+          })
+          .catch((error) => {
+            // eslint-disable-next-line no-console
+            console.error(error);
+            return { status: response.status };
+          });
+      } else {
+        return { status: response.status };
+      }
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      return { status: 500 };
+    });
+}
+
 type updateFieldsToOmit = 'id' | 'projects_id' | 'directus_users_id' | 'activities_id';
 /**
  * Update gdp project directus user collaborator properties.
