@@ -1,8 +1,8 @@
 import React, { ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { retrieveToken } from '../../../services/auth';
-import { useDispatch } from 'react-redux';
-import { setAuthState, setUserProfile } from '../../../store/reducers/authReducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectAuthState, setAuthState, setUserProfile } from '../../../store/reducers/authReducer';
 import getConfig from 'next/config';
 import { getMyUsProfile } from '../../../services/userService/UsUsers';
 import { message } from 'antd';
@@ -17,6 +17,7 @@ type Props = {
 const Authenticated = ({ children }: Props) => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const authState = useSelector(selectAuthState);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -24,11 +25,12 @@ const Authenticated = ({ children }: Props) => {
         retrieveToken().then(
           (token) => {
             if (token) {
+              if (!authState) message.success(messages.login.success(publicRuntimeConfig.APP_NAME));
               dispatch(setAuthState(true));
               getMyUsProfile().then((res) => {
                 if (res.status === 200 && res.data) {
+                  console.log('res.data', res.data);
                   dispatch(setUserProfile(res.data));
-                  message.success(messages.login.success(publicRuntimeConfig.APP_NAME));
                 } else {
                   message.error(messages.login.error.general);
                   dispatch(setUserProfile({}));

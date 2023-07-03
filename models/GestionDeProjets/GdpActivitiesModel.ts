@@ -1,6 +1,16 @@
 import { UsUserModel } from '../UserService/UsUserModel';
 import { GdpUsersNotificationModel } from './GdpUsersNotificationModel';
 
+export enum ActivitiesCollectionEnum {
+  Affair = 'affair',
+  AffairUser = 'affair_user',
+  AffairSatisfaction = 'affair_satisfaction',
+  AffairFile = 'affair_file',
+  AffairPhase = 'affair_phase',
+  Project = 'projects',
+  ProjectDirectusUsersClient = 'projects_directus_users_clients',
+  ProjectDirectusUsersCollaborator = 'projects_directus_users_collaborators',
+}
 export enum ActivitiesActionEnum {
   Create = 'create',
   Delete = 'delete',
@@ -10,11 +20,11 @@ export enum ActivitiesActionEnum {
 export type GdpActivitiesModel = {
   id: number;
   action: ActivitiesActionEnum;
-  collection: string | null;
+  collection: ActivitiesCollectionEnum | null;
   content: any | null;
 
   user_created: string | UsUserModel;
-  date_created: Date;
+  date_created: string;
 
   projects_id: number | null;
   affairs_id: number | null;

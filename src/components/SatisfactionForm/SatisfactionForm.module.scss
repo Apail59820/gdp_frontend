@@ -1,0 +1,45 @@
+@import 'projex-global-styles';
+
+.separator {
+  border: 1px solid $neutral-light;
+}
+
+.radioGroup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  .customRadio {
+    display: inline-flex;
+    flex-direction: column-reverse;
+    margin: 0;
+    margin-inline: 0;
+    &::after {
+      display: none;
+    }
+  }
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .5rem;
+  & .marginTop {
+    margin-top: 1rem;
+  }
+  .fakeBtn {
+    cursor: pointer;
+  }
+}
+
+
+:export {
+  red: $red;
+  orange: $orange;
+  neutral: $neutral;
+  primary: $primary;
+  green: $green;
+}
+

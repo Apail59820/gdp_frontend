@@ -196,7 +196,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
             <span className={styles.span}>
               <Button
                 small
-                style={'textAlert'}
+                style={'alert'}
                 onClick={() => {
                   showConfirmDelete();
                 }}

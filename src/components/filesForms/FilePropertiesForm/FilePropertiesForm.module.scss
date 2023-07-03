@@ -1,0 +1,39 @@
+@import "../../styles/utils/variables.scss";
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 1rem;
+  border-left: 1px solid $neutral-light;
+
+  .filesInformations {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $neutral-light;;
+
+
+      p {
+        margin: 0;
+        padding: 0;
+        color: $text;
+      }
+  }
+  .filesInputsGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filesIsPublishedContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+  }
+
+  .filesActionButtonsContainer {
+    display: flex;
+    flex-direction: row;
+  }
+}

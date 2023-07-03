@@ -1,0 +1,35 @@
+@import 'projex-global-styles';
+
+.header {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-evenly;
+  gap: 1rem;
+
+  .headerEmojis {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    span {
+      text-transform: capitalize;
+    }
+  }
+
+  .headerInfos {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+
+.separator {
+  border: 1px solid #DDE3EB;
+}
+
+:export {
+  red: $red;
+  orange: $orange;
+  neutral: $neutral;
+  primary: $primary;
+  green: $green;
+}

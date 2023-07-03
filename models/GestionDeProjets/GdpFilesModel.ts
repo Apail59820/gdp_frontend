@@ -49,7 +49,7 @@ export type GdpFilesModel = {
   document_type: GdpAssetDocumentEnum | null;
 
   uploaded_by: string | UsUserModel;
-  uploaded_on: Date;
+  uploaded_on: string;
   modified_by: string | UsUserModel | null;
   modified_on: Date | null;
 

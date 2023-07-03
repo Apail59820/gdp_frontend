@@ -3,7 +3,7 @@ import { GdpActivitiesModel } from './GdpActivitiesModel';
 import { GdpProjectsModel } from './GdpProjectsModel';
 
 export type GdpProjectsClientsModel = {
-  id: string;
+  id: number;
   show_notifications: boolean;
 
   projects_id: number | GdpProjectsModel;
