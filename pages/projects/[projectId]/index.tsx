@@ -119,17 +119,13 @@ const Project = () => {
 
     if (affairsIds) {
       affairsIds.forEach((affairId) => {
-        if (typeof affairId === 'number') affairsToFetch.push(affairId);
-        else tmpAffairs.push(affairId);
+        if (typeof affairId === 'number') {
+          if (affairs.filter((affair) => affair.id === affairId).length > 0) {
+            tmpAffairs.push(affairs.filter((affair) => affair.id === affairId)[0]);
+          } else affairsToFetch.push(affairId);
+        } else tmpAffairs.push(affairId);
       });
     }
-
-    affairsToFetch.forEach((affairId) => {
-      if (affairs.filter((affair) => affair.id === affairId).length > 0) {
-        tmpAffairs.push(affairs.filter((affair) => affair.id === affairId)[0]);
-        affairsToFetch.splice(affairsToFetch.indexOf(affairId), 1);
-      }
-    });
 
     if (affairsToFetch.length > 0) {
       getGdpAffairs({
