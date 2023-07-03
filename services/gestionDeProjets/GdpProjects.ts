@@ -132,7 +132,7 @@ export async function createGdpProject(
     body: JSON.stringify(project),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/project`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects`, myInit)
     .then((response) => {
       if (response.status === 200 || response.status === 204) {
         return response
