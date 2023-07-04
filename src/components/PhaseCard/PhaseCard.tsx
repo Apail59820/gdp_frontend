@@ -7,7 +7,7 @@ import ProgressStatusMessage from '../ProgressStatusMessage/ProgressStatusMessag
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 
 type Props = {
-  phase: GdpPhaseModel;
+  phase: Partial<GdpPhaseModel>;
   onKebabMenuClick: React.MouseEventHandler<HTMLButtonElement>;
 };
 

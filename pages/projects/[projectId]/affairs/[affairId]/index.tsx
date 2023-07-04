@@ -1,12 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../../../../../styles/Affair.module.scss';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
-import {
-  GdpActivitiesModel,
-  GdpAffairsUsersModel,
-  GdpFilesModel,
-  GdpProjectsModel,
-} from '../../../../../models/GdPModels';
+import { GdpProjectsModel } from '../../../../../models/GdPModels';
 import { GdpAffairModel } from '../../../../../models/GdPModels';
 import { Breadcrumb, QuickActionCard } from '@projex/ui';
 import Grid from '../../../../../src/components/Grid/Grid';
@@ -17,28 +12,36 @@ import CollaboratorTeamWidget from '../../../../../src/components/CollaboratorTe
 import BillingWidget from '../../../../../src/components/BillingWidget/BillingWidget';
 import FilesWidget from '../../../../../src/components/FilesWidget/FilesWidget';
 import StatisticsWidget from '../../../../../src/components/StatisticsWidget/StatisticsWidget';
-import type { Statistic } from '../../../../../src/components/StatisticsCard/StatisticsCard';
 import { capitalize } from '../../../../../utils/capitalize';
 import PhasesWidget from '../../../../../src/components/PhasesWidget/PhasesWidget';
 import { getGdpAffair } from '../../../../../services/gestionDeProjets/GdpAffairs';
 import { useRouter } from 'next/router';
 import { isRequestSuccessful } from '../../../../../utils/isRequestSuccessful';
-import { getGdpAffairsUsers } from '../../../../../services/gestionDeProjets/GdpAffairsUsers';
 import ActivitiesWidget from '../../../../../src/components/ActivitiesWidget/ActivitiesWidget';
+import { getGdpAffairsPhases } from '../../../../../services/gestionDeProjets/GdpPhases';
+import { UsUserModel } from '../../../../../models/UserService/UsUserModel';
+import { getGdpAffairsUsers } from '../../../../../services/gestionDeProjets/GdpAffairsUsers';
 import { getUsUsers } from '../../../../../services/userService/UsUsers';
-
-const AFFAIR_PROGRESS_PERCENTAGE: number = 65;
-
-const STATISTICS: Statistic[] = [
-  { label: 'Label 1 ', percentage: 65 },
-  { label: 'Label 2', percentage: 65 },
-];
 
 const Affair = () => {
   const { query } = useRouter();
 
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
-  const [users, setUsers] = useState<Partial<GdpAffairsUsersModel>[]>([]);
+  const [affairPhases, setAffairPhases] = useState<Partial<GdpAffairModel>[]>([]);
+  const [affairManagers, setAffairManagers] = useState<Partial<UsUserModel>[]>([]);
+  const [affairClients, setAffairClients] = useState<Partial<UsUserModel>[]>([]);
+
+  const progressPercentage = useMemo(() => {
+    const requiredProps = ['name', 'company_entity', 'projects_id'];
+    let propsDefined = requiredProps.reduce(
+      (count, prop) => count + (affair && affair[prop as keyof Partial<GdpAffairModel>] ? 1 : 0),
+      0
+    );
+
+    if (affair.affairs_phases && affair.affairs_phases.length > 0) propsDefined++;
+    // On divise par requiredProps.length + 1 car on ajoute 1 pour les phases
+    return Math.round((propsDefined / (requiredProps.length + 1)) * 100);
+  }, [affair]);
 
   useEffect(() => {
     if (!query.affairId || typeof query.affairId !== 'string') return;
@@ -60,44 +63,126 @@ const Affair = () => {
       .then((response) => {
         if (isRequestSuccessful(response.status) && response.data) {
           setAffair(response.data);
-        }
+        } else setAffair({});
       })
       // eslint-disable-next-line no-console
       .catch((error) => console.error(error));
   }, [query.affairId]);
 
-  useEffect(
-    function retrieveUsers() {
-      getGdpAffairsUsers({ filter: { affairs_id: affair.id } })
-        .then((response) => {
-          if (isRequestSuccessful(response.status) && response.data) {
-            const userIds = response.data.map((user) => user.directus_users_id as string);
+  // Retrieve phases
+  useEffect(() => {
+    if (affair.affairs_phases && affair.affairs_phases.length > 0) {
+      const phasesToRetrieve: number[] = [];
+      const phases: Partial<GdpAffairModel>[] = [];
+      affair.affairs_phases.forEach((phase) => {
+        if (typeof phase === 'number') phasesToRetrieve.push(phase);
+        else phases.push(phase);
+      });
 
-            getUsUsers({
-              filter: {
-                id: {
-                  _in: userIds,
-                },
-              },
-            }).then((response2) => {
-              if (isRequestSuccessful(response2.status) && response2.data) {
-                const formattedUsers = response.data?.map((user) => {
-                  return {
-                    ...user,
-                    directus_users_id: response2.data?.find((userFound) => userFound.id === user.directus_users_id),
-                  };
-                });
+      if (phasesToRetrieve.length > 0) {
+        getGdpAffairsPhases({ filter: { id: { in: phasesToRetrieve } } }).then((response) => {
+          if (response.status === 200 && response.data) {
+            phases.push(...response.data);
+          }
+        });
+      }
+      setAffairPhases(phases);
+    }
+  }, [affair]);
 
-                setUsers(formattedUsers);
+  // Retrieve managers
+  useEffect(() => {
+    if (affair && affair.affairs_directus_users_ids) {
+      const relationsToRetrieve: number[] = [];
+      const managersToRetrieve: string[] = [];
+      const managers: Partial<UsUserModel>[] = [];
+      affair.affairs_directus_users_ids.forEach((relation) => {
+        if (typeof relation === 'number') relationsToRetrieve.push(relation);
+        else if (relation.project_manager) {
+          if (typeof relation.directus_users_id === 'string') managersToRetrieve.push(relation.directus_users_id);
+          else managers.push(relation.directus_users_id);
+        }
+      });
+      if (relationsToRetrieve.length > 0) {
+        getGdpAffairsUsers({ filter: { id: { _in: relationsToRetrieve } } }).then((response) => {
+          if (response.status === 200 && response.data) {
+            response.data.forEach((relation) => {
+              if (relation.directus_users_id) {
+                if (typeof relation.directus_users_id === 'string') managersToRetrieve.push(relation.directus_users_id);
+                else managers.push(relation.directus_users_id);
               }
             });
           }
-        })
-        // eslint-disable-next-line no-console
-        .catch((error) => console.error(error));
-    },
-    [affair]
-  );
+          if (managersToRetrieve.length > 0) {
+            getUsUsers({ filter: { id: { _in: managersToRetrieve } } }).then((response) => {
+              if (response.status === 200 && response.data) {
+                setAffairManagers([...managers, ...response.data]);
+              }
+            });
+          } else {
+            setAffairManagers(managers);
+          }
+        });
+      } else {
+        if (managersToRetrieve.length > 0) {
+          getUsUsers({ filter: { id: { _in: managersToRetrieve } } }).then((response) => {
+            if (response.status === 200 && response.data) {
+              setAffairManagers([...managers, ...response.data]);
+            }
+          });
+        } else {
+          setAffairManagers(managers);
+        }
+      }
+    }
+  }, [affair]);
+
+  // Retrieve clients
+  useEffect(() => {
+    if (affair && affair.affairs_directus_users_ids) {
+      const relationsToRetrieve: number[] = [];
+      const clientsToRetrieve: string[] = [];
+      const clients: Partial<UsUserModel>[] = [];
+      affair.affairs_directus_users_ids.forEach((relation) => {
+        if (typeof relation === 'number') relationsToRetrieve.push(relation);
+        else if (!relation.project_manager) {
+          if (typeof relation.directus_users_id === 'string') clientsToRetrieve.push(relation.directus_users_id);
+          else clients.push(relation.directus_users_id);
+        }
+      });
+      if (relationsToRetrieve.length > 0) {
+        getGdpAffairsUsers({ filter: { id: { _in: relationsToRetrieve } } }).then((response) => {
+          if (response.status === 200 && response.data) {
+            response.data.forEach((relation) => {
+              if (relation.directus_users_id) {
+                if (typeof relation.directus_users_id === 'string') clientsToRetrieve.push(relation.directus_users_id);
+                else clients.push(relation.directus_users_id);
+              }
+            });
+          }
+          if (clientsToRetrieve.length > 0) {
+            getUsUsers({ filter: { id: { _in: clientsToRetrieve } } }).then((response) => {
+              if (response.status === 200 && response.data) {
+                setAffairClients([...clients, ...response.data]);
+              }
+            });
+          } else {
+            setAffairManagers(clients);
+          }
+        });
+      } else {
+        if (clientsToRetrieve.length > 0) {
+          getUsUsers({ filter: { id: { _in: clientsToRetrieve } } }).then((response) => {
+            if (response.status === 200 && response.data) {
+              setAffairClients([...clients, ...response.data]);
+            }
+          });
+        } else {
+          setAffairClients(clients);
+        }
+      }
+    }
+  }, [affair]);
 
   return (
     <div className="page">
@@ -134,22 +219,22 @@ const Affair = () => {
             >
               Vous pouvez créer des étapes pour un suivi approfondi de l&apos;affaire
             </QuickActionCard>
-            <QuickActionCard title="Complétez l'affaire" progress={AFFAIR_PROGRESS_PERCENTAGE}>
+            <QuickActionCard title="Complétez l'affaire" progress={progressPercentage}>
               Remplissez l&apos;affaire pour profiter pleinement de toutes les fonctionnalités
             </QuickActionCard>
           </Grid>
         </QuickAccessWidget>
-        <PhasesWidget phases={[]} onNewPhaseClick={() => console.log('open modal ?')} />
+        <PhasesWidget phases={affairPhases} onNewPhaseClick={() => console.log('open modal ?')} />
         <section>
           <Grid type="narrow">
             <ClientTeamWidget
-              users={[]}
-              clientCompany={affair.projects_id as GdpProjectsModel}
+              users={affairClients}
+              clientCompany={{ name: 'Client' }}
               onAddClientClick={() => console.log('open modal ?')}
             />
             <CollaboratorTeamWidget
               type="affair"
-              users={[]}
+              users={affairManagers}
               companyEntity={'company'}
               onAddCollaboratorClick={() => console.log('open modal ?')}
             />
@@ -157,17 +242,14 @@ const Affair = () => {
         </section>
         <section>
           <Grid type="narrow">
-            <ActivitiesWidget activities={affair.activities_id as GdpActivitiesModel[]} />
+            <ActivitiesWidget activities={[]} />
             <BillingWidget invoices={[]} onConfigureBillingClick={() => console.log('open modal ?')} />
           </Grid>
         </section>
         <section>
           <Grid type="narrow">
-            <FilesWidget
-              files={(affair.files as GdpFilesModel[]) || []}
-              onNewFileClick={() => console.log('open modal ?')}
-            />
-            <StatisticsWidget statistics={STATISTICS || []} onNewStatisticClick={() => console.log('open modal ?')} />
+            <FilesWidget files={[]} onNewFileClick={() => console.log('open modal ?')} />
+            <StatisticsWidget statistics={[]} onNewStatisticClick={() => console.log('open modal ?')} />
           </Grid>
         </section>
       </div>
