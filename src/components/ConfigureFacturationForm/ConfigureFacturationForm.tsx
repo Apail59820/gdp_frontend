@@ -55,7 +55,13 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
         setAffairs([...affairs, initAffair]);
       }
     }
-  }, []);
+  }, [affairs, initAffair, initProject, projects]);
+
+  useEffect(() => {
+    if (initProject) {
+      setProjectId(initProject.id);
+    }
+  }, [initProject]);
 
   // Ce useEffect nous permet de ne récupérer que les affaires pythagores qui n'ont pas d'affaire associée
   useEffect(() => {

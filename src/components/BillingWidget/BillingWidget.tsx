@@ -12,9 +12,16 @@ type Props = {
   max?: number;
   onConfigureBillingClick: React.MouseEventHandler<HTMLButtonElement>;
   allInvoicesPageHref?: string;
+  displayConfigureButton?: boolean;
 };
 
-const BillingWidget = ({ invoices, max = 3, onConfigureBillingClick, allInvoicesPageHref }: Props) => {
+const BillingWidget = ({
+  invoices,
+  max = 3,
+  onConfigureBillingClick,
+  allInvoicesPageHref,
+  displayConfigureButton,
+}: Props) => {
   const router = useRouter();
 
   return (
@@ -41,11 +48,15 @@ const BillingWidget = ({ invoices, max = 3, onConfigureBillingClick, allInvoices
       ) : (
         <ConfigureWidget
           descriptionText="Vous n'avez aucune facture configurée"
-          button={{
-            label: 'Configurer la facturation',
-            type: 'edit',
-            onClick: onConfigureBillingClick,
-          }}
+          button={
+            displayConfigureButton
+              ? {
+                  label: 'Configurer la facturation',
+                  type: 'edit',
+                  onClick: onConfigureBillingClick,
+                }
+              : undefined
+          }
         />
       )}
     </Section>
