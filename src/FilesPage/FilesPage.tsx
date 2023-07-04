@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, ReactNode } from 'react';
 import styles from './FilesPage.module.scss';
 import { Button, Input, Select } from '@projex/ui';
 import { QueryParameters } from '../../models/DirectusModel';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import { selectCompanyEntities } from '../../store/reducers/companyEntitiesReducer';
 import GlobalFilters from '../components/GlobalFiltersComponents/GlobalFilters';
@@ -13,9 +13,12 @@ import { CompanyEnum } from '../../models/UserService/UsCompanyEntityModel';
 import { GdpAssetDocumentEnum, GdpFilesModel, GdpFilesStatusEnum } from '../../models/GestionDeProjets/GdpFilesModel';
 import DisplayOptionsController from '../components/DisplayOptionsController/DisplayOptionsController';
 import { GdpProjectsModel, GdpProjectStatusEnum } from '../../models/GestionDeProjets/GdpProjectsModel';
-import { Switch } from 'antd';
+import { Switch, Table } from 'antd';
 import FilesGridDisplay from '../components/FilesGridDisplay/FilesGridDisplay';
-
+import FolderIcon from '../../public/folder.svg';
+import FileIcon from '../../public/file.svg';
+import FileImageIcon from '../../public/file-image.svg';
+import Link from 'next/link';
 const { publicRuntimeConfig } = getConfig();
 
 type FilesFiltersType = {
@@ -178,6 +181,71 @@ const FilesPage = ({
     };
   }, [projectsCount, projects, lazyLoadingState]);
 
+  interface DataSourceItem {
+    key: string | number | undefined;
+    name: JSX.Element;
+    type: string | null | undefined;
+    uploaded_on: Date | string | undefined;
+  }
+
+  const columns = [
+    {
+      title: 'Nom du fichier',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
+    },
+    {
+      title: 'Date de mise en ligne',
+      dataIndex: 'uploaded_on',
+      key: 'uploaded_on',
+      sorter: (a: DataSourceItem, b: DataSourceItem) => {
+        if (!a.uploaded_on || !b.uploaded_on) return 0;
+        return a.uploaded_on < b.uploaded_on ? 1 : -1;
+      },
+    },
+  ];
+
+  let dataSource: DataSourceItem[] = [];
+
+  if (!organizePerProjects) {
+    dataSource = [
+      ...files.map((file) => ({
+        key: file.id,
+        name: (
+          <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}>
+            <img src={file.type === 'image/png' ? FileImageIcon.src : FileIcon.src} width={20} height={20} alt="Icon" />
+            <span style={{ display: 'inline-flex', marginLeft: '8px' }}>{file.title}</span>
+          </div>
+        ),
+        type: file.type,
+        uploaded_on: file.uploaded_on,
+      })),
+    ];
+  }
+
+  if (organizePerProjects) {
+    dataSource = [
+      ...projects.map((project) => ({
+        key: project.id as number,
+        name: (
+          <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}>
+            <Link href={`/projects/${project.id}/files`} style={{ display: 'flex' }}>
+              <img src={FolderIcon.src} width={22} height={22} alt="Icon" />
+              <span style={{ display: 'inline-flex', marginLeft: '8px' }}>{project.name}</span>
+            </Link>
+          </div>
+        ),
+        type: 'dossier',
+        uploaded_on: project.date_created,
+      })),
+    ];
+  }
+
   return (
     <div className="page" ref={pageRef}>
       <GlobalFilters />
@@ -312,7 +380,17 @@ const FilesPage = ({
               }
             />
           ) : (
-            <div>TABLE</div>
+            <Table
+              columns={columns}
+              dataSource={dataSource}
+              pagination={false}
+              size={'large'}
+              locale={{
+                triggerAsc: 'Trier de manière ascendante',
+                triggerDesc: 'Trier de manière descendante',
+                cancelSort: 'Ne pas trier',
+              }}
+            />
           )}
         </div>
       </div>

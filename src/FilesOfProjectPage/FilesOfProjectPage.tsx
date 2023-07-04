@@ -20,6 +20,12 @@ import FilesGridDisplay, { GridFolderItem } from '../components/FilesGridDisplay
 import { LoadingOutlined } from '@ant-design/icons';
 import UploadFilesFormUploadFilesForm from '../components/filesForms/UploadFilesForm/UploadFilesForm';
 import PageHeaderBanner from '../components/PageHeaderBanner/PageHeaderBanner';
+import { Table } from 'antd';
+import FolderIcon from '../../public/folder.svg';
+import FileImageIcon from '../../public/file-image.svg';
+import FileIcon from '../../public/file.svg';
+import FileArrayLeftLong from '../../public/arrow-left-long.svg';
+import Link from 'next/link';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -276,6 +282,89 @@ const FilesOfProjectPage = ({
     }
   }
 
+  interface DataSourceItem {
+    key: string | number | undefined;
+    name: JSX.Element;
+    type: string | null | undefined;
+    uploaded_on: Date | string | undefined;
+  }
+
+  const columns = [
+    {
+      title: 'Nom du fichier',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
+    },
+    {
+      title: 'Date de mise en ligne',
+      dataIndex: 'uploaded_on',
+      key: 'uploaded_on',
+      sorter: (a: DataSourceItem, b: DataSourceItem) => {
+        if (!a.uploaded_on || !b.uploaded_on) return 0;
+        return a.uploaded_on < b.uploaded_on ? 1 : -1;
+      },
+    },
+  ];
+
+  let dataSource: DataSourceItem[] = [];
+
+  //displayOption === 'grid'
+  if (displayOption === 'list') {
+    dataSource = [
+      ...files.map((file) => ({
+        key: file.id,
+        name: (
+          <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}>
+            <img src={file.type === 'image/png' ? FileImageIcon.src : FileIcon.src} width={20} height={20} alt="Icon" />
+            <span style={{ display: 'inline-flex', marginLeft: '8px' }}>{file.title}</span>
+          </div>
+        ),
+        type: file.type,
+        uploaded_on: file.uploaded_on,
+      })),
+    ];
+
+    const folders = getFolders();
+    if (folders) {
+      dataSource = [
+        ...folders.map((folder) => {
+          const folderIcon = [];
+          if (folder.folder.type === 'back_to_projects') {
+            folderIcon.push(
+              <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}>
+                <Link href={`/files`} style={{ display: 'flex' }}>
+                  <img src={FileArrayLeftLong.src} width={22} height={22} alt="Icon" />
+                  <span style={{ display: 'inline-flex', marginLeft: '8px' }}>{folder.folder.name}</span>
+                </Link>
+              </div>
+            );
+          } else {
+            folderIcon.push(
+              <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}>
+                <Link href={`/projects/${project.id}/files`} style={{ display: 'flex' }}>
+                  <img src={FolderIcon.src} width={22} height={22} alt="Icon" />
+                  <span style={{ display: 'inline-flex', marginLeft: '8px' }}>{folder.folder.name}</span>
+                </Link>
+              </div>
+            );
+          }
+          return {
+            key: folder.folder.id as number,
+            name: folderIcon,
+            type: folder.folder.type !== 'back_to_projects' ? folder.folder.type : '',
+            uploaded_on: '',
+          };
+        }),
+        ...dataSource,
+      ];
+    }
+  }
+
   return (
     <div className="page" ref={pageRef}>
       <div className={styles.projectsPage}>
@@ -359,7 +448,17 @@ const FilesOfProjectPage = ({
               folders={getFolders()}
             />
           ) : (
-            <div>TABLE</div>
+            <Table
+              columns={columns}
+              dataSource={dataSource}
+              pagination={false}
+              size={'large'}
+              locale={{
+                triggerAsc: 'Trier de manière ascendante',
+                triggerDesc: 'Trier de manière descendante',
+                cancelSort: 'Ne pas trier',
+              }}
+            />
           )}
         </div>
       </div>
