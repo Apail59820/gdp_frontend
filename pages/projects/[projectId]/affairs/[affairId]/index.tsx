@@ -1,7 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../../../../../styles/Affair.module.scss';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { GdpProjectsModel } from '../../../../../models/GdPModels';
+import {
+  GdpActivitiesModel,
+  GdpFilesModel,
+  GdpProjectsModel,
+  GdpPythagoreFactureModel,
+  GdpSatisfactionModel,
+} from '../../../../../models/GdPModels';
 import { GdpAffairModel } from '../../../../../models/GdPModels';
 import { Breadcrumb, QuickActionCard } from '@projex/ui';
 import Grid from '../../../../../src/components/Grid/Grid';
@@ -11,7 +17,6 @@ import ClientTeamWidget from '../../../../../src/components/ClientTeamWidget/Cli
 import CollaboratorTeamWidget from '../../../../../src/components/CollaboratorTeamWidget/CollaboratorTeamWidget';
 import BillingWidget from '../../../../../src/components/BillingWidget/BillingWidget';
 import FilesWidget from '../../../../../src/components/FilesWidget/FilesWidget';
-import StatisticsWidget from '../../../../../src/components/StatisticsWidget/StatisticsWidget';
 import { capitalize } from '../../../../../utils/capitalize';
 import PhasesWidget from '../../../../../src/components/PhasesWidget/PhasesWidget';
 import { getGdpAffair } from '../../../../../services/gestionDeProjets/GdpAffairs';
@@ -22,6 +27,12 @@ import { getGdpAffairsPhases } from '../../../../../services/gestionDeProjets/Gd
 import { UsUserModel } from '../../../../../models/UserService/UsUserModel';
 import { getGdpAffairsUsers } from '../../../../../services/gestionDeProjets/GdpAffairsUsers';
 import { getUsUsers } from '../../../../../services/userService/UsUsers';
+import { getGdpActivities } from '../../../../../services/gestionDeProjets/GdpActivities';
+import { getGdpAffairsPythagoreAffairs } from '../../../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
+import { getGdpPythagoreFactures } from '../../../../../services/gestionDeProjets/GdpPythagoreFactures';
+import { getGdpFiles } from '../../../../../services/gestionDeProjets/GdpFiles';
+import SatisfactionWidget from '../../../../../src/components/SatisfactionWidget/SatisfactionWidget';
+import { getGdpSatisfactions } from '../../../../../services/gestionDeProjets/GdpAffairsSatisfaction';
 
 const Affair = () => {
   const { query } = useRouter();
@@ -30,6 +41,10 @@ const Affair = () => {
   const [affairPhases, setAffairPhases] = useState<Partial<GdpAffairModel>[]>([]);
   const [affairManagers, setAffairManagers] = useState<Partial<UsUserModel>[]>([]);
   const [affairClients, setAffairClients] = useState<Partial<UsUserModel>[]>([]);
+  const [affairActivities, setAffairActivities] = useState<Partial<GdpActivitiesModel>[]>([]);
+  const [affairInvoices, setAffairInvoices] = useState<Partial<GdpPythagoreFactureModel>[]>([]);
+  const [files, setFiles] = useState<Partial<GdpFilesModel>[]>([]);
+  const [affairSatisfactions, setAffairSatisfactions] = useState<Partial<GdpSatisfactionModel>[]>([]);
 
   const progressPercentage = useMemo(() => {
     const requiredProps = ['name', 'company_entity', 'projects_id'];
@@ -184,6 +199,105 @@ const Affair = () => {
     }
   }, [affair]);
 
+  // Retrieve activities
+  useEffect(() => {
+    getGdpActivities({
+      filter: {
+        _and: [
+          { projects_id: { _eq: affair.id } },
+          {
+            collection: {
+              _in: ['projects', 'projects_directus_users_clients', 'projects_directus_users_collaborators'],
+            },
+          },
+        ],
+      },
+    }).then((res) => {
+      if (res.status === 200 && res.data) {
+        setAffairActivities(res.data);
+      } else {
+        setAffairActivities([]);
+      }
+    });
+  }, [affair.id]);
+
+  useEffect(() => {
+    if (affair.pythagore_ids && affair.pythagore_ids.length > 0) {
+      const affairPythagoreAffairIds: number[] = [];
+      const pythagoreAffairIds: string[] = [];
+      affair.pythagore_ids.forEach((affairPythagoreAffairRelation) => {
+        if (typeof affairPythagoreAffairRelation === 'number')
+          affairPythagoreAffairIds.push(affairPythagoreAffairRelation);
+        else if (affairPythagoreAffairRelation.pythagore_affaires_id)
+          if (typeof affairPythagoreAffairRelation.pythagore_affaires_id === 'string')
+            pythagoreAffairIds.push(affairPythagoreAffairRelation.pythagore_affaires_id);
+          else if (affairPythagoreAffairRelation.pythagore_affaires_id.numero_affaire) {
+            pythagoreAffairIds.push(affairPythagoreAffairRelation.pythagore_affaires_id.numero_affaire);
+          }
+      });
+      if (affairPythagoreAffairIds.length > 0 && pythagoreAffairIds.length < 3) {
+        getGdpAffairsPythagoreAffairs({
+          filter: {
+            id: { _in: affairPythagoreAffairIds },
+          },
+          limit: 3,
+        }).then((res) => {
+          if (res.status === 200 && res.data) {
+            res.data.forEach((affairPythagoreAffairRelation) => {
+              if (affairPythagoreAffairRelation.pythagore_affaires_id)
+                if (typeof affairPythagoreAffairRelation.pythagore_affaires_id === 'string')
+                  pythagoreAffairIds.push(affairPythagoreAffairRelation.pythagore_affaires_id);
+                else if (affairPythagoreAffairRelation.pythagore_affaires_id.numero_affaire) {
+                  pythagoreAffairIds.push(affairPythagoreAffairRelation.pythagore_affaires_id.numero_affaire);
+                }
+            });
+          }
+          if (pythagoreAffairIds.length > 0) {
+            getGdpPythagoreFactures({
+              filter: {
+                num_affaire: { _in: pythagoreAffairIds },
+              },
+              limit: 3,
+            }).then((res) => {
+              if (res.status === 200 && res.data) {
+                setAffairInvoices(res.data);
+              } else setAffairInvoices([]);
+            });
+          } else setAffairInvoices([]);
+        });
+      }
+    } else {
+      setAffairInvoices([]);
+    }
+  }, [affair.pythagore_ids]);
+
+  useEffect(() => {
+    getGdpFiles({
+      filter: {
+        projects_id: { _eq: affair.id },
+      },
+    }).then((res) => {
+      if (res.status === 200 && res.data) {
+        setFiles(res.data);
+      } else setFiles([]);
+    });
+  }, [affair.id]);
+
+  useEffect(() => {
+    if (affair) {
+      getGdpSatisfactions({
+        filter: {
+          affairs_id: { _eq: affair.id },
+        },
+      }).then((res) => {
+        if (res.status === 200 && res.data) setAffairSatisfactions(res.data);
+        else setAffairSatisfactions([]);
+      });
+    } else {
+      setAffairSatisfactions([]);
+    }
+  }, [affair]);
+
   return (
     <div className="page">
       <PageHeaderBanner
@@ -242,14 +356,14 @@ const Affair = () => {
         </section>
         <section>
           <Grid type="narrow">
-            <ActivitiesWidget activities={[]} />
-            <BillingWidget invoices={[]} onConfigureBillingClick={() => console.log('open modal ?')} />
+            <ActivitiesWidget activities={affairActivities} />
+            <BillingWidget invoices={affairInvoices} onConfigureBillingClick={() => console.log('open modal ?')} />
           </Grid>
         </section>
         <section>
           <Grid type="narrow">
-            <FilesWidget files={[]} onNewFileClick={() => console.log('open modal ?')} />
-            <StatisticsWidget statistics={[]} onNewStatisticClick={() => console.log('open modal ?')} />
+            <FilesWidget files={files} onNewFileClick={() => console.log('open modal ?')} />
+            <SatisfactionWidget satisfactions={affairSatisfactions} />
           </Grid>
         </section>
       </div>
