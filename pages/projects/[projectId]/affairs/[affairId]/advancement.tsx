@@ -20,6 +20,7 @@ import { getGdpAffairsPhases } from '../../../../../services/gestionDeProjets/Gd
 import { getGdpFiles } from '../../../../../services/gestionDeProjets/GdpFiles';
 import { isRequestSuccessful } from '../../../../../utils/isRequestSuccessful';
 import { getGdpActivities } from '../../../../../services/gestionDeProjets/GdpActivities';
+import CreatePhaseForm from '../../../../../src/components/CreatePhaseForm/CreatePhaseForm';
 
 const ACTIVITIES = [
   {
@@ -50,48 +51,74 @@ const Advancement = () => {
 
   const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
+  const [finalAffair, setFinalAffair] = useState<Partial<GdpAffairModel>>({});
   const [phases, setPhases] = useState<Partial<GdpPhaseModel>[]>([]);
+  const [phaseToModify, setPhaseToModify] = useState<Partial<GdpPhaseModel>>();
   const [activities, setActivities] = useState<Partial<GdpActivitiesModel>[]>([]);
-
+  const [dataFetched, setDataFetched] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [projectCompanyEntityName, setProjectCompanyEntityName] = useState<string>('Inconnue');
 
   useEffect(() => {
     if (projectId) {
-      if (projects.filter((project) => project.id === projectId).length > 0) {
-        return setProject(projects.filter((project) => project.id === projectId)[0]);
+      const existingProject = projects.find((project) => project.id === projectId);
+      if (existingProject) {
+        setProject(existingProject);
       } else {
         getGdpProjectById(projectId).then((res) => {
           if (isRequestSuccessful(res.status) && res.data) {
-            setProject(res.data);
-            dispatch(setProjects([...projects, res.data]));
+            const newProject = res.data;
+            setProject(newProject);
+            dispatch(setProjects([...projects, newProject]));
           }
         });
       }
+
       if (project.company_entity) {
         if (typeof project.company_entity === 'number') {
           getUsCompanyEntity(project.company_entity).then((res) => {
-            if (isRequestSuccessful(res.status) && res.data && res.data.name)
+            if (isRequestSuccessful(res.status) && res.data && res.data.name) {
               setProjectCompanyEntityName(res.data.name);
-            else setProjectCompanyEntityName('Inconnue');
+            } else {
+              setProjectCompanyEntityName('Inconnue');
+            }
           });
         } else {
-          project.company_entity.name
-            ? setProjectCompanyEntityName(project.company_entity.name)
-            : setProjectCompanyEntityName('Inconnue');
+          const companyEntityName = project.company_entity.name || 'Inconnue';
+          setProjectCompanyEntityName(companyEntityName);
         }
-      } else setProjectCompanyEntityName('Inconnue');
-    } else setProject({ id: -1, name: '' });
+      } else {
+        setProjectCompanyEntityName('Inconnue');
+      }
+    } else {
+      setProject({ id: -1, name: '' });
+    }
   }, [dispatch, project.company_entity, projectId, projects]);
 
+  // useEffect(() => {
+  //   if (affairId) {
+  //     getGdpAffair(affairId).then((res) => {
+  //       if (isRequestSuccessful(res.status) && res.data) {
+  //         const updatedAffair = { ...res.data };
+  //         setAffair(updatedAffair);
+  //       }
+  //     });
+  //   }
+  // }, [affairId]);
+
   useEffect(() => {
-    if (affairId) {
+    if (phases.length > 0 && affairId && !dataFetched) {
+      console.log('affair before final::', affair);
       getGdpAffair(affairId).then((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
-          setAffair(res.data);
+          const updatedAffair = { ...res.data, affairs_phases: phases };
+          console.log('updated affair:::', updatedAffair);
+          setFinalAffair(updatedAffair);
+          setDataFetched(true);
         }
       });
     }
-  }, [project, affairs, affairId]);
+  }, [phases, affair, affairId, dataFetched]);
 
   useEffect(() => {
     if (affairId) {
@@ -99,7 +126,7 @@ const Advancement = () => {
         filter: {
           affairs_id: { _in: affairId },
         },
-        fields: 'id,name,order,status,trigger_survey,activities_id,affairs_id,affairs_satisfaction',
+        fields: 'id, name, order, status, trigger_survey, activities_id, affairs_id, affairs_satisfaction, description',
       }).then((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
           setPhases(res.data);
@@ -109,46 +136,61 @@ const Advancement = () => {
   }, [affairId]);
 
   useEffect(() => {
-    if (projectId && affairId && phases) {
+    if (projectId && affairId && phases.length > 0) {
       getGdpActivities({
         filter: {
           affairs_id: { _eq: affairId },
         },
         fields:
-          'id, action, affairs_directus_users_id, affairs_id, affairs_phases_id, affairs_pythagore_affaires_id, affairs_satisfaction_id, collection, content, date_created, directus_files_id, projects_id, users_notifications_id',
+          'id,action,affairs_directus_users_id,affairs_id,affairs_phases_id,affairs_pythagore_affaires_id,affairs_satisfaction_id,collection,content,date_created,directus_files_id,projects_id,users_notifications_id',
       }).then((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
           setActivities(res.data);
         }
       });
     }
-  }, [affairId]);
+  }, [projectId, affairId, phases]);
+
+  if (finalAffair.affairs_phases) {
+    console.log('affair final:::::', finalAffair);
+  } else {
+    console.log('defini affair_phases', finalAffair.affairs_phases);
+  }
 
   return (
-    <div className="page">
-      <PageHeaderBanner data={project} />
-      <div className={styles.advancementPage}>
-        <Breadcrumb dynamicRoutesLabel={[project.name!, affair.name!]} />
-        <div className={styles.head}>
-          <h1>Nom de l&apos;affaire - Avancement</h1>
-          <Button small icon={<PlusOutlined />}>
-            Ajouter une étape
-          </Button>
-        </div>
-        <div className={styles.body}>
-          <div className={styles.phases}>
-            {phases.map((phase) => (
-              <section className={styles.phaseContainer} key={phase.id}>
-                <Phase phase={phase} affair_id={affairId} project_id={projectId} />
-              </section>
-            ))}
+    <>
+      <CreatePhaseForm project={project} affair={finalAffair} isOpen={isOpen} setIsOpen={setIsOpen} />
+      <div className="page">
+        <PageHeaderBanner data={project} />
+        <div className={styles.advancementPage}>
+          <Breadcrumb dynamicRoutesLabel={[project.name!, affair.name!]} />
+          <div className={styles.head}>
+            <h1>Nom de l&apos;affaire - Avancement</h1>
+            <Button
+              small
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setIsOpen(true);
+              }}
+            >
+              Ajouter une étape
+            </Button>
           </div>
-          <div className={styles.activitiesWidgetContainer}>
-            <ActivitiesWidget activities={activities} />
+          <div className={styles.body}>
+            <div className={styles.phases}>
+              {phases.map((phase) => (
+                <section className={styles.phaseContainer} key={phase.id}>
+                  <Phase phase={phase} affair={finalAffair} project={project} />
+                </section>
+              ))}
+            </div>
+            <div className={styles.activitiesWidgetContainer}>
+              <ActivitiesWidget activities={activities} />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

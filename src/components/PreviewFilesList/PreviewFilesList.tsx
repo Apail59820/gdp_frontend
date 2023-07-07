@@ -5,6 +5,7 @@ import { DateTime } from 'luxon';
 import Link from 'next/link';
 import { ShadowCard } from '@projex/ui';
 import { GdpFilesModel } from '../../../models/GestionDeProjets/GdpFilesModel';
+import Image from 'next/image';
 
 export type PreviewFilesListProps = {
   files: Partial<GdpFilesModel>[];
@@ -38,7 +39,8 @@ const PreviewFilesList = ({ files, max = 4, allFilesPageHref }: PreviewFilesList
             <li className={styles.assetContainer} key={index}>
               <div className={styles.imgAndTitle}>
                 <div className={styles.imageContainer}>
-                  <img src={getImage().src} alt="Icon" />
+                  <Image src={getImage().src} fill alt="Icon" className={styles.image} />
+                  {/* <img src={getImage().src} alt="Icon" /> */}
                 </div>
                 <span className={styles.title}>{title}</span>
               </div>
