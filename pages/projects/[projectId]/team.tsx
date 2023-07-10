@@ -12,6 +12,8 @@ import CollaboratorTeamWidget from '../../../src/components/CollaboratorTeamWidg
 import UserCard from '../../../src/components/UserCard/UserCard';
 import { UsUserModel } from '../../../models/UsModels';
 import { getUsUsers } from '../../../services/userService/UsUsers';
+import ManageProjectsCollaboratorForm from '../../../src/components/ManageProjectsCollaboratorForm/ManageProjectsCollaboratorForm';
+import ManageProjectManagers from '../../../src/components/ManageProjectManagers/ManageProjectManagers';
 
 const Team = () => {
   const router = useRouter();
@@ -22,6 +24,9 @@ const Team = () => {
   const [projectManagers, setProjectManagers] = useState<Partial<UsUserModel>[]>([]);
   const [projectClients, setProjectClients] = useState<Partial<UsUserModel>[]>([]);
   const [projectCollaborators, setProjectCollaborators] = useState<Partial<UsUserModel>[]>([]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddManagerModalOpen, setIsAddManagerModalOpen] = useState(false);
 
   const { projectId } = router.query;
 
@@ -44,12 +49,16 @@ const Team = () => {
     )
       .then((res) => {
         if (isRequestSuccessful(res.status) && res.data) setProject(res.data);
-        else setProject({});
+        else {
+          setProject({});
+          router.push('/404');
+        }
       })
       .catch((e) => {
         // eslint-disable-next-line no-console
         console.error(e);
         setProject({});
+        router.push('/404');
       })
       .finally(() => setIsLoading(false));
   }, [router, projectId]);
@@ -143,25 +152,23 @@ const Team = () => {
             <ManageItemCard
               label="Ajouter un chef de projet"
               onClick={() => {
-                // TODO Handle click
+                setIsAddManagerModalOpen(true);
               }}
             />
           </Grid>
         </Section>
         <Section title="Clients">
-          <Grid>
-            {projectClients.map((client) => (
-              <React.Fragment key={client.id}>
-                <UserCard user={client} onKebabMenuClick={() => {}} />
-              </React.Fragment>
-            ))}
-            <ManageItemCard
-              label="Ajouter un client"
-              onClick={() => {
-                // TODO Handle click
-              }}
-            />
-          </Grid>
+          {projectClients.length ? (
+            <Grid>
+              {projectClients.map((client) => (
+                <React.Fragment key={client.id}>
+                  <UserCard user={client} onKebabMenuClick={() => {}} />
+                </React.Fragment>
+              ))}
+            </Grid>
+          ) : (
+            <p>Aucun client n&apos;est lié à ce projet.</p>
+          )}
         </Section>
         <Section title="Équipe">
           <Grid>
@@ -173,11 +180,19 @@ const Team = () => {
             <ManageItemCard
               label="Ajouter un collaborateur"
               onClick={() => {
-                // TODO Handle click
+                setIsModalOpen(true);
               }}
             />
           </Grid>
         </Section>
+        {project.id ? (
+          <ManageProjectsCollaboratorForm isOpen={isModalOpen} setIsOpen={setIsModalOpen} projectId={project.id} />
+        ) : null}
+        <ManageProjectManagers
+          open={isAddManagerModalOpen}
+          onClose={() => setIsAddManagerModalOpen(false)}
+          project={project}
+        />
       </div>
     </div>
   );

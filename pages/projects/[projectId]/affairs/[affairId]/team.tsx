@@ -20,6 +20,7 @@ import { UsUserModel } from '../../../../../models/UsModels';
 import UserCard from '../../../../../src/components/UserCard/UserCard';
 import { getUsUsers } from '../../../../../services/userService/UsUsers';
 import ManageAffairUsersForm from '../../../../../src/components/ManageAffairUsersForm/ManageAffairUsersForm';
+import ManageAffairManagerForm from '../../../../../src/components/ManageAffairManagerForm/ManageAffairManagerForm';
 
 const Team = () => {
   const router = useRouter();
@@ -36,6 +37,7 @@ const Team = () => {
 
   const [userToAddType, setUserToAddType] = useState<'collaborator' | 'client'>('collaborator');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddManagerModalOpen, setIsAddManagerModalOpen] = useState(false);
 
   const { projectId, affairId } = router.query;
 
@@ -58,23 +60,31 @@ const Team = () => {
     )
       .then((res) => {
         if (isRequestSuccessful(res.status) && res.data) setProject(res.data);
-        else setProject({});
+        else {
+          setProject({});
+          router.push('/404');
+        }
       })
       .catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error);
         setProject({});
+        router.push('/404');
       });
 
     getGdpAffair(+affairId)
       .then((res) => {
         if (isRequestSuccessful(res.status) && res.data) setAffair(res.data);
-        else setAffair({});
+        else {
+          setAffair({});
+          router.push('/404');
+        }
       })
       .catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error);
         setAffair({});
+        router.push('/404');
       })
       .finally(() => setIsLoading(false));
   }, [router, projectId, affairId]);
@@ -194,8 +204,7 @@ const Team = () => {
             <ManageItemCard
               label="Ajouter un responsable d'affaire"
               onClick={() => {
-                setUserToAddType('collaborator');
-                setIsModalOpen(true);
+                setIsAddManagerModalOpen(true);
               }}
             />
           </Grid>
@@ -216,6 +225,7 @@ const Team = () => {
             />
           </Grid>
         </Section>
+        <ManageAffairManagerForm isOpen={isAddManagerModalOpen} setIsOpen={setIsAddManagerModalOpen} affair={affair} />
         <ManageAffairUsersForm
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
