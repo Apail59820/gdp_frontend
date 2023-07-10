@@ -67,7 +67,7 @@ const Team = () => {
       },
     });
 
-    if (response.status === 200 && response.data) return setProjectClients(response.data);
+    if (isRequestSuccessful(response.status) && response.data) return setProjectClients(response.data);
     setProjectClients([]);
   };
 
@@ -86,7 +86,7 @@ const Team = () => {
       },
     });
 
-    if (response.status === 200 && response.data) return setProjectManagers(response.data);
+    if (isRequestSuccessful(response.status) && response.data) return setProjectManagers(response.data);
     setProjectManagers([]);
   };
 
@@ -105,7 +105,7 @@ const Team = () => {
       },
     });
 
-    if (response.status === 200 && response.data) return setProjectCollaborators(response.data);
+    if (isRequestSuccessful(response.status) && response.data) return setProjectCollaborators(response.data);
     setProjectCollaborators([]);
   };
 
