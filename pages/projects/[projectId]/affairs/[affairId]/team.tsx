@@ -19,6 +19,7 @@ import CollaboratorTeamWidget from '../../../../../src/components/CollaboratorTe
 import { UsUserModel } from '../../../../../models/UsModels';
 import UserCard from '../../../../../src/components/UserCard/UserCard';
 import { getUsUsers } from '../../../../../services/userService/UsUsers';
+import ManageAffairUsersForm from '../../../../../src/components/ManageAffairUsersForm/ManageAffairUsersForm';
 
 const Team = () => {
   const router = useRouter();
@@ -33,6 +34,9 @@ const Team = () => {
   const [affairManagers, setAffairManagers] = useState<Partial<UsUserModel>[]>([]);
   const [affairCollaborators, setAffairCollaborators] = useState<Partial<UsUserModel>[]>([]);
 
+  const [userToAddType, setUserToAddType] = useState<'collaborator' | 'client'>('collaborator');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { projectId, affairId } = router.query;
 
   useEffect(() => {
@@ -45,7 +49,7 @@ const Team = () => {
       [
         'id',
         'name',
-        'company_entity.*',
+        'company_entity',
         'projects_directus_users_clients_ids.*',
         'projects_directus_users_collaborators_ids.*',
         'status',
@@ -162,11 +166,21 @@ const Team = () => {
         <h1 className={styles.title}>{affair.name} - L&apos;équipe</h1>
         <section>
           <Grid type="narrow">
-            <ClientTeamWidget users={projectClients} clientCompany={{}} onAddClientClick={() => {}} />
+            <ClientTeamWidget
+              users={projectClients}
+              clientCompany={{}}
+              onAddClientClick={() => {
+                setUserToAddType('client');
+                setIsModalOpen(true);
+              }}
+            />
             <CollaboratorTeamWidget
               users={projectManagers}
               companyEntity={'companyEntity'}
-              onAddCollaboratorClick={() => {}}
+              onAddCollaboratorClick={() => {
+                setUserToAddType('collaborator');
+                setIsModalOpen(true);
+              }}
             />
           </Grid>
         </section>
@@ -180,7 +194,8 @@ const Team = () => {
             <ManageItemCard
               label="Ajouter un responsable d'affaire"
               onClick={() => {
-                // TODO Handle click
+                setUserToAddType('collaborator');
+                setIsModalOpen(true);
               }}
             />
           </Grid>
@@ -195,11 +210,18 @@ const Team = () => {
             <ManageItemCard
               label="Ajouter un collaborateur à l'affaire"
               onClick={() => {
-                // TODO Handle click
+                setUserToAddType('collaborator');
+                setIsModalOpen(true);
               }}
             />
           </Grid>
         </Section>
+        <ManageAffairUsersForm
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+          affair={affair}
+          userType={userToAddType}
+        />
       </div>
     </div>
   );
