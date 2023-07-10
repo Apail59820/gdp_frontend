@@ -54,27 +54,8 @@ const Team = () => {
       .finally(() => setIsLoading(false));
   }, [router, projectId]);
 
-  const retrieveProjectManagers = async () => {
-    const projectManagersIds: string[] = (
-      project.projects_directus_users_collaborators_ids as GdpProjectsCollaboratorsModel[]
-    )
-      ?.filter((user) => user.project_manager)
-      .map((user) => user.directus_users_id as string);
-
-    const response = await getUsUsers({
-      filter: {
-        id: {
-          _in: projectManagersIds,
-        },
-      },
-    });
-
-    if (response.status === 200 && response.data) return setProjectManagers(response.data);
-    setProjectManagers([]);
-  };
-
   const retrieveProjectClients = async () => {
-    const projectClientsIds: string[] = (project.projects_directus_users_clients_ids as GdpProjectsClientsModel[]).map(
+    const projectClientsIds: string[] = (project.projects_directus_users_clients_ids as GdpProjectsClientsModel[])?.map(
       (user) => user.directus_users_id as string
     );
 
@@ -90,10 +71,31 @@ const Team = () => {
     setProjectClients([]);
   };
 
+  const retrieveProjectManagers = async () => {
+    const projectManagersIds: string[] = (
+      project.projects_directus_users_collaborators_ids as GdpProjectsCollaboratorsModel[]
+    )
+      ?.filter((user) => user.project_manager)
+      ?.map((user) => user.directus_users_id as string);
+
+    const response = await getUsUsers({
+      filter: {
+        id: {
+          _in: projectManagersIds,
+        },
+      },
+    });
+
+    if (response.status === 200 && response.data) return setProjectManagers(response.data);
+    setProjectManagers([]);
+  };
+
   const retrieveProjectCollaborators = async () => {
     const projectCollaboratorsIds: string[] = (
       project.projects_directus_users_collaborators_ids as GdpProjectsCollaboratorsModel[]
-    ).map((user) => user.directus_users_id as string);
+    )
+      ?.filter((user) => !user.project_manager)
+      ?.map((user) => user.directus_users_id as string);
 
     const response = await getUsUsers({
       filter: {
@@ -108,8 +110,8 @@ const Team = () => {
   };
 
   useEffect(() => {
-    retrieveProjectManagers();
     retrieveProjectClients();
+    retrieveProjectManagers();
     retrieveProjectCollaborators();
   }, [project]);
 
@@ -119,7 +121,7 @@ const Team = () => {
     <div className="page">
       <PageHeaderBanner data={project} />
       <div className={styles.teamPage}>
-        <Breadcrumb dynamicRoutesLabel={[project.name!]} />
+        <Breadcrumb dynamicRoutesLabel={[project.name || 'Projet']} />
         <h1 className={styles.title}>L&apos;équipe du projet</h1>
         <section>
           <Grid type="narrow">
