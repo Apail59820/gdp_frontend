@@ -7,6 +7,7 @@ import { Tooltip } from 'antd';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 import UserInformations from '../UserInformations/UserInformations';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
+import Image from 'next/image';
 
 export type TeamCardProps = {
   users: Partial<UsUserModel>[];
