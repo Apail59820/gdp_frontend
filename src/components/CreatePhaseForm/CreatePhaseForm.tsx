@@ -20,6 +20,7 @@ type props = {
   isOpen: boolean;
   phase?: Partial<GdpPhaseModel>;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onUpdate?: () => void;
 };
 
 type formValues = {
@@ -36,7 +37,7 @@ enum displayStatus {
   'completed' = 'Terminée',
 }
 
-const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) => {
+const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }: props) => {
   const statusOptions: GdpPhaseStatusEnum[] = Object.values(GdpPhaseStatusEnum);
 
   const showConfirmDelete = () => {
@@ -61,6 +62,9 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
                     message.error(messages.general.error());
                   } else {
                     message.success(messages.general.success());
+                    if (onUpdate) {
+                      onUpdate();
+                    }
                     setIsOpen(false);
                     Modal.destroyAll();
                   }
@@ -84,10 +88,13 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
       name: values.name,
       status: values.status,
       description: values.description,
-      order: affair.affairs_phases.length + 1,
+      order: affair.affairs_phases_ids.length + 1,
     });
     if (isRequestSuccessful(response.status) && response.data) {
       message.success(messages.general.success());
+      if (onUpdate) {
+        onUpdate();
+      }
       setIsOpen(false);
     } else message.error(messages.general.error());
   }
@@ -100,16 +107,18 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
     });
     if (isRequestSuccessful(response.status) && response.data) {
       message.success(messages.general.success());
+
+      if (onUpdate) {
+        onUpdate();
+      }
       setIsOpen(false);
     } else message.error(messages.general.error());
   }
 
   const onSubmit = (values: formValues) => {
     if (phase) {
-      console.warn('br phase');
       updateAffairPhase(phase.id, values);
     } else {
-      console.warn('br affair');
       createAffairPhase(values);
     }
   };

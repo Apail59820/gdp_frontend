@@ -8,10 +8,11 @@ type Props = Omit<CollaboratorTeamCardProps, 'allUsersPageHref' | 'onKebabMenuCl
   onAddCollaboratorClick: React.MouseEventHandler<HTMLButtonElement>;
   type?: 'project' | 'affair';
   collaboratorTeamPageHref?: string;
+  displayConfigureButton?: boolean;
 };
 
 const CollaboratorTeamWidget = (props: Props) => {
-  const { onAddCollaboratorClick, type = 'project', collaboratorTeamPageHref } = props;
+  const { onAddCollaboratorClick, type = 'project', collaboratorTeamPageHref, displayConfigureButton } = props;
   const router = useRouter();
 
   const isCurrentPageTeamPage: boolean = router.asPath.split('/')[router.asPath.split('/').length - 1] === 'team';
@@ -34,7 +35,11 @@ const CollaboratorTeamWidget = (props: Props) => {
       ) : (
         <ConfigureWidget
           descriptionText="Aucun collaborateur ajouté au projet"
-          button={{ label: 'Ajouter des collaborateurs', onClick: onAddCollaboratorClick }}
+          button={
+            displayConfigureButton
+              ? { label: 'Ajouter des collaborateurs', onClick: onAddCollaboratorClick }
+              : undefined
+          }
         />
       )}
     </Section>

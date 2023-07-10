@@ -31,9 +31,9 @@ const AffairCard = ({ affair, onKebabMenuClick }: Props) => {
   const [affairManager, setAffairManager] = useState<string>('Manager inconnu');
 
   const affairPhasesCount: number = useMemo(() => {
-    if (affair.affairs_phases) return affair.affairs_phases?.length;
+    if (affair.affairs_phases_ids) return affair.affairs_phases_ids?.length;
     return 0;
-  }, [affair.affairs_phases]);
+  }, [affair.affairs_phases_ids]);
 
   const completedAffairPhasesCount: number = useMemo(
     () => affairPhases.filter((affairPhase) => affairPhase.status === 'completed').length,
@@ -48,10 +48,10 @@ const AffairCard = ({ affair, onKebabMenuClick }: Props) => {
 
   // useEffect to fetch affair phases
   useEffect(() => {
-    if (affair.affairs_phases) {
+    if (affair.affairs_phases_ids) {
       const tmpPhases: Partial<GdpPhaseModel>[] = [];
       const phasesIdToFetch: number[] = [];
-      affair.affairs_phases.forEach((phase) => {
+      affair.affairs_phases_ids.forEach((phase) => {
         if (typeof phase === 'number') phasesIdToFetch.push(phase);
         else tmpPhases.push(phase);
       });
@@ -66,7 +66,7 @@ const AffairCard = ({ affair, onKebabMenuClick }: Props) => {
         });
       }
     } else setAffairPhases([]);
-  }, [affair.affairs_phases]);
+  }, [affair.affairs_phases_ids]);
 
   // useEffect to fetch affair company entity
   useEffect(() => {

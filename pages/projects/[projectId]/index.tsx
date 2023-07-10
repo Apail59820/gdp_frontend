@@ -44,18 +44,30 @@ import {
 } from '../../../store/reducers/clientsCompanyEntitiesReducer';
 import { UsClientsCompanyEntitiesModel } from '../../../models/UserService/UsClientsCompanyEntitiesModel';
 import { getUsClientCompanyEntity } from '../../../services/userService/UsClientsCompanyEntities';
+import ConfigureFacturationForm from '../../../src/components/ConfigureFacturationForm/ConfigureFacturationForm';
+import UploadFilesFormUploadFilesForm from '../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
+import { selectUserProfile } from '../../../store/reducers/authReducer';
+import ManageProjectManagers from '../../../src/components/ManageProjectManagers/ManageProjectManagers';
 
 const Project = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const projectId = parseInt(router.query.projectId as string);
 
+  const me = useSelector(selectUserProfile);
   const projects = useSelector(selectProjects);
   const affairs = useSelector(selectAffairs);
   const clientCompanies = useSelector(selectClientsCompanyEntities);
 
+  const [isUserProjectManager, setIsUserProjectManager] = useState<boolean>(false);
+  const [isUserClassicCollaborator, setIsUserClassicCollaborator] = useState<boolean>(false);
+  const [isUserClient, setIsUserClient] = useState<boolean>(false);
+
   const [isCreateAffairFormOpen, setIsCreateAffairFormOpen] = React.useState<boolean>(false);
   const [isCreateProjectFormOpen, setIsCreateProjectFormOpen] = React.useState<boolean>(false);
+  const [isConfigureFacturationFormOpen, setIsConfigureFacturationFormOpen] = React.useState<boolean>(false);
+  const [isUploadFileFormOpen, setIsUploadFileFormOpen] = React.useState<boolean>(false);
+  const [isManageProjectManagersFormOpen, setIsManageProjectManagersFormOpen] = React.useState<boolean>(false);
 
   const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
   const progressPercentage = useMemo(() => {
@@ -119,17 +131,13 @@ const Project = () => {
 
     if (affairsIds) {
       affairsIds.forEach((affairId) => {
-        if (typeof affairId === 'number') affairsToFetch.push(affairId);
-        else tmpAffairs.push(affairId);
+        if (typeof affairId === 'number') {
+          if (affairs.filter((affair) => affair.id === affairId).length > 0) {
+            tmpAffairs.push(affairs.filter((affair) => affair.id === affairId)[0]);
+          } else affairsToFetch.push(affairId);
+        } else tmpAffairs.push(affairId);
       });
     }
-
-    affairsToFetch.forEach((affairId) => {
-      if (affairs.filter((affair) => affair.id === affairId).length > 0) {
-        tmpAffairs.push(affairs.filter((affair) => affair.id === affairId)[0]);
-        affairsToFetch.splice(affairsToFetch.indexOf(affairId), 1);
-      }
-    });
 
     if (affairsToFetch.length > 0) {
       getGdpAffairs({
@@ -177,6 +185,7 @@ const Project = () => {
 
     tmpRelations.forEach((relation) => {
       if (typeof relation.directus_users_id === 'string') clientIds.push(relation.directus_users_id);
+      if (me && relation.directus_users_id === me.id) setIsUserClient(true);
     });
 
     if (clientIds.length > 0) {
@@ -190,8 +199,9 @@ const Project = () => {
         } else setProjectClients([]);
       });
     } else setProjectClients([]);
-  }, [project]);
+  }, [me, project]);
 
+  // Get project managers
   useEffect(() => {
     const relationIds = project?.projects_directus_users_collaborators_ids;
     const relationToFetch: number[] = [];
@@ -200,21 +210,14 @@ const Project = () => {
     if (relationIds) {
       relationIds.forEach((relationId) => {
         if (typeof relationId === 'number') relationToFetch.push(relationId);
-        else if (relationId.project_manager) tmpRelations.push(relationId);
+        else tmpRelations.push(relationId);
       });
     }
 
     if (relationToFetch.length > 0) {
       getGdpProjectsUsersCollaborators({
         filter: {
-          _and: [
-            {
-              id: { _in: relationToFetch },
-            },
-            {
-              project_manager: { _eq: true },
-            },
-          ],
+          id: { _in: relationToFetch },
         },
         fields: 'id,directus_users_id',
       }).then((res) => {
@@ -224,9 +227,26 @@ const Project = () => {
       });
     }
 
-    const collaboratorIds: string[] = [];
+    const tmpRelationPM: Partial<GdpProjectsCollaboratorsModel>[] = [];
+    const tmpRelationClassic: Partial<GdpProjectsCollaboratorsModel>[] = [];
 
     tmpRelations.forEach((relation) => {
+      if (relation.project_manager) tmpRelationPM.push(relation);
+      else tmpRelationClassic.push(relation);
+    });
+
+    if (me && tmpRelationPM.filter((relation) => relation.directus_users_id === me.id).length > 0) {
+      setIsUserProjectManager(true);
+    } else {
+      setIsUserProjectManager(false);
+      if (me && tmpRelationClassic.filter((relation) => relation.directus_users_id === me.id).length > 0)
+        setIsUserClassicCollaborator(true);
+      else setIsUserClassicCollaborator(false);
+    }
+
+    const collaboratorIds: string[] = [];
+
+    tmpRelationPM.forEach((relation) => {
       if (typeof relation.directus_users_id === 'string') collaboratorIds.push(relation.directus_users_id);
     });
 
@@ -241,7 +261,7 @@ const Project = () => {
         } else setProjectManagers([]);
       });
     } else setProjectManagers([]);
-  }, [project]);
+  }, [me, project]);
 
   useEffect(() => {
     getGdpFiles({
@@ -267,6 +287,7 @@ const Project = () => {
           },
         ],
       },
+      sort: '-date_created',
     }).then((res) => {
       if (res.status === 200 && res.data) {
         setProjectActivities(res.data);
@@ -369,73 +390,105 @@ const Project = () => {
         <div className={styles.projectPage}>
           <Breadcrumb dynamicRoutesLabel={[project.name!]} />
           <div className={styles.titleContainer}>
-            <h1 className={styles.title}>Le projet</h1>
-            <Button icon={<EditOutlined />} onClick={() => setIsCreateProjectFormOpen(true)}>
-              Modifier le projet
-            </Button>
+            {/* start ---------------- EVERY FORM GOES HERE ---------------- start */}
+            <CreateAffairForm project={project} isOpen={isCreateAffairFormOpen} setIsOpen={setIsCreateAffairFormOpen} />
             <CreateProjectForm
               isOpen={isCreateProjectFormOpen}
               setIsOpen={setIsCreateProjectFormOpen}
               project={project}
             />
+            <ManageProjectManagers
+              open={isManageProjectManagersFormOpen}
+              onClose={() => setIsManageProjectManagersFormOpen(false)}
+              project={project}
+            />
+            <ConfigureFacturationForm
+              isOpen={isConfigureFacturationFormOpen}
+              setIsOpen={setIsConfigureFacturationFormOpen}
+              initProject={project}
+            />
+            <UploadFilesFormUploadFilesForm
+              isOpen={isUploadFileFormOpen}
+              mode={'files'}
+              setIsOpen={setIsUploadFileFormOpen}
+              project={project}
+            />
+            {/* end ---------------- EVERY FORM GOES HERE ---------------- end */}
+            <h1 className={styles.title}>Le projet</h1>
+            {isUserProjectManager && (
+              <Button icon={<EditOutlined />} onClick={() => setIsCreateProjectFormOpen(true)}>
+                Modifier le projet
+              </Button>
+            )}
           </div>
-          <QuickAccessWidget>
-            <Grid>
-              <QuickActionCard
-                title="Créez une nouvelle affaire"
-                button={{
-                  label: 'Ajouter une affaire',
-                  icon: <PlusOutlined />,
-                  onClick: () => setIsCreateAffairFormOpen(true),
-                }}
-              >
-                Vous pouvez désormais ajouter une affaire au projet afin d&apos;en suivre l&apos;évolution et la
-                facturation
-              </QuickActionCard>
-              <CreateAffairForm
-                project={project}
-                isOpen={isCreateAffairFormOpen}
-                setIsOpen={setIsCreateAffairFormOpen}
-              />
-              <QuickActionCard
-                title="Facturation"
-                button={{
-                  label: 'Configurer la facturation',
-                  icon: <EditOutlined />,
-                  onClick: () => console.log('open modal ?'),
-                }}
-              >
-                Vous pouvez associer les numéros Pythagore aux affaires correspondantes
-              </QuickActionCard>
-              <QuickActionCard title="Complétez le projet" progress={progressPercentage}>
-                Remplissez les informations du projet pour le compléter
-              </QuickActionCard>
-            </Grid>
-          </QuickAccessWidget>
-          <AffairsWidget affairs={projectAffairs} onNewAffairClick={() => setIsCreateAffairFormOpen(true)} />
+          {isUserProjectManager && (
+            <QuickAccessWidget>
+              <Grid>
+                <QuickActionCard
+                  title="Créez une nouvelle affaire"
+                  button={{
+                    label: 'Ajouter une affaire',
+                    icon: <PlusOutlined />,
+                    onClick: () => setIsCreateAffairFormOpen(true),
+                  }}
+                >
+                  Vous pouvez désormais ajouter une affaire au projet afin d&apos;en suivre l&apos;évolution et la
+                  facturation
+                </QuickActionCard>
+                <QuickActionCard
+                  title="Facturation"
+                  button={{
+                    label: 'Configurer la facturation',
+                    icon: <EditOutlined />,
+                    onClick: () => setIsConfigureFacturationFormOpen(true),
+                  }}
+                >
+                  Vous pouvez associer les numéros Pythagore aux affaires correspondantes
+                </QuickActionCard>
+                <QuickActionCard title="Complétez le projet" progress={progressPercentage}>
+                  Remplissez les informations du projet pour le compléter
+                </QuickActionCard>
+              </Grid>
+            </QuickAccessWidget>
+          )}
+          <AffairsWidget
+            affairs={projectAffairs}
+            onNewAffairClick={() => setIsCreateAffairFormOpen(true)}
+            displayCreateCard={isUserProjectManager}
+          />
           <section>
             <Grid type="narrow">
               <ClientTeamWidget
                 users={projectClients}
                 clientCompany={projectClientCompany}
-                onAddClientClick={() => console.log('open modal ?')}
+                onAddClientClick={() => console.log('clicked')}
+                displayConfigureButton={false}
               />
               <CollaboratorTeamWidget
                 users={projectManagers}
                 companyEntity={projectCompanyEntityName}
-                onAddCollaboratorClick={() => console.log('open modal ?')}
+                onAddCollaboratorClick={() => setIsManageProjectManagersFormOpen(true)}
+                displayConfigureButton={isUserProjectManager}
               />
             </Grid>
           </section>
           <section>
             <Grid type="narrow">
               <ActivitiesWidget activities={projectActivities} />
-              <BillingWidget invoices={projectInvoices} onConfigureBillingClick={() => console.log('open modal ?')} />
+              <BillingWidget
+                invoices={projectInvoices}
+                onConfigureBillingClick={() => setIsConfigureFacturationFormOpen(true)}
+                displayConfigureButton={isUserProjectManager}
+              />
             </Grid>
           </section>
           <section>
             <Grid type="narrow">
-              <FilesWidget files={files} onNewFileClick={() => console.log('open modal ?')} />
+              <FilesWidget
+                files={files}
+                onNewFileClick={() => setIsUploadFileFormOpen(true)}
+                displayConfigureButton={isUserProjectManager || isUserClassicCollaborator || isUserClient}
+              />
               <SatisfactionWidget satisfactions={projectSatisfactions} />
             </Grid>
           </section>

@@ -33,7 +33,7 @@ const CreateAffairForm = ({ project, affair, isOpen, setIsOpen }: props) => {
         name: values.affairName,
         company_entity: values.entity,
         projects_id: project.id,
-        affairs_phases: [],
+        affairs_phases_ids: [],
       });
       if (isRequestSuccessful(response.status) && response.data) {
         message.success(messages.general.success());

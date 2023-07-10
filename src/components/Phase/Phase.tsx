@@ -1,5 +1,5 @@
 import { ProgressBar, Section } from '@projex/ui';
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, createContext, useContext, useEffect, useState } from 'react';
 import FilesWidget from '../FilesWidget/FilesWidget';
 import PreviewFilesList from '../PreviewFilesList/PreviewFilesList';
 import styles from './Phase.module.scss';
@@ -11,18 +11,29 @@ import CreatePhaseForm from '../CreatePhaseForm/CreatePhaseForm';
 import { Button } from '@projex/ui';
 import { PlusOutlined, SmileOutlined } from '@ant-design/icons';
 import SatisfactionForm from '../SatisfactionForm/SatisfactionForm';
+import UploadFilesFormUploadFilesForm from '../filesForms/UploadFilesForm/UploadFilesForm';
+import getConfig from 'next/config';
+import { useSelector } from 'react-redux';
+import { selectUserProfile } from '../../../store/reducers/authReducer';
+
+const { publicRuntimeConfig } = getConfig();
 
 type Props = {
   phase: Partial<GdpPhaseModel>;
   affair: Partial<GdpAffairModel>;
   project: Partial<GdpProjectsModel>;
+  satisfactionDone: boolean;
+  setIsPhaseUpdated: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Phase = ({ phase, affair, project }: Props) => {
+const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated }: Props) => {
   const [files, setFiles] = useState<Partial<GdpFilesModel>[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [filesFetched, setFilesFetched] = useState<boolean>(false);
   const [isOpenSatisfactionForm, setIsOpenSatisfactionForm] = useState<boolean>(false);
+  const [isOpenFilesForm, setIsOpenFilesForm] = useState<boolean>(false);
+
+  const user = useSelector(selectUserProfile);
 
   useEffect(() => {
     if (!filesFetched) {
@@ -44,7 +55,7 @@ const Phase = ({ phase, affair, project }: Props) => {
       }
     } else {
     }
-  }, [phase, affair, project]);
+  }, [phase, affair, project, filesFetched]);
 
   const renderStatus = (): JSX.Element => {
     switch (phase.status) {
@@ -108,6 +119,7 @@ const Phase = ({ phase, affair, project }: Props) => {
         phase={phase}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        onUpdate={() => setIsPhaseUpdated(true)}
       ></CreatePhaseForm>
       <SatisfactionForm
         affair_id={affair.id!}
@@ -115,6 +127,16 @@ const Phase = ({ phase, affair, project }: Props) => {
         isOpen={isOpenSatisfactionForm}
         setIsOpen={setIsOpenSatisfactionForm}
       ></SatisfactionForm>
+      <UploadFilesFormUploadFilesForm
+        isOpen={isOpenFilesForm}
+        setIsOpen={setIsOpenFilesForm}
+        project={project}
+        affair={affair}
+        phase={phase}
+        onFileUpload={() => setFilesFetched(false)}
+        mode="files"
+      ></UploadFilesFormUploadFilesForm>
+
       <div className={styles.phase}>
         <section className={styles.aside}>
           <div>
@@ -148,10 +170,16 @@ const Phase = ({ phase, affair, project }: Props) => {
               </button>
             </div>
 
-            <span className={`text-small ${styles.statistics}`}>› Statistiques de satisfaction disponibles</span>
+            {(user?.role === publicRuntimeConfig.ROLE_COLLABORATOR_ID ||
+              user?.role === publicRuntimeConfig.ROLE_ADMIN_ID) && (
+              <span className={`text-small ${styles.statistics}`}>› Statistiques de satisfaction disponibles</span>
+            )}
           </div>
           {/* TODO ne pas afficher si aucun de fichiers associés */}
-          <Section title="Fichiers associés" link={{ label: 'Voir tous les fichiers', href: '/' }}>
+          <Section
+            title="Fichiers associés"
+            link={{ label: 'Voir tous les fichiers', href: `/projects/${project.id}/files` }}
+          >
             {filesFetched && <PreviewFilesList files={files} max={3} allFilesPageHref={'/'} />}
           </Section>
           <div className={styles.button}>
@@ -160,7 +188,7 @@ const Phase = ({ phase, affair, project }: Props) => {
               style="secondary"
               icon={<PlusOutlined />}
               onClick={() => {
-                console.log('pop modal ajout fichier');
+                setIsOpenFilesForm(true);
               }}
             >
               Ajouter des fichiers
@@ -171,6 +199,7 @@ const Phase = ({ phase, affair, project }: Props) => {
               <Button
                 style="secondary"
                 icon={<SmileOutlined />}
+                disabled={satisfactionDone}
                 onClick={() => {
                   setIsOpenSatisfactionForm(true);
                 }}

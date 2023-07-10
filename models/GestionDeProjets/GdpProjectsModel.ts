@@ -41,4 +41,6 @@ export type GdpProjectsModel = {
   files: string[] | GdpAffairModel[];
   affairs_ids: number[] | GdpAffairModel[];
   activities_id: number[] | GdpActivitiesModel[];
+
+  image: string | null;
 };

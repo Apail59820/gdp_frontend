@@ -19,7 +19,7 @@ export type GdpAffairModel = {
 
   company_entity: number | UsCompanyEntityModel;
   projects_id: number | GdpProjectsModel;
-  affairs_phases: number[] | Partial<GdpPhaseModel>[];
+  affairs_phases_ids: number[] | GdpPhaseModel[];
   pythagore_ids: number[] | GdpAffairsPythagoreAffairesModel[];
   affairs_satisfaction: string[] | number[] | GdpSatisfactionModel[];
   affairs_directus_users_ids: number[] | GdpAffairsUsersModel[];

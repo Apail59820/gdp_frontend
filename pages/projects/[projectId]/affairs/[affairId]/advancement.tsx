@@ -1,6 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button } from '@projex/ui';
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { CompanyEnum } from '../../../../../models/UsModels';
 import ActivitiesWidget from '../../../../../src/components/ActivitiesWidget/ActivitiesWidget';
 import PageHeaderBanner from '../../../../../src/components/PageHeaderBanner/PageHeaderBanner';
@@ -11,7 +11,13 @@ import { selectGlobalFilters } from '../../../../../store/reducers/globalFilterR
 import { selectProjects, selectProjectsCount, setProjects } from '../../../../../store/reducers/projectsReducer';
 import { globalAgent } from 'http';
 import { useRouter } from 'next/router';
-import { GdpActivitiesModel, GdpAffairModel, GdpPhaseModel, GdpProjectsModel } from '../../../../../models/GdPModels';
+import {
+  GdpActivitiesModel,
+  GdpAffairModel,
+  GdpPhaseModel,
+  GdpProjectsModel,
+  GdpSatisfactionModel,
+} from '../../../../../models/GdPModels';
 import { getGdpProjectById } from '../../../../../services/gestionDeProjets/GdpProjects';
 import { getUsCompanyEntity } from '../../../../../services/userService/UsCompanyEntities';
 import { getGdpAffair } from '../../../../../services/gestionDeProjets/GdpAffairs';
@@ -21,28 +27,26 @@ import { getGdpFiles } from '../../../../../services/gestionDeProjets/GdpFiles';
 import { isRequestSuccessful } from '../../../../../utils/isRequestSuccessful';
 import { getGdpActivities } from '../../../../../services/gestionDeProjets/GdpActivities';
 import CreatePhaseForm from '../../../../../src/components/CreatePhaseForm/CreatePhaseForm';
+import { selectUserProfile } from '../../../../../store/reducers/authReducer';
+import { getGdpSatisfactions } from '../../../../../services/gestionDeProjets/GdpAffairsSatisfaction';
+import getConfig from 'next/config';
 
-const ACTIVITIES = [
-  {
-    creationDate: '10/12/2022',
-    label: 'Ajout du fichier preview-facade.png',
-    author: 'Olivier Le Baron',
-  },
-  {
-    creationDate: '10/12/2022',
-    label: 'Ajout du fichier preview-facade.png',
-    author: 'Olivier Le Baron',
-  },
-  {
-    creationDate: '10/12/2022',
-    label: 'Ajout du fichier preview-facade.png',
-    author: 'Olivier Le Baron',
-  },
-];
+const { publicRuntimeConfig } = getConfig();
+
+interface IsatisfactionContext {
+  setHasSubmitSatisfaction: React.Dispatch<React.SetStateAction<boolean>>;
+  hasSubmitSatisfaction: boolean;
+}
+
+export const satisfactionContext = createContext<IsatisfactionContext>({
+  setHasSubmitSatisfaction: () => {},
+  hasSubmitSatisfaction: false,
+});
 
 const Advancement = () => {
   const projects = useSelector(selectProjects);
   const affairs = useSelector(selectAffairs);
+  const user = useSelector(selectUserProfile);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -53,8 +57,12 @@ const Advancement = () => {
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
   const [finalAffair, setFinalAffair] = useState<Partial<GdpAffairModel>>({});
   const [phases, setPhases] = useState<Partial<GdpPhaseModel>[]>([]);
-  const [phaseToModify, setPhaseToModify] = useState<Partial<GdpPhaseModel>>();
+  const [satisfactions, setSatisfactions] = useState<Partial<GdpSatisfactionModel>[]>([]);
   const [activities, setActivities] = useState<Partial<GdpActivitiesModel>[]>([]);
+  const [phaseUpdated, setPhaseUpdated] = useState<boolean>(false);
+
+  const [hasSubmitSatisfaction, setHasSubmitSatisfaction] = useState<boolean>(false);
+
   const [dataFetched, setDataFetched] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [projectCompanyEntityName, setProjectCompanyEntityName] = useState<string>('Inconnue');
@@ -95,24 +103,12 @@ const Advancement = () => {
     }
   }, [dispatch, project.company_entity, projectId, projects]);
 
-  // useEffect(() => {
-  //   if (affairId) {
-  //     getGdpAffair(affairId).then((res) => {
-  //       if (isRequestSuccessful(res.status) && res.data) {
-  //         const updatedAffair = { ...res.data };
-  //         setAffair(updatedAffair);
-  //       }
-  //     });
-  //   }
-  // }, [affairId]);
-
   useEffect(() => {
     if (phases.length > 0 && affairId && !dataFetched) {
-      console.log('affair before final::', affair);
       getGdpAffair(affairId).then((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
           const updatedAffair = { ...res.data, affairs_phases: phases };
-          console.log('updated affair:::', updatedAffair);
+
           setFinalAffair(updatedAffair);
           setDataFetched(true);
         }
@@ -130,10 +126,11 @@ const Advancement = () => {
       }).then((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
           setPhases(res.data);
+          setPhaseUpdated(false);
         }
       });
     }
-  }, [affairId]);
+  }, [affairId, phaseUpdated]);
 
   useEffect(() => {
     if (projectId && affairId && phases.length > 0) {
@@ -151,45 +148,73 @@ const Advancement = () => {
     }
   }, [projectId, affairId, phases]);
 
-  if (finalAffair.affairs_phases) {
-    console.log('affair final:::::', finalAffair);
-  } else {
-    console.log('defini affair_phases', finalAffair.affairs_phases);
-  }
+  useEffect(() => {
+    if (user) {
+      getGdpSatisfactions({
+        filter: {
+          user_created: { _eq: user.id },
+        },
+        fields: '*',
+      }).then((res) => {
+        if (isRequestSuccessful(res.status) && res.data) {
+          setSatisfactions(res.data);
+        }
+      });
+    }
+  }, [user, affair, phases, hasSubmitSatisfaction]);
 
   return (
     <>
-      <CreatePhaseForm project={project} affair={finalAffair} isOpen={isOpen} setIsOpen={setIsOpen} />
-      <div className="page">
-        <PageHeaderBanner data={project} />
-        <div className={styles.advancementPage}>
-          <Breadcrumb dynamicRoutesLabel={[project.name!, affair.name!]} />
-          <div className={styles.head}>
-            <h1>Nom de l&apos;affaire - Avancement</h1>
-            <Button
-              small
-              icon={<PlusOutlined />}
-              onClick={() => {
-                setIsOpen(true);
-              }}
-            >
-              Ajouter une étape
-            </Button>
-          </div>
-          <div className={styles.body}>
-            <div className={styles.phases}>
-              {phases.map((phase) => (
-                <section className={styles.phaseContainer} key={phase.id}>
-                  <Phase phase={phase} affair={finalAffair} project={project} />
-                </section>
-              ))}
+      <satisfactionContext.Provider
+        value={{
+          setHasSubmitSatisfaction,
+          hasSubmitSatisfaction,
+        }}
+      >
+        <CreatePhaseForm project={project} affair={finalAffair} isOpen={isOpen} setIsOpen={setIsOpen} />
+        <div className="page">
+          <PageHeaderBanner data={project} />
+          <div className={styles.advancementPage}>
+            <Breadcrumb dynamicRoutesLabel={[project.name!, affair.name!]} />
+            <div className={styles.head}>
+              <h1>Nom de l&apos;affaire - Avancement</h1>
+              <Button
+                small
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setIsOpen(true);
+                }}
+              >
+                Ajouter une étape
+              </Button>
             </div>
-            <div className={styles.activitiesWidgetContainer}>
-              <ActivitiesWidget activities={activities} />
+            <div className={styles.body}>
+              <div className={styles.phases}>
+                {phases.map((phase) => (
+                  <section className={styles.phaseContainer} key={phase.id}>
+                    <Phase
+                      phase={phase}
+                      affair={finalAffair}
+                      project={project}
+                      setIsPhaseUpdated={setPhaseUpdated}
+                      satisfactionDone={satisfactions.some((satisfaction) => {
+                        return (
+                          finalAffair.id === satisfaction.affairs_id &&
+                          phase.id === satisfaction.affairs_phases_id &&
+                          user?.id === satisfaction.user_created
+                        );
+                      })}
+                    />
+                  </section>
+                ))}
+              </div>
+              <div className={styles.activitiesWidgetContainer}>
+                <ActivitiesWidget activities={activities} />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </satisfactionContext.Provider>
     </>
   );
 };

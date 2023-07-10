@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Form, Input, message, Modal, Radio, RadioChangeEvent } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import styles from './SatisfactionForm.module.scss';
 import { CreateGdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
 import { Button } from '@projex/ui';
 import { createGdpSatisfaction } from '../../../services/gestionDeProjets/GdpAffairsSatisfaction';
+import { satisfactionContext } from '../../../pages/projects/[projectId]/affairs/[affairId]/advancement';
 
 type SatisfactionFormProps = {
   affair_id: number;
@@ -21,6 +22,8 @@ type FormProps = {
 
 const SatisfactionForm = ({ affair_id, affair_phases_id, isOpen, setIsOpen }: SatisfactionFormProps) => {
   const [form] = useForm();
+
+  const { setHasSubmitSatisfaction } = useContext(satisfactionContext);
 
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
@@ -56,15 +59,19 @@ const SatisfactionForm = ({ affair_id, affair_phases_id, isOpen, setIsOpen }: Sa
 
   const onFinish = (values: FormProps) => {
     if (affair_id && affair_phases_id && values.score_soft_skills && values.score_hard_skills) {
-      createGdpSatisfaction({ ...satisfactionValues, comment: values.comment }).then((response) => {
-        if (response.status === 200) {
-          setIsOpen(false);
-          form.resetFields();
-          setOpenConfirmModal(true);
-        } else {
-          message.error('Une erreur est survenue');
+      createGdpSatisfaction({ ...satisfactionValues, comment: values.comment, affairs_id: affair_id }).then(
+        (response) => {
+          if (response.status === 200) {
+            setIsOpen(false);
+
+            setHasSubmitSatisfaction(true);
+            form.resetFields();
+            setOpenConfirmModal(true);
+          } else {
+            message.error('Une erreur est survenue');
+          }
         }
-      });
+      );
     }
   };
 

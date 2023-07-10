@@ -51,6 +51,7 @@
   }
   .content {
     padding: 2.625rem 2rem;
+    padding-right: 0;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
@@ -59,6 +60,14 @@
     .subtitle {
       white-space: nowrap;
       text-overflow: ellipsis;
+    }
+    .title {
+      .longName {
+        position: relative;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
     .subtitle {
       font-size: 1rem;

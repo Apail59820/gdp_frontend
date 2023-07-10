@@ -12,9 +12,10 @@ type Props = {
   affairs: Partial<GdpAffairModel>[];
   onNewAffairClick: React.MouseEventHandler<HTMLButtonElement>;
   allAffairsPageHref?: string;
+  displayCreateCard?: boolean;
 };
 
-const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref }: Props) => {
+const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref, displayCreateCard }: Props) => {
   const router = useRouter();
 
   return (
@@ -33,9 +34,11 @@ const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref }: Props)
             <AffairCard affair={affair} onKebabMenuClick={() => console.log('handle click ?')} />
           </Link>
         ))}
-        <div className={styles.manageItemCardContainer}>
-          <ManageItemCard label="Nouvelle affaire" onClick={onNewAffairClick} />
-        </div>
+        {displayCreateCard && (
+          <div className={styles.manageItemCardContainer}>
+            <ManageItemCard label="Nouvelle affaire" onClick={onNewAffairClick} />
+          </div>
+        )}
       </Grid>
     </Section>
   );

@@ -27,8 +27,8 @@ type FacturesFiltersType = {
 };
 
 type Props = {
-  factures: Partial<GdpPythagoreFactureModel>[];
-  facturesCount: number | null;
+  files: Partial<GdpPythagoreFactureModel>[];
+  filesCount: number | null;
   setSpecificFilters: (newFilters: QueryParameters) => void;
   lazyLoadingState: LazyLoadingStateType;
   setLazyLoadingState: (newState: LazyLoadingStateType) => void;
@@ -46,13 +46,7 @@ let timerSearch: NodeJS.Timeout;
 
 let isNewDataLoading = false;
 
-const FacturesPage = ({
-  factures,
-  setSpecificFilters,
-  facturesCount,
-  lazyLoadingState,
-  setLazyLoadingState,
-}: Props) => {
+const FacturesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState, setLazyLoadingState }: Props) => {
   const pageRef = useRef<HTMLDivElement>(null);
 
   const globalFilters = useSelector(selectGlobalFilters);
@@ -108,12 +102,12 @@ const FacturesPage = ({
     if (pageRef && pageRef.current) {
       const page = pageRef.current;
       if (page.scrollTop + page.clientHeight >= page.scrollHeight - 400) {
-        if (facturesCount && factures.length < facturesCount && !isNewDataLoading) {
+        if (filesCount && files.length < filesCount && !isNewDataLoading) {
           //lazy Loading Specific
           isNewDataLoading = true;
           setLazyLoadingState({
             limit: lazyLoadingState.limit,
-            offset: factures.length,
+            offset: files.length,
             action: 'APPEND',
           });
           setTimeout(() => {
@@ -130,7 +124,7 @@ const FacturesPage = ({
     return () => {
       if (pageRef && pageRef.current) pageRef.current.removeEventListener('scroll', onScrollEvent);
     };
-  }, [facturesCount, factures, lazyLoadingState]);
+  }, [filesCount, files, lazyLoadingState]);
 
   return (
     <div className="page" ref={pageRef}>
@@ -142,7 +136,7 @@ const FacturesPage = ({
             <Input
               label={'Rechercher une facture'}
               value={facturesFilters.search}
-              setValue={(value) => setFacturesFilters({ ...facturesFilters, search: value })}
+              setValue={(value) => setFacturesFilters({ ...facturesFilters, search: `${value}` })}
               large={false}
             />
           </div>
@@ -198,7 +192,7 @@ const FacturesPage = ({
           </div>
         </div>
         <div className={styles.content}>
-          <BillingTable factures={factures} />
+          <BillingTable factures={files} />
         </div>
       </div>
     </div>
