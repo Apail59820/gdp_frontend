@@ -1,0 +1,18 @@
+.footer {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.customLabel {
+  margin: 0 0 8px 0;
+}
+
+.formListItems {
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
+  .formItem {
+    flex-grow: 1;
+  }
+}

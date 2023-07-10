@@ -7,6 +7,31 @@ import { Provider } from 'react-redux';
 import configureStore from '../store/store';
 import Authenticated from '../src/components/Authenticated/Authenticated';
 import { RetrieveGlobalData } from '../src/RetrieveGlobalData/RetrieveGlobalData';
+import { useSelector } from 'react-redux';
+import { selectUserProfile } from '../store/reducers/authReducer';
+import { useEffect, useState } from 'react';
+import { getUserAvatarByUserId } from '../utils/assets';
+
+const RenderTopBar = () => {
+  const user = useSelector(selectUserProfile);
+  const [userProfilePicture, setUserProfilePicture] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    if (user)
+      getUserAvatarByUserId(user.id!).then(({ data }) => {
+        setUserProfilePicture(data);
+      });
+  }, [user]);
+  return (
+    <TopBar
+      items={[
+        { label: 'Gestion de projet', href: '/href', active: true },
+        { label: 'Catalogue des solutions alternatives', href: '/href', active: false },
+      ]}
+      user={user}
+      avatar={userProfilePicture}
+    />
+  );
+};
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -21,12 +46,7 @@ export default function App({ Component, pageProps }: AppProps) {
               <title>Maïa</title>
             </Head>
             <header id="header">
-              <TopBar
-                items={[
-                  { label: 'Gestion de projet', href: '/href', active: true },
-                  { label: 'Catalogue des solutions alternatives', href: '/href', active: false },
-                ]}
-              />
+              <RenderTopBar />
             </header>
             <main id="main">
               <aside id="aside">

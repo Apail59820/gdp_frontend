@@ -3,7 +3,7 @@ import { GdpAffairModel } from './GdpAffairModel';
 import { GdpActivitiesModel } from './GdpActivitiesModel';
 
 export type GdpAffairsUsersModel = {
-  id: string;
+  id: number;
   show_notifications: boolean;
   project_manager: boolean;
 

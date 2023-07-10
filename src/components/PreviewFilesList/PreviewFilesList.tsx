@@ -7,7 +7,7 @@ import { ShadowCard } from '@projex/ui';
 import { GdpFilesModel } from '../../../models/GestionDeProjets/GdpFilesModel';
 
 export type PreviewFilesListProps = {
-  files: GdpFilesModel[];
+  files: Partial<GdpFilesModel>[];
   max?: number;
   allFilesPageHref?: string;
 };
@@ -22,12 +22,12 @@ const PreviewFilesList = ({ files, max = 4, allFilesPageHref }: PreviewFilesList
   };
 
   enum displayType {
-    'png' = 'Image PNG',
-    'pdf' = 'Document PDF',
-    'svg' = 'Image SVG',
-    'jpg' = 'Image JPG',
-    'zip' = 'Archive ZIP',
-    'rar' = 'Archive RAR',
+    'image/png' = 'Image PNG',
+    'application/pdf' = 'Document PDF',
+    'image/svg+xml' = 'Image SVG',
+    'image/jpeg' = 'Image JPG / JPEG',
+    'application/zip' = 'Archive ZIP',
+    'application/x-rar-compressed' = 'Archive RAR',
   }
 
   return (
@@ -47,7 +47,7 @@ const PreviewFilesList = ({ files, max = 4, allFilesPageHref }: PreviewFilesList
               )}
               {uploaded_on && (
                 <span className={styles.uploadDate}>
-                  {DateTime.fromISO('uploaded_on').setLocale('fr').toLocaleString(DateTime.DATE_FULL)}
+                  {DateTime.fromISO(uploaded_on).setLocale('fr').toLocaleString()}
                 </span>
               )}
             </li>

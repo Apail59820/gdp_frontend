@@ -6,9 +6,10 @@ import { Section } from '@projex/ui';
 
 type Props = PreviewFilesListProps & {
   onNewFileClick: React.MouseEventHandler<HTMLButtonElement>;
+  displayConfigureButton?: boolean;
 };
 
-const FilesWidget = ({ files, max, onNewFileClick, allFilesPageHref }: Props) => {
+const FilesWidget = ({ files, max, onNewFileClick, allFilesPageHref, displayConfigureButton }: Props) => {
   const router = useRouter();
 
   return (
@@ -17,7 +18,9 @@ const FilesWidget = ({ files, max, onNewFileClick, allFilesPageHref }: Props) =>
       link={
         files.length > 0
           ? {
-              label: `Voir le${files.length > 1 ? `s ${files.length}` : ''} fichier${files.length > 1 ? 's' : ''}`,
+              label: `Voir ${files.length > 1 ? `tous les ${files.length}` : 'le'} fichier${
+                files.length > 1 ? 's' : ''
+              }`,
               href: allFilesPageHref || `${router.asPath}/files`,
             }
           : undefined
@@ -28,10 +31,14 @@ const FilesWidget = ({ files, max, onNewFileClick, allFilesPageHref }: Props) =>
       ) : (
         <ConfigureWidget
           descriptionText="Vous n'avez aucun fichier"
-          button={{
-            label: 'Ajouter un fichier',
-            onClick: onNewFileClick,
-          }}
+          button={
+            displayConfigureButton
+              ? {
+                  label: 'Ajouter un fichier',
+                  onClick: onNewFileClick,
+                }
+              : undefined
+          }
         />
       )}
     </Section>

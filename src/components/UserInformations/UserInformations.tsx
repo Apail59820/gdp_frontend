@@ -10,6 +10,8 @@ export type UserInformationsProps = {
 };
 
 const UserInformations = ({ user }: UserInformationsProps) => {
+  const { first_name, last_name, title, company, number, email } = user;
+
   const getColorByCompany = () => {
     // switch (company?.toLowerCase()) {
     //   case CompanyEnum.AMEXIA:
@@ -34,7 +36,7 @@ const UserInformations = ({ user }: UserInformationsProps) => {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className={styles.image}
-        src={getImagesByCompany(user.company).picto}
+        src={user.avatar ?? getImagesByCompany(user.company!).picto}
         alt={`Photo de ${user.first_name} ${user.last_name}`}
       />
       <div className={styles.informationsContainer}>
@@ -44,9 +46,9 @@ const UserInformations = ({ user }: UserInformationsProps) => {
           </h4>
         </Link>
         <span className={`${styles.job} ${getColorByCompany()}`}>
-          {user?.role ? capitalize(user.role) : ''}
-          {user?.role && user?.company ? ' — ' : ''}
-          {user?.company ? capitalize(user.company) : ''}
+          {title ? capitalize(title) : ''}
+          {title && company ? ' — ' : ''}
+          {company ? capitalize(company) : ''}
         </span>
         <ul className={`small ${styles.informations}`}>
           {user?.number ? (

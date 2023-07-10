@@ -8,13 +8,20 @@ import { Section } from '@projex/ui';
 import { useRouter } from 'next/router';
 
 type Props = {
-  invoices: GdpPythagoreFactureModel[];
+  invoices: Partial<GdpPythagoreFactureModel>[];
   max?: number;
   onConfigureBillingClick: React.MouseEventHandler<HTMLButtonElement>;
   allInvoicesPageHref?: string;
+  displayConfigureButton?: boolean;
 };
 
-const BillingWidget = ({ invoices, max = 3, onConfigureBillingClick, allInvoicesPageHref }: Props) => {
+const BillingWidget = ({
+  invoices,
+  max = 3,
+  onConfigureBillingClick,
+  allInvoicesPageHref,
+  displayConfigureButton,
+}: Props) => {
   const router = useRouter();
 
   return (
@@ -33,7 +40,7 @@ const BillingWidget = ({ invoices, max = 3, onConfigureBillingClick, allInvoices
     >
       {invoices.length > 0 ? (
         <Grid type="narrow">
-          {invoices.slice(0, max).map((invoice: GdpPythagoreFactureModel) => (
+          {invoices.slice(0, max).map((invoice: Partial<GdpPythagoreFactureModel>) => (
             <InvoiceCard key={invoice.num_facture} invoice={invoice} />
           ))}
           <ManageItemCard type="edit" label="Configurer la facturation" onClick={onConfigureBillingClick} />
@@ -41,11 +48,15 @@ const BillingWidget = ({ invoices, max = 3, onConfigureBillingClick, allInvoices
       ) : (
         <ConfigureWidget
           descriptionText="Vous n'avez aucune facture configurée"
-          button={{
-            label: 'Configurer la facturation',
-            type: 'edit',
-            onClick: onConfigureBillingClick,
-          }}
+          button={
+            displayConfigureButton
+              ? {
+                  label: 'Configurer la facturation',
+                  type: 'edit',
+                  onClick: onConfigureBillingClick,
+                }
+              : undefined
+          }
         />
       )}
     </Section>

@@ -9,12 +9,13 @@ import Grid from '../Grid/Grid';
 import { Section } from '@projex/ui';
 
 type Props = {
-  affairs: GdpAffairModel[];
+  affairs: Partial<GdpAffairModel>[];
   onNewAffairClick: React.MouseEventHandler<HTMLButtonElement>;
   allAffairsPageHref?: string;
+  displayCreateCard?: boolean;
 };
 
-const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref }: Props) => {
+const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref, displayCreateCard }: Props) => {
   const router = useRouter();
 
   return (
@@ -27,15 +28,17 @@ const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref }: Props)
       }
     >
       <Grid>
-        {affairs.map((affair: GdpAffairModel) => (
+        {affairs.map((affair: Partial<GdpAffairModel>) => (
           <Link key={affair.id} href={`${router.asPath}/affairs/${affair.id}`}>
             {/* TODO Handle onClick */}
             <AffairCard affair={affair} onKebabMenuClick={() => console.log('handle click ?')} />
           </Link>
         ))}
-        <div className={styles.manageItemCardContainer}>
-          <ManageItemCard label="Nouvelle affaire" onClick={onNewAffairClick} />
-        </div>
+        {displayCreateCard && (
+          <div className={styles.manageItemCardContainer}>
+            <ManageItemCard label="Nouvelle affaire" onClick={onNewAffairClick} />
+          </div>
+        )}
       </Grid>
     </Section>
   );

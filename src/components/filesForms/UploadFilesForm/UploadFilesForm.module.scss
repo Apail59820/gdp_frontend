@@ -1,0 +1,56 @@
+@import "../../styles/utils/variables.scss";
+
+.FormContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
+  .UploadFilesSide {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    .FileListContainer {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .FileItem {
+      height: 100%;
+      width: 100%;
+      padding: 1rem;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.5rem;
+      word-break: break-word;
+
+      //background: #FFFFFF;
+      //box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+    }
+
+    .FileItemProgressBar {
+      width: 100%;
+      height: 8px;
+      background: #DDE3EB;
+
+      .FileItemProgressBarFilled {
+        height: 100%;
+        background: #002559;
+      }
+    }
+
+    .UploadActionsButtons {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+  }
+}

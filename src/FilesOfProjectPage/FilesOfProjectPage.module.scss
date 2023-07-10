@@ -1,0 +1,77 @@
+.projectsPage {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 2rem;
+
+  .titleBar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    .buttonAddFileContainer {
+      margin: auto 0;
+    }
+  }
+
+  .headAndFilters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border: solid #DDE3EB;
+    border-width: 1px 0;
+    padding: 1rem 0;
+    align-items: center;
+
+    .InputContainer {
+      flex-grow: 1;
+    }
+
+    .headItemContainer {
+      padding-top: 1.2rem;
+    }
+  }
+
+  .content {
+    .gridDisplay {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 1rem;
+
+      .card {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        border: solid 1px #d3d3d3;
+        cursor: pointer;
+        padding: 8px;
+
+        &:hover {
+          border: solid 2px #3eb1c9;
+          padding: 7px;
+        }
+
+        .cardText {
+          position: absolute;
+          top: 70px;
+          left: 0;
+          width: 100%;
+          height: 40px;
+          text-align: center;
+
+          > h3 {
+            margin: 0;
+          }
+
+          > h4 {
+            margin: 0;
+            color: #505050;
+          }
+        }
+      }
+
+    }
+  }
+}

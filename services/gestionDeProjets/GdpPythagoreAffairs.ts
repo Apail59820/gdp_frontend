@@ -54,7 +54,7 @@ export async function getGdpPythagoreAffaires(
  * @returns Promise containing the request status and the gdp pythagore affair corresponding to the id
  */
 export async function getGdpPythagoreAffaire(
-  id: number,
+  id: string,
   fields = defaultFields
 ): Promise<{ status: number; data?: Partial<GdpPythagoreAffaireModel> }> {
   const token = await retrieveToken();

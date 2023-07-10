@@ -28,7 +28,7 @@ export type GdpPythagoreFactureModel = {
   statut_facture: GdPPythagoreFactureStatut | null;
   etatreglt_facture: GdPPythagoreFactureReglement | null;
   nom_fichierpdf_facture: string | null;
-
+  nom_client: string | null;
   emails_logs?: number[] | GdpEmailsLogsModel[];
   code_client: string | GdpPythagoreClientModel | null;
   num_affaire: string | GdpPythagoreAffaireModel | null;

@@ -65,7 +65,7 @@ const FilesTable = ({ filesList }: props) => {
       const phases: GdpPhaseModel[] = [];
       const affairId = router.query.affairId;
       const myAffair = affairs.find((affair) => affair.id == affairId);
-      myAffair?.affairs_phases?.forEach((affairPhase) => {
+      myAffair?.affairs_phases_ids?.forEach((affairPhase) => {
         if (typeof affairPhase !== 'number') phases.push(affairPhase);
       });
       phases.map((phase) => tmp.push({ key: phase.id, title: phase.name, dataType: 'phase', id: phase.id.toString() }));

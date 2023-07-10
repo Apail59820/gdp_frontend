@@ -23,6 +23,7 @@ export type UsUserModel = {
   email_notifications: boolean | null;
   show_notifications: boolean | null;
   show_documentation: boolean | null;
+  avatar: string | null;
 
   activities_id: number[] | UsActivitiesModel[];
   clients_interactions_id: number[] | UsClientsInteractionsModel[];

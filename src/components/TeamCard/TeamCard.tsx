@@ -9,7 +9,7 @@ import UserInformations from '../UserInformations/UserInformations';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 
 export type TeamCardProps = {
-  users: UsUserModel[];
+  users: Partial<UsUserModel>[];
   maxIcon?: number;
   allUsersPageHref: string;
   aside: React.ReactNode;
@@ -17,7 +17,7 @@ export type TeamCardProps = {
 };
 
 const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClick }: TeamCardProps) => {
-  const [currentUser, setCurrentUser] = useState<UsUserModel>(users[0]);
+  const [currentUser, setCurrentUser] = useState<Partial<UsUserModel>>(users[0]);
 
   return (
     <ShadowCard>
@@ -28,13 +28,13 @@ const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClic
             <UserInformations user={currentUser} />
           </div>
           <ul className={styles.usersIconsContainer}>
-            {users.slice(0, maxIcon).map((user: UsUserModel) => (
+            {users.slice(0, maxIcon).map((user: Partial<UsUserModel>) => (
               <li key={user.id} className={styles.user} onClick={() => setCurrentUser(user)}>
                 <Tooltip title={`${user.first_name} ${user.last_name}`}>
                   <div className={styles.userIcon}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={getImagesByCompany(user.company).picto}
+                    <Image
+                      fill={true}
+                      src={user.avatar || getImagesByCompany(user.company!).picto}
                       alt={`Photo de ${user.first_name} ${user.last_name}`}
                     />
                   </div>
