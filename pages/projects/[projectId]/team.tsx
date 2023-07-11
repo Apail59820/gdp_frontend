@@ -156,18 +156,14 @@ const Team = () => {
               users={projectClients}
               clientCompany={(project.clients_company_entity as Partial<UsClientsCompanyEntitiesModel> | null) || {}}
             />
-            <CollaboratorTeamWidget
-              users={projectManagers}
-              companyEntity={companyEntity?.name || ''}
-              onAddCollaboratorClick={() => {}}
-            />
+            <CollaboratorTeamWidget users={projectManagers} companyEntity={companyEntity?.name || ''} />
           </Grid>
         </section>
         <Section title="Chefs de projet">
           <Grid>
             {projectManagers.map((manager) => (
               <React.Fragment key={manager.id}>
-                <UserCard user={manager} onKebabMenuClick={() => {}} />
+                <UserCard user={manager} />
               </React.Fragment>
             ))}
             <ManageItemCard

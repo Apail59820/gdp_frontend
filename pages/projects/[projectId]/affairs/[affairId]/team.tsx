@@ -16,11 +16,12 @@ import styles from '../../../../../styles/Team.module.scss';
 import { Breadcrumb, Grid, ManageItemCard, Section } from '@projex/ui';
 import ClientTeamWidget from '../../../../../src/components/ClientTeamWidget/ClientTeamWidget';
 import CollaboratorTeamWidget from '../../../../../src/components/CollaboratorTeamWidget/CollaboratorTeamWidget';
-import { UsUserModel } from '../../../../../models/UsModels';
+import { UsClientsCompanyEntitiesModel, UsCompanyEntityModel, UsUserModel } from '../../../../../models/UsModels';
 import UserCard from '../../../../../src/components/UserCard/UserCard';
 import { getUsUsers } from '../../../../../services/userService/UsUsers';
 import ManageAffairUsersForm from '../../../../../src/components/ManageAffairUsersForm/ManageAffairUsersForm';
 import ManageAffairManagerForm from '../../../../../src/components/ManageAffairManagerForm/ManageAffairManagerForm';
+import { getUsCompanyEntity } from '../../../../../services/userService/UsCompanyEntities';
 
 const Team = () => {
   const router = useRouter();
@@ -34,6 +35,8 @@ const Team = () => {
 
   const [affairManagers, setAffairManagers] = useState<Partial<UsUserModel>[]>([]);
   const [affairCollaborators, setAffairCollaborators] = useState<Partial<UsUserModel>[]>([]);
+
+  const [companyEntity, setCompanyEntity] = useState<Partial<UsCompanyEntityModel>>();
 
   const [userToAddType, setUserToAddType] = useState<'collaborator' | 'client'>('collaborator');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,6 +55,7 @@ const Team = () => {
         'id',
         'name',
         'company_entity',
+        'clients_company_entity',
         'projects_directus_users_clients_ids.*',
         'projects_directus_users_collaborators_ids.*',
         'status',
@@ -88,6 +92,19 @@ const Team = () => {
       })
       .finally(() => setIsLoading(false));
   }, [router, projectId, affairId]);
+
+  const retrieveProjectCompanyEntity = async () => {
+    if (!project.company_entity) return;
+
+    const response = await getUsCompanyEntity(project.company_entity as number);
+
+    if (isRequestSuccessful(response.status) && response.data) return setCompanyEntity(response.data);
+    setCompanyEntity({});
+  };
+
+  useEffect(() => {
+    retrieveProjectCompanyEntity();
+  }, [project.company_entity]);
 
   const retrieveProjectClients = async () => {
     const projectClientsIds: string[] = (project.projects_directus_users_clients_ids as GdpProjectsClientsModel[])?.map(
@@ -178,7 +195,7 @@ const Team = () => {
           <Grid type="narrow">
             <ClientTeamWidget
               users={projectClients}
-              clientCompany={{}}
+              clientCompany={(project.clients_company_entity as Partial<UsClientsCompanyEntitiesModel> | null) || {}}
               onAddClientClick={() => {
                 setUserToAddType('client');
                 setIsModalOpen(true);
@@ -187,7 +204,7 @@ const Team = () => {
             />
             <CollaboratorTeamWidget
               users={projectManagers}
-              companyEntity={'companyEntity'}
+              companyEntity={companyEntity?.name || ''}
               onAddCollaboratorClick={() => {
                 setUserToAddType('collaborator');
                 setIsModalOpen(true);
@@ -199,7 +216,7 @@ const Team = () => {
           <Grid>
             {affairManagers.map((manager) => (
               <React.Fragment key={manager.id}>
-                <UserCard user={manager} onKebabMenuClick={() => {}} />
+                <UserCard user={manager} />
               </React.Fragment>
             ))}
             <ManageItemCard
@@ -214,7 +231,7 @@ const Team = () => {
           <Grid>
             {affairCollaborators.map((collaborator) => (
               <React.Fragment key={collaborator.id}>
-                <UserCard user={collaborator} onKebabMenuClick={() => {}} />
+                <UserCard user={collaborator} />
               </React.Fragment>
             ))}
             <ManageItemCard
