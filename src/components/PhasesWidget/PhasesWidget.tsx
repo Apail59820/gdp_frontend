@@ -8,7 +8,7 @@ import PhaseCard from '../PhaseCard/PhaseCard';
 import type { GdpPhaseModel } from '../../../models/GestionDeProjets/GdpPhaseModel';
 
 type Props = {
-  phases: GdpPhaseModel[];
+  phases: Partial<GdpPhaseModel>[];
   onNewPhaseClick: React.MouseEventHandler<HTMLButtonElement>;
   allPhasesPageHref?: string;
 };
@@ -26,7 +26,7 @@ const PhasesWidget = ({ phases, onNewPhaseClick, allPhasesPageHref }: Props) => 
       }
     >
       <Grid>
-        {phases.map((phase: GdpPhaseModel) => (
+        {phases.map((phase: Partial<GdpPhaseModel>) => (
           <PhaseCard key={phase.id} phase={phase} onKebabMenuClick={() => console.log('handle click ?')} />
         ))}
         <div className={styles.manageItemCardContainer}>
