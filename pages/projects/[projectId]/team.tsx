@@ -10,10 +10,11 @@ import { Breadcrumb, Grid, ManageItemCard, Section } from '@projex/ui';
 import ClientTeamWidget from '../../../src/components/ClientTeamWidget/ClientTeamWidget';
 import CollaboratorTeamWidget from '../../../src/components/CollaboratorTeamWidget/CollaboratorTeamWidget';
 import UserCard from '../../../src/components/UserCard/UserCard';
-import { UsUserModel } from '../../../models/UsModels';
+import { UsClientsCompanyEntitiesModel, UsCompanyEntityModel, UsUserModel } from '../../../models/UsModels';
 import { getUsUsers } from '../../../services/userService/UsUsers';
 import ManageProjectsCollaboratorForm from '../../../src/components/ManageProjectsCollaboratorForm/ManageProjectsCollaboratorForm';
 import ManageProjectManagers from '../../../src/components/ManageProjectManagers/ManageProjectManagers';
+import { getUsCompanyEntity } from '../../../services/userService/UsCompanyEntities';
 
 const Team = () => {
   const router = useRouter();
@@ -24,6 +25,8 @@ const Team = () => {
   const [projectManagers, setProjectManagers] = useState<Partial<UsUserModel>[]>([]);
   const [projectClients, setProjectClients] = useState<Partial<UsUserModel>[]>([]);
   const [projectCollaborators, setProjectCollaborators] = useState<Partial<UsUserModel>[]>([]);
+
+  const [companyEntity, setCompanyEntity] = useState<Partial<UsCompanyEntityModel>>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddManagerModalOpen, setIsAddManagerModalOpen] = useState(false);
@@ -40,7 +43,9 @@ const Team = () => {
       [
         'id',
         'name',
-        'company_entity.*',
+        'company_entity',
+        'client_company_name',
+        'clients_company_entity',
         'projects_directus_users_clients_ids.*',
         'projects_directus_users_collaborators_ids.*',
         'status',
@@ -124,6 +129,19 @@ const Team = () => {
     retrieveProjectCollaborators();
   }, [project]);
 
+  const retrieveProjectCompanyEntity = async () => {
+    if (!project.company_entity) return;
+
+    const response = await getUsCompanyEntity(project.company_entity as number);
+
+    if (isRequestSuccessful(response.status) && response.data) return setCompanyEntity(response.data);
+    setCompanyEntity({});
+  };
+
+  useEffect(() => {
+    retrieveProjectCompanyEntity();
+  }, [project.company_entity]);
+
   if (isLoading) return null;
 
   return (
@@ -134,10 +152,13 @@ const Team = () => {
         <h1 className={styles.title}>L&apos;équipe du projet</h1>
         <section>
           <Grid type="narrow">
-            <ClientTeamWidget users={projectClients} clientCompany={{}} onAddClientClick={() => {}} />
+            <ClientTeamWidget
+              users={projectClients}
+              clientCompany={(project.clients_company_entity as Partial<UsClientsCompanyEntitiesModel> | null) || {}}
+            />
             <CollaboratorTeamWidget
-              users={projectCollaborators}
-              companyEntity={'companyEntity'}
+              users={projectManagers}
+              companyEntity={companyEntity?.name || ''}
               onAddCollaboratorClick={() => {}}
             />
           </Grid>
@@ -162,19 +183,19 @@ const Team = () => {
             <Grid>
               {projectClients.map((client) => (
                 <React.Fragment key={client.id}>
-                  <UserCard user={client} onKebabMenuClick={() => {}} />
+                  <UserCard user={client} />
                 </React.Fragment>
               ))}
             </Grid>
           ) : (
-            <p>Aucun client n&apos;est lié à ce projet.</p>
+            <p>Aucun client n&apos;est lié à ce projet. Veuillez ajouter vos clients aux affaires liées à ce projet.</p>
           )}
         </Section>
         <Section title="Équipe">
           <Grid>
             {projectCollaborators.map((collaborator) => (
               <React.Fragment key={collaborator.id}>
-                <UserCard user={collaborator} onKebabMenuClick={() => {}} />
+                <UserCard user={collaborator} />
               </React.Fragment>
             ))}
             <ManageItemCard

@@ -5,7 +5,7 @@ import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 import { Section } from '@projex/ui';
 
 type Props = Omit<ClientTeamCardProps, 'allUsersPageHref' | 'onKebabMenuClick'> & {
-  onAddClientClick: React.MouseEventHandler<HTMLButtonElement>;
+  onAddClientClick?: React.MouseEventHandler<HTMLButtonElement>;
   clientTeamPageHref?: string;
   displayConfigureButton?: boolean;
 };
@@ -32,7 +32,11 @@ const ClientTeamWidget = (props: Props) => {
       ) : (
         <ConfigureWidget
           descriptionText="Aucun client ajouté au projet, veuillez ajouter vos clients aux affaires liées à ce projet."
-          button={displayConfigureButton ? { label: 'Ajouter des clients', onClick: onAddClientClick } : undefined}
+          button={
+            displayConfigureButton && onAddClientClick
+              ? { label: 'Ajouter des clients', onClick: onAddClientClick }
+              : undefined
+          }
         />
       )}
     </Section>

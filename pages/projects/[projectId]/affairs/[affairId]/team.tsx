@@ -183,6 +183,7 @@ const Team = () => {
                 setUserToAddType('client');
                 setIsModalOpen(true);
               }}
+              displayConfigureButton
             />
             <CollaboratorTeamWidget
               users={projectManagers}

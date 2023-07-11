@@ -9,7 +9,6 @@ export type ClientTeamCardProps = Omit<TeamCardProps, 'renderUserDetails' | 'asi
 
 const ClientTeamCard = (props: ClientTeamCardProps) => {
   const { clientCompany } = props;
-  /* TODO: fetch client company entity to retrieve informations */
   const aside = (
     <section className={styles.clientCompanyDetails}>
       <h4 className={styles.title}>{clientCompany.name}</h4>
