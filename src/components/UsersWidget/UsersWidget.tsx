@@ -17,8 +17,8 @@ const UsersWidget = ({ users, label, addUserLabel, onNewUserClick }: Props) => {
   return (
     <Section title={label || 'Les utilisateurs'}>
       <Grid>
-        {users?.map((user: Partial<UsUserModel>) => (
-          <UserCard key={user.id} user={user} onKebabMenuClick={() => console.log('handle click ?')} />
+        {users?.map((user) => (
+          <UserCard key={user.id} user={user} />
         ))}
         <div className={styles.manageItemCardContainer}>
           <ManageItemCard label={addUserLabel || 'Nouvel utilisateur'} onClick={onNewUserClick} />
