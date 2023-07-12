@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import {
   GdpActivitiesModel,
   GdpAffairModel,
+  GdpFilesModel,
   GdpPhaseModel,
   GdpProjectsModel,
   GdpSatisfactionModel,
@@ -44,109 +45,65 @@ export const satisfactionContext = createContext<IsatisfactionContext>({
 });
 
 const Advancement = () => {
-  const projects = useSelector(selectProjects);
-  const affairs = useSelector(selectAffairs);
   const user = useSelector(selectUserProfile);
 
   const router = useRouter();
-  const dispatch = useDispatch();
   const projectId = parseInt(router.query.projectId as string);
   const affairId = parseInt(router.query.affairId as string);
 
   const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
-  const [finalAffair, setFinalAffair] = useState<Partial<GdpAffairModel>>({});
-  const [phases, setPhases] = useState<Partial<GdpPhaseModel>[]>([]);
   const [satisfactions, setSatisfactions] = useState<Partial<GdpSatisfactionModel>[]>([]);
   const [activities, setActivities] = useState<Partial<GdpActivitiesModel>[]>([]);
   const [phaseUpdated, setPhaseUpdated] = useState<boolean>(false);
+  const [files, setFiles] = useState<Partial<GdpFilesModel>[]>([]);
+
+  const [phases, setPhases] = useState<Partial<GdpPhaseModel>[]>([]);
 
   const [hasSubmitSatisfaction, setHasSubmitSatisfaction] = useState<boolean>(false);
 
   const [dataFetched, setDataFetched] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [projectCompanyEntityName, setProjectCompanyEntityName] = useState<string>('Inconnue');
 
   useEffect(() => {
-    if (projectId) {
-      const existingProject = projects.find((project) => project.id === projectId);
-      if (existingProject) {
-        setProject(existingProject);
-      } else {
-        getGdpProjectById(projectId).then((res) => {
-          if (isRequestSuccessful(res.status) && res.data) {
-            const newProject = res.data;
-            setProject(newProject);
-            dispatch(setProjects([...projects, newProject]));
-          }
-        });
-      }
-
-      if (project.company_entity) {
-        if (typeof project.company_entity === 'number') {
-          getUsCompanyEntity(project.company_entity).then((res) => {
-            if (isRequestSuccessful(res.status) && res.data && res.data.name) {
-              setProjectCompanyEntityName(res.data.name);
-            } else {
-              setProjectCompanyEntityName('Inconnue');
-            }
-          });
-        } else {
-          const companyEntityName = project.company_entity.name || 'Inconnue';
-          setProjectCompanyEntityName(companyEntityName);
-        }
-      } else {
-        setProjectCompanyEntityName('Inconnue');
-      }
-    } else {
-      setProject({ id: -1, name: '' });
-    }
-  }, [dispatch, project.company_entity, projectId, projects]);
-
-  useEffect(() => {
-    if (phases.length > 0 && affairId && !dataFetched) {
-      getGdpAffair(affairId).then((res) => {
+    if (affairId && !dataFetched) {
+      getGdpAffair(
+        affairId,
+        [
+          '*',
+          'company_entity.*',
+          'pythagore_ids.*',
+          'affairs_directus_users_ids.*',
+          'projects_id.name',
+          'projects_id.id',
+          'affairs_phases_ids.*',
+          'activities_id.*',
+          'files.*',
+        ].join(',')
+      ).then((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
-          const updatedAffair = { ...res.data, affairs_phases: phases };
+          setAffair(res.data);
+          setPhases(res.data.affairs_phases_ids);
+          setActivities(res.data.activities_id);
+          setProject(res.data.projects_id);
+          setFiles(res.data.files);
 
-          setFinalAffair(updatedAffair);
           setDataFetched(true);
         }
       });
     }
-  }, [phases, affair, affairId, dataFetched]);
-
-  useEffect(() => {
-    if (affairId) {
-      getGdpAffairsPhases({
-        filter: {
-          affairs_id: { _in: affairId },
-        },
-        fields: 'id, name, order, status, trigger_survey, activities_id, affairs_id, affairs_satisfaction, description',
-      }).then((res) => {
+    if (affairId && phaseUpdated) {
+      getGdpAffair(affairId, ['affairs_phases_ids.*', 'files.*'].join(',')).then((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
-          setPhases(res.data);
+          setPhases(res.data.affairs_phases_ids);
+          setFiles(res.data.files);
+
           setPhaseUpdated(false);
         }
       });
+    } else {
     }
-  }, [affairId, phaseUpdated]);
-
-  useEffect(() => {
-    if (projectId && affairId && phases.length > 0) {
-      getGdpActivities({
-        filter: {
-          affairs_id: { _eq: affairId },
-        },
-        fields:
-          'id,action,affairs_directus_users_id,affairs_id,affairs_phases_id,affairs_pythagore_affaires_id,affairs_satisfaction_id,collection,content,date_created,directus_files_id,projects_id,users_notifications_id',
-      }).then((res) => {
-        if (isRequestSuccessful(res.status) && res.data) {
-          setActivities(res.data);
-        }
-      });
-    }
-  }, [projectId, affairId, phases]);
+  }, [phases, affair, affairId, dataFetched, phaseUpdated]);
 
   useEffect(() => {
     if (user) {
@@ -158,6 +115,7 @@ const Advancement = () => {
       }).then((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
           setSatisfactions(res.data);
+          setHasSubmitSatisfaction(false);
         }
       });
     }
@@ -171,7 +129,13 @@ const Advancement = () => {
           hasSubmitSatisfaction,
         }}
       >
-        <CreatePhaseForm project={project} affair={finalAffair} isOpen={isOpen} setIsOpen={setIsOpen} />
+        <CreatePhaseForm
+          project={project}
+          affair={affair}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          onUpdate={() => setDataFetched(false)}
+        />
         <div className="page">
           <PageHeaderBanner data={project} />
           <div className={styles.advancementPage}>
@@ -190,24 +154,30 @@ const Advancement = () => {
             </div>
             <div className={styles.body}>
               <div className={styles.phases}>
-                {phases.map((phase) => (
-                  <section className={styles.phaseContainer} key={phase.id}>
-                    <Phase
-                      phase={phase}
-                      affair={finalAffair}
-                      project={project}
-                      setIsPhaseUpdated={setPhaseUpdated}
-                      satisfactionDone={satisfactions.some((satisfaction) => {
-                        return (
-                          finalAffair.id === satisfaction.affairs_id &&
-                          phase.id === satisfaction.affairs_phases_id &&
-                          user?.id === satisfaction.user_created
-                        );
-                      })}
-                    />
-                  </section>
-                ))}
+                {phases.map((phase) => {
+                  const filteredFiles = files.filter((file) => file.phase_id === phase.id);
+
+                  return (
+                    <section className={styles.phaseContainer} key={phase.id}>
+                      <Phase
+                        phase={phase}
+                        affair={affair}
+                        project={project}
+                        files={filteredFiles}
+                        setIsPhaseUpdated={setPhaseUpdated}
+                        satisfactionDone={satisfactions.some((satisfaction) => {
+                          return (
+                            affair.id === satisfaction.affairs_id &&
+                            phase.id === satisfaction.affairs_phases_id &&
+                            user?.id === satisfaction.user_created
+                          );
+                        })}
+                      />
+                    </section>
+                  );
+                })}
               </div>
+
               <div className={styles.activitiesWidgetContainer}>
                 <ActivitiesWidget activities={activities} />
               </div>

@@ -58,7 +58,7 @@ const SatisfactionForm = ({ affair_id, affair_phases_id, isOpen, setIsOpen }: Sa
   };
 
   const onFinish = (values: FormProps) => {
-    if (affair_id && affair_phases_id && values.score_soft_skills && values.score_hard_skills) {
+    if (affair_id && affair_phases_id && values.score_soft_skills >= 0 && values.score_hard_skills >= 0) {
       createGdpSatisfaction({ ...satisfactionValues, comment: values.comment, affairs_id: affair_id }).then(
         (response) => {
           if (response.status === 200) {

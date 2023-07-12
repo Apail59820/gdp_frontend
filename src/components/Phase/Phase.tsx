@@ -24,38 +24,15 @@ type Props = {
   project: Partial<GdpProjectsModel>;
   satisfactionDone: boolean;
   setIsPhaseUpdated: React.Dispatch<React.SetStateAction<boolean>>;
+  files: Partial<GdpFilesModel>[];
 };
 
-const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated }: Props) => {
-  const [files, setFiles] = useState<Partial<GdpFilesModel>[]>([]);
+const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, files }: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [filesFetched, setFilesFetched] = useState<boolean>(false);
   const [isOpenSatisfactionForm, setIsOpenSatisfactionForm] = useState<boolean>(false);
   const [isOpenFilesForm, setIsOpenFilesForm] = useState<boolean>(false);
 
   const user = useSelector(selectUserProfile);
-
-  useEffect(() => {
-    if (!filesFetched) {
-      const phaseId = phase.id;
-      const projectId = project.id;
-      const affairId = affair.id;
-      if (phaseId && projectId && affairId) {
-        getGdpFiles({
-          filter: {
-            phase_id: { _eq: phaseId },
-            _and: [{ affair_id: { _eq: affairId } }, { projects_id: { _eq: projectId } }],
-          },
-        }).then((res) => {
-          if (isRequestSuccessful(res.status) && res.data) {
-            setFiles(res.data);
-            setFilesFetched(true);
-          }
-        });
-      }
-    } else {
-    }
-  }, [phase, affair, project, filesFetched]);
 
   const renderStatus = (): JSX.Element => {
     switch (phase.status) {
@@ -133,7 +110,7 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated }: 
         project={project}
         affair={affair}
         phase={phase}
-        onFileUpload={() => setFilesFetched(false)}
+        onFileUpload={() => setIsPhaseUpdated(true)}
         mode="files"
       ></UploadFilesFormUploadFilesForm>
 
@@ -180,7 +157,7 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated }: 
             title="Fichiers associés"
             link={{ label: 'Voir tous les fichiers', href: `/projects/${project.id}/files` }}
           >
-            {filesFetched && <PreviewFilesList files={files} max={3} allFilesPageHref={'/'} />}
+            {files && <PreviewFilesList files={files} max={3} allFilesPageHref={'/'} />}
           </Section>
           <div className={styles.button}>
             <Button
