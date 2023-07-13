@@ -19,6 +19,7 @@ import FolderIcon from '../../public/folder.svg';
 import FileIcon from '../../public/file.svg';
 import FileImageIcon from '../../public/file-image.svg';
 import Link from 'next/link';
+import { DateTime } from "luxon";
 const { publicRuntimeConfig } = getConfig();
 
 type FilesFiltersType = {
@@ -223,7 +224,9 @@ const FilesPage = ({
           </div>
         ),
         type: file.type,
-        uploaded_on: file.uploaded_on,
+        uploaded_on: DateTime.fromISO(file.uploaded_on as string)
+          .setLocale('fr')
+          .toLocaleString(),
       })),
     ];
   }
@@ -240,8 +243,10 @@ const FilesPage = ({
             </Link>
           </div>
         ),
-        type: 'dossier',
-        uploaded_on: project.date_created,
+        type: 'projet',
+        uploaded_on: DateTime.fromISO(project.date_created as any)
+          .setLocale('fr')
+          .toLocaleString(),
       })),
     ];
   }

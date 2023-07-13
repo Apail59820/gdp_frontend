@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styles from './FilesOfProjectPage.module.scss';
-import { Button, Input, Select, ShadowCard } from '@projex/ui';
+import { Button, Input, Select } from '@projex/ui';
 import { QueryParameters } from '../../models/DirectusModel';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import { selectCompanyEntities } from '../../store/reducers/companyEntitiesReducer';
-import { selectGlobalFilters } from '../../store/reducers/globalFilterReducer';
 import { LazyLoadingStateType } from '../../models/LazyLoadingStateType';
+import { DateTime } from 'luxon';
 import getConfig from 'next/config';
 
 import { CompanyEnum } from '../../models/UserService/UsCompanyEntityModel';
@@ -17,7 +17,6 @@ import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel } from '../../models/GestionDeProjets/GdpPhaseModel';
 import { useRouter } from 'next/router';
 import FilesGridDisplay, { GridFolderItem } from '../components/FilesGridDisplay/FilesGridDisplay';
-import { LoadingOutlined } from '@ant-design/icons';
 import UploadFilesFormUploadFilesForm from '../components/filesForms/UploadFilesForm/UploadFilesForm';
 import PageHeaderBanner from '../components/PageHeaderBanner/PageHeaderBanner';
 import { Table } from 'antd';
@@ -284,7 +283,7 @@ const FilesOfProjectPage = ({
 
   interface DataSourceItem {
     key: string | number | undefined;
-    name: JSX.Element;
+    name: JSX.Element | JSX.Element[];
     type: string | null | undefined;
     uploaded_on: Date | string | undefined;
   }
@@ -313,7 +312,6 @@ const FilesOfProjectPage = ({
 
   let dataSource: DataSourceItem[] = [];
 
-  //displayOption === 'grid'
   if (displayOption === 'list') {
     dataSource = [
       ...files.map((file) => ({
@@ -325,46 +323,46 @@ const FilesOfProjectPage = ({
           </div>
         ),
         type: file.type,
-        uploaded_on: file.uploaded_on,
+        uploaded_on: DateTime.fromISO(file.uploaded_on as string)
+          .setLocale('fr')
+          .toLocaleString(),
       })),
     ];
-
+    //TODO fix preview files table view mode.
     const folders = getFolders();
     if (folders) {
       dataSource = [
-        ...folders.map((folder) => {
-          const folderIcon = [];
-          if (folder.folder.type === 'back_to_projects') {
-            folderIcon.push(
-              <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}>
-                <Link href={`/files`} style={{ display: 'flex' }}>
-                  <img src={FileArrayLeftLong.src} width={22} height={22} alt="Icon" />
-                  <span style={{ display: 'inline-flex', marginLeft: '8px' }}>{folder.folder.name}</span>
-                </Link>
-              </div>
-            );
+        ...folders.map((folder): DataSourceItem => {
+          const linkProps: { href: string; onClick?: () => void } = { href: '' };
+          const currentIcon = folder.type === 'back' ? FileArrayLeftLong : FolderIcon;
+          if (folder.type === 'back' && folder.href && folder.href.length > 0) {
+            linkProps.href = folder.href;
           } else {
-            folderIcon.push(
-              <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}>
-                <Link href={`/projects/${project.id}/files`} style={{ display: 'flex' }}>
-                  <img src={FolderIcon.src} width={22} height={22} alt="Icon" />
-                  <span style={{ display: 'inline-flex', marginLeft: '8px' }}>{folder.folder.name}</span>
-                </Link>
-              </div>
-            );
+            linkProps.href = `/projects/${project.id}/files`;
+            linkProps.onClick = folder.onClick;
           }
           return {
-            key: folder.folder.id as number,
-            name: folderIcon,
-            type: folder.folder.type !== 'back_to_projects' ? folder.folder.type : '',
-            uploaded_on: '',
+            key: folder.folder.name as string,
+            name: (
+              <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}>
+                <Link {...linkProps} style={{ display: 'flex' }}>
+                  <img src={currentIcon?.src} width={22} height={22} alt="Icon" />
+                  <span style={{ display: 'inline-flex', marginLeft: '8px' }}>{folder.folder.name}</span>
+                </Link>
+              </div>
+            ),
+            type: folder.folder.type
+              .replace(/back_to_projects|back_to_affairs|back_to_phases/g, '')
+              .replace('affair', 'affaire'),
+            uploaded_on: DateTime.fromISO(project.date_created as any)
+              .setLocale('fr')
+              .toLocaleString(),
           };
         }),
         ...dataSource,
       ];
     }
   }
-
   return (
     <div className="page" ref={pageRef}>
       <div className={styles.projectsPage}>
