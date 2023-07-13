@@ -92,12 +92,7 @@ const Factures = () => {
 
   return (
     <>
-      <ConfigureFacturationForm
-        isOpen={isConfigureFacturationFormOpen}
-        setIsOpen={setIsConfigureFacturationFormOpen}
-        initProject={{}}
-        initAffair={{}}
-      />
+      <ConfigureFacturationForm isOpen={isConfigureFacturationFormOpen} setIsOpen={setIsConfigureFacturationFormOpen} />
       {factures.length > 0 ? (
         <FacturesPage
           files={factures}
