@@ -1,14 +1,21 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './MainMessage.module.scss';
 import { capitalize } from '../../../../utils/capitalize';
 import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';
 import defaultImage from '../../../../public/default-affair-image.png';
 import { ManageItemButton } from '@projex/ui';
-import { Tooltip } from 'antd';
+import { message, Tooltip } from 'antd';
+import {
+  GdpAssetDocumentEnum,
+  GdpFilesStatusEnum,
+  GdpFileUsageEnum,
+} from '../../../../models/GestionDeProjets/GdpFilesModel';
+import { downloadGdPFile, uploadGdpFile } from '../../../../services/gestionDeProjets/GdpFiles';
+import { isRequestSuccessful } from '../../../../utils/isRequestSuccessful';
+import { updateGdpProject } from '../../../../services/gestionDeProjets/GdpProjects';
 
 export type MainMessageProps = {
   project: Partial<GdpProjectsModel>;
-  onManageThumbnailClick?: React.MouseEventHandler<HTMLButtonElement>;
   showImage?: boolean;
   resizeTitleProps?: { entityLogoWidth: number };
 };
@@ -26,7 +33,7 @@ const resizeTitleCalculator = (
   );
 };
 
-const MainMessage = ({ project, showImage = true, onManageThumbnailClick, resizeTitleProps }: MainMessageProps) => {
+const MainMessage = ({ project, showImage = true, resizeTitleProps }: MainMessageProps) => {
   const mainMessageTitleRef = useRef<HTMLDivElement>(null);
   const mainMessageImageRef = useRef<HTMLDivElement>(null);
   const { entityLogoWidth } = resizeTitleProps || {};
@@ -36,6 +43,9 @@ const MainMessage = ({ project, showImage = true, onManageThumbnailClick, resize
   const [isNameTooLong, setIsNameTooLong] = useState<boolean>(false);
   const [projectName, setProjectName] = useState<string>('');
   const [textAreaLength, setTextAreaLength] = useState<number>(0);
+  const [projectImage, setProjectImage] = useState<string>(defaultImage.src);
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setProjectsNameLength(project.name?.length as number);
@@ -65,32 +75,84 @@ const MainMessage = ({ project, showImage = true, onManageThumbnailClick, resize
     } else setIsNameTooLong(false);
   }, [entityLogoWidth, projectsNameLength, resizeTitle, textAreaLength, windowInnerWidth]);
 
+  useEffect(() => {
+    if (project.image) {
+      downloadGdPFile(project.image).then((res) => {
+        if (isRequestSuccessful(res.status) && res.data) setProjectImage(res.data);
+        else setProjectImage(defaultImage.src);
+      });
+    } else {
+      setProjectImage(defaultImage.src);
+    }
+  }, [project.image]);
+
+  const handleManageItemButtonClick = () => {
+    if (!inputRef?.current) return;
+    inputRef.current.click();
+  };
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0] && project.id) {
+      const proprerties = {
+        title: e.target.files[0].name,
+        filesize: e.target.files[0].size,
+        filename_download: e.target.files[0].name,
+        status: GdpFilesStatusEnum.VISIBLE,
+        usage: GdpFileUsageEnum.PROJECTS_IMAGE,
+        projects_id: project.id,
+        affair_id: null,
+        phase_id: null,
+        is_cover: true,
+        document_type: GdpAssetDocumentEnum.UNKNOWN,
+      };
+      uploadGdpFile(proprerties, e.target.files[0]).then((res) => {
+        if (isRequestSuccessful(res.status) && res.data && res.data.id && project.id) {
+          message.success("L'image a été importée avec succès");
+          updateGdpProject(project.id, { image: res.data.id }).then((res) => {
+            if (isRequestSuccessful(res.status)) {
+              message.success("L'image a été associée au projet");
+            } else {
+              message.error("Une erreur est survenue lors de l'association de l'image au projet");
+            }
+          });
+        } else {
+          message.error("Une erreur est survenue lors de l'import du fichier");
+        }
+      });
+    }
+  };
+
   return (
     <div className={styles.mainMessage}>
-      {showImage && onManageThumbnailClick ? (
+      {showImage ? (
         <div className={styles.stickerContainer}>
           {project ? (
             <div className={styles.imageContainer} ref={mainMessageImageRef}>
-              {/* // TODO Revoir image */}
               <img
                 className={styles.image}
                 data-main-message-image-container-length={mainMessageImageRef.current?.clientWidth}
-                src={defaultImage.src ? defaultImage.src : ''}
+                src={projectImage}
                 alt="Image illustrant le projet"
               />
               <div className={styles.editImageButton}>
+                <input
+                  type="file"
+                  multiple={false}
+                  ref={inputRef}
+                  name={'fileInput'}
+                  style={{ display: 'none' }}
+                  onChange={handleUpload}
+                />
                 <ManageItemButton
                   label="Modifier la vignette"
                   type="edit"
                   direction="vertical"
                   tiny
-                  onClick={onManageThumbnailClick}
+                  onClick={handleManageItemButtonClick}
                 />
               </div>
             </div>
-          ) : (
-            <ManageItemButton label="Définir une vignette" direction="vertical" tiny onClick={onManageThumbnailClick} />
-          )}
+          ) : null}
         </div>
       ) : null}
       <section className={styles.content}>
