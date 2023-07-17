@@ -40,7 +40,6 @@ const PreviewFilesList = ({ files, max = 4, allFilesPageHref }: PreviewFilesList
               <div className={styles.imgAndTitle}>
                 <div className={styles.imageContainer}>
                   <Image src={getImage().src} fill alt="Icon" className={styles.image} />
-                  {/* <img src={getImage().src} alt="Icon" /> */}
                 </div>
                 <span className={styles.title}>{title}</span>
               </div>
