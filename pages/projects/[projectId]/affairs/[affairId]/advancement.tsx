@@ -164,6 +164,9 @@ const Advancement = () => {
                         affair={affair}
                         project={project}
                         files={filteredFiles}
+                        satisfactions={satisfactions.filter(
+                          (satisfaction) => satisfaction.affairs_phases_id === phase.id
+                        )}
                         setIsPhaseUpdated={setPhaseUpdated}
                         satisfactionDone={satisfactions.some((satisfaction) => {
                           return (

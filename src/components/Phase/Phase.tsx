@@ -4,7 +4,13 @@ import FilesWidget from '../FilesWidget/FilesWidget';
 import PreviewFilesList from '../PreviewFilesList/PreviewFilesList';
 import styles from './Phase.module.scss';
 
-import { GdpAffairModel, GdpFilesModel, GdpPhaseModel, GdpProjectsModel } from '../../../models/GdPModels';
+import {
+  GdpAffairModel,
+  GdpFilesModel,
+  GdpPhaseModel,
+  GdpProjectsModel,
+  GdpSatisfactionModel,
+} from '../../../models/GdPModels';
 import { getGdpFiles } from '../../../services/gestionDeProjets/GdpFiles';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
 import CreatePhaseForm from '../CreatePhaseForm/CreatePhaseForm';
@@ -25,9 +31,24 @@ type Props = {
   satisfactionDone: boolean;
   setIsPhaseUpdated: React.Dispatch<React.SetStateAction<boolean>>;
   files: Partial<GdpFilesModel>[];
+  satisfactions: Partial<GdpSatisfactionModel>[];
 };
 
-const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, files }: Props) => {
+const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, files, satisfactions }: Props) => {
+  const total = 4;
+
+  const score =
+    satisfactions.reduce(
+      (acc, satisfaction) => acc + (satisfaction.score_hard_skills ? satisfaction.score_hard_skills : 0),
+      0
+    ) / satisfactions.length;
+
+  const getColor = () => {
+    if (score <= total / 3) return 'alert';
+    if (score >= total / 3 && score <= (total / 3) * 2) return 'warning';
+    if (score >= (total / 3) * 2) return 'ok';
+  };
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenSatisfactionForm, setIsOpenSatisfactionForm] = useState<boolean>(false);
   const [isOpenFilesForm, setIsOpenFilesForm] = useState<boolean>(false);
@@ -122,7 +143,11 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, fi
           </div>
           <div>
             <span className="text-tiny">satisfaction</span>
-            <ProgressBar color={getColorByStatus()} percentage={75} tiny />
+            <ProgressBar
+              tiny
+              color={getColor()}
+              percentage={isNaN((score / total) * 100) ? 0 : (score / total) * 100}
+            />
           </div>
         </section>
         <article className={styles.body}>
