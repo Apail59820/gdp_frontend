@@ -52,6 +52,7 @@ export type fileItemType = {
  * @param project - project to which the files will be attached
  * @param affair  - affair to which the files will be attached
  * @param phase - phase to which the files will be attached
+ * @param onFileUpload - callback triggered when form is submitted
  */
 export default function UploadFilesFormUploadFilesForm({
   isOpen,

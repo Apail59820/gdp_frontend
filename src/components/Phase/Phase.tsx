@@ -25,7 +25,7 @@ import { selectUserProfile } from '../../../store/reducers/authReducer';
 const { publicRuntimeConfig } = getConfig();
 
 type Props = {
-  phase: Partial<GdpPhaseModel>;
+  phase: GdpPhaseModel;
   affair: Partial<GdpAffairModel>;
   project: Partial<GdpProjectsModel>;
   satisfactionDone: boolean;
