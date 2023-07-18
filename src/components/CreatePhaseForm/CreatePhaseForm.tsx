@@ -18,7 +18,7 @@ type props = {
   project: Partial<GdpProjectsModel>;
   affair: Partial<GdpAffairModel>;
   isOpen: boolean;
-  phase?: Partial<GdpPhaseModel>;
+  phase?: GdpPhaseModel;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onUpdate?: () => void;
 };
@@ -83,20 +83,22 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
   };
 
   async function createAffairPhase(values: formValues) {
-    const response = await createGdpAffairPhase({
-      affairs_id: affair.id,
-      name: values.name,
-      status: values.status,
-      description: values.description,
-      order: affair.affairs_phases_ids.length + 1,
-    });
-    if (isRequestSuccessful(response.status) && response.data) {
-      message.success(messages.general.success());
-      if (onUpdate) {
-        onUpdate();
-      }
-      setIsOpen(false);
-    } else message.error(messages.general.error());
+    if (affair.affairs_phases_ids) {
+      const response = await createGdpAffairPhase({
+        affairs_id: affair.id!,
+        name: values.name,
+        status: values.status,
+        description: values.description,
+        order: affair.affairs_phases_ids.length + 1,
+      });
+      if (isRequestSuccessful(response.status) && response.data) {
+        message.success(messages.general.success());
+        if (onUpdate) {
+          onUpdate();
+        }
+        setIsOpen(false);
+      } else message.error(messages.general.error());
+    }
   }
 
   async function updateAffairPhase(phaseId: number, values: formValues) {

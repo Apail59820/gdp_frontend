@@ -54,11 +54,11 @@ const Advancement = () => {
   const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
   const [satisfactions, setSatisfactions] = useState<Partial<GdpSatisfactionModel>[]>([]);
-  const [activities, setActivities] = useState<Partial<GdpActivitiesModel>[]>([]);
+  const [activities, setActivities] = useState<Partial<GdpAffairModel['activities_id']>>([]);
   const [phaseUpdated, setPhaseUpdated] = useState<boolean>(false);
   const [files, setFiles] = useState<Partial<GdpFilesModel>[]>([]);
 
-  const [phases, setPhases] = useState<Partial<GdpPhaseModel>[]>([]);
+  const [phases, setPhases] = useState<GdpPhaseModel[]>([]);
 
   const [hasSubmitSatisfaction, setHasSubmitSatisfaction] = useState<boolean>(false);
 
@@ -82,11 +82,12 @@ const Advancement = () => {
         ].join(',')
       ).then((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
+          console.log('resdata;;;;', res.data);
           setAffair(res.data);
-          setPhases(res.data.affairs_phases_ids);
-          setActivities(res.data.activities_id);
-          setProject(res.data.projects_id);
-          setFiles(res.data.files);
+          if (res.data.affairs_phases_ids) setPhases(res.data.affairs_phases_ids as GdpPhaseModel[]);
+          if (res.data.activities_id) setActivities(res.data.activities_id);
+          if (res.data.projects_id) setProject(res.data.projects_id as Partial<GdpProjectsModel>);
+          if (res.data.files) setFiles(res.data.files as Partial<GdpFilesModel>[]);
 
           setDataFetched(true);
         }
@@ -95,8 +96,8 @@ const Advancement = () => {
     if (affairId && phaseUpdated) {
       getGdpAffair(affairId, ['affairs_phases_ids.*', 'files.*'].join(',')).then((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
-          setPhases(res.data.affairs_phases_ids);
-          setFiles(res.data.files);
+          if (res.data.affairs_phases_ids) setPhases(res.data.affairs_phases_ids as GdpPhaseModel[]);
+          if (res.data.files) setFiles(res.data.files as Partial<GdpFilesModel>[]);
 
           setPhaseUpdated(false);
         }
@@ -182,7 +183,7 @@ const Advancement = () => {
               </div>
 
               <div className={styles.activitiesWidgetContainer}>
-                <ActivitiesWidget activities={activities} />
+                <ActivitiesWidget activities={activities as GdpActivitiesModel[]} />
               </div>
             </div>
           </div>
