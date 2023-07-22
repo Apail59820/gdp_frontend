@@ -45,7 +45,7 @@ import {
 import { UsClientsCompanyEntitiesModel } from '../../../models/UserService/UsClientsCompanyEntitiesModel';
 import { getUsClientCompanyEntity } from '../../../services/userService/UsClientsCompanyEntities';
 import ConfigureFacturationForm from '../../../src/components/ConfigureFacturationForm/ConfigureFacturationForm';
-import UploadFilesFormUploadFilesForm from '../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
+import UploadFilesForm from '../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
 import { selectUserProfile } from '../../../store/reducers/authReducer';
 import ManageProjectManagers from '../../../src/components/ManageProjectManagers/ManageProjectManagers';
 
@@ -407,11 +407,12 @@ const Project = () => {
               setIsOpen={setIsConfigureFacturationFormOpen}
               initProject={project}
             />
-            <UploadFilesFormUploadFilesForm
+            <UploadFilesForm
               isOpen={isUploadFileFormOpen}
               mode={'files'}
-              setIsOpen={setIsUploadFileFormOpen}
+              onClose={() => setIsUploadFileFormOpen(false)}
               project={project}
+              fileItems={[]}
             />
             {/* end ---------------- EVERY FORM GOES HERE ---------------- end */}
             <h1 className={styles.title}>Le projet</h1>

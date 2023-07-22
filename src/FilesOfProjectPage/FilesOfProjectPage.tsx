@@ -18,7 +18,10 @@ import { GdpPhaseModel } from '../../models/GestionDeProjets/GdpPhaseModel';
 import { useRouter } from 'next/router';
 import FilesGridDisplay, { GridFolderItem } from '../components/FilesGridDisplay/FilesGridDisplay';
 import { LoadingOutlined } from '@ant-design/icons';
-import UploadFilesFormUploadFilesForm from '../components/filesForms/UploadFilesForm/UploadFilesForm';
+import UploadFilesForm, {
+  fileItemType,
+  UploadStatusEnum,
+} from '../components/filesForms/UploadFilesForm/UploadFilesForm';
 import PageHeaderBanner from '../components/PageHeaderBanner/PageHeaderBanner';
 
 const { publicRuntimeConfig } = getConfig();
@@ -88,6 +91,17 @@ const FilesOfProjectPage = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
+  const [filesToUpdate, setFilesToUpdate] = useState<fileItemType[]>([]);
+
+  function UpdateFiles(filesToUpdate: fileItemType[]) {
+    setFilesToUpdate(filesToUpdate);
+    setIsUploadModalOpen(true);
+  }
+
+  function onFileModalClose() {
+    setFilesToUpdate([]);
+    setIsUploadModalOpen(false);
+  }
 
   function updateSpecificFilters() {
     const filterRules: any[] = [];
@@ -352,7 +366,16 @@ const FilesOfProjectPage = ({
                   ? []
                   : files.map((file) => ({
                       file: file,
-                      onClick: () => console.log('Click'),
+                      onClick: () =>
+                        file.id &&
+                        UpdateFiles([
+                          {
+                            id: file.id,
+                            file: undefined,
+                            properties: file,
+                            uploadState: UploadStatusEnum.DONE,
+                          },
+                        ]),
                       type: 'file',
                     }))
               }
@@ -363,10 +386,11 @@ const FilesOfProjectPage = ({
           )}
         </div>
       </div>
-      <UploadFilesFormUploadFilesForm
+      <UploadFilesForm
         isOpen={isUploadModalOpen}
-        setIsOpen={setIsUploadModalOpen}
+        onClose={onFileModalClose}
         mode={'files'}
+        fileItems={filesToUpdate}
         project={FilesLevelFilter.project}
         affair={FilesLevelFilter.affair}
         phase={FilesLevelFilter.phase}

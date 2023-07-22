@@ -22,7 +22,8 @@ import FileInput from '../../FIleUpload/FileInput';
 export type UploadFilesFormPropsType = {
   isOpen: boolean;
   mode: 'files' | 'images';
-  setIsOpen: (isOpen: boolean) => void;
+  onClose: () => void;
+  fileItems: fileItemType[];
   project: Partial<GdpProjectsModel>;
   affair?: Partial<GdpAffairModel>;
   phase?: Partial<GdpPhaseModel>;
@@ -38,7 +39,7 @@ export enum UploadStatusEnum {
 
 export type fileItemType = {
   id: string;
-  file: File;
+  file?: File;
   properties: Partial<GdpFilesModel>;
   uploadState: UploadStatusEnum;
 };
@@ -48,23 +49,29 @@ export type fileItemType = {
  * @param isOpen - boolean to open or close the modal
  * @param mode - files or images
  * @param setIsOpen - function to set the isOpen state
+ * @param fileItems - files to update
  * @param project - project to which the files will be attached
  * @param affair  - affair to which the files will be attached
  * @param phase - phase to which the files will be attached
  */
-export default function UploadFilesFormUploadFilesForm({
+export default function UploadFilesForm({
   isOpen,
-  setIsOpen,
+  onClose,
   mode = 'files',
+  fileItems,
   project,
   affair,
   phase,
 }: UploadFilesFormPropsType) {
-  const [fileList, setFileList] = useState<fileItemType[]>([]);
+  const [fileList, setFileList] = useState<fileItemType[]>(fileItems);
   const [uploadProgress, setUploadProgress] = useState<{ percent: number; fileId: string }[]>([]);
   const [showPropertiesFormOfFileIndex, setShowPropertiesFormOfFileIndex] = useState<number | undefined>();
   const [affairsOptions, setAffairsOptions] = useState<Partial<GdpAffairModel>[]>([]);
   const [phasesOptions, setPhasesOptions] = useState<Partial<GdpPhaseModel>[]>([]);
+
+  useEffect(() => {
+    setFileList(fileItems);
+  }, [fileItems]);
 
   /**
    * Update affairs and phases options when project changes.
@@ -117,6 +124,7 @@ export default function UploadFilesFormUploadFilesForm({
 
   const uploadOneFile = async (fileUID: string, _fileListTmp: fileItemType[]) => {
     const fileIndex = _fileListTmp.findIndex((fileItem) => fileItem.id === fileUID);
+    if (!_fileListTmp[fileIndex].file) return _fileListTmp;
     setFileList(
       _fileListTmp.map((fileItem) => ({
         ...fileItem,
@@ -126,10 +134,10 @@ export default function UploadFilesFormUploadFilesForm({
     const uploadResponse = await uploadGdpFilesWithProgress(
       [
         {
-          data: _fileListTmp[fileIndex].file,
+          data: _fileListTmp[fileIndex].file as File,
           properties: {
             filename_download: _fileListTmp[fileIndex].properties.filename_download,
-            filesize: _fileListTmp[fileIndex].file.size,
+            filesize: (_fileListTmp[fileIndex].file as File).size,
             status: _fileListTmp[fileIndex].properties.status || GdpFilesStatusEnum.VISIBLE,
             usage: getFileUsage(_fileListTmp[fileIndex]),
             projects_id: _fileListTmp[fileIndex].properties.projects_id || project.id,
@@ -193,7 +201,7 @@ export default function UploadFilesFormUploadFilesForm({
     setShowPropertiesFormOfFileIndex(undefined);
     setAffairsOptions([]);
     setPhasesOptions([]);
-    setIsOpen(false);
+    onClose();
   };
 
   async function onFilesUploadChange(files: FileList) {
@@ -266,7 +274,7 @@ export default function UploadFilesFormUploadFilesForm({
       title={mode === 'files' ? 'Ajouter des fichiers' : 'Ajouter des images'}
       open={isOpen}
       closable
-      onCancel={() => setIsOpen(false)}
+      onCancel={onClose}
       footer={null}
       destroyOnClose
       width={1000}
@@ -279,7 +287,9 @@ export default function UploadFilesFormUploadFilesForm({
                 <ShadowCard width="192px" height="192px">
                   <div key={index} className={styles.FileItem} onClick={() => setShowPropertiesFormOfFileIndex(index)}>
                     <Image src={'/file.svg'} alt={'file icon'} width={48} height={77} />
-                    <div className={styles.FileItemName}>{fileItem.file.name}</div>
+                    <div className={styles.FileItemName}>
+                      {fileItem.properties.filename_download || fileItem.file?.name || 'fichier sans nom'}
+                    </div>
                     {fileItem.uploadState === UploadStatusEnum.UPLOADING && displayProgressBar(fileItem.id)}
                   </div>
                 </ShadowCard>
