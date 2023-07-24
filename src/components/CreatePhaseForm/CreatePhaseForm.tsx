@@ -1,5 +1,5 @@
 import { Form, Input, message, Modal, Select } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel, GdpPhaseStatusEnum } from '../../../models/GestionDeProjets/GdpPhaseModel';
@@ -13,6 +13,7 @@ import {
 import { messages } from '../../../constants/messages';
 import { DeleteOutlined, WarningOutlined } from '@ant-design/icons';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
+import PhasesTemplates from '../../../constants/PhasesTemplates';
 
 type props = {
   project: Partial<GdpProjectsModel>;
@@ -39,6 +40,13 @@ enum displayStatus {
 
 const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }: props) => {
   const statusOptions: GdpPhaseStatusEnum[] = Object.values(GdpPhaseStatusEnum);
+  const [form] = Form.useForm();
+
+  const [description, setDescription] = React.useState<string>('');
+
+  useEffect(() => {
+    form.setFieldValue('description', description);
+  }, [description, form]);
 
   const showConfirmDelete = () => {
     if (phase) {
@@ -136,6 +144,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
         autoComplete={'off'}
         layout={'vertical'}
         onFinish={onSubmit}
+        form={form}
         initialValues={{
           projectName: project.name,
           affairName: affair.name,
@@ -166,7 +175,20 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
             },
           ]}
         >
-          <Input type={'text'} placeholder={'Entrez le nom de votre étape'} />
+          <Select
+            placeholder={'Selectionnez votre phase'}
+            onChange={(e) => {
+              const a = PhasesTemplates.find((template) => template.name === e);
+              if (a) setDescription(a.description);
+              else setDescription('');
+            }}
+          >
+            {PhasesTemplates.map((template) => (
+              <Select.Option key={template.key} value={template.name}>
+                {template.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item
           label={"État d'avancement"}
@@ -197,7 +219,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
             },
           ]}
         >
-          <Input.TextArea placeholder={'Entrez la description de votre étape'} />
+          <Input.TextArea placeholder={'Entrez la description de votre étape'} value={description} />
         </Form.Item>
         <footer className={styles.footer}>
           <Button small htmlType={'submit'}>
