@@ -10,7 +10,8 @@ import { selectAffairs } from '../../../store/reducers/affairsReducer';
 import { getUsUser } from '../../../services/userService/UsUsers';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import styles from './PreviewSatisfactionsList.module.scss';
-import DisplaySatisfaction from '../DisplaySatisfaction/DisplaySatisfaction';
+import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
+import ModalDisplaySatisfaction from '../ModalDisplaySatisfaction/ModalDisplaySatisfaction';
 
 interface PreviewSatisfactionsListProps {
   satisfactions: Partial<GdpSatisfactionModel>[];
@@ -87,17 +88,21 @@ const PreviewSatisfactionsList = ({ satisfactions }: PreviewSatisfactionsListPro
   return (
     <ShadowCard>
       <div className={styles.container}>
-        {satisfactions.map((satisfaction) => (
-          <React.Fragment key={satisfaction.id}>
-            <PreviewSatisfaction satisfaction={satisfaction} handleClick={handleClick} />
-            <DisplaySatisfaction
-              isOpen={openModal === satisfaction.id}
-              handleClose={handleClose}
-              satisfaction={satisfaction}
-            />
-            <hr className={styles.separator} />
-          </React.Fragment>
-        ))}
+        {satisfactions.length > 0 ? (
+          satisfactions.map((satisfaction) => (
+            <React.Fragment key={satisfaction.id}>
+              <PreviewSatisfaction satisfaction={satisfaction} handleClick={handleClick} />
+              <ModalDisplaySatisfaction
+                isOpen={openModal === satisfaction.id}
+                handleClose={handleClose}
+                satisfaction={satisfaction}
+              />
+              <hr className={styles.separator} />
+            </React.Fragment>
+          ))
+        ) : (
+          <ConfigureWidget descriptionText={'Aucune satisfaction à afficher'} />
+        )}
       </div>
     </ShadowCard>
   );

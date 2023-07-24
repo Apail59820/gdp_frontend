@@ -1,15 +1,17 @@
-@import 'projex-global-styles';
+@import '../../../node_modules/projex-global-styles';
 
 .header {
   display: flex;
   align-items: stretch;
-  justify-content: space-evenly;
-  gap: 1rem;
+  justify-content: flex-start;
+  gap: 1.5rem;
 
   .headerEmojis {
     display: flex;
     flex-direction: column;
+    gap: .5rem;
     align-items: center;
+
     span {
       text-transform: capitalize;
     }

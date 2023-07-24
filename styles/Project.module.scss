@@ -15,4 +15,10 @@
     align-items: center;
     gap: 1rem;
   }
+
+  .phasesWidget {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
 }
