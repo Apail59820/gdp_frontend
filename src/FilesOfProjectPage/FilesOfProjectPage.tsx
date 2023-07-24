@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styles from './FilesOfProjectPage.module.scss';
-import { Button, Input, Select, ShadowCard } from '@projex/ui';
+import { Button, Input, Select } from '@projex/ui';
 import { QueryParameters } from '../../models/DirectusModel';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import { selectCompanyEntities } from '../../store/reducers/companyEntitiesReducer';
-import { selectGlobalFilters } from '../../store/reducers/globalFilterReducer';
 import { LazyLoadingStateType } from '../../models/LazyLoadingStateType';
+import { DateTime } from 'luxon';
 import getConfig from 'next/config';
 
 import { CompanyEnum } from '../../models/UserService/UsCompanyEntityModel';
@@ -17,9 +17,14 @@ import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel } from '../../models/GestionDeProjets/GdpPhaseModel';
 import { useRouter } from 'next/router';
 import FilesGridDisplay, { GridFolderItem } from '../components/FilesGridDisplay/FilesGridDisplay';
-import { LoadingOutlined } from '@ant-design/icons';
 import UploadFilesFormUploadFilesForm from '../components/filesForms/UploadFilesForm/UploadFilesForm';
 import PageHeaderBanner from '../components/PageHeaderBanner/PageHeaderBanner';
+import { Table } from 'antd';
+import FolderIcon from '../../public/folder.svg';
+import FileImageIcon from '../../public/file-image.svg';
+import FileIcon from '../../public/file.svg';
+import FileArrayLeftLong from '../../public/arrow-left-long.svg';
+import Link from 'next/link';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -276,6 +281,88 @@ const FilesOfProjectPage = ({
     }
   }
 
+  interface DataSourceItem {
+    key: string | number | undefined;
+    name: JSX.Element | JSX.Element[];
+    type: string | null | undefined;
+    uploaded_on: Date | string | undefined;
+  }
+
+  const columns = [
+    {
+      title: 'Nom du fichier',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
+    },
+    {
+      title: 'Date de mise en ligne',
+      dataIndex: 'uploaded_on',
+      key: 'uploaded_on',
+      sorter: (a: DataSourceItem, b: DataSourceItem) => {
+        if (!a.uploaded_on || !b.uploaded_on) return 0;
+        return a.uploaded_on < b.uploaded_on ? 1 : -1;
+      },
+    },
+  ];
+
+  let dataSource: DataSourceItem[] = [];
+
+  if (displayOption === 'list') {
+    dataSource = [
+      ...files.map((file) => ({
+        key: file.id,
+        name: (
+          <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}>
+            <img src={file.type === 'image/png' ? FileImageIcon.src : FileIcon.src} width={20} height={20} alt="Icon" />
+            <span style={{ display: 'inline-flex', marginLeft: '8px' }}>{file.title}</span>
+          </div>
+        ),
+        type: file.type,
+        uploaded_on: DateTime.fromISO(file.uploaded_on as string)
+          .setLocale('fr')
+          .toLocaleString(),
+      })),
+    ];
+    //TODO fix preview files table view mode.
+    const folders = getFolders();
+    if (folders) {
+      dataSource = [
+        ...folders.map((folder): DataSourceItem => {
+          const linkProps: { href: string; onClick?: () => void } = { href: '' };
+          const currentIcon = folder.type === 'back' ? FileArrayLeftLong : FolderIcon;
+          if (folder.type === 'back' && folder.href && folder.href.length > 0) {
+            linkProps.href = folder.href;
+          } else {
+            linkProps.href = `/projects/${project.id}/files`;
+            linkProps.onClick = folder.onClick;
+          }
+          return {
+            key: folder.folder.name as string,
+            name: (
+              <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}>
+                <Link {...linkProps} style={{ display: 'flex' }}>
+                  <img src={currentIcon?.src} width={22} height={22} alt="Icon" />
+                  <span style={{ display: 'inline-flex', marginLeft: '8px' }}>{folder.folder.name}</span>
+                </Link>
+              </div>
+            ),
+            type: folder.folder.type
+              .replace(/back_to_projects|back_to_affairs|back_to_phases/g, '')
+              .replace('affair', 'affaire'),
+            uploaded_on: DateTime.fromISO(project.date_created as any)
+              .setLocale('fr')
+              .toLocaleString(),
+          };
+        }),
+        ...dataSource,
+      ];
+    }
+  }
   return (
     <div className="page" ref={pageRef}>
       <div className={styles.projectsPage}>
@@ -359,7 +446,17 @@ const FilesOfProjectPage = ({
               folders={getFolders()}
             />
           ) : (
-            <div>TABLE</div>
+            <Table
+              columns={columns}
+              dataSource={dataSource}
+              pagination={false}
+              size={'large'}
+              locale={{
+                triggerAsc: 'Trier de manière ascendante',
+                triggerDesc: 'Trier de manière descendante',
+                cancelSort: 'Ne pas trier',
+              }}
+            />
           )}
         </div>
       </div>

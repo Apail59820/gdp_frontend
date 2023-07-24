@@ -1,44 +1,47 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from './UserInformations.module.scss';
 import { UsUserModel } from '../../../models/UsModels';
-import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 import { capitalize } from '../../../utils/capitalize';
+import { CompanyEnum } from '../../../models/UsModels';
 import Link from 'next/link';
+import { getAsset } from '../../../services/userService/UsAssets';
+import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
 
 export type UserInformationsProps = {
   user: Partial<UsUserModel>;
+  avatar: string | undefined;
 };
 
 const UserInformations = ({ user }: UserInformationsProps) => {
-  const { first_name, last_name, title, company, number, email } = user;
-
+  const { avatar, first_name, last_name, title, company, number, email } = user;
+  const [currentUserAvatar, setCurrentUserAvatar] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    if (!avatar) return;
+    getAsset(avatar as string).then((res) => {
+      if (isRequestSuccessful(res.status) && res.data) {
+        setCurrentUserAvatar(res.data);
+      }
+    });
+  }, [avatar, user]);
   const getColorByCompany = () => {
-    // switch (company?.toLowerCase()) {
-    //   case CompanyEnum.AMEXIA:
-    //     return styles.amexia;
-    //   case CompanyEnum.DIAGOBAT:
-    //     return styles.diagobat;
-    //   case CompanyEnum.IMPERIUM:
-    //     return styles.imperium;
-    //   case CompanyEnum.PROBIM:
-    //     return styles.probim;
-    //   case CompanyEnum.PROJEX:
-    //     return styles.projex;
-    //   default:
-    //     return styles.groupeProjex;
-    // }
-    return styles.groupeProjex;
+    switch (company?.toLocaleLowerCase()) {
+      case CompanyEnum.AMEXIA:
+        return styles.amexia;
+      case CompanyEnum.DIAGOBAT:
+        return styles.diagobat;
+      case CompanyEnum.IMPERIUM:
+        return styles.imperium;
+      case CompanyEnum.PROBIM:
+        return styles.probim;
+      case CompanyEnum.PROJEX:
+        return styles.projex;
+      default:
+        return styles.groupeProjex;
+    }
   };
-
   return (
     <div className={styles.userInformations}>
-      {/* TODO Render user profile picture */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        className={styles.image}
-        src={user.avatar ?? getImagesByCompany(user.company!).picto}
-        alt={`Photo de ${user.first_name} ${user.last_name}`}
-      />
+      <img className={styles.image} src={currentUserAvatar} alt={`Photo de ${user.first_name} ${user.last_name}`} />
       <div className={styles.informationsContainer}>
         <Link href={`/users/${user.id}`}>
           <h4 className={styles.name}>
