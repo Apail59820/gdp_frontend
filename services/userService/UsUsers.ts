@@ -17,6 +17,7 @@ const defaultFields = [
   'company',
   'web_link',
   'role',
+  'avatar',
   'clients_interactions_id.*', //todo a détailler ?
   'company_entities.*', //todo a détailler ?
 ].join(',');
