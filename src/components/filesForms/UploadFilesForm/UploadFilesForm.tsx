@@ -26,6 +26,7 @@ export type UploadFilesFormPropsType = {
   project: Partial<GdpProjectsModel>;
   affair?: Partial<GdpAffairModel>;
   phase?: Partial<GdpPhaseModel>;
+  onFileUpload?: () => void;
 };
 
 export enum UploadStatusEnum {
@@ -51,6 +52,7 @@ export type fileItemType = {
  * @param project - project to which the files will be attached
  * @param affair  - affair to which the files will be attached
  * @param phase - phase to which the files will be attached
+ * @param onFileUpload - callback triggered when form is submitted
  */
 export default function UploadFilesFormUploadFilesForm({
   isOpen,
@@ -59,6 +61,7 @@ export default function UploadFilesFormUploadFilesForm({
   project,
   affair,
   phase,
+  onFileUpload,
 }: UploadFilesFormPropsType) {
   const [fileList, setFileList] = useState<fileItemType[]>([]);
   const [uploadProgress, setUploadProgress] = useState<{ percent: number; fileId: string }[]>([]);
@@ -157,6 +160,10 @@ export default function UploadFilesFormUploadFilesForm({
         uploadState: fileItem.id === fileUID ? UploadStatusEnum.DONE : fileItem.uploadState,
       }));
       setFileList(updatedFileList);
+      setIsOpen(false);
+      if (onFileUpload) {
+        onFileUpload();
+      }
       return updatedFileList;
     } else {
       const updatedFileList = _fileListTmp.map((fileItem) => ({
@@ -164,6 +171,10 @@ export default function UploadFilesFormUploadFilesForm({
         uploadState: fileItem.id === fileUID ? UploadStatusEnum.ERROR : fileItem.uploadState,
       }));
       setFileList(updatedFileList);
+      setIsOpen(false);
+      if (onFileUpload) {
+        onFileUpload();
+      }
       return updatedFileList;
     }
   };
