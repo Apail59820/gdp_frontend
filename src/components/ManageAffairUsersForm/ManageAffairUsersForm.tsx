@@ -59,7 +59,7 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
         affair.affairs_directus_users_ids.forEach((relation) => {
           if (typeof relation !== 'number') {
             if (typeof relation.directus_users_id !== 'string') {
-              tmpAffairDirectusUsersId.push(relation.directus_users_id.id);
+              relation.directus_users_id.id && tmpAffairDirectusUsersId.push(relation.directus_users_id.id);
             } else {
               tmpAffairDirectusUsersId.push(relation.directus_users_id);
             }
@@ -70,7 +70,7 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
                   const { directus_users_id } = relation;
                   if (!directus_users_id) return;
                   if (typeof directus_users_id !== 'string') {
-                    tmpAffairDirectusUsersId.push(directus_users_id.id);
+                    directus_users_id.id && tmpAffairDirectusUsersId.push(directus_users_id.id);
                   } else {
                     tmpAffairDirectusUsersId.push(directus_users_id);
                   }
@@ -90,7 +90,7 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
           affair.projects_id?.projects_directus_users_clients_ids.forEach((relation) => {
             if (typeof relation !== 'number') {
               if (typeof relation.directus_users_id !== 'string') {
-                tmpAffairDirectusUsersId.push(relation.directus_users_id.id);
+                relation.directus_users_id.id && tmpAffairDirectusUsersId.push(relation.directus_users_id.id);
               } else {
                 tmpAffairDirectusUsersId.push(relation.directus_users_id);
               }
@@ -101,7 +101,7 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
                     const { directus_users_id } = relation;
                     if (!directus_users_id) return;
                     if (typeof directus_users_id !== 'string') {
-                      tmpAffairDirectusUsersId.push(directus_users_id.id);
+                      directus_users_id.id && tmpAffairDirectusUsersId.push(directus_users_id.id);
                     } else {
                       tmpAffairDirectusUsersId.push(directus_users_id);
                     }
@@ -117,7 +117,7 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
               res.data.projects_directus_users_clients_ids.forEach((relation) => {
                 if (typeof relation !== 'number') {
                   if (typeof relation.directus_users_id !== 'string') {
-                    tmpAffairDirectusUsersId.push(relation.directus_users_id.id);
+                    relation.directus_users_id.id && tmpAffairDirectusUsersId.push(relation.directus_users_id.id);
                   } else {
                     tmpAffairDirectusUsersId.push(relation.directus_users_id);
                   }
@@ -127,7 +127,7 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
                       const { directus_users_id } = res.data[0];
                       if (!directus_users_id) return;
                       if (typeof directus_users_id !== 'string') {
-                        tmpAffairDirectusUsersId.push(directus_users_id.id);
+                        directus_users_id.id && tmpAffairDirectusUsersId.push(directus_users_id.id);
                       } else {
                         tmpAffairDirectusUsersId.push(directus_users_id);
                       }

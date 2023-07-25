@@ -101,6 +101,8 @@ const Affair = () => {
         'projects_id.name',
         'projects_id.id',
         'projects_id.company_entity',
+        'projects_id.projects_directus_users_clients_ids.*',
+        'projects_id.projects_directus_users_collaborators_ids.*',
         'affairs_phases.*',
         'activities_id.*',
       ].join(',')
@@ -317,6 +319,19 @@ const Affair = () => {
             });
           } else setAffairInvoices([]);
         });
+      } else {
+        if (pythagoreAffairIds.length > 0) {
+          getGdpPythagoreFactures({
+            filter: {
+              num_affaire: { _in: pythagoreAffairIds },
+            },
+            limit: 3,
+          }).then((res) => {
+            if (res.status === 200 && res.data) {
+              setAffairInvoices(res.data);
+            } else setAffairInvoices([]);
+          });
+        }
       }
     } else {
       setAffairInvoices([]);
