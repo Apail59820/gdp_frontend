@@ -121,7 +121,7 @@ const CreateAffairForm = ({ project, affair, isOpen, setIsOpen }: props) => {
         </Form.Item>
         <footer className={styles.footer}>
           <Button small htmlType={'submit'}>
-            Créer l&apos;affaire
+            {affair ? 'Modifier' : 'Créer'} l&apos;affaire
           </Button>
           <Button small style={'text'} onClick={() => setIsOpen(false)}>
             Annuler

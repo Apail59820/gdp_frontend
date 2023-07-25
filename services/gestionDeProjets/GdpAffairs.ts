@@ -103,7 +103,8 @@ type createFieldsToOmit =
   | 'affairs_satisfaction'
   | 'affairs_directus_users_ids'
   | 'files'
-  | 'activities_id';
+  | 'activities_id'
+  | 'affairs_phases_ids';
 
 /**
  * Create a GdpAffair.
