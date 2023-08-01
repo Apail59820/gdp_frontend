@@ -45,6 +45,10 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
   let timeout: ReturnType<typeof setTimeout> | null;
 
   useEffect(() => {
+    initAffair && initAffair.id && setAffairId(initAffair.id);
+  }, [initAffair]);
+
+  useEffect(() => {
     if (initProject) {
       if (!projects.includes(initProject)) {
         setProjects([...projects, initProject]);
@@ -315,7 +319,7 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
             <>
               <p className={styles.customLabel}>Numéros Pythagore</p>
               {fields.map(({ key, name, ...restFields }) => (
-                <div className={styles.formListItems}>
+                <div className={styles.formListItems} key={key}>
                   <Form.Item className={styles.formItem} {...restFields} name={[name, 'affaire']}>
                     <Select
                       showSearch

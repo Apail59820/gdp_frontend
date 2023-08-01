@@ -61,7 +61,7 @@ const MainMessage = ({ project, showImage = true, onManageThumbnailClick, resize
     );
     if (resizeTitle < projectsNameLength) {
       setIsNameTooLong(true);
-      setProjectName(`${project.name?.slice(0, Math.round(resizeTitle))?.trim()}...`);
+      setProjectName(`${project.name?.slice(0, Math.round(resizeTitle))?.trim()}…`);
     } else setIsNameTooLong(false);
   }, [entityLogoWidth, projectsNameLength, resizeTitle, textAreaLength, windowInnerWidth]);
 

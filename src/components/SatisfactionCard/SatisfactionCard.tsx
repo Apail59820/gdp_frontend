@@ -12,11 +12,17 @@ interface SatisfactionCardProps {
 const SatisfactionCard = ({ satisfactions, reverse }: SatisfactionCardProps) => {
   const total = 4;
 
-  const score =
+  const score = isNaN(
     satisfactions.reduce(
       (acc, satisfaction) => acc + (satisfaction.score_hard_skills ? satisfaction.score_hard_skills : 0),
       0
-    ) / satisfactions.length;
+    ) / satisfactions.length
+  )
+    ? 0
+    : satisfactions.reduce(
+        (acc, satisfaction) => acc + (satisfaction.score_hard_skills ? satisfaction.score_hard_skills : 0),
+        0
+      ) / satisfactions.length;
 
   const commentsNumber = satisfactions.filter((satisfaction) => satisfaction.comment).length;
 

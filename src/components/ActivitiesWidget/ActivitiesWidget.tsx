@@ -56,7 +56,7 @@ const ActivitiesWidget = ({ activities }: ActivitiesWidgetProps) => {
 
   const formattedActivities: Activity[] = useMemo(
     () =>
-      activities.map((activity) => {
+      activities?.map((activity) => {
         let author = 'Inconnu';
         if (activity.user_created) {
           if (typeof activity.user_created === 'string') {
@@ -88,7 +88,7 @@ const ActivitiesWidget = ({ activities }: ActivitiesWidgetProps) => {
 
   return (
     <Section title="Activités récentes">
-      {formattedActivities.length > 0 ? (
+      {formattedActivities?.length > 0 ? (
         <RecentActivitiesCard activities={formattedActivities} />
       ) : (
         <ConfigureWidget descriptionText="Aucune activité récente" />
