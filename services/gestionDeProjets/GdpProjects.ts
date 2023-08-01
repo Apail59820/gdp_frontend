@@ -98,6 +98,7 @@ type createFieldsToOmit =
   | 'date_updated'
   | 'projects_directus_users_clients_ids'
   | 'projects_directus_users_collaborators_ids'
+  | 'affairs_ids'
   | 'files'
   | 'affairs'
   | 'activities_id'
@@ -105,6 +106,7 @@ type createFieldsToOmit =
   | 'zip_code'
   | 'city'
   | 'country'
+  | 'image'
   | 'client_info'
   | 'status'
   | 'project_type';

@@ -42,11 +42,13 @@ import ConfigureFacturationForm from '../../../../../src/components/ConfigureFac
 import ManageAffairUsersForm from '../../../../../src/components/ManageAffairUsersForm/ManageAffairUsersForm';
 import { getGdpProjectsUsersClients } from '../../../../../services/gestionDeProjets/GdpProjectsUsersClients';
 import UploadFilesFormUploadFilesForm from '../../../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
+import { selectAffairs } from '../../../../../store/reducers/affairsReducer';
 
 const Affair = () => {
   const { query } = useRouter();
   const me = useSelector(selectUserProfile);
   const projects = useSelector(selectProjects);
+  const affairs = useSelector(selectAffairs);
 
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
   const [affairPhases, setAffairPhases] = useState<Partial<GdpAffairModel>[]>([]);
@@ -90,6 +92,15 @@ const Affair = () => {
   useEffect(() => {
     if (!query.affairId || typeof query.affairId !== 'string') return;
 
+    const affairId = parseInt(query.affairId);
+
+    const retrievedAffair = affairs.find((affair) => affair.id === affairId);
+
+    if (retrievedAffair) {
+      setAffair(retrievedAffair);
+      return;
+    }
+
     getGdpAffair(
       +query.affairId,
       [
@@ -114,7 +125,7 @@ const Affair = () => {
       })
       // eslint-disable-next-line no-console
       .catch((error) => console.error(error));
-  }, [query.affairId]);
+  }, [affairs, query.affairId]);
 
   // Retrieve phases
   useEffect(() => {
