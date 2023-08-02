@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@redux-devtools/core": "^3.13.1",
+    "@projex/ui": "workspace:*",
     "@reduxjs/toolkit": "^1.9.1",
     "@types/js-cookie": "^3.0.2",
     "eslint-config-custom": "workspace:*",
