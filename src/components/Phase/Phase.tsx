@@ -1,14 +1,60 @@
 import { ProgressBar, Section } from '@projex/ui';
-import React from 'react';
+import React, { Dispatch, createContext, useContext, useEffect, useState } from 'react';
 import FilesWidget from '../FilesWidget/FilesWidget';
 import PreviewFilesList from '../PreviewFilesList/PreviewFilesList';
 import styles from './Phase.module.scss';
 
+import {
+  GdpAffairModel,
+  GdpFilesModel,
+  GdpPhaseModel,
+  GdpProjectsModel,
+  GdpSatisfactionModel,
+} from '../../../models/GdPModels';
+import { getGdpFiles } from '../../../services/gestionDeProjets/GdpFiles';
+import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
+import CreatePhaseForm from '../CreatePhaseForm/CreatePhaseForm';
+import { Button } from '@projex/ui';
+import { PlusOutlined, SmileOutlined } from '@ant-design/icons';
+import SatisfactionForm from '../SatisfactionForm/SatisfactionForm';
+import UploadFilesFormUploadFilesForm from '../filesForms/UploadFilesForm/UploadFilesForm';
+import getConfig from 'next/config';
+import { useSelector } from 'react-redux';
+import { selectUserProfile } from '../../../store/reducers/authReducer';
+
+const { publicRuntimeConfig } = getConfig();
+
 type Props = {
-  phase: any;
+  phase: GdpPhaseModel;
+  affair: Partial<GdpAffairModel>;
+  project: Partial<GdpProjectsModel>;
+  satisfactionDone: boolean;
+  setIsPhaseUpdated: React.Dispatch<React.SetStateAction<boolean>>;
+  files: Partial<GdpFilesModel>[];
+  satisfactions: Partial<GdpSatisfactionModel>[];
 };
 
-const Phase = ({ phase }: Props) => {
+const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, files, satisfactions }: Props) => {
+  const total = 4;
+
+  const score =
+    satisfactions.reduce(
+      (acc, satisfaction) => acc + (satisfaction.score_hard_skills ? satisfaction.score_hard_skills : 0),
+      0
+    ) / satisfactions.length;
+
+  const getColor = () => {
+    if (score <= total / 3) return 'alert';
+    if (score >= total / 3 && score <= (total / 3) * 2) return 'warning';
+    if (score >= (total / 3) * 2) return 'ok';
+  };
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpenSatisfactionForm, setIsOpenSatisfactionForm] = useState<boolean>(false);
+  const [isOpenFilesForm, setIsOpenFilesForm] = useState<boolean>(false);
+
+  const user = useSelector(selectUserProfile);
+
   const renderStatus = (): JSX.Element => {
     switch (phase.status) {
       case 'completed':
@@ -64,42 +110,109 @@ const Phase = ({ phase }: Props) => {
   };
 
   return (
-    <div className={styles.phase}>
-      <section className={styles.aside}>
-        <div>
-          <h1 className={styles.order}>{phase.order}</h1>
-          <span className={`text-tiny ${styles.status}`}>{renderStatus()}</span>
-        </div>
-        <div>
-          <span className="text-tiny">satisfaction</span>
-          <ProgressBar color={getColorByStatus()} percentage={75} tiny />
-        </div>
-      </section>
-      <article className={styles.body}>
-        <div className={styles.main}>
-          <h2 className={styles.title}>Avant Projet Sommaire (APS)</h2>
-          <p className={styles.description}>
-            Sur la base des premières études de diagnostic (esquisses), soit l&apos;architecte, soit le maître
-            d&apos;œuvre d&apos;un bureau d&apos;études va mettre au point une offre de service en rentrant au cœur du
-            processus de construction du bâtiment.
-          </p>
-          <span className={`text-small ${styles.statistics}`}>› Statistiques de satisfaction disponibles</span>
-          <button className={`text-small ${styles.editButton}`}>
-            <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M10.668 1.92188C11.0781 2.35156 11.0781 3.03516 10.668 3.46484L4.55469 9.57812C4.32031 9.79297 4.04688 9.96875 3.75391 10.0469L1.39062 10.75C1.27344 10.7695 1.15625 10.75 1.07812 10.6719C1 10.5938 0.960938 10.4766 1 10.3594L1.70312 7.99609C1.78125 7.70312 1.95703 7.42969 2.17188 7.19531L8.28516 1.08203C8.71484 0.671875 9.39844 0.671875 9.82812 1.08203L10.668 1.92188ZM7.66016 2.60547L9.14453 4.08984L10.2188 3.03516C10.3945 2.83984 10.3945 2.54688 10.2188 2.37109L9.37891 1.53125C9.20312 1.35547 8.91016 1.35547 8.71484 1.53125L7.66016 2.60547ZM7.21094 3.03516L2.62109 7.64453C2.46484 7.78125 2.34766 7.97656 2.28906 8.17188L1.76172 9.98828L3.57812 9.46094C3.77344 9.40234 3.96875 9.28516 4.10547 9.12891L8.69531 4.53906L7.21094 3.03516Z"
-                fill="#002559"
-              />
-            </svg>
-            Modifier l&apos;étape
-          </button>
-        </div>
-        {/* TODO ne pas afficher si aucun de fichiers associés */}
-        <Section title="Fichiers associés" link={{ label: 'Voir tous les fichiers', href: '/' }}>
-          <PreviewFilesList files={[]} max={3} allFilesPageHref={'/'} />
-        </Section>
-      </article>
-    </div>
+    <>
+      <CreatePhaseForm
+        project={project}
+        affair={affair}
+        phase={phase}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        onUpdate={() => setIsPhaseUpdated(true)}
+      ></CreatePhaseForm>
+      <SatisfactionForm
+        affair_id={affair.id!}
+        affair_phases_id={phase.id!}
+        isOpen={isOpenSatisfactionForm}
+        setIsOpen={setIsOpenSatisfactionForm}
+      ></SatisfactionForm>
+      <UploadFilesFormUploadFilesForm
+        isOpen={isOpenFilesForm}
+        setIsOpen={setIsOpenFilesForm}
+        project={project}
+        affair={affair}
+        phase={phase}
+        onFileUpload={() => setIsPhaseUpdated(true)}
+        mode="files"
+      ></UploadFilesFormUploadFilesForm>
+
+      <div className={styles.phase}>
+        <section className={styles.aside}>
+          <div>
+            <h1 className={styles.order}>{phase.order}</h1>
+            <span className={`text-tiny ${styles.status}`}>{renderStatus()}</span>
+          </div>
+          <div>
+            <span className="text-tiny">satisfaction</span>
+            <ProgressBar
+              tiny
+              color={getColor()}
+              percentage={isNaN((score / total) * 100) ? 0 : (score / total) * 100}
+            />
+          </div>
+        </section>
+        <article className={styles.body}>
+          <div className={styles.main}>
+            <h2 className={styles.title}>{phase.name}</h2>
+            <div className={styles.descriptionContainer}>
+              <p>{phase.description}</p>
+
+              <button
+                className={`text-small ${styles.editButton}`}
+                onClick={() => {
+                  setIsOpen(true);
+                }}
+              >
+                <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M10.668 1.92188C11.0781 2.35156 11.0781 3.03516 10.668 3.46484L4.55469 9.57812C4.32031 9.79297 4.04688 9.96875 3.75391 10.0469L1.39062 10.75C1.27344 10.7695 1.15625 10.75 1.07812 10.6719C1 10.5938 0.960938 10.4766 1 10.3594L1.70312 7.99609C1.78125 7.70312 1.95703 7.42969 2.17188 7.19531L8.28516 1.08203C8.71484 0.671875 9.39844 0.671875 9.82812 1.08203L10.668 1.92188ZM7.66016 2.60547L9.14453 4.08984L10.2188 3.03516C10.3945 2.83984 10.3945 2.54688 10.2188 2.37109L9.37891 1.53125C9.20312 1.35547 8.91016 1.35547 8.71484 1.53125L7.66016 2.60547ZM7.21094 3.03516L2.62109 7.64453C2.46484 7.78125 2.34766 7.97656 2.28906 8.17188L1.76172 9.98828L3.57812 9.46094C3.77344 9.40234 3.96875 9.28516 4.10547 9.12891L8.69531 4.53906L7.21094 3.03516Z"
+                    fill="#002559"
+                  />
+                </svg>
+                Modifier l&apos;étape
+              </button>
+            </div>
+
+            {(user?.role === publicRuntimeConfig.ROLE_COLLABORATOR_ID ||
+              user?.role === publicRuntimeConfig.ROLE_ADMIN_ID) && (
+              <span className={`text-small ${styles.statistics}`}>› Statistiques de satisfaction disponibles</span>
+            )}
+          </div>
+          {/* TODO ne pas afficher si aucun de fichiers associés */}
+          <Section
+            title="Fichiers associés"
+            link={{ label: 'Voir tous les fichiers', href: `/projects/${project.id}/files` }}
+          >
+            {files && <PreviewFilesList files={files} max={3} allFilesPageHref={'/'} />}
+          </Section>
+          <div className={styles.button}>
+            <Button
+              small
+              style="secondary"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setIsOpenFilesForm(true);
+              }}
+            >
+              Ajouter des fichiers
+            </Button>
+          </div>
+          {phase.status === 'completed' && (
+            <div>
+              <Button
+                style="secondary"
+                icon={<SmileOutlined />}
+                disabled={satisfactionDone}
+                onClick={() => {
+                  setIsOpenSatisfactionForm(true);
+                }}
+              >
+                Donner ma satisfation
+              </Button>
+            </div>
+          )}
+        </article>
+      </div>
+    </>
   );
 };
 

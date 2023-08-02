@@ -33,7 +33,7 @@ const CreateAffairForm = ({ project, affair, isOpen, setIsOpen }: props) => {
         name: values.affairName,
         company_entity: values.entity,
         projects_id: project.id,
-        affairs_phases_ids: [],
+        //affairs_phases_ids: [],
       });
       if (isRequestSuccessful(response.status) && response.data) {
         message.success(messages.general.success());
@@ -121,7 +121,7 @@ const CreateAffairForm = ({ project, affair, isOpen, setIsOpen }: props) => {
         </Form.Item>
         <footer className={styles.footer}>
           <Button small htmlType={'submit'}>
-            Créer l&apos;affaire
+            {affair ? 'Modifier' : 'Créer'} l&apos;affaire
           </Button>
           <Button small style={'text'} onClick={() => setIsOpen(false)}>
             Annuler

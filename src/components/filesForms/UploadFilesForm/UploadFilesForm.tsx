@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Modal, Upload } from 'antd';
+import { message, Modal } from 'antd';
 import styles from './UploadFilesForm.module.scss';
 import Image from 'next/image';
 import { Button, ShadowCard } from '@projex/ui';
@@ -26,6 +26,7 @@ export type UploadFilesFormPropsType = {
   project: Partial<GdpProjectsModel>;
   affair?: Partial<GdpAffairModel>;
   phase?: Partial<GdpPhaseModel>;
+  onFileUpload?: () => void;
 };
 
 export enum UploadStatusEnum {
@@ -51,6 +52,7 @@ export type fileItemType = {
  * @param project - project to which the files will be attached
  * @param affair  - affair to which the files will be attached
  * @param phase - phase to which the files will be attached
+ * @param onFileUpload - callback triggered when form is submitted
  */
 export default function UploadFilesFormUploadFilesForm({
   isOpen,
@@ -59,6 +61,7 @@ export default function UploadFilesFormUploadFilesForm({
   project,
   affair,
   phase,
+  onFileUpload,
 }: UploadFilesFormPropsType) {
   const [fileList, setFileList] = useState<fileItemType[]>([]);
   const [uploadProgress, setUploadProgress] = useState<{ percent: number; fileId: string }[]>([]);
@@ -145,6 +148,7 @@ export default function UploadFilesFormUploadFilesForm({
     );
     setUploadProgress([...uploadProgress.filter((progressItem) => progressItem.fileId !== fileUID)]);
     if (isRequestSuccessful(uploadResponse.status)) {
+      message.success(`Le fichier ${_fileListTmp[fileIndex].properties.filename_download} a bien été uploadé.`);
       const updatedFileList = _fileListTmp.map((fileItem) => ({
         ...fileItem,
         properties: {
@@ -157,13 +161,22 @@ export default function UploadFilesFormUploadFilesForm({
         uploadState: fileItem.id === fileUID ? UploadStatusEnum.DONE : fileItem.uploadState,
       }));
       setFileList(updatedFileList);
+      setIsOpen(false);
+      if (onFileUpload) {
+        onFileUpload();
+      }
       return updatedFileList;
     } else {
+      message.error(`Le fichier ${_fileListTmp[fileIndex].properties.filename_download} n'a pas pu être uploadé.`);
       const updatedFileList = _fileListTmp.map((fileItem) => ({
         ...fileItem,
         uploadState: fileItem.id === fileUID ? UploadStatusEnum.ERROR : fileItem.uploadState,
       }));
       setFileList(updatedFileList);
+      setIsOpen(false);
+      if (onFileUpload) {
+        onFileUpload();
+      }
       return updatedFileList;
     }
   };
@@ -185,6 +198,7 @@ export default function UploadFilesFormUploadFilesForm({
     for (let i = 0; i < files.length; i++) {
       _fileList = [...(await uploadOneFile(files[i].id, _fileList))];
     }
+    setIsOpen(false);
   };
 
   const handleCancel = () => {

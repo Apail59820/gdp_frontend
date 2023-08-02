@@ -54,12 +54,12 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
 
   useEffect(() => {
     const tmpAffairDirectusUsersId: string[] = [];
-    if (affair.affairs_directus_users_ids) {
+    if (affair.affairs_directus_users_ids && affair.affairs_directus_users_ids.length > 0) {
       if (userType === 'collaborator') {
-        affair.affairs_directus_users_ids?.forEach((relation) => {
+        affair.affairs_directus_users_ids.forEach((relation) => {
           if (typeof relation !== 'number') {
             if (typeof relation.directus_users_id !== 'string') {
-              tmpAffairDirectusUsersId.push(relation.directus_users_id.id);
+              relation.directus_users_id.id && tmpAffairDirectusUsersId.push(relation.directus_users_id.id);
             } else {
               tmpAffairDirectusUsersId.push(relation.directus_users_id);
             }
@@ -70,7 +70,7 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
                   const { directus_users_id } = relation;
                   if (!directus_users_id) return;
                   if (typeof directus_users_id !== 'string') {
-                    tmpAffairDirectusUsersId.push(directus_users_id.id);
+                    directus_users_id.id && tmpAffairDirectusUsersId.push(directus_users_id.id);
                   } else {
                     tmpAffairDirectusUsersId.push(directus_users_id);
                   }
@@ -81,11 +81,16 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
           }
         });
       } else {
-        if (typeof affair.projects_id !== 'number') {
+        if (
+          typeof affair.projects_id !== 'number' &&
+          affair.projects_id &&
+          affair.projects_id.projects_directus_users_clients_ids &&
+          affair.projects_id.projects_directus_users_clients_ids.length > 0
+        ) {
           affair.projects_id?.projects_directus_users_clients_ids.forEach((relation) => {
             if (typeof relation !== 'number') {
               if (typeof relation.directus_users_id !== 'string') {
-                tmpAffairDirectusUsersId.push(relation.directus_users_id.id);
+                relation.directus_users_id.id && tmpAffairDirectusUsersId.push(relation.directus_users_id.id);
               } else {
                 tmpAffairDirectusUsersId.push(relation.directus_users_id);
               }
@@ -96,7 +101,7 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
                     const { directus_users_id } = relation;
                     if (!directus_users_id) return;
                     if (typeof directus_users_id !== 'string') {
-                      tmpAffairDirectusUsersId.push(directus_users_id.id);
+                      directus_users_id.id && tmpAffairDirectusUsersId.push(directus_users_id.id);
                     } else {
                       tmpAffairDirectusUsersId.push(directus_users_id);
                     }
@@ -106,13 +111,13 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
               });
             }
           });
-        } else {
+        } else if (affair.projects_id && typeof affair.projects_id === 'number') {
           getGdpProjectById(affair.projects_id).then((res) => {
             if (res.status === 200 && res.data && res.data.projects_directus_users_clients_ids) {
               res.data.projects_directus_users_clients_ids.forEach((relation) => {
                 if (typeof relation !== 'number') {
                   if (typeof relation.directus_users_id !== 'string') {
-                    tmpAffairDirectusUsersId.push(relation.directus_users_id.id);
+                    relation.directus_users_id.id && tmpAffairDirectusUsersId.push(relation.directus_users_id.id);
                   } else {
                     tmpAffairDirectusUsersId.push(relation.directus_users_id);
                   }
@@ -122,7 +127,7 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
                       const { directus_users_id } = res.data[0];
                       if (!directus_users_id) return;
                       if (typeof directus_users_id !== 'string') {
-                        tmpAffairDirectusUsersId.push(directus_users_id.id);
+                        directus_users_id.id && tmpAffairDirectusUsersId.push(directus_users_id.id);
                       } else {
                         tmpAffairDirectusUsersId.push(directus_users_id);
                       }

@@ -5,7 +5,7 @@ import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 import CollaboratorTeamCard, { CollaboratorTeamCardProps } from '../CollaboratorTeamCard/CollaboratorTeamCard';
 
 type Props = Omit<CollaboratorTeamCardProps, 'allUsersPageHref' | 'onKebabMenuClick'> & {
-  onAddCollaboratorClick: React.MouseEventHandler<HTMLButtonElement>;
+  onAddCollaboratorClick?: React.MouseEventHandler<HTMLButtonElement>;
   type?: 'project' | 'affair';
   collaboratorTeamPageHref?: string;
   displayConfigureButton?: boolean;
@@ -30,13 +30,13 @@ const CollaboratorTeamWidget = (props: Props) => {
         <CollaboratorTeamCard
           {...props}
           allUsersPageHref={collaboratorTeamPageHref || `${router.asPath}/team`}
-          onKebabMenuClick={() => console.log('handle click ?')}
+          onKebabMenuClick={() => {}}
         />
       ) : (
         <ConfigureWidget
           descriptionText="Aucun collaborateur ajouté au projet"
           button={
-            displayConfigureButton
+            displayConfigureButton && onAddCollaboratorClick
               ? { label: 'Ajouter des collaborateurs', onClick: onAddCollaboratorClick }
               : undefined
           }

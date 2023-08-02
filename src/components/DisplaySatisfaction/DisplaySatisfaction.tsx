@@ -1,17 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
 import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
-import { Modal } from 'antd';
 import styles from './DisplaySatisfaction.module.scss';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DateTime } from 'luxon';
-import { UsUserModel } from '../../../models/UserService/UsUserModel';
-import { selectUsers } from '../../../store/reducers/usersReducer';
 import { useSelector } from 'react-redux';
+import { selectUsers } from '../../../store/reducers/usersReducer';
+import { UsUserModel } from '../../../models/UserService/UsUserModel';
 import { getUsUser } from '../../../services/userService/UsUsers';
-import { Button } from '@projex/ui';
 
 interface DisplaySatisfactionProps {
-  isOpen: boolean;
-  handleClose: () => void;
   satisfaction: Partial<GdpSatisfactionModel>;
 }
 
@@ -100,7 +96,7 @@ const DisplaySatisfactionSkill = ({
   );
 };
 
-const DisplaySatisfaction = ({ isOpen, handleClose, satisfaction }: DisplaySatisfactionProps) => {
+const DisplaySatisfaction = ({ satisfaction }: DisplaySatisfactionProps) => {
   const users = useSelector(selectUsers);
   const [author, setAuthor] = useState<Partial<UsUserModel>>({});
 
@@ -121,19 +117,8 @@ const DisplaySatisfaction = ({ isOpen, handleClose, satisfaction }: DisplaySatis
       } else setAuthor(satisfaction.user_created);
     } else setAuthor({});
   }, [satisfaction.user_created, users]);
-
   return (
-    <Modal
-      open={isOpen}
-      closable
-      onCancel={handleClose}
-      title={'Satisfaction'}
-      footer={
-        <Button small onClick={handleClose}>
-          Fermer
-        </Button>
-      }
-    >
+    <div>
       <header className={styles.header}>
         <DisplaySatisfactionSkill type={'score_hard_skills'} indexSatisfaction={satisfaction.score_hard_skills} />
         <DisplaySatisfactionSkill type={'score_soft_skills'} indexSatisfaction={satisfaction.score_soft_skills} />
@@ -147,9 +132,7 @@ const DisplaySatisfaction = ({ isOpen, handleClose, satisfaction }: DisplaySatis
         </div>
       </header>
       <p>{satisfaction.comment ? satisfaction.comment : 'Aucun commentaire'}</p>
-      <hr className={styles.separator} />
-      <p>Merci pour votre participation !</p>
-    </Modal>
+    </div>
   );
 };
 

@@ -5,7 +5,7 @@ import UserInformations, { UserInformationsProps } from '../UserInformations/Use
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 
 type Props = UserInformationsProps & {
-  onKebabMenuClick: React.MouseEventHandler<HTMLButtonElement>;
+  onKebabMenuClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 const UserCard = ({ user, onKebabMenuClick }: Props) => {
@@ -13,7 +13,7 @@ const UserCard = ({ user, onKebabMenuClick }: Props) => {
     <ShadowCard>
       <div className={styles.userInformationsContainer}>
         <UserInformations user={user} />
-        <KebabMenuForCards onClick={onKebabMenuClick} />
+        {onKebabMenuClick ? <KebabMenuForCards onClick={onKebabMenuClick} /> : null}
       </div>
     </ShadowCard>
   );

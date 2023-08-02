@@ -18,6 +18,7 @@ import { getGdpAffairsUsers } from '../../../services/gestionDeProjets/GdpAffair
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
 import { GdpProjectsClientsModel } from '../../../models/GestionDeProjets/GdpProjectsClientsModel';
 import { getGdpProjectsUsersClients } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
+import Link from 'next/link';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -40,6 +41,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
     num_affaire,
     etatreglt_facture,
     date_echeance_facture,
+    nom_fichierpdf_facture,
   } = billing;
 
   const [clientsEmails, setClientsEmails] = useState<string[]>([]);
@@ -331,7 +333,13 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
               </Button>
             </>
           )}
-          {/* Pas opérationnel pour le moment <Button small>Télécharger la facture</Button>*/}
+          {nom_fichierpdf_facture && (
+            <Button small>
+              <Link href={nom_fichierpdf_facture} download={nom_fichierpdf_facture}>
+                Télécharger la facture {nom_fichierpdf_facture}
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
     </div>

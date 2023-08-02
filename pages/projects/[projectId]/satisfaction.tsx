@@ -15,6 +15,7 @@ import PreviewAffairSatisfactionCard from '../../../src/components/PreviewAffair
 import { selectAffairs, setAffairs } from '../../../store/reducers/affairsReducer';
 import { getGdpAffairs } from '../../../services/gestionDeProjets/GdpAffairs';
 import Link from 'next/link';
+import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 
 const ProjectSatisfaction = () => {
   const router = useRouter();
@@ -25,6 +26,7 @@ const ProjectSatisfaction = () => {
   const affairs = useSelector(selectAffairs);
 
   const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
+  const [projectAffairs, setProjectAffairs] = useState<Partial<GdpAffairModel>[]>([]);
   const [projectSatisfactions, setProjectSatisfactions] = useState<Partial<GdpSatisfactionModel>[]>([]);
 
   useEffect(() => {
@@ -56,15 +58,16 @@ const ProjectSatisfaction = () => {
 
   useEffect(() => {
     const affairsIdsToFetch: number[] = [];
+    const existingAffairs: Partial<GdpAffairModel>[] = [];
     project.affairs_ids?.forEach((affair) => {
       if (typeof affair === 'number') {
-        if (affairs.filter((affair) => affair.id === affair).length === 0) {
+        if (affairs.filter((affairFromContext) => affairFromContext.id === affair).length === 0) {
           affairsIdsToFetch.push(affair);
         }
       } else {
-        if (affairs.filter((affair) => affair.id === affair.id).length === 0) {
+        if (affairs.filter((affairFromContext) => affairFromContext.id === affair.id).length === 0) {
           affairsIdsToFetch.push(affair.id);
-        }
+        } else existingAffairs.push(affair);
       }
     });
     if (affairsIdsToFetch.length > 0) {
@@ -73,7 +76,10 @@ const ProjectSatisfaction = () => {
           id: { _in: affairsIdsToFetch },
         },
       }).then((res) => {
-        if (res.status === 200 && res.data) dispatch(setAffairs([...affairs, ...res.data]));
+        if (res.status === 200 && res.data) {
+          dispatch(setAffairs([...affairs, ...res.data]));
+          setProjectAffairs([...existingAffairs, ...res.data]);
+        }
       });
     }
   }, [affairs, dispatch, project.affairs_ids]);
@@ -96,11 +102,11 @@ const ProjectSatisfaction = () => {
         </section>
         <Section title={'Par affaire'}>
           <Grid>
-            {project.affairs_ids?.map((affairId, index) => (
-              <Link href={'/affairs/' + affairId + '/satisfaction'} key={index}>
+            {projectAffairs.map((affair, index) => (
+              <Link href={'/affairs/' + affair.id + '/satisfaction'} key={index}>
                 <PreviewAffairSatisfactionCard
-                  affair={affairs.filter((affair) => affair.id === affairId)[0]}
-                  satisfactions={projectSatisfactions.filter((satisfaction) => satisfaction.affairs_id === affairId)}
+                  affair={affair}
+                  satisfactions={projectSatisfactions.filter((satisfaction) => satisfaction.affairs_id === affair.id)}
                 />
               </Link>
             ))}
