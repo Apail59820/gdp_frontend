@@ -117,7 +117,6 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
     });
     if (isRequestSuccessful(response.status) && response.data) {
       message.success(messages.general.success());
-
       if (onUpdate) {
         onUpdate();
       }

@@ -138,13 +138,17 @@ const Affair = () => {
       });
 
       if (phasesToRetrieve.length > 0) {
-        getGdpAffairsPhases({ filter: { id: { in: phasesToRetrieve } } }).then((response) => {
-          if (response.status === 200 && response.data) {
-            phases.push(...response.data);
+        getGdpAffairsPhases({ filter: { id: { _in: phasesToRetrieve } }, limit: 3, sort: '-date_created' }).then(
+          (response) => {
+            if (response.status === 200 && response.data) {
+              phases.push(...response.data);
+            }
+            setAffairPhases(phases);
           }
-        });
+        );
+      } else {
+        setAffairPhases(phases);
       }
-      setAffairPhases(phases);
     }
   }, [affair]);
 
@@ -398,6 +402,37 @@ const Affair = () => {
     }
   }, [affairManagers, me]);
 
+  const handleUpdateAffairPhase = () => {
+    if (!query.affairId || typeof query.affairId !== 'string') return;
+
+    const affairId = parseInt(query.affairId);
+
+    getGdpAffair(
+      affairId,
+      [
+        '*',
+        'phases.*',
+        'company_entity.*',
+        'pythagore_ids.*',
+        'affairs_directus_users_ids.*',
+        'projects_id.name',
+        'projects_id.id',
+        'projects_id.company_entity',
+        'projects_id.projects_directus_users_clients_ids.*',
+        'projects_id.projects_directus_users_collaborators_ids.*',
+        'affairs_phases.*',
+        'activities_id.*',
+      ].join(',')
+    )
+      .then((response) => {
+        if (isRequestSuccessful(response.status) && response.data) {
+          setAffair(response.data);
+        } else setAffair({});
+      })
+      // eslint-disable-next-line no-console
+      .catch((error) => console.error(error));
+  };
+
   return (
     <div className="page">
       <PageHeaderBanner data={affairProject ? affairProject : { name: 'Projet' }} />
@@ -421,6 +456,7 @@ const Affair = () => {
             affair={affair}
             isOpen={isCreatePhaseFormVisible}
             setIsOpen={setIsCreatePhaseFormVisible}
+            onUpdate={handleUpdateAffairPhase}
           />
           <ConfigureFacturationForm
             isOpen={isConfigureFacturationFormVisible}
