@@ -7,15 +7,18 @@ import { Section } from '@projex/ui';
 import PhaseCard from '../PhaseCard/PhaseCard';
 import type { GdpPhaseModel } from '../../../models/GestionDeProjets/GdpPhaseModel';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
+import { GdpFilesModel } from '../../../models/GdPModels';
+import Files from '../../../pages/files';
 
 type Props = {
   phases: Partial<GdpPhaseModel>[];
   onNewPhaseClick: React.MouseEventHandler<HTMLButtonElement>;
   allPhasesPageHref?: string;
   displayCreateCard?: boolean;
+  files: Partial<GdpFilesModel>[];
 };
 
-const PhasesWidget = ({ phases, onNewPhaseClick, allPhasesPageHref, displayCreateCard }: Props) => {
+const PhasesWidget = ({ phases, onNewPhaseClick, allPhasesPageHref, displayCreateCard, files }: Props) => {
   const router = useRouter();
 
   return (
@@ -30,7 +33,7 @@ const PhasesWidget = ({ phases, onNewPhaseClick, allPhasesPageHref, displayCreat
       <Grid>
         {phases.length > 0 ? (
           phases.map((phase: Partial<GdpPhaseModel>) => (
-            <PhaseCard key={phase.id} phase={phase} onKebabMenuClick={() => console.log('handle click ?')} />
+            <PhaseCard key={phase.id} phase={phase} onKebabMenuClick={() => console.log('handle click ?')} files={files.filter((file) => file.phase_id == phase.id)}/>
           ))
         ) : (
           <ConfigureWidget descriptionText={"Aucune phase n'a été créée pour cette affaire."} />
