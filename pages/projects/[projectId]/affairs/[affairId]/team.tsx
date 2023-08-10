@@ -186,7 +186,7 @@ const Team = () => {
   if (isLoading) return null;
 
   return (
-    <div>
+    <div className={'page'}>
       <PageHeaderBanner data={project} />
       <div className={styles.teamPage}>
         <Breadcrumb dynamicRoutesLabel={[project.name || 'Projet', affair.name || 'Affaire']} />

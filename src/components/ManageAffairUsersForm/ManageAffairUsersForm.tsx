@@ -131,6 +131,7 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
                       } else {
                         tmpAffairDirectusUsersId.push(directus_users_id);
                       }
+                      setAffairDirectusUsersId(tmpAffairDirectusUsersId);
                     }
                   });
                 }
