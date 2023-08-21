@@ -10,8 +10,8 @@
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
     "@next/font": "13.0.7",
-    "@projex/global-styles": "workspace:*",
-    "@projex/ui": "workspace:*",
+    "@projex/global-styles": "^1.0.0",
+    "@projex/ui": "^0.0.1",
     "@reduxjs/toolkit": "^1.9.1",
     "@types/luxon": "^3.2.0",
     "@types/node": "^17.0.12",
@@ -30,11 +30,11 @@
   },
   "devDependencies": {
     "@redux-devtools/core": "^3.13.1",
-    "@projex/ui": "workspace:*",
+    "@projex/ui": "^0.0.1",
     "@reduxjs/toolkit": "^1.9.1",
     "@types/js-cookie": "^3.0.2",
-    "eslint-config-custom": "workspace:*",
+    "@projex/eslint-config-custom": "^0.0.0",
     "react-redux": "^8.0.5",
-    "tsconfig": "workspace:*"
+    "@projex/tsconfig": "^0.0.0"
   }
 }
