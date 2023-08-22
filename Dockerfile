@@ -17,6 +17,7 @@ ENV NODE_OPTIONS --max_old_space_size=4096
 COPY --from=deps /app/node_modules ./node_modules
 COPY . ./
 # RUN export NODE_OPTIONS=--openssl-legacy-provider
+RUN export NODE_OPTIONS=--experimental-specifier-resolution=node
 RUN npm run build
 
 # Production image, copy all the files and run next
