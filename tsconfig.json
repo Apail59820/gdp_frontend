@@ -1,5 +1,5 @@
 {
-  "extends": "tsconfig/nextjs.json",
+  "extends": "./node_modules/@projex/tsconfig/nextjs.json",
   "include": [
     "next-env.d.ts",
     "**/*.ts",
@@ -11,6 +11,12 @@
   ],
   "compilerOptions": {
     "target": "ES5",
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "moduleResolution": "Node",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   }
 }
