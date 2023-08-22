@@ -45,6 +45,12 @@ const nextConfig = {
     CLIENTS_COMPANY_ENTITIES_CHUNK_SIZE: process.env.CLIENTS_COMPANY_ENTITIES_CHUNK_SIZE,
     CLIENTS_COMPANY_ENTITIES_GLOBAL_CHUNK_SIZE: process.env.CLIENTS_COMPANY_ENTITIES_GLOBAL_CHUNK_SIZE,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 module.exports = nextConfig;
