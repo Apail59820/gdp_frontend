@@ -46,11 +46,11 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
       });
     }
     const project = projects.filter((project) => project.id === projectId)[0];
-    const relationId: string[] = [];
+    const relationId: number[] = [];
     const userId: string[] = [];
     const tmpInitCollaborators: Partial<UsUserModel>[] = [];
     project?.projects_directus_users_collaborators_ids?.forEach((relation) => {
-      if (typeof relation === 'string') {
+      if (typeof relation === 'number') {
         relationId.push(relation);
       } else {
         if (typeof relation.directus_users_id === 'string') {
@@ -90,7 +90,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
   const fetchData = async (
     getter: (queryParameters: QueryParameters) => any,
     queryParams: QueryParameters,
-    setter: React.Dispatch<React.SetStateAction<any>>
+    setter: React.Dispatch<React.SetStateAction<any>>,
   ) => {
     if (timeout) {
       clearTimeout(timeout);
@@ -120,7 +120,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
     const project = projects.filter((project) => project.id === projectId)[0];
     if (project) {
       project.projects_directus_users_collaborators_ids?.forEach((relation) => {
-        if (typeof relation !== 'string') {
+        if (typeof relation !== 'number') {
           if (typeof relation.directus_users_id !== 'string') {
             const rduId = relation.directus_users_id;
             if (valuesToDelete.some((manager) => manager.id === rduId.id)) {
@@ -144,7 +144,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
             projects_id: projectId,
             directus_users_id: value.collaborator,
             project_manager: false,
-          }))
+          })),
         ).then((res) => {
           if (res.status === 200) {
             message.success(`Les modifications ont bien été prises en compte.`);
@@ -232,7 +232,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
                                 ],
                               },
                             },
-                            setUsers
+                            setUsers,
                           );
                         }
                       }}
