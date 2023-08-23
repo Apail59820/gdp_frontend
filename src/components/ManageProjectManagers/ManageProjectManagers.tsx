@@ -46,7 +46,7 @@ const ManageProjectManagers = ({ open, onClose, project }: ManageProjectManagers
   const fetchData = async (
     getter: (queryParameters: QueryParameters) => any,
     queryParams: QueryParameters,
-    setter: React.Dispatch<React.SetStateAction<any>>
+    setter: React.Dispatch<React.SetStateAction<any>>,
   ) => {
     if (timeout) {
       clearTimeout(timeout);
@@ -150,7 +150,7 @@ const ManageProjectManagers = ({ open, onClose, project }: ManageProjectManagers
           projects_id: values.project,
           directus_users_id: manager,
           project_manager: true,
-        })
+        }),
       );
       createGdpProjectUserCollaborators(relationsToAdd).then((res) => {
         if (res.status === 200) {
@@ -164,7 +164,7 @@ const ManageProjectManagers = ({ open, onClose, project }: ManageProjectManagers
       initialRelations.forEach((relation) => {
         if (typeof relation.directus_users_id === 'string') {
           if (managersToRemove.includes(relation.directus_users_id) && relation.id) relationsToRemove.push(relation.id);
-        } else if (relation.directus_users_id) {
+        } else if (relation.directus_users_id && relation.directus_users_id.id) {
           if (managersToRemove.includes(relation.directus_users_id.id) && relation.id)
             relationsToRemove.push(relation.id);
         }
@@ -232,7 +232,7 @@ const ManageProjectManagers = ({ open, onClose, project }: ManageProjectManagers
                                 ],
                               },
                             },
-                            setQueriedUsers
+                            setQueriedUsers,
                           ).catch((err) => console.error(err));
                         }
                       }}

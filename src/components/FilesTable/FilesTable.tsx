@@ -71,11 +71,11 @@ const FilesTable = ({ filesList }: props) => {
       phases.map((phase) => tmp.push({ key: phase.id, title: phase.name, dataType: 'phase', id: phase.id.toString() }));
     } else if (route.includes('affair')) {
       affairs.map((affair) =>
-        tmp.push({ key: affair.id as number, title: affair.name, dataType: 'affair', id: affair.id?.toString() })
+        tmp.push({ key: affair.id as number, title: affair.name, dataType: 'affair', id: affair.id?.toString() }),
       );
     } else if (route.includes('project')) {
       projects.map((project) =>
-        tmp.push({ key: project.id as string, title: project.name, dataType: 'project', id: project.id })
+        tmp.push({ key: project.id as number, title: project.name, dataType: 'project', id: project.id?.toString() }),
       );
     }
     setData(tmp);
@@ -175,8 +175,7 @@ const FilesTable = ({ filesList }: props) => {
       key: 'uploaded_on',
       sorter: (a: DataType, b: DataType) => {
         if (!a.uploaded_on || !b.uploaded_on) return 0;
-        return Interval.fromDateTimes(DateTime.fromJSDate(b.uploaded_on), DateTime.fromJSDate(a.uploaded_on)).length() >
-          0
+        return Interval.fromDateTimes(DateTime.fromISO(b.uploaded_on), DateTime.fromISO(a.uploaded_on)).length() > 0
           ? 1
           : -1;
       },
