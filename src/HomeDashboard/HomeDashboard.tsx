@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import { GdpProjectsModel } from '../../models/GdPModels';
-import { QuickActionCard } from '@projex/ui';
+import { QuickActionCard } from 'projex-ui';
 import Grid from '../components/Grid/Grid';
 import QuickAccessWidget from '../components/QuickAccessWidget/QuickAccessWidget';
 import ProjectsWidget from '../components/ProjectsWidget/ProjectsWidget';
@@ -93,7 +93,7 @@ const HomeDashboard = () => {
             button={{
               label: 'Ajouter un projet',
               onClick: () => setIsCreateNewProjectModalOpen(true),
-              icon: <PlusOutlined />,
+              icon: <PlusOutlined rev={undefined} />,
             }}
           >
             Créer un nouveau projet dés maintenant
@@ -105,7 +105,7 @@ const HomeDashboard = () => {
             button={{
               label: 'Ajouter des informations',
               href: publicRuntimeConfig.USER_SERVICE_URL + `/users/${userProfile?.id}`,
-              icon: <PlusOutlined />,
+              icon: <PlusOutlined rev={undefined} />,
             }}
           >
             Remplissez votre profil pour profiter pleinement de toutes les fonctionnalités

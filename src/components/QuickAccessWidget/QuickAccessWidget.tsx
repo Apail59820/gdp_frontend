@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useState } from 'react';
-import { Section } from '@projex/ui';
+import { Section } from 'projex-ui';
 
 type Props = PropsWithChildren;
 

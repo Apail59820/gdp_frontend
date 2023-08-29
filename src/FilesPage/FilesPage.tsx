@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, ReactNode } from 'react';
 import styles from './FilesPage.module.scss';
-import { Button, Input, Select } from '@projex/ui';
+import { Button, Input, Select } from 'projex-ui';
 import { QueryParameters } from '../../models/DirectusModel';
 import { DeleteOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
@@ -350,7 +350,7 @@ const FilesPage = ({
             </>
           )}
           <div className={styles.headItemContainer}>
-            <Button style={'text_gray'} icon={<DeleteOutlined />} onClick={resetFilters}>
+            <Button style={'text_gray'} icon={<DeleteOutlined rev={undefined} />} onClick={resetFilters}>
               Réinitialiser les filtres
             </Button>
           </div>

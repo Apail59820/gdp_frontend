@@ -1,31 +1,31 @@
-import '@projex/global-styles/styles/globals.css';
+import 'projex-styles/styles/globals.css';
 import '../styles/globals.css';
-import type { AppProps } from 'next/app';
+import type {AppProps} from 'next/app';
 import Head from 'next/head';
-import { SideBar, TopBar } from '@projex/ui';
-import { Provider } from 'react-redux';
+import {Provider} from 'react-redux';
 import configureStore from '../store/store';
 import Authenticated from '../src/components/Authenticated/Authenticated';
-import { RetrieveGlobalData } from '../src/RetrieveGlobalData/RetrieveGlobalData';
-import { useSelector } from 'react-redux';
-import { selectUserProfile } from '../store/reducers/authReducer';
-import { useEffect, useState } from 'react';
-import { getUserAvatarByUserId } from '../utils/assets';
+import {RetrieveGlobalData} from '../src/RetrieveGlobalData/RetrieveGlobalData';
+import {useSelector} from 'react-redux';
+import {selectUserProfile} from '../store/reducers/authReducer';
+import React, {useEffect, useState} from 'react';
+import {getUserAvatarByUserId} from '../utils/assets';
+import {SideBar, TopBar} from "projex-ui";
 
 const RenderTopBar = () => {
   const user = useSelector(selectUserProfile);
   const [userProfilePicture, setUserProfilePicture] = useState<string | undefined>(undefined);
   useEffect(() => {
     if (user)
-      getUserAvatarByUserId(user.id!).then(({ data }) => {
+      getUserAvatarByUserId(user.id!).then(({data}) => {
         setUserProfilePicture(data);
       });
   }, [user]);
   return (
     <TopBar
       items={[
-        { label: 'Gestion de projet', href: '/href', active: true },
-        { label: 'Catalogue des solutions alternatives', href: '/href', active: false },
+        {label: 'Gestion de projet', href: '/href', active: true},
+        {label: 'Catalogue des solutions alternatives', href: '/href', active: false},
       ]}
       user={user}
       avatar={userProfilePicture}
@@ -33,20 +33,20 @@ const RenderTopBar = () => {
   );
 };
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({Component, pageProps}: AppProps) {
   return (
     <>
       <Provider store={configureStore}>
         <Authenticated>
           <RetrieveGlobalData>
             <Head>
-              <meta charSet="UTF-8" />
-              <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+              <meta charSet="UTF-8"/>
+              <meta httpEquiv="X-UA-Compatible" content="IE=edge"/>
+              <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
               <title>Maïa</title>
             </Head>
             <header id="header">
-              <RenderTopBar />
+              <RenderTopBar/>
             </header>
             <main id="main">
               <aside id="aside">

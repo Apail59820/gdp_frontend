@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Empty, Form, Input, message, Modal, Select } from 'antd';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { UsCompanyEntityModel } from '../../../models/UserService/UsCompanyEntityModel';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import { selectCompanyEntities } from '../../../store/reducers/companyEntitiesReducer';
 import { useSelector } from 'react-redux';
 import { selectClientsCompanyEntities } from '../../../store/reducers/clientsCompanyEntitiesReducer';

@@ -9,7 +9,7 @@ import {
   GdpSatisfactionModel,
 } from '../../../../../models/GdPModels';
 import { GdpAffairModel } from '../../../../../models/GdPModels';
-import { Breadcrumb, Button, QuickActionCard } from '@projex/ui';
+import { Breadcrumb, Button, QuickActionCard } from 'projex-ui';
 import Grid from '../../../../../src/components/Grid/Grid';
 import PageHeaderBanner from '../../../../../src/components/PageHeaderBanner/PageHeaderBanner';
 import QuickAccessWidget from '../../../../../src/components/QuickAccessWidget/QuickAccessWidget';
@@ -433,7 +433,7 @@ const Affair = () => {
           {/* end ---------------- EVERY FORM GOES HERE ---------------- end */}
           <h1 className={styles.title}>{affair.name ? capitalize(affair.name) : `Affaire ${affair.id}`}</h1>
           {isUserAffairManager && (
-            <Button icon={<EditOutlined />} onClick={() => setIsCreateAffairFormVisible(true)}>
+            <Button icon={<EditOutlined rev={undefined} />} onClick={() => setIsCreateAffairFormVisible(true)}>
               Modifier l&apos;affaire
             </Button>
           )}
@@ -445,7 +445,7 @@ const Affair = () => {
                 title="Facturation"
                 button={{
                   label: 'Configurer la facturation',
-                  icon: <EditOutlined />,
+                  icon: <EditOutlined rev={undefined} />,
                   onClick: () => setIsConfigureFacturationFormVisible(true),
                 }}
               >
@@ -455,7 +455,7 @@ const Affair = () => {
                 title="Étapes du projet"
                 button={{
                   label: 'Ajouter une étape',
-                  icon: <PlusOutlined />,
+                  icon: <PlusOutlined rev={undefined} />,
                   onClick: () => setIsCreatePhaseFormVisible(true),
                 }}
               >

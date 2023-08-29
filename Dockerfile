@@ -6,7 +6,6 @@ WORKDIR /app
 COPY package.json ./
 COPY .npmrc ./
 RUN cat .npmrc
-RUN npx google-artifactregistry-auth .npmrc
 RUN npm install --production
 
 
@@ -27,16 +26,20 @@ ENV NODE_ENV production
 #RUN npm install --global pm2
 #RUN sed -i 's/pidusage(pids, function retPidUsage(err, statistics) {/pidusage(pids, { usePs: true }, function retPidUsage(err, statistics) {/' /usr/local/lib/node_modules/pm2/lib/God/ActionMethods.js
 
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
 # You only need to copy next.config.js if you are NOT using the default configuration
 COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-USER node
+USER nextjs
 
 EXPOSE 3001
+
+ENV PORT 3001
 
 # Run npm start script with PM2 when container starts
 CMD [ "npm", "start" ]

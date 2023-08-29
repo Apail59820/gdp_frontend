@@ -13,7 +13,7 @@ import {
 } from '../../../services/gestionDeProjets/GdpProjectsUsersCollaborators';
 import { getUsUsers } from '../../../services/userService/UsUsers';
 import { QueryParameters } from '../../../models/DirectusModel';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import { GdpProjectsCollaboratorsModel } from '../../../models/GestionDeProjets/GdpProjectsCollaboratorsModel';
 import getConfig from 'next/config';
 import { MinusCircleOutlined } from '@ant-design/icons';
@@ -245,6 +245,7 @@ const ManageProjectManagers = ({ open, onClose, project }: ManageProjectManagers
                     />
                   </Form.Item>
                   <MinusCircleOutlined
+                    rev={undefined}
                     onClick={() => {
                       const tmp = [...managers];
                       if (form.getFieldValue('managers')[name]) {
