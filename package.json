@@ -30,8 +30,6 @@
   },
   "devDependencies": {
     "@redux-devtools/core": "^3.13.1",
-    "@reduxjs/toolkit": "^1.9.1",
-    "@types/js-cookie": "^3.0.2",
-    "react-redux": "^8.0.5"
+    "@types/js-cookie": "^3.0.2"
   }
 }
