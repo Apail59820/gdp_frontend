@@ -1,6 +1,5 @@
-import { RecentActivitiesCard, Section } from '@projex/ui';
+import { RecentActivitiesCard, Section } from 'projex-ui';
 import React, { useMemo } from 'react';
-import type { Activity } from '@projex/ui/dist/components/molecules/RecentActivities/RecentActivities';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 import {
   ActivitiesActionEnum,
@@ -12,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUsers, setUsers } from '../../../store/reducers/usersReducer';
 import { get } from 'js-cookie';
 import { getUsUser, getUsUsers } from '../../../services/userService/UsUsers';
+import {Activity} from "projex-ui/dist/types/components/molecules/RecentActivities/RecentActivities";
 
 /*export type Activity = {
   creationDate: string;

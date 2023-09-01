@@ -9,7 +9,7 @@ import downloadIcon from '../../../public/download.svg';
 import deleteIcon from '../../../public/trash-can.svg';
 import { DateTime, Interval } from 'luxon';
 import styles from './FilesTable.module.scss';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { useRouter } from 'next/router';
@@ -64,7 +64,7 @@ const FilesTable = ({ filesList }: props) => {
     if (route.includes('phase')) {
       const phases: GdpPhaseModel[] = [];
       const affairId = router.query.affairId;
-      const myAffair = affairs.find((affair) => affair.id == affairId);
+      const myAffair = affairs.find((affair) => affair.id.toString() == affairId);
       myAffair?.affairs_phases_ids?.forEach((affairPhase) => {
         if (typeof affairPhase !== 'number') phases.push(affairPhase);
       });

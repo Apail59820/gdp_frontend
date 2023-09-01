@@ -1,4 +1,4 @@
-import { ProgressBarRounded } from '@projex/ui';
+import { ProgressBarRounded } from 'projex-ui';
 import React from 'react';
 import styles from './StatisticsCard.module.scss';
 

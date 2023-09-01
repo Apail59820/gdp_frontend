@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
 import styles from './ExpandedBillingInfo.module.scss';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import { DateTime, Interval } from 'luxon';
 import { message, Modal } from 'antd';
 import getConfig from 'next/config';

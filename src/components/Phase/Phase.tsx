@@ -1,4 +1,4 @@
-import { ProgressBar, Section } from '@projex/ui';
+import { ProgressBar, Section } from 'projex-ui';
 import React, { Dispatch, createContext, useContext, useEffect, useState } from 'react';
 import FilesWidget from '../FilesWidget/FilesWidget';
 import PreviewFilesList from '../PreviewFilesList/PreviewFilesList';
@@ -14,7 +14,7 @@ import {
 import { getGdpFiles } from '../../../services/gestionDeProjets/GdpFiles';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
 import CreatePhaseForm from '../CreatePhaseForm/CreatePhaseForm';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import { PlusOutlined, SmileOutlined } from '@ant-design/icons';
 import SatisfactionForm from '../SatisfactionForm/SatisfactionForm';
 import UploadFilesFormUploadFilesForm from '../filesForms/UploadFilesForm/UploadFilesForm';
@@ -188,7 +188,7 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, fi
             <Button
               small
               style="secondary"
-              icon={<PlusOutlined />}
+              icon={<PlusOutlined rev={undefined} />}
               onClick={() => {
                 setIsOpenFilesForm(true);
               }}
@@ -200,7 +200,7 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, fi
             <div>
               <Button
                 style="secondary"
-                icon={<SmileOutlined />}
+                icon={<SmileOutlined rev={undefined} />}
                 disabled={satisfactionDone}
                 onClick={() => {
                   setIsOpenSatisfactionForm(true);

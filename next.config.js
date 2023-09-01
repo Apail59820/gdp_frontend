@@ -5,7 +5,6 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
-  transpilePackages: ['@projex/ui'],
   publicRuntimeConfig: {
     DIRECTUS_HOST: process.env.DIRECTUS_HOST,
     USER_SERVICE_API_URL: process.env.USER_SERVICE_API_URL,
@@ -46,9 +45,18 @@ const nextConfig = {
     CLIENTS_COMPANY_ENTITIES_CHUNK_SIZE: process.env.CLIENTS_COMPANY_ENTITIES_CHUNK_SIZE,
     CLIENTS_COMPANY_ENTITIES_GLOBAL_CHUNK_SIZE: process.env.CLIENTS_COMPANY_ENTITIES_GLOBAL_CHUNK_SIZE,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+    eslint: {
+      ignoreDuringBuilds: true,
+    },
+    webpack: (config) => {
+      config.resolve = {
+        ...config.resolve,
+        fallback: {
+          fs: false
+        }
+      }
+      return config;
+  }
 };
 
 module.exports = nextConfig;

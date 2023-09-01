@@ -7,7 +7,7 @@ import { UsUserModel } from '../../../models/UserService/UsUserModel';
 import { getUsUsers } from '../../../services/userService/UsUsers';
 import { messages } from '../../../constants/messages';
 import { MinusCircleOutlined } from '@ant-design/icons';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import styles from './ManageAffairManagerForm.module.scss';
 import { updateAffairUsers } from '../../../services/gestionDeProjets/GdpAffairsUsers';
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
@@ -265,7 +265,7 @@ const ManageAffairManagerForm = ({ isOpen, setIsOpen, affair }: ManageAffairMana
                       }}
                     />
                   </Form.Item>
-                  <MinusCircleOutlined onClick={() => remove(name)} />
+                  <MinusCircleOutlined rev={undefined} onClick={() => remove(name)} />
                 </div>
               ))}
               <Form.Item>
