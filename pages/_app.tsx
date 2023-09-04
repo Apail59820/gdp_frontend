@@ -12,8 +12,11 @@ import {SideBar, TopBar} from "projex-ui";
 import {getMyUsProfile} from "../services/userService/UsUsers";
 import {isRequestSuccessful} from "../utils/isRequestSuccessful";
 import {UsUserModel} from "../models/UserService/UsUserModel";
+// import getConfig from "next/config";
 
 export default function App({Component, pageProps}: AppProps) {
+  // const { publicRuntimeConfig } = getConfig();
+
   const [user, setUser] = useState<Partial<UsUserModel>>({});
   const [userProfilePicture, setUserProfilePicture] = useState<string | undefined>(undefined);
   useEffect(() => {
@@ -132,7 +135,7 @@ export default function App({Component, pageProps}: AppProps) {
                           </svg>
                         ),
                       },
-                      {
+                      /*{
                         label: 'Statistiques',
                         href: '/stats',
                         icon: (
@@ -149,10 +152,10 @@ export default function App({Component, pageProps}: AppProps) {
                             />
                           </svg>
                         ),
-                      },
-                      {
+                      },*/
+                      /*{
                         label: 'Utilisateurs',
-                        href: '/users',
+                        href: `${publicRuntimeConfig.USER_SERVICE_URL}/users`,
                         icon: (
                           <svg
                             width="26"
@@ -167,7 +170,7 @@ export default function App({Component, pageProps}: AppProps) {
                             />
                           </svg>
                         ),
-                      },
+                      },*/
                     ],
                     foot: [
                       {
