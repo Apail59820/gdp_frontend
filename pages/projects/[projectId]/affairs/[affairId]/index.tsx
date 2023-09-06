@@ -9,7 +9,7 @@ import {
   GdpSatisfactionModel,
 } from '../../../../../models/GdPModels';
 import { GdpAffairModel } from '../../../../../models/GdPModels';
-import { Breadcrumb, Button, QuickActionCard } from '@projex/ui';
+import { Breadcrumb, Button, QuickActionCard } from 'projex-ui';
 import Grid from '../../../../../src/components/Grid/Grid';
 import PageHeaderBanner from '../../../../../src/components/PageHeaderBanner/PageHeaderBanner';
 import QuickAccessWidget from '../../../../../src/components/QuickAccessWidget/QuickAccessWidget';
@@ -42,11 +42,13 @@ import ConfigureFacturationForm from '../../../../../src/components/ConfigureFac
 import ManageAffairUsersForm from '../../../../../src/components/ManageAffairUsersForm/ManageAffairUsersForm';
 import { getGdpProjectsUsersClients } from '../../../../../services/gestionDeProjets/GdpProjectsUsersClients';
 import UploadFilesFormUploadFilesForm from '../../../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
+import { selectAffairs } from '../../../../../store/reducers/affairsReducer';
 
 const Affair = () => {
   const { query } = useRouter();
   const me = useSelector(selectUserProfile);
   const projects = useSelector(selectProjects);
+  const affairs = useSelector(selectAffairs);
 
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
   const [affairPhases, setAffairPhases] = useState<Partial<GdpAffairModel>[]>([]);
@@ -90,6 +92,15 @@ const Affair = () => {
   useEffect(() => {
     if (!query.affairId || typeof query.affairId !== 'string') return;
 
+    const affairId = parseInt(query.affairId);
+
+    const retrievedAffair = affairs.find((affair) => affair.id === affairId);
+
+    if (retrievedAffair) {
+      setAffair(retrievedAffair);
+      return;
+    }
+
     getGdpAffair(
       +query.affairId,
       [
@@ -114,7 +125,7 @@ const Affair = () => {
       })
       // eslint-disable-next-line no-console
       .catch((error) => console.error(error));
-  }, [query.affairId]);
+  }, [affairs, query.affairId]);
 
   // Retrieve phases
   useEffect(() => {
@@ -127,13 +138,17 @@ const Affair = () => {
       });
 
       if (phasesToRetrieve.length > 0) {
-        getGdpAffairsPhases({ filter: { id: { _in: phasesToRetrieve } } }).then((response) => {
-          if (response.status === 200 && response.data) {
-            phases.push(...response.data);
+        getGdpAffairsPhases({ filter: { id: { _in: phasesToRetrieve } }, limit: 3, sort: '-date_created' }).then(
+          (response) => {
+            if (response.status === 200 && response.data) {
+              phases.push(...response.data);
+            }
+            setAffairPhases(phases);
           }
-        });
+        );
+      } else {
+        setAffairPhases(phases);
       }
-      setAffairPhases(phases);
     }
   }, [affair]);
 
@@ -387,6 +402,37 @@ const Affair = () => {
     }
   }, [affairManagers, me]);
 
+  const handleUpdateAffairPhase = () => {
+    if (!query.affairId || typeof query.affairId !== 'string') return;
+
+    const affairId = parseInt(query.affairId);
+
+    getGdpAffair(
+      affairId,
+      [
+        '*',
+        'phases.*',
+        'company_entity.*',
+        'pythagore_ids.*',
+        'affairs_directus_users_ids.*',
+        'projects_id.name',
+        'projects_id.id',
+        'projects_id.company_entity',
+        'projects_id.projects_directus_users_clients_ids.*',
+        'projects_id.projects_directus_users_collaborators_ids.*',
+        'affairs_phases.*',
+        'activities_id.*',
+      ].join(',')
+    )
+      .then((response) => {
+        if (isRequestSuccessful(response.status) && response.data) {
+          setAffair(response.data);
+        } else setAffair({});
+      })
+      // eslint-disable-next-line no-console
+      .catch((error) => console.error(error));
+  };
+
   return (
     <div className="page">
       <PageHeaderBanner data={affairProject ? affairProject : { name: 'Projet' }} />
@@ -410,6 +456,7 @@ const Affair = () => {
             affair={affair}
             isOpen={isCreatePhaseFormVisible}
             setIsOpen={setIsCreatePhaseFormVisible}
+            onUpdate={handleUpdateAffairPhase}
           />
           <ConfigureFacturationForm
             isOpen={isConfigureFacturationFormVisible}
@@ -433,7 +480,7 @@ const Affair = () => {
           {/* end ---------------- EVERY FORM GOES HERE ---------------- end */}
           <h1 className={styles.title}>{affair.name ? capitalize(affair.name) : `Affaire ${affair.id}`}</h1>
           {isUserAffairManager && (
-            <Button icon={<EditOutlined />} onClick={() => setIsCreateAffairFormVisible(true)}>
+            <Button icon={<EditOutlined rev={undefined} />} onClick={() => setIsCreateAffairFormVisible(true)}>
               Modifier l&apos;affaire
             </Button>
           )}
@@ -445,7 +492,7 @@ const Affair = () => {
                 title="Facturation"
                 button={{
                   label: 'Configurer la facturation',
-                  icon: <EditOutlined />,
+                  icon: <EditOutlined rev={undefined} />,
                   onClick: () => setIsConfigureFacturationFormVisible(true),
                 }}
               >
@@ -455,7 +502,7 @@ const Affair = () => {
                 title="Étapes du projet"
                 button={{
                   label: 'Ajouter une étape',
-                  icon: <PlusOutlined />,
+                  icon: <PlusOutlined rev={undefined} />,
                   onClick: () => setIsCreatePhaseFormVisible(true),
                 }}
               >

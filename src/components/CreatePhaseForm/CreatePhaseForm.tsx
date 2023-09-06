@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel, GdpPhaseStatusEnum } from '../../../models/GestionDeProjets/GdpPhaseModel';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import styles from './CreatePhaseForm.module.scss';
 import {
   createGdpAffairPhase,
@@ -56,7 +56,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
         okText: 'Oui',
         cancelText: 'Non',
         okType: 'danger',
-        icon: <WarningOutlined />,
+        icon: <WarningOutlined rev={undefined} />,
         closable: true,
         maskClosable: true,
         footer: [
@@ -117,7 +117,6 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
     });
     if (isRequestSuccessful(response.status) && response.data) {
       message.success(messages.general.success());
-
       if (onUpdate) {
         onUpdate();
       }
@@ -236,7 +235,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
                 onClick={() => {
                   showConfirmDelete();
                 }}
-                icon={<DeleteOutlined />}
+                icon={<DeleteOutlined rev={undefined} />}
               >
                 Supprimer l&apos;étape
               </Button>

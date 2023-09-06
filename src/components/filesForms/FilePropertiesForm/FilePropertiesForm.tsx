@@ -1,7 +1,7 @@
 import { fileItemType, UploadStatusEnum } from '../UploadFilesForm/UploadFilesForm';
 import { useEffect, useState } from 'react';
 import styles from './FilePropertiesForm.module.scss';
-import { Button, Input, Select } from '@projex/ui';
+import { Button, Input, Select } from 'projex-ui';
 import { GdpAffairModel } from '../../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel } from '../../../../models/GestionDeProjets/GdpPhaseModel';
 import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';
@@ -126,7 +126,7 @@ export default function FilePropertiesForm({
       <div className={styles.filesInputsGroup}>
         <Input
           label="Associer à..."
-          value={project.name || project.id || 'projet inconnu'}
+          value={project.name || project.id?.toString() || 'projet inconnu'}
           setValue={() => {}}
           disabled={true}
         />

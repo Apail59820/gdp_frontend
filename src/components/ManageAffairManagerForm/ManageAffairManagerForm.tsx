@@ -7,7 +7,7 @@ import { UsUserModel } from '../../../models/UserService/UsUserModel';
 import { getUsUsers } from '../../../services/userService/UsUsers';
 import { messages } from '../../../constants/messages';
 import { MinusCircleOutlined } from '@ant-design/icons';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import styles from './ManageAffairManagerForm.module.scss';
 import { updateAffairUsers } from '../../../services/gestionDeProjets/GdpAffairsUsers';
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
@@ -41,8 +41,9 @@ const ManageAffairManagerForm = ({ isOpen, setIsOpen, affair }: ManageAffairMana
   affair.affairs_directus_users_ids?.forEach((relation) => {
     if (typeof relation !== 'number') {
       if (typeof relation.directus_users_id !== 'string') {
-        affairDirectusUsersId.push(relation.directus_users_id.id);
-        if (relation.project_manager) initialAffairManagerList.push(relation.directus_users_id.id);
+        relation.directus_users_id.id && affairDirectusUsersId.push(relation.directus_users_id.id);
+        if (relation.project_manager)
+          relation.directus_users_id.id && initialAffairManagerList.push(relation.directus_users_id.id);
       } else {
         affairDirectusUsersId.push(relation.directus_users_id);
         if (relation.project_manager) initialAffairManagerList.push(relation.directus_users_id);
@@ -89,7 +90,7 @@ const ManageAffairManagerForm = ({ isOpen, setIsOpen, affair }: ManageAffairMana
         } else {
           if (
             affairManagerToAdd.some(
-              (manager: { responsable: string }) => manager.responsable === relation.directus_users_id
+              (manager: { responsable: string }) => manager.responsable === relation.directus_users_id,
             )
           ) {
             relationIdToAdd.push(relation.id);
@@ -157,7 +158,7 @@ const ManageAffairManagerForm = ({ isOpen, setIsOpen, affair }: ManageAffairMana
   const fetchData = async (
     getter: (queryParameters: QueryParameters) => any,
     queryParams: QueryParameters,
-    setter: React.Dispatch<React.SetStateAction<any>>
+    setter: React.Dispatch<React.SetStateAction<any>>,
   ) => {
     if (timeout) {
       clearTimeout(timeout);
@@ -250,7 +251,7 @@ const ManageAffairManagerForm = ({ isOpen, setIsOpen, affair }: ManageAffairMana
                                 ],
                               },
                             },
-                            setAffairUsers
+                            setAffairUsers,
                           ).catch((err) => {
                             console.error(err);
                           });
@@ -264,7 +265,7 @@ const ManageAffairManagerForm = ({ isOpen, setIsOpen, affair }: ManageAffairMana
                       }}
                     />
                   </Form.Item>
-                  <MinusCircleOutlined onClick={() => remove(name)} />
+                  <MinusCircleOutlined rev={undefined} onClick={() => remove(name)} />
                 </div>
               ))}
               <Form.Item>

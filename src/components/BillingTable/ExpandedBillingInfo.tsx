@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
 import styles from './ExpandedBillingInfo.module.scss';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import { DateTime, Interval } from 'luxon';
 import { message, Modal } from 'antd';
 import getConfig from 'next/config';
@@ -59,7 +59,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
   async function retrieveFacturesEmailsAlerts() {
     if (emails_logs && emails_logs.length > 0 && typeof emails_logs[0] !== 'number') {
       setTimeSinceLastMail(
-        Interval.fromDateTimes(DateTime.fromJSDate(emails_logs[0].date_created), DateTime.now()).length('hours')
+        Interval.fromDateTimes(DateTime.fromJSDate(emails_logs[0].date_created), DateTime.now()).length('hours'),
       );
     } else setTimeSinceLastMail(null);
   }
@@ -125,7 +125,12 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
           if (res.status === 200 && res.data) {
             if (res.data.affairs_id && res.data.affairs_id[0] && typeof res.data.affairs_id[0] === 'number') {
               const affairRes = await getGdpAffairPythagoreAffair(res.data.affairs_id[0]);
-              if (affairRes.status === 200 && affairRes.data && affairRes.data.affairs_id && typeof affairRes.data.affairs_id !== 'number') {
+              if (
+                affairRes.status === 200 &&
+                affairRes.data &&
+                affairRes.data.affairs_id &&
+                typeof affairRes.data.affairs_id !== 'number'
+              ) {
                 const affair = affairRes.data.affairs_id;
                 if (affair) {
                   const users: Partial<GdpAffairsUsersModel>[] = [];
@@ -147,30 +152,35 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
                     }
                   }
                   setUserCanSendMail(
-                    users.filter((adu: Partial<GdpAffairsUsersModel>) => adu.directus_users_id === myUser?.id).length > 0
+                    users.filter((adu: Partial<GdpAffairsUsersModel>) => adu.directus_users_id === myUser?.id).length >
+                      0,
                   );
                   if (affair.projects_id) {
-                    const projectsDirectusUsersClients: Array<string | GdpProjectsClientsModel> = [];
+                    const projectsDirectusUsersClients: Array<number | GdpProjectsClientsModel> = [];
                     if (typeof affair.projects_id !== 'number') {
                       affair.projects_id.projects_directus_users_clients_ids.forEach((user) =>
-                        projectsDirectusUsersClients.push(user)
+                        projectsDirectusUsersClients.push(user),
                       );
                     } else {
                       const projectRes = await getGdpProjectById(affair.projects_id);
-                      if (projectRes.status === 200 && projectRes.data && projectRes.data.projects_directus_users_clients_ids) {
+                      if (
+                        projectRes.status === 200 &&
+                        projectRes.data &&
+                        projectRes.data.projects_directus_users_clients_ids
+                      ) {
                         projectRes.data.projects_directus_users_clients_ids.forEach((user) => {
                           projectsDirectusUsersClients.push(user);
                         });
                       }
                     }
                     const clientsResponse: string[] = [];
-                    const pducIds: string[] = [];
+                    const pducIds: number[] = [];
                     const clientsId: string[] = [];
 
                     projectsDirectusUsersClients.forEach((pduc) => {
-                      if (typeof pduc !== 'string') {
+                      if (typeof pduc !== 'number') {
                         if (typeof pduc.directus_users_id !== 'string') {
-                          clientsResponse.push(pduc.directus_users_id.email);
+                          pduc.directus_users_id.email && clientsResponse.push(pduc.directus_users_id.email);
                         } else {
                           clientsId.push(pduc.directus_users_id);
                         }
@@ -184,7 +194,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
                         pducResponse.data.forEach((pduc) => {
                           if (pduc.directus_users_id) {
                             if (typeof pduc.directus_users_id !== 'string') {
-                              clientsResponse.push(pduc.directus_users_id.email);
+                              pduc.directus_users_id.email && clientsResponse.push(pduc.directus_users_id.email);
                             } else {
                               clientsId.push(pduc.directus_users_id);
                             }
@@ -192,7 +202,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
                         });
                       }
                     }
-                    if (clientsId.length > 0) {                      
+                    if (clientsId.length > 0) {
                       const response = await getUsUsers({ filter: { id: { _in: clientsId } } });
                       if (response.status === 200 && response.data) {
                         response.data.forEach((client) => {
