@@ -14,11 +14,14 @@ import { QueryParameters } from '../../models/DirectusModel';
 import { isRequestSuccessful } from '../../utils/isRequestSuccessful';
 import CreateProjectForm from '../components/CreateProjectForm/CreateProjectForm';
 import {selectUserProfile} from "../../store/reducers/authReducer";
+import { selectProjects } from '../../store/reducers/projectsReducer';
 
 const { publicRuntimeConfig } = getConfig();
 
 const HomeDashboard = () => {
   const userProfile = useSelector(selectUserProfile);
+
+  const globalProjects = useSelector(selectProjects);
 
   const [currentUsersProjects, setCurrentUsersProjects] = useState<Partial<GdpProjectsModel>[]>([]);
   const [areCurrentUsersProjectsLoading, setAreCurrentUsersProjectsLoading] = useState(true);
@@ -45,25 +48,31 @@ const HomeDashboard = () => {
       if (isCurrentUsersRoleClient) {
         getGdpProjectsUsersClients(queryParameters).then((result) => {
           if (isRequestSuccessful(result.status) && result.data) {
-            const projects = result.data.map(
-              (projectClients) => projectClients.projects_id as Partial<GdpProjectsModel>
+            const myProjects = result.data.map(
+              (projectCollaborators) => projectCollaborators.projects_id as Partial<GdpProjectsModel>
             );
+            const projects = globalProjects.filter((project) => {
+              return myProjects.some((myProject) => myProject.id === project.id);
+            });
             setCurrentUsersProjects(projects);
           }
         });
       } else {
         getGdpProjectsUsersCollaborators(queryParameters).then((result) => {
           if (isRequestSuccessful(result.status) && result.data) {
-            const projects = result.data.map(
+            const myProjects = result.data.map(
               (projectCollaborators) => projectCollaborators.projects_id as Partial<GdpProjectsModel>
             );
+            const projects = globalProjects.filter((project) => {
+              return myProjects.some((myProject) => myProject.id === project.id);
+            });
             setCurrentUsersProjects(projects);
           }
         });
       }
       setAreCurrentUsersProjectsLoading(false);
     },
-    [userProfile]
+    [globalProjects, userProfile]
   );
 
   const getProfileCompletionPercentage = (): number => {

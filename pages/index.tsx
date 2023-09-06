@@ -6,6 +6,7 @@ import HomeDashboard from '../src/HomeDashboard/HomeDashboard';
 import HomeUpdates from '../src/HomeUpdates/HomeUpdates';
 import { getMyUsProfile } from '../services/userService/UsUsers';
 import { isRequestSuccessful } from '../utils/isRequestSuccessful';
+import { capitalize } from '../utils/capitalize';
 
 type Tab = {
   label: string;
@@ -32,9 +33,9 @@ const Home = () => {
       .then((res) => {
         if (isRequestSuccessful(res.status) && res.data) {
           const { first_name = null, last_name = null } = res.data;
-          if (first_name && last_name) setUserFullName(`${first_name} ${last_name}`);
-          else if (first_name) setUserFullName(`${first_name}`);
-          else if (last_name) setUserFullName(`${last_name}`);
+          if (first_name && last_name) setUserFullName(`${first_name.toUpperCase()} ${capitalize(last_name)}`);
+          else if (first_name) setUserFullName(`${first_name.toUpperCase()}`);
+          else if (last_name) setUserFullName(`${capitalize(last_name)}`);
           else throw 'this user has neither first_name or last_name';
         }
       })

@@ -4,7 +4,7 @@ import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsMo
 import { UsCompanyEntityModel } from '../../../models/UserService/UsCompanyEntityModel';
 import { Button } from 'projex-ui';
 import { selectCompanyEntities } from '../../../store/reducers/companyEntitiesReducer';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectClientsCompanyEntities } from '../../../store/reducers/clientsCompanyEntitiesReducer';
 import { UsClientsCompanyEntitiesModel } from '../../../models/UserService/UsClientsCompanyEntitiesModel';
 import styles from './CreateProjectForm.module.scss';
@@ -12,6 +12,7 @@ import { createGdpProject, updateGdpProject } from '../../../services/gestionDeP
 import { messages } from '../../../constants/messages';
 import { QueryParameters } from '../../../models/DirectusModel';
 import { getUsClientsCompanyEntities } from '../../../services/userService/UsClientsCompanyEntities';
+import { selectProjects, setProjects } from '../../../store/reducers/projectsReducer';
 
 type CreateProjectFormProps = {
   project?: Partial<GdpProjectsModel>;
@@ -26,6 +27,8 @@ interface FormProps {
 }
 
 const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProps) => {
+  const dispatch = useDispatch();
+  const projects = useSelector(selectProjects);
   const companyEntities: Partial<UsCompanyEntityModel>[] = useSelector(selectCompanyEntities);
   const [clientsCompanyEntities, setClientsCompanyEntities] = useState<Partial<UsClientsCompanyEntitiesModel>[]>(
     useSelector(selectClientsCompanyEntities)
@@ -47,13 +50,17 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
         }
       });
     } else {
+      const client_company = clientsCompanyEntities.find((entity) => entity.name === values.clientEntity);
       createGdpProject({
         name: values.projectName,
         client_company_name: values.clientEntity,
+        clients_company_entity: client_company?.id ?? null,
         company_entity: values.entity,
       }).then((res) => {
-        if (res.status === 200) {
+        if (res.status === 200 && res.data) {
           message.success(messages.general.success('La création du projet', true, false));
+          dispatch(setProjects([...projects, res.data]));
+          setIsOpen(false);
         } else {
           message.error(messages.general.error());
         }
