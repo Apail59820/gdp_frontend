@@ -51,7 +51,7 @@ const PreviewAffairSatisfactionCard = ({ affair, satisfactions }: PreviewAffairS
         else setAffairCompanyEntity('Entité inconnue');
       }
     } else setAffairCompanyEntity('Entité inconnue');
-  }, [affair.company_entity, companyEntities]);
+  }, [affair?.company_entity, companyEntities]);
 
   // useEffect to fetch first affair manager
   useEffect(() => {

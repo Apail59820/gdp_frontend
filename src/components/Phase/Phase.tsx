@@ -21,6 +21,7 @@ import UploadFilesFormUploadFilesForm from '../filesForms/UploadFilesForm/Upload
 import getConfig from 'next/config';
 import { useSelector } from 'react-redux';
 import { selectUserProfile } from '../../../store/reducers/authReducer';
+import Link from 'next/link';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -174,7 +175,9 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, fi
 
             {(user?.role === publicRuntimeConfig.ROLE_COLLABORATOR_ID ||
               user?.role === publicRuntimeConfig.ROLE_ADMIN_ID) && (
-              <span className={`text-small ${styles.statistics}`}>› Statistiques de satisfaction disponibles</span>
+              <Link href={`/projects/${project.id}/satisfaction`}>
+                <span className={`text-small ${styles.statistics}`}>› Statistiques de satisfaction disponibles</span>
+              </Link>
             )}
           </div>
           {/* TODO ne pas afficher si aucun de fichiers associés */}
@@ -182,7 +185,7 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, fi
             title="Fichiers associés"
             link={{ label: 'Voir tous les fichiers', href: `/projects/${project.id}/files` }}
           >
-            {files && <PreviewFilesList files={files} max={3} allFilesPageHref={'/'} />}
+            {files.length > 0 && <PreviewFilesList files={files} max={3} allFilesPageHref={'/'} />}
           </Section>
           <div className={styles.button}>
             <Button
