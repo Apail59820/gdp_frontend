@@ -110,9 +110,7 @@ type createFieldsToOmit =
   | 'client_info'
   | 'status'
   | 'project_type'
-  | 'image'
   | 'clients_company_entity'
-  | 'affairs_ids';
 
 /**
  * Create a gdp Project.

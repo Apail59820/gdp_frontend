@@ -54,7 +54,6 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
       createGdpProject({
         name: values.projectName,
         client_company_name: values.clientEntity,
-        clients_company_entity: client_company?.id ?? null,
         company_entity: values.entity,
       }).then((res) => {
         if (res.status === 200 && res.data) {
