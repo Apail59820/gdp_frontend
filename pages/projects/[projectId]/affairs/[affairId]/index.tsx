@@ -356,7 +356,7 @@ const Affair = () => {
   useEffect(() => {
     getGdpFiles({
       filter: {
-        projects_id: { _eq: affair.id },
+        affair_id: { _eq: affair.id },
       },
     }).then((res) => {
       if (res.status === 200 && res.data) {
@@ -518,6 +518,7 @@ const Affair = () => {
           phases={affairPhases}
           onNewPhaseClick={() => setIsCreatePhaseFormVisible(true)}
           displayCreateCard={isUserAffairManager}
+          files={files}
         />
         <section>
           <Grid type="narrow">

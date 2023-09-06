@@ -5,17 +5,16 @@ import { GdpPhaseModel } from '../../../models/GestionDeProjets/GdpPhaseModel';
 import { capitalize } from '../../../utils/capitalize';
 import ProgressStatusMessage from '../ProgressStatusMessage/ProgressStatusMessage';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
+import { GdpFilesModel } from '../../../models/GdPModels';
 
 type Props = {
   phase: Partial<GdpPhaseModel>;
   onKebabMenuClick: React.MouseEventHandler<HTMLButtonElement>;
+  files: Partial<GdpFilesModel>[];
 };
 
-const PhaseCard = ({ phase, onKebabMenuClick }: Props) => {
+const PhaseCard = ({ phase, onKebabMenuClick, files }: Props) => {
   const { name, description, status } = phase;
-
-  // TODO Handle files display
-  const NUMBER_OF_FILES = 3;
 
   return (
     <ShadowCard>
@@ -25,7 +24,7 @@ const PhaseCard = ({ phase, onKebabMenuClick }: Props) => {
           <p className={styles.description}>{description ? capitalize(description) : '/'}</p>
           {/* TODO Handle files display */}
           <span>
-            {NUMBER_OF_FILES} fichier{NUMBER_OF_FILES > 1 ? 's' : ''} associé{NUMBER_OF_FILES > 1 ? 's' : ''}
+            {files.length} fichier{files.length > 1 ? 's' : ''} associé{files.length > 1 ? 's' : ''}
           </span>
         </div>
         {status ? <ProgressStatusMessage status={status} /> : null}
