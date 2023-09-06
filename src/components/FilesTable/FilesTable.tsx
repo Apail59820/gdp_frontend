@@ -9,7 +9,7 @@ import downloadIcon from '../../../public/download.svg';
 import deleteIcon from '../../../public/trash-can.svg';
 import { DateTime, Interval } from 'luxon';
 import styles from './FilesTable.module.scss';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { useRouter } from 'next/router';
@@ -64,18 +64,18 @@ const FilesTable = ({ filesList }: props) => {
     if (route.includes('phase')) {
       const phases: GdpPhaseModel[] = [];
       const affairId = router.query.affairId;
-      const myAffair = affairs.find((affair) => affair.id == affairId);
+      const myAffair = affairs.find((affair) => affair.id.toString() == affairId);
       myAffair?.affairs_phases_ids?.forEach((affairPhase) => {
         if (typeof affairPhase !== 'number') phases.push(affairPhase);
       });
       phases.map((phase) => tmp.push({ key: phase.id, title: phase.name, dataType: 'phase', id: phase.id.toString() }));
     } else if (route.includes('affair')) {
       affairs.map((affair) =>
-        tmp.push({ key: affair.id as number, title: affair.name, dataType: 'affair', id: affair.id?.toString() })
+        tmp.push({ key: affair.id as number, title: affair.name, dataType: 'affair', id: affair.id?.toString() }),
       );
     } else if (route.includes('project')) {
       projects.map((project) =>
-        tmp.push({ key: project.id as string, title: project.name, dataType: 'project', id: project.id })
+        tmp.push({ key: project.id as number, title: project.name, dataType: 'project', id: project.id?.toString() }),
       );
     }
     setData(tmp);
@@ -175,8 +175,7 @@ const FilesTable = ({ filesList }: props) => {
       key: 'uploaded_on',
       sorter: (a: DataType, b: DataType) => {
         if (!a.uploaded_on || !b.uploaded_on) return 0;
-        return Interval.fromDateTimes(DateTime.fromJSDate(b.uploaded_on), DateTime.fromJSDate(a.uploaded_on)).length() >
-          0
+        return Interval.fromDateTimes(DateTime.fromISO(b.uploaded_on), DateTime.fromISO(a.uploaded_on)).length() > 0
           ? 1
           : -1;
       },

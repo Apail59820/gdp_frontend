@@ -9,7 +9,7 @@ import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
 
 export type UserInformationsProps = {
   user: Partial<UsUserModel>;
-  avatar: string | undefined;
+  avatar?: string | undefined;
 };
 
 const UserInformations = ({ user }: UserInformationsProps) => {

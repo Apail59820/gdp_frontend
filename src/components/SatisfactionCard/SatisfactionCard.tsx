@@ -1,7 +1,7 @@
 import React from 'react';
 import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
 import styles from './SatisfactionCard.module.scss';
-import { ProgressBarRounded, ShadowCard } from '@projex/ui';
+import { ProgressBarRounded, ShadowCard } from 'projex-ui';
 import { DateTime } from 'luxon';
 
 interface SatisfactionCardProps {
@@ -43,8 +43,8 @@ const SatisfactionCard = ({ satisfactions, reverse }: SatisfactionCardProps) => 
       <div className={`${styles.container} ${reverse && styles.reverse}`}>
         <ProgressBarRounded
           percentage={isNaN((score / total) * 100) ? 0 : (score / total) * 100}
-          text={`${score} / ${total}`}
-          color={'green'}
+          // text={`${score} / ${total}`}
+          // color={'green'}
         />
         <div className={styles.infos}>
           <span>

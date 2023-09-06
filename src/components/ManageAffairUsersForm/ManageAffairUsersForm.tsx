@@ -1,29 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { Empty, Form, message, Modal, Select } from 'antd';
-import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
-import { useSelector } from 'react-redux';
-import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
-import { Button } from '@projex/ui';
-import { selectUsers } from '../../../store/reducers/usersReducer';
+import React, {useEffect, useState} from 'react';
+import {Empty, Form, message, Modal, Select} from 'antd';
+import {GdpAffairModel} from '../../../models/GestionDeProjets/GdpAffairModel';
+import {useSelector} from 'react-redux';
+import {GdpProjectsModel} from '../../../models/GestionDeProjets/GdpProjectsModel';
+import {Button} from 'projex-ui';
+import {selectUsers} from '../../../store/reducers/usersReducer';
 import getConfig from 'next/config';
-import { MinusCircleOutlined } from '@ant-design/icons';
+import {MinusCircleOutlined} from '@ant-design/icons';
 import styles from './ManageAffairUsersForm.module.scss';
-import { UsUserModel } from '../../../models/UserService/UsUserModel';
-import { getUsUsers } from '../../../services/userService/UsUsers';
-import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
-import { QueryParameters } from '../../../models/DirectusModel';
+import {UsUserModel} from '../../../models/UserService/UsUserModel';
+import {getUsUsers} from '../../../services/userService/UsUsers';
+import {getGdpProjectById} from '../../../services/gestionDeProjets/GdpProjects';
+import {QueryParameters} from '../../../models/DirectusModel';
 import {
   createGdpAffairUsers,
   deleteGdpAffairUsers,
   getGdpAffairsUsers,
 } from '../../../services/gestionDeProjets/GdpAffairsUsers';
-import { GdpAffairsUsersModel } from '../../../models/GestionDeProjets/GdpAffairsUsersModel';
+import {GdpAffairsUsersModel} from '../../../models/GestionDeProjets/GdpAffairsUsersModel';
 import {
   createGdpProjectUsersClients,
   deleteProjectsUsersClient,
 } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
 
-const { publicRuntimeConfig } = getConfig();
+const {publicRuntimeConfig} = getConfig();
 
 type ManageAffairUsersProps = {
   isOpen: boolean;
@@ -37,7 +37,7 @@ enum UserRoles {
   'client' = 'ROLE_CLIENT_ID',
 }
 
-const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAffairUsersProps) => {
+const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffairUsersProps) => {
   const [form] = Form.useForm();
   const [projects, setProjects] = useState<Partial<GdpProjectsModel>[]>([]);
   const [affairs, setAffairs] = useState<Partial<GdpAffairModel>[]>([]);
@@ -64,10 +64,10 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
               tmpAffairDirectusUsersId.push(relation.directus_users_id);
             }
           } else {
-            getGdpAffairsUsers({ filter: { id: { _eq: relation } } }).then((res) => {
+            getGdpAffairsUsers({filter: {id: {_eq: relation}}}).then((res) => {
               if (res.status === 200 && res.data) {
                 res.data.forEach((relation) => {
-                  const { directus_users_id } = relation;
+                  const {directus_users_id} = relation;
                   if (!directus_users_id) return;
                   if (typeof directus_users_id !== 'string') {
                     directus_users_id.id && tmpAffairDirectusUsersId.push(directus_users_id.id);
@@ -95,10 +95,10 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
                 tmpAffairDirectusUsersId.push(relation.directus_users_id);
               }
             } else {
-              getGdpAffairsUsers({ filter: { id: { _eq: relation } } }).then((res) => {
+              getGdpAffairsUsers({filter: {id: {_eq: relation}}}).then((res) => {
                 if (res.status === 200 && res.data) {
                   res.data.forEach((relation) => {
-                    const { directus_users_id } = relation;
+                    const {directus_users_id} = relation;
                     if (!directus_users_id) return;
                     if (typeof directus_users_id !== 'string') {
                       directus_users_id.id && tmpAffairDirectusUsersId.push(directus_users_id.id);
@@ -122,9 +122,9 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
                     tmpAffairDirectusUsersId.push(relation.directus_users_id);
                   }
                 } else {
-                  getGdpAffairsUsers({ filter: { id: { _eq: relation } } }).then((res) => {
+                  getGdpAffairsUsers({filter: {id: {_eq: relation}}}).then((res) => {
                     if (res.status === 200 && res.data) {
-                      const { directus_users_id } = res.data[0];
+                      const {directus_users_id} = res.data[0];
                       if (!directus_users_id) return;
                       if (typeof directus_users_id !== 'string') {
                         directus_users_id.id && tmpAffairDirectusUsersId.push(directus_users_id.id);
@@ -179,10 +179,10 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
 
   useEffect(() => {
     if (affairDirectusUsersId.length > 0) {
-      getUsUsers({ filter: { id: { _in: affairDirectusUsersId } } }).then((res) => {
+      getUsUsers({filter: {id: {_in: affairDirectusUsersId}}}).then((res) => {
         if (res.status === 200 && res.data) {
           setAffairUsers(res.data);
-          const diff = res.data?.filter(({ id: id1 }) => !users.some(({ id: id2 }) => id2 === id1));
+          const diff = res.data?.filter(({id: id1}) => !users.some(({id: id2}) => id2 === id1));
           setUsers([...users, ...diff]);
         } else {
           console.error('Unable to fetch affair users.');
@@ -253,7 +253,7 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
       if (valuesToAdd.length > 0) {
         // Ajout des collaborateurs
         createGdpAffairUsers(
-          valuesToAdd.map((value: any) => ({ affairs_id: affair.id, directus_users_id: value.user }))
+          valuesToAdd.map((value: any) => ({affairs_id: affair.id, directus_users_id: value.user}))
         ).then((res) => {
           if (res.status === 200) {
             message.success(`Les modifications ont bien été prises en compte.`);
@@ -342,11 +342,11 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
             }))}
           />
         </Form.Item>
-        <Form.List name={'users'} initialValue={affairUsers.map((user) => ({ user: user.id }))}>
-          {(fields, { add, remove }) => (
+        <Form.List name={'users'} initialValue={affairUsers.map((user) => ({user: user.id}))}>
+          {(fields, {add, remove}) => (
             <>
               <p className={styles.customLabel}>{userType}</p>
-              {fields.map(({ key, name, ...restFields }) => (
+              {fields.map(({key, name, ...restFields}) => (
                 <div key={key} className={styles.formListItems}>
                   <Form.Item className={styles.formItem} {...restFields} name={[name, 'user']}>
                     <Select
@@ -367,7 +367,7 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
                             getUsUsers,
                             {
                               filter: {
-                                _or: [{ first_name: { _starts_with: value } }, { last_name: { _starts_with: value } }],
+                                _or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}],
                               },
                             },
                             setUsers
@@ -381,11 +381,12 @@ const ManageAffairUsersForm = ({ isOpen, setIsOpen, affair, userType }: ManageAf
                         }
                       }}
                       notFoundContent={
-                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucun utilisateur trouvé'} />
+                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucun utilisateur trouvé'}/>
                       }
                     />
                   </Form.Item>
                   <MinusCircleOutlined
+                    rev={undefined}
                     onClick={() => {
                       const tmp = [...selectedUsers];
                       if (form.getFieldValue('users')[name]) {

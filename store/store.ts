@@ -30,6 +30,8 @@ export type AppState = {
   clients_company_entities: Partial<UsClientsCompanyEntitiesModel>[];
 };
 
+
+
 export default configureStore({
   reducer: {
     auth: authReducer,

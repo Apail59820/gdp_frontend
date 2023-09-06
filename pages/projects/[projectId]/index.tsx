@@ -1,52 +1,52 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import styles from '../../../styles/Project.module.scss';
-import { EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, QuickActionCard } from '@projex/ui';
+import {EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {Breadcrumb, Button, QuickActionCard} from 'projex-ui';
 import Grid from '../../../src/components/Grid/Grid';
 import PageHeaderBanner from '../../../src/components/PageHeaderBanner/PageHeaderBanner';
 import QuickAccessWidget from '../../../src/components/QuickAccessWidget/QuickAccessWidget';
-import { GdpActivitiesModel } from '../../../models/GestionDeProjets/GdpActivitiesModel';
+import {GdpActivitiesModel} from '../../../models/GestionDeProjets/GdpActivitiesModel';
 import ClientTeamWidget from '../../../src/components/ClientTeamWidget/ClientTeamWidget';
 import CollaboratorTeamWidget from '../../../src/components/CollaboratorTeamWidget/CollaboratorTeamWidget';
 import ActivitiesWidget from '../../../src/components/ActivitiesWidget/ActivitiesWidget';
 import BillingWidget from '../../../src/components/BillingWidget/BillingWidget';
 import FilesWidget from '../../../src/components/FilesWidget/FilesWidget';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectProjects, setProjects } from '../../../store/reducers/projectsReducer';
-import { useRouter } from 'next/router';
-import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
-import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
-import { selectAffairs, setAffairs } from '../../../store/reducers/affairsReducer';
-import { getGdpAffairs } from '../../../services/gestionDeProjets/GdpAffairs';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectProjects, setProjects} from '../../../store/reducers/projectsReducer';
+import {useRouter} from 'next/router';
+import {getGdpProjectById} from '../../../services/gestionDeProjets/GdpProjects';
+import {GdpAffairModel} from '../../../models/GestionDeProjets/GdpAffairModel';
+import {selectAffairs, setAffairs} from '../../../store/reducers/affairsReducer';
+import {getGdpAffairs} from '../../../services/gestionDeProjets/GdpAffairs';
 import CreateAffairForm from '../../../src/components/CreateAffairForm/CreateAffairForm';
-import { GdpProjectsClientsModel } from '../../../models/GestionDeProjets/GdpProjectsClientsModel';
-import { getGdpProjectsUsersClients } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
-import { getUsUsers } from '../../../services/userService/UsUsers';
-import { UsUserModel } from '../../../models/UserService/UsUserModel';
-import { GdpProjectsCollaboratorsModel } from '../../../models/GestionDeProjets/GdpProjectsCollaboratorsModel';
-import { getGdpProjectsUsersCollaborators } from '../../../services/gestionDeProjets/GdpProjectsUsersCollaborators';
-import { getGdpFiles } from '../../../services/gestionDeProjets/GdpFiles';
-import { GdpFilesModel } from '../../../models/GestionDeProjets/GdpFilesModel';
-import { getGdpActivities } from '../../../services/gestionDeProjets/GdpActivities';
-import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
-import { getUsCompanyEntity } from '../../../services/userService/UsCompanyEntities';
-import { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
+import {GdpProjectsClientsModel} from '../../../models/GestionDeProjets/GdpProjectsClientsModel';
+import {getGdpProjectsUsersClients} from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
+import {getUsUsers} from '../../../services/userService/UsUsers';
+import {UsUserModel} from '../../../models/UserService/UsUserModel';
+import {GdpProjectsCollaboratorsModel} from '../../../models/GestionDeProjets/GdpProjectsCollaboratorsModel';
+import {getGdpProjectsUsersCollaborators} from '../../../services/gestionDeProjets/GdpProjectsUsersCollaborators';
+import {getGdpFiles} from '../../../services/gestionDeProjets/GdpFiles';
+import {GdpFilesModel} from '../../../models/GestionDeProjets/GdpFilesModel';
+import {getGdpActivities} from '../../../services/gestionDeProjets/GdpActivities';
+import {GdpProjectsModel} from '../../../models/GestionDeProjets/GdpProjectsModel';
+import {getUsCompanyEntity} from '../../../services/userService/UsCompanyEntities';
+import {GdpPythagoreFactureModel} from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
 import AffairsWidget from '../../../src/components/AffairsWidget/AffairsWidget';
-import { getGdpPythagoreFactures } from '../../../services/gestionDeProjets/GdpPythagoreFactures';
-import { getGdpAffairsPythagoreAffairs } from '../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
+import {getGdpPythagoreFactures} from '../../../services/gestionDeProjets/GdpPythagoreFactures';
+import {getGdpAffairsPythagoreAffairs} from '../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
 import CreateProjectForm from '../../../src/components/CreateProjectForm/CreateProjectForm';
 import SatisfactionWidget from '../../../src/components/SatisfactionWidget/SatisfactionWidget';
-import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
-import { getGdpSatisfactions } from '../../../services/gestionDeProjets/GdpAffairsSatisfaction';
+import {GdpSatisfactionModel} from '../../../models/GestionDeProjets/GdpSatisfactionModel';
+import {getGdpSatisfactions} from '../../../services/gestionDeProjets/GdpAffairsSatisfaction';
 import {
   selectClientsCompanyEntities,
   setClientsCompanyEntities,
 } from '../../../store/reducers/clientsCompanyEntitiesReducer';
-import { UsClientsCompanyEntitiesModel } from '../../../models/UserService/UsClientsCompanyEntitiesModel';
-import { getUsClientCompanyEntity } from '../../../services/userService/UsClientsCompanyEntities';
+import {UsClientsCompanyEntitiesModel} from '../../../models/UserService/UsClientsCompanyEntitiesModel';
+import {getUsClientCompanyEntity} from '../../../services/userService/UsClientsCompanyEntities';
 import ConfigureFacturationForm from '../../../src/components/ConfigureFacturationForm/ConfigureFacturationForm';
 import UploadFilesFormUploadFilesForm from '../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
-import { selectUserProfile } from '../../../store/reducers/authReducer';
+import {selectUserProfile} from '../../../store/reducers/authReducer';
 import ManageProjectManagers from '../../../src/components/ManageProjectManagers/ManageProjectManagers';
 
 const Project = () => {
@@ -142,7 +142,7 @@ const Project = () => {
     if (affairsToFetch.length > 0) {
       getGdpAffairs({
         filter: {
-          id: { _in: affairsToFetch },
+          id: {_in: affairsToFetch},
         },
         limit: 3,
       }).then((res) => {
@@ -171,7 +171,7 @@ const Project = () => {
     if (relationToFetch.length > 0) {
       getGdpProjectsUsersClients({
         filter: {
-          id: { _in: relationToFetch },
+          id: {_in: relationToFetch},
         },
         fields: ['id', 'directus_users_id'].join(''),
       }).then((res) => {
@@ -191,7 +191,7 @@ const Project = () => {
     if (clientIds.length > 0) {
       getUsUsers({
         filter: {
-          id: { _in: clientIds },
+          id: {_in: clientIds},
         },
       }).then((res) => {
         if (res.status === 200 && res.data) {
@@ -217,7 +217,7 @@ const Project = () => {
     if (relationToFetch.length > 0) {
       getGdpProjectsUsersCollaborators({
         filter: {
-          id: { _in: relationToFetch },
+          id: {_in: relationToFetch},
         },
         fields: 'id,directus_users_id',
       }).then((res) => {
@@ -253,7 +253,7 @@ const Project = () => {
     if (collaboratorIds.length > 0) {
       getUsUsers({
         filter: {
-          id: { _in: collaboratorIds },
+          id: {_in: collaboratorIds},
         },
       }).then((res) => {
         if (res.status === 200 && res.data) {
@@ -266,7 +266,7 @@ const Project = () => {
   useEffect(() => {
     getGdpFiles({
       filter: {
-        projects_id: { _eq: projectId },
+        projects_id: {_eq: projectId},
       },
     }).then((res) => {
       if (res.status === 200 && res.data) {
@@ -279,7 +279,7 @@ const Project = () => {
     getGdpActivities({
       filter: {
         _and: [
-          { projects_id: { _eq: projectId } },
+          {projects_id: {_eq: projectId}},
           {
             collection: {
               _in: ['projects', 'projects_directus_users_clients', 'projects_directus_users_collaborators'],
@@ -317,7 +317,7 @@ const Project = () => {
     if (affairPythagoreAffairIds.length > 0 && pythagoreAffairIds.length < 3) {
       getGdpAffairsPythagoreAffairs({
         filter: {
-          id: { _in: affairPythagoreAffairIds },
+          id: {_in: affairPythagoreAffairIds},
         },
         limit: 3,
       }).then((res) => {
@@ -336,7 +336,7 @@ const Project = () => {
     if (pythagoreAffairIds.length > 0) {
       getGdpPythagoreFactures({
         filter: {
-          num_affaire: { _in: pythagoreAffairIds },
+          num_affaire: {_in: pythagoreAffairIds},
         },
         limit: 3,
       }).then((res) => {
@@ -351,7 +351,7 @@ const Project = () => {
     if (project && project.affairs_ids && project.affairs_ids.length > 0) {
       getGdpSatisfactions({
         filter: {
-          affairs_id: { _in: project.affairs_ids },
+          affairs_id: {_in: project.affairs_ids},
         },
       }).then((res) => {
         if (res.status === 200 && res.data) setProjectSatisfactions(res.data);
@@ -386,12 +386,12 @@ const Project = () => {
   return (
     project && (
       <div className="page">
-        <PageHeaderBanner data={project} />
+        <PageHeaderBanner data={project}/>
         <div className={styles.projectPage}>
-          <Breadcrumb dynamicRoutesLabel={[project.name!]} />
+          <Breadcrumb dynamicRoutesLabel={[project.name!]}/>
           <div className={styles.titleContainer}>
             {/* start ---------------- EVERY FORM GOES HERE ---------------- start */}
-            <CreateAffairForm project={project} isOpen={isCreateAffairFormOpen} setIsOpen={setIsCreateAffairFormOpen} />
+            <CreateAffairForm project={project} isOpen={isCreateAffairFormOpen} setIsOpen={setIsCreateAffairFormOpen}/>
             <CreateProjectForm
               isOpen={isCreateProjectFormOpen}
               setIsOpen={setIsCreateProjectFormOpen}
@@ -416,7 +416,7 @@ const Project = () => {
             {/* end ---------------- EVERY FORM GOES HERE ---------------- end */}
             <h1 className={styles.title}>Le projet</h1>
             {isUserProjectManager && (
-              <Button icon={<EditOutlined />} onClick={() => setIsCreateProjectFormOpen(true)}>
+              <Button icon={<EditOutlined rev={undefined}/>} onClick={() => setIsCreateProjectFormOpen(true)}>
                 Modifier le projet
               </Button>
             )}
@@ -428,7 +428,7 @@ const Project = () => {
                   title="Créez une nouvelle affaire"
                   button={{
                     label: 'Ajouter une affaire',
-                    icon: <PlusOutlined />,
+                    icon: <PlusOutlined rev={undefined}/>,
                     onClick: () => setIsCreateAffairFormOpen(true),
                   }}
                 >
@@ -439,7 +439,7 @@ const Project = () => {
                   title="Facturation"
                   button={{
                     label: 'Configurer la facturation',
-                    icon: <EditOutlined />,
+                    icon: <EditOutlined rev={undefined}/>,
                     onClick: () => setIsConfigureFacturationFormOpen(true),
                   }}
                 >
@@ -474,7 +474,7 @@ const Project = () => {
           </section>
           <section>
             <Grid type="narrow">
-              <ActivitiesWidget activities={projectActivities} />
+              <ActivitiesWidget activities={projectActivities}/>
               <BillingWidget
                 invoices={projectInvoices}
                 onConfigureBillingClick={() => setIsConfigureFacturationFormOpen(true)}
@@ -489,7 +489,7 @@ const Project = () => {
                 onNewFileClick={() => setIsUploadFileFormOpen(true)}
                 displayConfigureButton={isUserProjectManager || isUserClassicCollaborator || isUserClient}
               />
-              <SatisfactionWidget satisfactions={projectSatisfactions} />
+              <SatisfactionWidget satisfactions={projectSatisfactions}/>
             </Grid>
           </section>
         </div>

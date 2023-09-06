@@ -4,7 +4,7 @@ import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsMo
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { useSelector } from 'react-redux';
 import { selectProjects } from '../../../store/reducers/projectsReducer';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import styles from './ConfigureFacturationForm.module.scss';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { GdpAffairsPythagoreAffairesModel } from '../../../models/GestionDeProjets/GdpAffairsPythagoreAffairesModel';
@@ -363,6 +363,7 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
                     />
                   </Form.Item>
                   <MinusCircleOutlined
+                    rev={undefined}
                     onClick={() => {
                       const tmp = [...selectedPythagoreAffairs];
                       if (form.getFieldValue('pythagoreAffaire')[name]) {

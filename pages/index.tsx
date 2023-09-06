@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.scss';
 import PageHeaderBanner from '../src/components/PageHeaderBanner/PageHeaderBanner';
-import { TabBar } from '@projex/ui';
+import { TabBar } from 'projex-ui';
 import HomeDashboard from '../src/HomeDashboard/HomeDashboard';
 import HomeUpdates from '../src/HomeUpdates/HomeUpdates';
 import { getMyUsProfile } from '../services/userService/UsUsers';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
 import { Modal } from 'antd';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import DisplaySatisfaction from '../DisplaySatisfaction/DisplaySatisfaction';
 import styles from '../DisplaySatisfaction/DisplaySatisfaction.module.scss';
 
