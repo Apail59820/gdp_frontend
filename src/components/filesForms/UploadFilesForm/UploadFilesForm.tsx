@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Modal, Upload } from 'antd';
+import { message, Modal } from 'antd';
 import styles from './UploadFilesForm.module.scss';
 import Image from 'next/image';
-import { Button, ShadowCard } from '@projex/ui';
+import { Button, ShadowCard } from 'projex-ui';
 import FilePropertiesForm from '../FilePropertiesForm/FilePropertiesForm';
 import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';
 import { GdpAffairModel } from '../../../../models/GestionDeProjets/GdpAffairModel';
@@ -148,6 +148,7 @@ export default function UploadFilesFormUploadFilesForm({
     );
     setUploadProgress([...uploadProgress.filter((progressItem) => progressItem.fileId !== fileUID)]);
     if (isRequestSuccessful(uploadResponse.status)) {
+      message.success(`Le fichier ${_fileListTmp[fileIndex].properties.filename_download} a bien été uploadé.`);
       const updatedFileList = _fileListTmp.map((fileItem) => ({
         ...fileItem,
         properties: {
@@ -166,6 +167,7 @@ export default function UploadFilesFormUploadFilesForm({
       }
       return updatedFileList;
     } else {
+      message.error(`Le fichier ${_fileListTmp[fileIndex].properties.filename_download} n'a pas pu être uploadé.`);
       const updatedFileList = _fileListTmp.map((fileItem) => ({
         ...fileItem,
         uploadState: fileItem.id === fileUID ? UploadStatusEnum.ERROR : fileItem.uploadState,
@@ -196,6 +198,7 @@ export default function UploadFilesFormUploadFilesForm({
     for (let i = 0; i < files.length; i++) {
       _fileList = [...(await uploadOneFile(files[i].id, _fileList))];
     }
+    setIsOpen(false);
   };
 
   const handleCancel = () => {

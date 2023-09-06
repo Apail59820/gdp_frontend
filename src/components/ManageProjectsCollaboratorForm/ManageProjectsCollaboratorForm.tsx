@@ -1,24 +1,24 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Form, message, Modal, Select } from 'antd';
-import { useForm } from 'antd/lib/form/Form';
-import { Button } from '@projex/ui';
-import { MinusCircleOutlined } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
-import { selectProjects } from '../../../store/reducers/projectsReducer';
-import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Form, message, Modal, Select} from 'antd';
+import {useForm} from 'antd/lib/form/Form';
+import {Button} from 'projex-ui';
+import {MinusCircleOutlined} from '@ant-design/icons';
+import {useSelector} from 'react-redux';
+import {selectProjects} from '../../../store/reducers/projectsReducer';
+import {getGdpProjectById} from '../../../services/gestionDeProjets/GdpProjects';
 import {
   createGdpProjectUserCollaborator,
   deleteGdpProjectsUsersCollaborators,
   getGdpProjectsUsersCollaborators,
 } from '../../../services/gestionDeProjets/GdpProjectsUsersCollaborators';
-import { getUsUsers } from '../../../services/userService/UsUsers';
-import { UsUserModel } from '../../../models/UserService/UsUserModel';
-import { selectUsers } from '../../../store/reducers/usersReducer';
+import {getUsUsers} from '../../../services/userService/UsUsers';
+import {UsUserModel} from '../../../models/UserService/UsUserModel';
+import {selectUsers} from '../../../store/reducers/usersReducer';
 import styles from './ManageProjectsCollaboratorForm.module.scss';
-import { QueryParameters } from '../../../models/DirectusModel';
+import {QueryParameters} from '../../../models/DirectusModel';
 import getConfig from 'next/config';
 
-const { publicRuntimeConfig } = getConfig();
+const {publicRuntimeConfig} = getConfig();
 
 type Props = {
   isOpen: boolean;
@@ -26,7 +26,7 @@ type Props = {
   projectId: number;
 };
 
-const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props) => {
+const ManageProjectsCollaboratorForm = ({isOpen, setIsOpen, projectId}: Props) => {
   const [form] = useForm();
 
   const [projects, setProjects] = useState(useSelector(selectProjects));
@@ -46,11 +46,11 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
       });
     }
     const project = projects.filter((project) => project.id === projectId)[0];
-    const relationId: string[] = [];
+    const relationId: number[] = [];
     const userId: string[] = [];
     const tmpInitCollaborators: Partial<UsUserModel>[] = [];
     project?.projects_directus_users_collaborators_ids?.forEach((relation) => {
-      if (typeof relation === 'string') {
+      if (typeof relation === 'number') {
         relationId.push(relation);
       } else {
         if (typeof relation.directus_users_id === 'string') {
@@ -61,7 +61,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
       }
     });
     if (relationId && relationId.length > 0) {
-      getGdpProjectsUsersCollaborators({ filter: { id: { _in: relationId } } }).then((res) => {
+      getGdpProjectsUsersCollaborators({filter: {id: {_in: relationId}}}).then((res) => {
         if (res.status == 200 && res.data) {
           res.data.forEach((relation) => {
             if (typeof relation.directus_users_id === 'string') {
@@ -74,7 +74,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
       });
     }
     if (userId.length > 0) {
-      getUsUsers({ filter: { id: { _in: userId } } }).then((res) => {
+      getUsUsers({filter: {id: {_in: userId}}}).then((res) => {
         if (res.status == 200 && res.data) {
           setInitialCollaborators([...tmpInitCollaborators, ...res.data]);
         }
@@ -90,7 +90,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
   const fetchData = async (
     getter: (queryParameters: QueryParameters) => any,
     queryParams: QueryParameters,
-    setter: React.Dispatch<React.SetStateAction<any>>
+    setter: React.Dispatch<React.SetStateAction<any>>,
   ) => {
     if (timeout) {
       clearTimeout(timeout);
@@ -120,7 +120,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
     const project = projects.filter((project) => project.id === projectId)[0];
     if (project) {
       project.projects_directus_users_collaborators_ids?.forEach((relation) => {
-        if (typeof relation !== 'string') {
+        if (typeof relation !== 'number') {
           if (typeof relation.directus_users_id !== 'string') {
             const rduId = relation.directus_users_id;
             if (valuesToDelete.some((manager) => manager.id === rduId.id)) {
@@ -144,7 +144,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
             projects_id: projectId,
             directus_users_id: value.collaborator,
             project_manager: false,
-          }))
+          })),
         ).then((res) => {
           if (res.status === 200) {
             message.success(`Les modifications ont bien été prises en compte.`);
@@ -191,12 +191,12 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
         </Form.Item>
         <Form.List
           name={'collaborators'}
-          initialValue={initalCollaborators.map((collaborateur) => ({ collaborator: collaborateur.id }))}
+          initialValue={initalCollaborators.map((collaborateur) => ({collaborator: collaborateur.id}))}
         >
-          {(fields, { add, remove }) => (
+          {(fields, {add, remove}) => (
             <>
               <p className={styles.customLabel}>Collaborateurs</p>
-              {fields.map(({ key, name, ...restFields }) => (
+              {fields.map(({key, name, ...restFields}) => (
                 <div className={styles.formListItems} key={key}>
                   <Form.Item className={styles.formItem} {...restFields} name={[name, 'collaborator']}>
                     <Select
@@ -220,8 +220,8 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
                                 _and: [
                                   {
                                     _or: [
-                                      { first_name: { _starts_with: value } },
-                                      { last_name: { _starts_with: value } },
+                                      {first_name: {_starts_with: value}},
+                                      {last_name: {_starts_with: value}},
                                     ],
                                   },
                                   {
@@ -232,7 +232,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
                                 ],
                               },
                             },
-                            setUsers
+                            setUsers,
                           );
                         }
                       }}
@@ -245,6 +245,7 @@ const ManageProjectsCollaboratorForm = ({ isOpen, setIsOpen, projectId }: Props)
                     />
                   </Form.Item>
                   <MinusCircleOutlined
+                    rev={undefined}
                     onClick={() => {
                       remove(name);
                     }}

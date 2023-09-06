@@ -3,7 +3,7 @@ import styles from './MainMessage.module.scss';
 import { capitalize } from '../../../../utils/capitalize';
 import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';
 import defaultImage from '../../../../public/default-affair-image.png';
-import { ManageItemButton } from '@projex/ui';
+import { ManageItemButton } from 'projex-ui';
 import { Tooltip } from 'antd';
 
 export type MainMessageProps = {
@@ -61,7 +61,7 @@ const MainMessage = ({ project, showImage = true, onManageThumbnailClick, resize
     );
     if (resizeTitle < projectsNameLength) {
       setIsNameTooLong(true);
-      setProjectName(`${project.name?.slice(0, Math.round(resizeTitle))?.trim()}...`);
+      setProjectName(`${project.name?.slice(0, Math.round(resizeTitle))?.trim()}…`);
     } else setIsNameTooLong(false);
   }, [entityLogoWidth, projectsNameLength, resizeTitle, textAreaLength, windowInnerWidth]);
 

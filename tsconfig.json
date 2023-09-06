@@ -1,5 +1,4 @@
 {
-  "extends": "tsconfig/nextjs.json",
   "include": [
     "next-env.d.ts",
     "**/*.ts",
@@ -11,6 +10,28 @@
   ],
   "compilerOptions": {
     "target": "ES5",
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "moduleResolution": "Node",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
   }
 }

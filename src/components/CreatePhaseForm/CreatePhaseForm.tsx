@@ -1,9 +1,9 @@
 import { Form, Input, message, Modal, Select } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel, GdpPhaseStatusEnum } from '../../../models/GestionDeProjets/GdpPhaseModel';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import styles from './CreatePhaseForm.module.scss';
 import {
   createGdpAffairPhase,
@@ -13,6 +13,7 @@ import {
 import { messages } from '../../../constants/messages';
 import { DeleteOutlined, WarningOutlined } from '@ant-design/icons';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
+import PhasesTemplates from '../../../constants/PhasesTemplates';
 
 type props = {
   project: Partial<GdpProjectsModel>;
@@ -39,6 +40,13 @@ enum displayStatus {
 
 const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }: props) => {
   const statusOptions: GdpPhaseStatusEnum[] = Object.values(GdpPhaseStatusEnum);
+  const [form] = Form.useForm();
+
+  const [description, setDescription] = React.useState<string>('');
+
+  useEffect(() => {
+    form.setFieldValue('description', description);
+  }, [description, form]);
 
   const showConfirmDelete = () => {
     if (phase) {
@@ -48,7 +56,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
         okText: 'Oui',
         cancelText: 'Non',
         okType: 'danger',
-        icon: <WarningOutlined />,
+        icon: <WarningOutlined rev={undefined} />,
         closable: true,
         maskClosable: true,
         footer: [
@@ -83,7 +91,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
   };
 
   async function createAffairPhase(values: formValues) {
-    if (affair.affairs_phases_ids) {
+    if (affair.id && affair.affairs_phases_ids) {
       const response = await createGdpAffairPhase({
         affairs_id: affair.id!,
         name: values.name,
@@ -109,7 +117,6 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
     });
     if (isRequestSuccessful(response.status) && response.data) {
       message.success(messages.general.success());
-
       if (onUpdate) {
         onUpdate();
       }
@@ -118,116 +125,125 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
   }
 
   const onSubmit = (values: formValues) => {
-    if (phase) {
-      updateAffairPhase(phase.id, values);
-    } else {
-      createAffairPhase(values);
-    }
+    if (phase) updateAffairPhase(phase.id, values);
+    else createAffairPhase(values);
   };
 
   return (
-    <>
-      <Modal
-        open={isOpen}
-        closable
-        onCancel={() => setIsOpen(false)}
-        title={`${phase ? `Modiifer l'étape ${phase.name}` : `Créer une étape pour l'affaire ${affair.name}`}`}
-        footer={null}
-        destroyOnClose
+    <Modal
+      open={isOpen}
+      closable
+      onCancel={() => setIsOpen(false)}
+      title={`${phase ? `Modiifer l'étape ${phase.name}` : `Créer une étape pour l'affaire ${affair.name}`}`}
+      footer={null}
+      destroyOnClose
+    >
+      <Form
+        name={'createPhaseForm'}
+        autoComplete={'off'}
+        layout={'vertical'}
+        onFinish={onSubmit}
+        form={form}
+        initialValues={{
+          projectName: project.name,
+          affairName: affair.name,
+          name: phase?.name,
+          status: phase?.status,
+          description: phase?.description,
+        }}
       >
-        <Form
-          name={'createPhaseForm'}
-          autoComplete={'off'}
-          layout={'vertical'}
-          onFinish={onSubmit}
-          initialValues={{
-            projectName: project.name,
-            affairName: affair.name,
-            name: phase?.name,
-            status: phase?.status,
-            description: phase?.description,
-          }}
+        <Form.Item label={'Nom du projet'} name={'projectName'} id={'projectName'}>
+          <Input disabled />
+        </Form.Item>
+        <Form.Item label={"Nom de l'affaire"} name={'affairName'} id={'affairName'}>
+          <Input disabled />
+        </Form.Item>
+        <Form.Item
+          label={"Nom de l'étape"}
+          name={'name'}
+          id={'name'}
+          rules={[
+            {
+              min: 1,
+              max: 255,
+              message: 'Veuillez entrer entre 1 et 255 caractères.',
+            },
+            {
+              required: true,
+              message: 'Veuillez entrer le nom de votre étape.',
+            },
+          ]}
         >
-          <Form.Item label={'Nom du projet'} name={'projectName'} id={'projectName'}>
-            <Input disabled />
-          </Form.Item>
-          <Form.Item label={"Nom de l'affaire"} name={'affairName'} id={'affairName'}>
-            <Input disabled />
-          </Form.Item>
-          <Form.Item
-            label={"Nom de l'étape"}
-            name={'name'}
-            id={'name'}
-            rules={[
-              {
-                min: 1,
-                max: 255,
-                message: 'Veuillez entrer entre 1 et 255 caractères.',
-              },
-              {
-                required: true,
-                message: 'Veuillez entrer le nom de votre étape.',
-              },
-            ]}
+          <Select
+            placeholder={'Selectionnez votre phase'}
+            onChange={(e) => {
+              const a = PhasesTemplates.find((template) => template.name === e);
+              if (a) setDescription(a.description);
+              else setDescription('');
+            }}
           >
-            <Input type={'text'} placeholder={'Entrez le nom de votre étape'} />
-          </Form.Item>
-          <Form.Item
-            label={"État d'avancement"}
-            name={'status'}
-            id={'status'}
-            rules={[
-              {
-                required: true,
-                message: "Veuillez sélectionner l'état de votre étape.",
-              },
-            ]}
-          >
-            <Select
-              placeholder={"Selectionnez l'état de votre phase"}
-              options={statusOptions.map((option: GdpPhaseStatusEnum) => {
-                return { label: displayStatus[option], value: option };
-              })}
-            />
-          </Form.Item>
-          <Form.Item
-            label={'Description'}
-            name={'description'}
-            id={'description'}
-            rules={[
-              {
-                required: true,
-                message: 'Veuillez entrer la description de votre étape.',
-              },
-            ]}
-          >
-            <Input.TextArea placeholder={'Entrez la description de votre étape'} />
-          </Form.Item>
-          <footer className={styles.footer}>
-            <Button small htmlType={'submit'}>
-              {phase ? `Modifier l'étape` : `Créer l'étape`}
-            </Button>
-            <Button small style={'text'} onClick={() => setIsOpen(false)}>
-              Annuler
-            </Button>
-            {phase && (
-              <span className={styles.span}>
-                <Button
-                  small
-                  style={'alert'}
-                  onClick={() => {
-                    showConfirmDelete();
-                  }}
-                  icon={<DeleteOutlined />}
-                >
-                  Supprimer l&apos;étape
-                </Button>
-              </span>
-            )}
-          </footer>
-        </Form>
-      </Modal>
-    </>
+            {PhasesTemplates.map((template) => (
+              <Select.Option key={template.key} value={template.name}>
+                {template.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          label={"État d'avancement"}
+          name={'status'}
+          id={'status'}
+          rules={[
+            {
+              required: true,
+              message: "Veuillez sélectionner l'état de votre étape.",
+            },
+          ]}
+        >
+          <Select
+            placeholder={"Selectionnez l'état de votre phase"}
+            options={statusOptions.map((option: GdpPhaseStatusEnum) => {
+              return { label: displayStatus[option], value: option };
+            })}
+          />
+        </Form.Item>
+        <Form.Item
+          label={'Description'}
+          name={'description'}
+          id={'description'}
+          rules={[
+            {
+              required: true,
+              message: 'Veuillez entrer la description de votre étape.',
+            },
+          ]}
+        >
+          <Input.TextArea placeholder={'Entrez la description de votre étape'} value={description} />
+        </Form.Item>
+        <footer className={styles.footer}>
+          <Button small htmlType={'submit'}>
+            {phase ? `Modifier l'étape` : `Créer l'étape`}
+          </Button>
+          <Button small style={'text'} onClick={() => setIsOpen(false)}>
+            Annuler
+          </Button>
+          {phase && (
+            <span className={styles.span}>
+              <Button
+                small
+                style={'alert'}
+                onClick={() => {
+                  showConfirmDelete();
+                }}
+                icon={<DeleteOutlined rev={undefined} />}
+              >
+                Supprimer l&apos;étape
+              </Button>
+            </span>
+          )}
+        </footer>
+      </Form>
+    </Modal>
   );
 };
 

@@ -4,7 +4,7 @@ import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsMo
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { useSelector } from 'react-redux';
 import { selectProjects } from '../../../store/reducers/projectsReducer';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import styles from './ConfigureFacturationForm.module.scss';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { GdpAffairsPythagoreAffairesModel } from '../../../models/GestionDeProjets/GdpAffairsPythagoreAffairesModel';
@@ -43,6 +43,10 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
   const [selectedPythagoreAffairs, setSelectedPythagoreAffairs] = useState<string[]>([]);
 
   let timeout: ReturnType<typeof setTimeout> | null;
+
+  useEffect(() => {
+    initAffair && initAffair.id && setAffairId(initAffair.id);
+  }, [initAffair]);
 
   useEffect(() => {
     if (initProject) {
@@ -315,7 +319,7 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
             <>
               <p className={styles.customLabel}>Numéros Pythagore</p>
               {fields.map(({ key, name, ...restFields }) => (
-                <div className={styles.formListItems}>
+                <div className={styles.formListItems} key={key}>
                   <Form.Item className={styles.formItem} {...restFields} name={[name, 'affaire']}>
                     <Select
                       showSearch
@@ -359,6 +363,7 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
                     />
                   </Form.Item>
                   <MinusCircleOutlined
+                    rev={undefined}
                     onClick={() => {
                       const tmp = [...selectedPythagoreAffairs];
                       if (form.getFieldValue('pythagoreAffaire')[name]) {

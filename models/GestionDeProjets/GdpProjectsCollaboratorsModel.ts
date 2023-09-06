@@ -8,7 +8,6 @@ export type GdpProjectsCollaboratorsModel = {
   project_manager: boolean;
 
   projects_id: number | GdpProjectsModel;
-  directus_users_id: string | UsUserModel;
+  directus_users_id: string | Partial<UsUserModel>;
   activities_id: number[] | GdpActivitiesModel[];
-  project_manager: boolean;
 };

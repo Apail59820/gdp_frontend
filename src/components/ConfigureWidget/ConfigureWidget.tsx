@@ -1,7 +1,7 @@
 import React from 'react';
-import { ManageItemCard } from '@projex/ui';
+import { ManageItemCard } from 'projex-ui';
 import styles from './ConfigureWidget.module.scss';
-import { ManageItemButtonProps } from '@projex/ui/dist/components/atoms/ManageItemButton/ManageItemButton';
+import {ManageItemButtonProps} from "projex-ui/dist/types/components/atoms/ManageItemButton/ManageItemButton";
 
 type props = {
   descriptionText: string;

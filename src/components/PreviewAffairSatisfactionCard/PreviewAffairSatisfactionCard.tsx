@@ -1,4 +1,4 @@
-import { ProgressBar, ShadowCard } from '@projex/ui';
+import { ProgressBar, ShadowCard } from 'projex-ui';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import styles from '../AffairCard/AffairCard.module.scss';
 import { capitalize } from '../../../utils/capitalize';
