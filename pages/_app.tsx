@@ -12,13 +12,14 @@ import {SideBar, TopBar} from "projex-ui";
 import {getMyUsProfile} from "../services/userService/UsUsers";
 import {isRequestSuccessful} from "../utils/isRequestSuccessful";
 import {UsUserModel} from "../models/UserService/UsUserModel";
-// import getConfig from "next/config";
+import getConfig from "next/config";
 
 export default function App({Component, pageProps}: AppProps) {
-  // const { publicRuntimeConfig } = getConfig();
+  const { publicRuntimeConfig } = getConfig();
 
   const [user, setUser] = useState<Partial<UsUserModel>>({});
   const [userProfilePicture, setUserProfilePicture] = useState<string | undefined>(undefined);
+
   useEffect(() => {
     getMyUsProfile().then((res) => {
       if (isRequestSuccessful(res.status) && res.data) {
@@ -48,8 +49,8 @@ export default function App({Component, pageProps}: AppProps) {
           <header id="header">
             <TopBar
               items={[
-                {label: 'Gestion de projet', href: '/href', active: true},
-                {label: 'Catalogue des solutions alternatives', href: '/href', active: false},
+                {label: 'Gestion de projet', href: '/', active: true},
+                {label: 'Catalogue des solutions alternatives', href: `${publicRuntimeConfig.CATALOG_APP_URL}/`, active: false},
               ]}
               user={user}
               avatar={userProfilePicture}
@@ -172,7 +173,7 @@ export default function App({Component, pageProps}: AppProps) {
                         ),
                       },*/
                     ],
-                    foot: [
+                    /*foot: [
                       {
                         label: 'Paramètres',
                         href: '/settings',
@@ -191,7 +192,7 @@ export default function App({Component, pageProps}: AppProps) {
                           </svg>
                         ),
                       },
-                    ],
+                    ],*/
                   }}
                 />
               </nav>
