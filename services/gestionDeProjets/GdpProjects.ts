@@ -20,7 +20,7 @@ const defaultFields = [
  * @returns request status and gdp projects.
  */
 export async function getGdpProjects(
-  props: QueryParameters = {}
+  props: QueryParameters = {},
 ): Promise<{ status: number; data?: Partial<GdpProjectsModel>[] }> {
   if (!props.fields) props.fields = defaultFields;
   const token = await retrieveToken();
@@ -39,7 +39,7 @@ export async function getGdpProjects(
 
   return fetch(
     `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/projects?${concatenateQueryParameters(props)}`,
-    myInit
+    myInit,
   )
     .then((res) => {
       if (res.status == 200)
@@ -61,7 +61,7 @@ export async function getGdpProjects(
  */
 export async function getGdpProjectById(
   id: number,
-  fields = defaultFields
+  fields = defaultFields,
 ): Promise<{ status: number; data?: Partial<GdpProjectsModel>; ok: boolean }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401, ok: false });
@@ -86,7 +86,7 @@ export async function getGdpProjectById(
       } else {
         return { status: res.status, ok: res.ok };
       }
-    }
+    },
   );
 }
 
@@ -98,6 +98,7 @@ type createFieldsToOmit =
   | 'date_updated'
   | 'projects_directus_users_clients_ids'
   | 'projects_directus_users_collaborators_ids'
+  | 'affairs_ids'
   | 'files'
   | 'affairs'
   | 'activities_id'
@@ -105,9 +106,11 @@ type createFieldsToOmit =
   | 'zip_code'
   | 'city'
   | 'country'
+  | 'image'
   | 'client_info'
   | 'status'
-  | 'project_type';
+  | 'project_type'
+  | 'clients_company_entity'
 
 /**
  * Create a gdp Project.
@@ -115,7 +118,7 @@ type createFieldsToOmit =
  * @returns Status and data containing gdp project properties.
  */
 export async function createGdpProject(
-  project: Omit<GdpProjectsModel, createFieldsToOmit>
+  project: Omit<GdpProjectsModel, createFieldsToOmit>,
 ): Promise<{ status: number; data?: Partial<GdpProjectsModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
@@ -176,7 +179,7 @@ type updateFieldsToOmit =
  */
 export async function updateGdpProject(
   id: string | number,
-  data: Partial<Omit<GdpProjectsModel, updateFieldsToOmit>>
+  data: Partial<Omit<GdpProjectsModel, updateFieldsToOmit>>,
 ): Promise<{ status: number; data?: Partial<GdpProjectsModel>; error?: string }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });

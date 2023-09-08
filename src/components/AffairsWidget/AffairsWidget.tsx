@@ -3,10 +3,10 @@ import styles from './AffairsWidget.module.scss';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
-import { ManageItemCard } from '@projex/ui';
+import { ManageItemCard } from 'projex-ui';
 import AffairCard from '../AffairCard/AffairCard';
 import Grid from '../Grid/Grid';
-import { Section } from '@projex/ui';
+import { Section } from 'projex-ui';
 
 type Props = {
   affairs: Partial<GdpAffairModel>[];

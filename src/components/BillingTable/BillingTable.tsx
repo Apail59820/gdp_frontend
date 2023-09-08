@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
-import { ColumnsType } from 'antd/lib/table';
-import { Table } from 'antd';
-import { DateTime, Interval } from 'luxon';
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
+import React, {useEffect, useState} from 'react';
+import {GdpPythagoreFactureModel} from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
+import {ColumnsType} from 'antd/lib/table';
+import {Table} from 'antd';
+import {DateTime, Interval} from 'luxon';
+import {DownOutlined, UpOutlined} from '@ant-design/icons';
 import styles from './BillingTable.module.scss';
 import ExpandedBillingInfo from './ExpandedBillingInfo';
-import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
+import {GdpProjectsModel} from '../../../models/GestionDeProjets/GdpProjectsModel';
 
 interface DataType extends Partial<GdpPythagoreFactureModel> {
   key: React.Key;
@@ -26,7 +26,7 @@ export enum InvoiceStateEnum {
   PAID = 'paid',
 }
 
-const BillingTable = ({ factures, displayAdditionnalInfo }: props) => {
+const BillingTable = ({factures, displayAdditionnalInfo}: props) => {
   const [formattedData, setFormattedData] = useState<DataType[]>([]);
 
   const getDaysLeft = (invoice: Partial<GdpPythagoreFactureModel>) => {
@@ -110,7 +110,7 @@ const BillingTable = ({ factures, displayAdditionnalInfo }: props) => {
         )
           return 0;
         return a.num_affaire.affairs_id[0].affairs_id.projects_id.name >
-          b.num_affaire.affairs_id[0].affairs_id.projects_id.name
+        b.num_affaire.affairs_id[0].affairs_id.projects_id.name
           ? 1
           : -1;
       },
@@ -205,10 +205,10 @@ const BillingTable = ({ factures, displayAdditionnalInfo }: props) => {
       facture.etatreglt_facture !== 'Reglee' && facture.statut_facture === 'Echue'
         ? (invoiceState = InvoiceStateEnum.LATE)
         : facture.etatreglt_facture !== 'Reglee' && betweenWarningDelayTriggerAndDueDate
-        ? (invoiceState = InvoiceStateEnum.SOON_TO_EXPIRE)
-        : facture.etatreglt_facture !== 'Reglee' && !betweenWarningDelayTriggerAndDueDate
-        ? (invoiceState = InvoiceStateEnum.OK)
-        : (invoiceState = InvoiceStateEnum.PAID);
+          ? (invoiceState = InvoiceStateEnum.SOON_TO_EXPIRE)
+          : facture.etatreglt_facture !== 'Reglee' && !betweenWarningDelayTriggerAndDueDate
+            ? (invoiceState = InvoiceStateEnum.OK)
+            : (invoiceState = InvoiceStateEnum.PAID);
       tmp.push({
         ...facture,
         key: index,
@@ -240,11 +240,11 @@ const BillingTable = ({ factures, displayAdditionnalInfo }: props) => {
             invoiceState={record.invoiceState}
           />
         ),
-        expandIcon: ({ expanded, onExpand, record }) =>
+        expandIcon: ({expanded, onExpand, record}) =>
           expanded ? (
-            <UpOutlined onClick={(e) => onExpand(record, e)} />
+            <UpOutlined rev={undefined} onClick={(e) => onExpand(record, e)}/>
           ) : (
-            <DownOutlined onClick={(e) => onExpand(record, e)} />
+            <DownOutlined rev={undefined} onClick={(e) => onExpand(record, e)}/>
           ),
       }}
     />

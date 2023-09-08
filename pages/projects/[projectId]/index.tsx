@@ -1,49 +1,49 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from '../../../styles/Project.module.scss';
-import { EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, QuickActionCard } from '@projex/ui';
+import {EditOutlined, PlusOutlined} from '@ant-design/icons';
+import {Breadcrumb, Button, QuickActionCard} from 'projex-ui';
 import Grid from '../../../src/components/Grid/Grid';
 import PageHeaderBanner from '../../../src/components/PageHeaderBanner/PageHeaderBanner';
 import QuickAccessWidget from '../../../src/components/QuickAccessWidget/QuickAccessWidget';
-import { GdpActivitiesModel } from '../../../models/GestionDeProjets/GdpActivitiesModel';
+import {GdpActivitiesModel} from '../../../models/GestionDeProjets/GdpActivitiesModel';
 import ClientTeamWidget from '../../../src/components/ClientTeamWidget/ClientTeamWidget';
 import CollaboratorTeamWidget from '../../../src/components/CollaboratorTeamWidget/CollaboratorTeamWidget';
 import ActivitiesWidget from '../../../src/components/ActivitiesWidget/ActivitiesWidget';
 import BillingWidget from '../../../src/components/BillingWidget/BillingWidget';
 import FilesWidget from '../../../src/components/FilesWidget/FilesWidget';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectProjects, setProjects } from '../../../store/reducers/projectsReducer';
-import { useRouter } from 'next/router';
-import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
-import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
-import { selectAffairs, setAffairs } from '../../../store/reducers/affairsReducer';
-import { getGdpAffairs } from '../../../services/gestionDeProjets/GdpAffairs';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectProjects, setProjects} from '../../../store/reducers/projectsReducer';
+import {useRouter} from 'next/router';
+import {getGdpProjectById} from '../../../services/gestionDeProjets/GdpProjects';
+import {GdpAffairModel} from '../../../models/GestionDeProjets/GdpAffairModel';
+import {selectAffairs, setAffairs} from '../../../store/reducers/affairsReducer';
+import {getGdpAffairs} from '../../../services/gestionDeProjets/GdpAffairs';
 import CreateAffairForm from '../../../src/components/CreateAffairForm/CreateAffairForm';
-import { GdpProjectsClientsModel } from '../../../models/GestionDeProjets/GdpProjectsClientsModel';
-import { getGdpProjectsUsersClients } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
-import { getUsUsers } from '../../../services/userService/UsUsers';
-import { UsUserModel } from '../../../models/UserService/UsUserModel';
-import { GdpProjectsCollaboratorsModel } from '../../../models/GestionDeProjets/GdpProjectsCollaboratorsModel';
-import { getGdpProjectsUsersCollaborators } from '../../../services/gestionDeProjets/GdpProjectsUsersCollaborators';
-import { getGdpFiles } from '../../../services/gestionDeProjets/GdpFiles';
-import { GdpFilesModel } from '../../../models/GestionDeProjets/GdpFilesModel';
-import { getGdpActivities } from '../../../services/gestionDeProjets/GdpActivities';
-import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
-import { getUsCompanyEntity } from '../../../services/userService/UsCompanyEntities';
-import { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
+import {GdpProjectsClientsModel} from '../../../models/GestionDeProjets/GdpProjectsClientsModel';
+import {getGdpProjectsUsersClients} from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
+import {getUsUsers} from '../../../services/userService/UsUsers';
+import {UsUserModel} from '../../../models/UserService/UsUserModel';
+import {GdpProjectsCollaboratorsModel} from '../../../models/GestionDeProjets/GdpProjectsCollaboratorsModel';
+import {getGdpProjectsUsersCollaborators} from '../../../services/gestionDeProjets/GdpProjectsUsersCollaborators';
+import {getGdpFiles} from '../../../services/gestionDeProjets/GdpFiles';
+import {GdpFilesModel} from '../../../models/GestionDeProjets/GdpFilesModel';
+import {getGdpActivities} from '../../../services/gestionDeProjets/GdpActivities';
+import {GdpProjectsModel} from '../../../models/GestionDeProjets/GdpProjectsModel';
+import {getUsCompanyEntity} from '../../../services/userService/UsCompanyEntities';
+import {GdpPythagoreFactureModel} from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
 import AffairsWidget from '../../../src/components/AffairsWidget/AffairsWidget';
-import { getGdpPythagoreFactures } from '../../../services/gestionDeProjets/GdpPythagoreFactures';
-import { getGdpAffairsPythagoreAffairs } from '../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
+import {getGdpPythagoreFactures} from '../../../services/gestionDeProjets/GdpPythagoreFactures';
+import {getGdpAffairsPythagoreAffairs} from '../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
 import CreateProjectForm from '../../../src/components/CreateProjectForm/CreateProjectForm';
 import SatisfactionWidget from '../../../src/components/SatisfactionWidget/SatisfactionWidget';
-import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
-import { getGdpSatisfactions } from '../../../services/gestionDeProjets/GdpAffairsSatisfaction';
+import {GdpSatisfactionModel} from '../../../models/GestionDeProjets/GdpSatisfactionModel';
+import {getGdpSatisfactions} from '../../../services/gestionDeProjets/GdpAffairsSatisfaction';
 import {
   selectClientsCompanyEntities,
   setClientsCompanyEntities,
 } from '../../../store/reducers/clientsCompanyEntitiesReducer';
-import { UsClientsCompanyEntitiesModel } from '../../../models/UserService/UsClientsCompanyEntitiesModel';
-import { getUsClientCompanyEntity } from '../../../services/userService/UsClientsCompanyEntities';
+import {UsClientsCompanyEntitiesModel} from '../../../models/UserService/UsClientsCompanyEntitiesModel';
+import {getUsClientCompanyEntity} from '../../../services/userService/UsClientsCompanyEntities';
 import ConfigureFacturationForm from '../../../src/components/ConfigureFacturationForm/ConfigureFacturationForm';
 import UploadFilesForm from '../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
 import { selectUserProfile } from '../../../store/reducers/authReducer';
@@ -417,7 +417,7 @@ const Project = () => {
             {/* end ---------------- EVERY FORM GOES HERE ---------------- end */}
             <h1 className={styles.title}>Le projet</h1>
             {isUserProjectManager && (
-              <Button icon={<EditOutlined />} onClick={() => setIsCreateProjectFormOpen(true)}>
+              <Button icon={<EditOutlined rev={undefined}/>} onClick={() => setIsCreateProjectFormOpen(true)}>
                 Modifier le projet
               </Button>
             )}
@@ -429,7 +429,7 @@ const Project = () => {
                   title="Créez une nouvelle affaire"
                   button={{
                     label: 'Ajouter une affaire',
-                    icon: <PlusOutlined />,
+                    icon: <PlusOutlined rev={undefined}/>,
                     onClick: () => setIsCreateAffairFormOpen(true),
                   }}
                 >
@@ -440,7 +440,7 @@ const Project = () => {
                   title="Facturation"
                   button={{
                     label: 'Configurer la facturation',
-                    icon: <EditOutlined />,
+                    icon: <EditOutlined rev={undefined}/>,
                     onClick: () => setIsConfigureFacturationFormOpen(true),
                   }}
                 >

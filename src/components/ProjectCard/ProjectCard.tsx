@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './ProjectCard.module.scss';
-import { ShadowCard } from '@projex/ui';
+import { ShadowCard } from 'projex-ui';
 import type { GdpProjectsModel } from '../../../models/GdPModels';
 import { capitalize } from '../../../utils/capitalize';
 import defaultImage from '../../../public/default-affair-image.png';

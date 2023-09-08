@@ -1,6 +1,5 @@
 import React from 'react';
 import styles from './FilesCard.module.scss';
-import { ShadowCard } from '@projex/ui';
 import { GdpFilesModel } from '../../../models/GestionDeProjets/GdpFilesModel';
 import FolderIcon from '../../../public/folder.svg';
 import ArrowLeftLong from '../../../public/arrow-left-long.svg';
