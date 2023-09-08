@@ -42,7 +42,7 @@ const SatisfactionCard = ({satisfactions, reverse}: SatisfactionCardProps) => {
     <ShadowCard>
       <div className={`${styles.container} ${reverse && styles.reverse}`}>
         <ProgressBarRounded
-          percentage={isNaN((score / total) * 100) ? 0 : (parseFloat((83.333333333333).toFixed(2)))}
+          percentage={isNaN((score / total) * 100) ? 0 : (parseFloat((score / total).toFixed(2)))}
           // text={`${score} / ${total}`}
           // color={'green'}
         />
@@ -50,7 +50,7 @@ const SatisfactionCard = ({satisfactions, reverse}: SatisfactionCardProps) => {
           <span>
             Note moyenne :{' '}
             <b>
-              {score} / {total}
+              {score.toFixed((2))} / {total}
             </b>
           </span>
           <span>
