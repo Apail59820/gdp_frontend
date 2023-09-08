@@ -50,7 +50,7 @@ export default function App({Component, pageProps}: AppProps) {
             <TopBar
               items={[
                 {label: 'Gestion de projet', href: '/', active: true},
-                {label: 'Catalogue des solutions alternatives', href: `${publicRuntimeConfig.USER_SERVICE_URL}/`, active: false},
+                {label: 'Catalogue des solutions alternatives', href: `${publicRuntimeConfig.CATALOG_APP_URL}/`, active: false},
               ]}
               user={user}
               avatar={userProfilePicture}
