@@ -41,8 +41,8 @@ import CreatePhaseForm from '../../../../../src/components/CreatePhaseForm/Creat
 import ConfigureFacturationForm from '../../../../../src/components/ConfigureFacturationForm/ConfigureFacturationForm';
 import ManageAffairUsersForm from '../../../../../src/components/ManageAffairUsersForm/ManageAffairUsersForm';
 import { getGdpProjectsUsersClients } from '../../../../../services/gestionDeProjets/GdpProjectsUsersClients';
-import UploadFilesFormUploadFilesForm from '../../../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
 import { selectAffairs } from '../../../../../store/reducers/affairsReducer';
+import UploadFilesForm from '../../../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
 
 const Affair = () => {
   const { query } = useRouter();
@@ -470,12 +470,13 @@ const Affair = () => {
             affair={affair}
             userType={affairUsersFormType}
           />
-          <UploadFilesFormUploadFilesForm
+          <UploadFilesForm
             isOpen={isUploadFilesFormVisible}
             mode={'files'}
-            setIsOpen={setIsUploadFilesFormVisible}
+            onClose={() => setIsUploadFilesFormVisible(false)}
             project={affairProject}
             affair={affair}
+            fileItems={[]}
           />
           {/* end ---------------- EVERY FORM GOES HERE ---------------- end */}
           <h1 className={styles.title}>{affair.name ? capitalize(affair.name) : `Affaire ${affair.id}`}</h1>

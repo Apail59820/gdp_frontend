@@ -169,7 +169,7 @@ export default function UploadFilesForm({
         uploadState: fileItem.id === fileUID ? UploadStatusEnum.DONE : fileItem.uploadState,
       }));
       setFileList(updatedFileList);
-      setIsOpen(false);
+      onClose()
       if (onFileUpload) {
         onFileUpload();
       }
@@ -181,7 +181,7 @@ export default function UploadFilesForm({
         uploadState: fileItem.id === fileUID ? UploadStatusEnum.ERROR : fileItem.uploadState,
       }));
       setFileList(updatedFileList);
-      setIsOpen(false);
+      onClose()
       if (onFileUpload) {
         onFileUpload();
       }
@@ -206,7 +206,7 @@ export default function UploadFilesForm({
     for (let i = 0; i < files.length; i++) {
       _fileList = [...(await uploadOneFile(files[i].id, _fileList))];
     }
-    setIsOpen(false);
+    onClose()
   };
 
   const handleCancel = () => {
