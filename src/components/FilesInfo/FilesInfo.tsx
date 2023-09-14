@@ -1,5 +1,5 @@
 import {message, Modal} from "antd";
-import {GdpFilesModel, GdpFilesStatusEnum} from "../../../models/GestionDeProjets/GdpFilesModel";
+import {GdpFilesModel} from "../../../models/GestionDeProjets/GdpFilesModel";
 import React, {useEffect, useState} from "react";
 import {GdpProjectsModel} from "../../../models/GestionDeProjets/GdpProjectsModel";
 import {UsUserModel} from '../../../models/UsModels';
@@ -151,8 +151,6 @@ const FileInfo = ({isOpen, setIsOpen , file} : FileInfoProps) => {
                     <div className={styles.textBlock}>
                         <p>Etat : {capitalize(file?.status)}</p>
                         <p>Projet : {capitalize(gdpProject?.name)}</p>
-                        <p>Action : </p>
-                        <p>Etape : </p>
                     </div>
                     <Button style={"primary"}
                             small={true}
