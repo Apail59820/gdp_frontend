@@ -10,7 +10,7 @@ import styles from "./FilesInfo.module.scss"
 import {Button} from "projex-ui";
 import Link from "next/link";
 import {getMyUsProfile} from "../../../services/userService/UsUsers";
-import {deleteGdpFile, downloadGdPFile} from "../../../services/gestionDeProjets/GdpFiles";
+import {deleteGdpFile} from "../../../services/gestionDeProjets/GdpFiles";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {downloadFile} from "../../../utils/downloadFile";
 
@@ -60,7 +60,7 @@ const FileInfo = ({isOpen, setIsOpen , file} : FileInfoProps) => {
             message.error("Vous n'avez pas la permission de modifier ce fichier.");
         return condition;
     }
-    const showDeleteConfirm = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    const showDeleteConfirm = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         Modal.confirm({
             title: `Supprimer le fichier`,
             closable: true,
@@ -98,7 +98,7 @@ const FileInfo = ({isOpen, setIsOpen , file} : FileInfoProps) => {
         });
         e.stopPropagation();
     };
-    const handleDelete = (e : React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    const handleDelete = (e : React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         if(isFileOwner()){
             showDeleteConfirm(e);
         }
@@ -111,7 +111,9 @@ const FileInfo = ({isOpen, setIsOpen , file} : FileInfoProps) => {
 
     useEffect(() => {
         if(file?.projects_id){
-            let gdpProjId = typeof file?.projects_id === GdpProjectsModel ? file.projects_id?.id : Number(file?.projects_id);
+            let gdpProjId: number = typeof file?.projects_id === 'object' && 'id' in file.projects_id
+                ? (file.projects_id as GdpProjectsModel).id
+                : Number(file?.projects_id);
             getGdpProjectById(gdpProjId).then(result => {
                 if(result?.data){
                     setGdpProject(result.data);
