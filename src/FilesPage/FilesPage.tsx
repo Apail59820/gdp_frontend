@@ -20,6 +20,7 @@ import FileIcon from '../../public/file.svg';
 import FileImageIcon from '../../public/file-image.svg';
 import Link from 'next/link';
 import { DateTime } from "luxon";
+import FilesInfo from "../components/FilesInfo/FilesInfo";
 const { publicRuntimeConfig } = getConfig();
 
 type FilesFiltersType = {
@@ -86,6 +87,9 @@ const FilesPage = ({
   const [filesFilters, setFilesFilters] = useState<FilesFiltersType>(FilesFiltersInitialState);
   const [projectsFilters, setProjectsFilters] = useState<ProjectsFiltersType>(projectsFiltersInitialState);
 
+  const [isFilesInfoModalOpen, setIsFilesInfoModalOpen] = useState<boolean>(false);
+
+  const [selectedFile, setSelectedFile] = useState<Partial<GdpFilesModel> | null>(null);
   function updateSpecificFilters() {
     updateSpecificFilesFilters();
     updateSpecificProjectsFilters();
@@ -367,7 +371,7 @@ const FilesPage = ({
                   : files.map((file) => ({
                       file: file,
                       type: 'file',
-                      onClick: () => console.log(file),
+                      onClick: () => setIsFilesInfoModalOpen(true),
                     }))
               }
               folders={
@@ -396,9 +400,15 @@ const FilesPage = ({
                 cancelSort: 'Ne pas trier',
               }}
             />
+
           )}
         </div>
       </div>
+      <FilesInfo
+          isOpen={isFilesInfoModalOpen}
+          setIsOpen={setIsFilesInfoModalOpen}
+          file={selectedFile}
+      />
     </div>
   );
 };

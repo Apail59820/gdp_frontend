@@ -19,12 +19,13 @@ import { useRouter } from 'next/router';
 import FilesGridDisplay, { GridFolderItem } from '../components/FilesGridDisplay/FilesGridDisplay';
 import UploadFilesFormUploadFilesForm from '../components/filesForms/UploadFilesForm/UploadFilesForm';
 import PageHeaderBanner from '../components/PageHeaderBanner/PageHeaderBanner';
-import { Table } from 'antd';
+import {message, Table} from 'antd';
 import FolderIcon from '../../public/folder.svg';
 import FileImageIcon from '../../public/file-image.svg';
 import FileIcon from '../../public/file.svg';
 import FileArrayLeftLong from '../../public/arrow-left-long.svg';
 import Link from 'next/link';
+import FilesInfo from "../components/FilesInfo/FilesInfo";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -93,7 +94,9 @@ const FilesOfProjectPage = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
+  const [isFilesInfoModalOpen, setIsFilesInfoModalOpen] = useState<boolean>(false);
 
+  const [selectedFile, setSelectedFile] = useState<Partial<GdpFilesModel> | null>(null);
   function updateSpecificFilters() {
     const filterRules: any[] = [];
     let search: string | undefined = undefined;
@@ -154,6 +157,11 @@ const FilesOfProjectPage = ({
         }
       }
     }
+  }
+
+  function onFileSelected(file : Partial<GdpFilesModel>) {
+    setSelectedFile(file);
+    setIsFilesInfoModalOpen(true);
   }
 
   //lazy loading
@@ -439,7 +447,7 @@ const FilesOfProjectPage = ({
                   ? []
                   : files.map((file) => ({
                       file: file,
-                      onClick: () => console.log('Click'),
+                      onClick: () => onFileSelected(file),
                       type: 'file',
                     }))
               }
@@ -468,6 +476,12 @@ const FilesOfProjectPage = ({
         affair={FilesLevelFilter.affair}
         phase={FilesLevelFilter.phase}
       />
+      <FilesInfo
+          isOpen={isFilesInfoModalOpen}
+          setIsOpen={setIsFilesInfoModalOpen}
+          file={selectedFile}
+      />
+
     </div>
   );
 };
