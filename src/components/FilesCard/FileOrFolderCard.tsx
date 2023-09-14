@@ -35,7 +35,7 @@ const FileOrFolderCard = ({ asset, type, onClick, href }: PropsFile | PropsFolde
     return FileIcon;
   };
 
-  const title = type === 'file' ? asset?.title : asset?.name;
+  const title = type === 'file' ? asset?.filename_download : asset?.name;
 
   return href ? (
     <Link href={href}>
