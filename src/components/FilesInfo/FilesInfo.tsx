@@ -19,9 +19,10 @@ import {capitalize} from "../../../utils/capitalize";
 type FileInfoProps = {
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setEditButtonState: React.Dispatch<React.SetStateAction<boolean>>;
     file : Partial<GdpFilesModel>
 };
-const FileInfo = ({isOpen, setIsOpen , file} : FileInfoProps) => {
+const FileInfo = ({isOpen, setIsOpen , setEditButtonState, file} : FileInfoProps) => {
     const [gdpProject, setGdpProject] = useState<Partial<GdpProjectsModel> | null>(null);
     const [myUsProfile, setMyUsProfile] = useState<Partial<UsUserModel>>(null);
 
@@ -105,7 +106,7 @@ const FileInfo = ({isOpen, setIsOpen , file} : FileInfoProps) => {
     }
     const handleModify = () => {
         if(isFileOwner()){
-
+            setEditButtonState(true);
         }
     }
 
@@ -151,8 +152,13 @@ const FileInfo = ({isOpen, setIsOpen , file} : FileInfoProps) => {
 
                     <div className={styles.line}></div>
                     <div className={styles.textBlock}>
-                        <p>Etat : {capitalize(file?.status)}</p>
-                        <p>Projet : {capitalize(gdpProject?.name)}</p>
+                        {(file && gdpProject) && (
+                                <>
+                                    <p>Etat : {capitalize(file?.status)}</p>
+                                    <p>Projet : {capitalize(gdpProject?.name)}</p>
+                                </>
+                            )
+                        }
                     </div>
                     <Button style={"primary"}
                             small={true}

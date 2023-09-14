@@ -98,6 +98,7 @@ const FilesOfProjectPage = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const [filesToUpdate, setFilesToUpdate] = useState<fileItemType[]>([]);
 
@@ -108,6 +109,7 @@ const FilesOfProjectPage = ({
 
   function onFileModalClose() {
     setFilesToUpdate([]);
+    setIsEditing(false);
     setIsUploadModalOpen(false);
   }
   const [isFilesInfoModalOpen, setIsFilesInfoModalOpen] = useState<boolean>(false);
@@ -188,6 +190,20 @@ const FilesOfProjectPage = ({
       if (pageRef && pageRef.current) pageRef.current.removeEventListener('scroll', onScrollEvent);
     };
   }, [filesCount, files, lazyLoadingState]);
+
+  useEffect(() => {
+    if(isEditing){
+          selectedFile.id &&
+          UpdateFiles([
+            {
+              id: selectedFile.id,
+              file: undefined,
+              properties: selectedFile,
+              uploadState: UploadStatusEnum.DONE,
+            },
+          ]);
+    }
+  }, [isEditing]);
 
   function getFolders(): GridFolderItem[] {
     const folders: GridFolderItem[] = [];
@@ -496,6 +512,7 @@ const FilesOfProjectPage = ({
       <FilesInfo
           isOpen={isFilesInfoModalOpen}
           setIsOpen={setIsFilesInfoModalOpen}
+          setEditButtonState={setIsEditing}
           file={selectedFile}
       />
 
