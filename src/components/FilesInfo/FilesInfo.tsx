@@ -14,6 +14,8 @@ import {deleteGdpFile, downloadGdPFile} from "../../../services/gestionDeProjets
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {downloadFile} from "../../../utils/downloadFile";
 
+import {capitalize} from "../../../utils/capitalize";
+
 type FileInfoProps = {
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,10 +29,10 @@ const FileInfo = ({isOpen, setIsOpen , file} : FileInfoProps) => {
         const thresh : number = si ? 1000 : 1024;
 
         if (Math.abs(bytes) < thresh) {
-            return bytes + ' B';
+            return bytes > 1 ? bytes + ' octets' : bytes + ' octet';
         }
 
-        const units = si ? ['kB', 'MB', 'GB', 'TB'] : ['KiB', 'MiB', 'GiB', 'TiB'];
+        const units = si ? ['ko', 'Mo', 'Go', 'To'] : ['Kio', 'Mio', 'Gio', 'Tio'];
         let u = -1;
         const r = 10**dp;
 
@@ -40,6 +42,16 @@ const FileInfo = ({isOpen, setIsOpen , file} : FileInfoProps) => {
         } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
 
         return bytes.toFixed(dp) + ' ' + units[u];
+    }
+
+    function formatDate(dateToFormat: Date) {
+        const date = new Date(dateToFormat);
+        const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+        const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+        const year = date.getFullYear();
+        const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+        const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+        return `${day}/${month}/${year} à ${hours}h${minutes}`;
     }
 
     const isFileOwner = () : boolean => {
@@ -132,14 +144,13 @@ const FileInfo = ({isOpen, setIsOpen , file} : FileInfoProps) => {
                     <div className={styles.textBlock}>
                         <p>Taille : {getFileSize(file?.filesize, true)}</p>
                         <p>Type de fichier : {file?.type.toString()}</p>
-                        <p>Modifié le : {file?.modified_on.toLocaleString()}</p>
+                        <p>Modifié le : {formatDate(file?.modified_on)}</p>
                     </div>
 
                     <div className={styles.line}></div>
-
                     <div className={styles.textBlock}>
-                        <p>Etat : {file?.status}</p>
-                        <p>Projet : {gdpProject?.name}</p>
+                        <p>Etat : {capitalize(file?.status)}</p>
+                        <p>Projet : {capitalize(gdpProject?.name)}</p>
                         <p>Action : </p>
                         <p>Etape : </p>
                     </div>
