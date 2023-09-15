@@ -1,6 +1,12 @@
 @import "projex-styles";
 
 .fileInfoContainer{
+
+  display: inline-flex;
+  padding: 12px;
+  align-items: flex-start;
+  gap: 16px;
+
   .frame {
     display: flex;
     flex-direction: column;
@@ -41,12 +47,6 @@
     }
   }
 
-  .previewFrame {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
 
 }
 
