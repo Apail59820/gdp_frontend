@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, ReactNode } from 'react';
 import styles from './FilesPage.module.scss';
 import { Button, Input, Select } from 'projex-ui';
 import { QueryParameters } from '../../models/DirectusModel';
-import { DeleteOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import { selectCompanyEntities } from '../../store/reducers/companyEntitiesReducer';
 import GlobalFilters from '../components/GlobalFiltersComponents/GlobalFilters';
@@ -21,6 +21,7 @@ import FileImageIcon from '../../public/file-image.svg';
 import Link from 'next/link';
 import { DateTime } from "luxon";
 import FilesInfo from "../components/FilesInfo/FilesInfo";
+import {UploadStatusEnum} from "../components/filesForms/UploadFilesForm/UploadFilesForm";
 const { publicRuntimeConfig } = getConfig();
 
 type FilesFiltersType = {
@@ -133,6 +134,11 @@ const FilesPage = ({
     setFilesFilters(FilesFiltersInitialState);
     setProjectsFilters(projectsFiltersInitialState);
     updateSpecificFilters();
+  }
+
+  function handleFileClick(file : Partial<GdpFilesModel>) {
+    setIsFilesInfoModalOpen(true);
+    setSelectedFile(file);
   }
 
   useEffect(() => {
@@ -371,7 +377,7 @@ const FilesPage = ({
                   : files.map((file) => ({
                       file: file,
                       type: 'file',
-                      onClick: () => setIsFilesInfoModalOpen(true),
+                      onClick: () => handleFileClick(file),
                     }))
               }
               folders={
@@ -407,6 +413,7 @@ const FilesPage = ({
       <FilesInfo
           isOpen={isFilesInfoModalOpen}
           setIsOpen={setIsFilesInfoModalOpen}
+          disableEdition={true}
           file={selectedFile}
       />
     </div>
