@@ -17,7 +17,6 @@ import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel } from '../../models/GestionDeProjets/GdpPhaseModel';
 import { useRouter } from 'next/router';
 import FilesGridDisplay, { GridFolderItem } from '../components/FilesGridDisplay/FilesGridDisplay';
-import { LoadingOutlined } from '@ant-design/icons';
 import UploadFilesForm, {
   fileItemType,
   UploadStatusEnum,
@@ -177,6 +176,12 @@ const FilesOfProjectPage = ({
     }
   }
 
+  function handleAddFile() {
+    setIsUploadModalOpen(true);
+    setIsEditing(false);
+    setSelectedFile(null);
+  }
+
   function onFileSelected(file : Partial<GdpFilesModel>) {
     setSelectedFile(file);
     setIsFilesInfoModalOpen(true);
@@ -252,7 +257,7 @@ const FilesOfProjectPage = ({
       const affair = (project.affairs_ids as GdpAffairModel[]).find(
         (affair) => affair.id === (FilesLevelFilter.affair as { id: string | number; name: string }).id
       );
-      if (affair)
+      if (affair?.affairs_phases_ids)
         folders.push(
           ...(affair.affairs_phases_ids as GdpPhaseModel[]).map((phase) => ({
             folder: {
@@ -410,7 +415,7 @@ const FilesOfProjectPage = ({
         <div className={styles.titleBar}>
           <h1 className={styles.title}>Fichiers</h1>
           <div className={styles.buttonAddFileContainer}>
-            <Button style={'primary'} onClick={() => setIsUploadModalOpen(true)} small={true}>
+            <Button style={'primary'} onClick={handleAddFile} small={true}>
               Ajouter un fichier
             </Button>
           </div>
@@ -503,6 +508,7 @@ const FilesOfProjectPage = ({
       <UploadFilesForm
         isOpen={isUploadModalOpen}
         onClose={onFileModalClose}
+        edit={isEditing}
         mode={'files'}
         fileItems={filesToUpdate}
         project={FilesLevelFilter.project}

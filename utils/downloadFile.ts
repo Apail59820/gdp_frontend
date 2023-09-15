@@ -1,12 +1,13 @@
 import { GdpFilesModel } from '../models/GdPModels';
 import {downloadGdPFile} from "../services/gestionDeProjets/GdpFiles";
 import {message} from "antd";
+import {isRequestSuccessful} from "./isRequestSuccessful";
 export function downloadFile(file : Partial<GdpFilesModel>) {
-
     if (file?.id)
         downloadGdPFile(file.id)
-            .then((res) => {
-                if (res.status === 200 ) {
+
+         .then((res) => {
+                if (isRequestSuccessful(res.status)) {
                     var data = new Blob([res.data], {type: file?.type});
                     var csvURL = window.URL.createObjectURL(data);
                     let tempLink = document.createElement('a');

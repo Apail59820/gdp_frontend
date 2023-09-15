@@ -10,11 +10,12 @@ import styles from "./FilesInfo.module.scss"
 import {Button} from "projex-ui";
 import Link from "next/link";
 import {getMyUsProfile} from "../../../services/userService/UsUsers";
-import {deleteGdpFile} from "../../../services/gestionDeProjets/GdpFiles";
+import {deleteGdpFile, downloadGdPFile} from "../../../services/gestionDeProjets/GdpFiles";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {downloadFile} from "../../../utils/downloadFile";
 
 import {capitalize} from "../../../utils/capitalize";
+import Image from "next/image";
 
 type FileInfoProps = {
     isOpen: boolean;
@@ -25,7 +26,7 @@ type FileInfoProps = {
 const FileInfo = ({isOpen, setIsOpen , setEditButtonState, file} : FileInfoProps) => {
     const [gdpProject, setGdpProject] = useState<Partial<GdpProjectsModel> | null>(null);
     const [myUsProfile, setMyUsProfile] = useState<Partial<UsUserModel>>(null);
-
+    const [filePreview, setFilePreview] = useState<string | undefined>(undefined);
     function getFileSize(bytes, si=false, dp=1) : string {
         const thresh : number = si ? 1000 : 1024;
 
@@ -60,6 +61,25 @@ const FileInfo = ({isOpen, setIsOpen , setEditButtonState, file} : FileInfoProps
         if(!condition)
             message.error("Vous n'avez pas la permission de modifier ce fichier.");
         return condition;
+    }
+
+    function getFilePreview () {
+        if (file?.id)
+            downloadGdPFile(file.id)
+
+                .then((res) => {
+                    if (isRequestSuccessful(res.status)) {
+                        let blob =  new Blob([res.data], {type: file?.type});
+                        blob.text().then((blobRes) => {
+                            if(typeof blobRes !== 'undefined'){
+                                setFilePreview(blobRes);
+                            }
+                        })
+                    }
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
     }
     const showDeleteConfirm = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         Modal.confirm({
@@ -121,6 +141,7 @@ const FileInfo = ({isOpen, setIsOpen , setEditButtonState, file} : FileInfoProps
                 }
             });
         }
+        getFilePreview();
     }, [file]);
 
     useEffect(() => {
@@ -193,6 +214,13 @@ const FileInfo = ({isOpen, setIsOpen , setEditButtonState, file} : FileInfoProps
                         <Link href={"#"} onClick={(e) => handleDelete(e)}>Supprimer le fichier</Link>
                     </div>
                 </div>
+
+                {(file?.type.split('/')[0] === 'image' && !(file?.type.split('/')[1] === 'svg+xml' )) && (
+                    <div className={styles.previewFrame}>
+                        <p>Aperçu du fichier : </p>
+                        <Image src={filePreview} alt={file?.filename_download} width={169} height={169}/>
+                    </div>
+                )}
             </div>
         </Modal>
     );
