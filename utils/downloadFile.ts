@@ -15,9 +15,9 @@ export function downloadFile(file : Partial<GdpFilesModel>) {
                             let tempLink = document.createElement('a');
                             tempLink.href = csvURL;
                             tempLink.setAttribute('download', file?.filename_download);
-                            document.body.appendChild(tempLink); // Append the link to the document body
+                            document.body.appendChild(tempLink);
                             tempLink.click();
-                            document.body.removeChild(tempLink); // Remove the link from the document body after clicking
+                            document.body.removeChild(tempLink);
                         })
                         .catch(error => {
                             console.error('Error fetching data:', error);
