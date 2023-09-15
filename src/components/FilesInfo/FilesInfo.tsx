@@ -34,7 +34,7 @@ const FileInfo = ({isOpen, setIsOpen , setEditButtonState, file} : FileInfoProps
             return bytes > 1 ? bytes + ' octets' : bytes + ' octet';
         }
 
-        const units = si ? ['ko', 'Mo', 'Go', 'To'] : ['Kio', 'Mio', 'Gio', 'Tio'];
+        const units = !si ? ['ko', 'Mo', 'Go', 'To'] : ['Kio', 'Mio', 'Gio', 'Tio'];
         let u = -1;
         const r = 10**dp;
 
@@ -166,7 +166,7 @@ const FileInfo = ({isOpen, setIsOpen , setEditButtonState, file} : FileInfoProps
                 <div className={styles.frame}>
                     <h3>{file?.filename_download}</h3>
                     <div className={styles.textBlock}>
-                        <p>Taille : {getFileSize(file?.filesize, true)}</p>
+                        <p>Taille : {getFileSize(file?.filesize)}</p>
                         <p>Type de fichier : {file?.type.toString()}</p>
                         <p>Modifié le : {formatDate(file?.modified_on)}</p>
                     </div>
