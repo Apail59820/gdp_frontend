@@ -8,12 +8,20 @@ export function downloadFile(file : Partial<GdpFilesModel>) {
 
          .then((res) => {
                 if (isRequestSuccessful(res.status)) {
-                    var data = new Blob([res.data], {type: file?.type});
-                    var csvURL = window.URL.createObjectURL(data);
-                    let tempLink = document.createElement('a');
-                    tempLink.href = csvURL;
-                    tempLink.setAttribute('download', file?.filename_download);
-                    tempLink.click();
+                    fetch(res.data)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            var csvURL = window.URL.createObjectURL(blob);
+                            let tempLink = document.createElement('a');
+                            tempLink.href = csvURL;
+                            tempLink.setAttribute('download', file?.filename_download);
+                            document.body.appendChild(tempLink); // Append the link to the document body
+                            tempLink.click();
+                            document.body.removeChild(tempLink); // Remove the link from the document body after clicking
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                        });
                 } else {
                     message.error("Une erreur est survenue lors du téléchargement du fichier.");
                 }
