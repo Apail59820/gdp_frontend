@@ -28,6 +28,7 @@ const ProjectSatisfaction = () => {
   const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
   const [projectAffairs, setProjectAffairs] = useState<Partial<GdpAffairModel>[]>([]);
   const [projectSatisfactions, setProjectSatisfactions] = useState<Partial<GdpSatisfactionModel>[]>([]);
+  const [affairsIdsToFetch, setAffairsIdsToFetch] = useState<any[]>([]);
 
   useEffect(() => {
     if (projectId) {
@@ -57,20 +58,26 @@ const ProjectSatisfaction = () => {
   }, [project]);
 
   useEffect(() => {
-    const affairsIdsToFetch: number[] = [];
     const existingAffairs: Partial<GdpAffairModel>[] = [];
     project.affairs_ids?.forEach((affair) => {
       if (typeof affair === 'number') {
-        if (affairs.filter((affairFromContext) => affairFromContext.id === affair).length === 0) {
-          affairsIdsToFetch.push(affair);
+        /* TODO check NextJs documentation
+            to see if we can get affairs from context then remove >= 0 and fix case by vase
+         */
+        if (affairs.filter((affairFromContext) => affairFromContext.id === affair).length >= 0) {
+          setAffairsIdsToFetch([...affairsIdsToFetch, affair]);
         }
       } else {
         if (affairs.filter((affairFromContext) => affairFromContext.id === affair.id).length === 0) {
-          affairsIdsToFetch.push(affair.id);
+          setAffairsIdsToFetch([...affairsIdsToFetch, affair.id]);
         } else existingAffairs.push(affair);
       }
     });
-    if (affairsIdsToFetch.length > 0) {
+  }, [affairs, dispatch, project.affairs_ids]);
+
+  useEffect(() => {
+    const existingAffairs: Partial<GdpAffairModel>[] = [];
+    if (affairsIdsToFetch.length) {
       getGdpAffairs({
         filter: {
           id: { _in: affairsIdsToFetch },
@@ -82,7 +89,7 @@ const ProjectSatisfaction = () => {
         }
       });
     }
-  }, [affairs, dispatch, project.affairs_ids]);
+  }, [projectSatisfactions]);
 
   return (
     <div className={'page'}>
