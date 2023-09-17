@@ -21,7 +21,7 @@ import FileInput from '../../FIleUpload/FileInput';
 
 export type UploadFilesFormPropsType = {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen?: (isOpen: boolean) => void;
   mode: 'files' | 'images';
   onClose?: () => void;
   edit?: boolean
