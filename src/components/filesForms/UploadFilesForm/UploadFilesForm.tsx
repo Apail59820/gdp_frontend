@@ -21,10 +21,11 @@ import FileInput from '../../FIleUpload/FileInput';
 
 export type UploadFilesFormPropsType = {
   isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
   mode: 'files' | 'images';
-  onClose: () => void;
-  edit: boolean
-  fileItems: fileItemType[];
+  onClose?: () => void;
+  edit?: boolean
+  fileItems?: fileItemType[];
   project: Partial<GdpProjectsModel>;
   affair?: Partial<GdpAffairModel>;
   phase?: Partial<GdpPhaseModel>;
