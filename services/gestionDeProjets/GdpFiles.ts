@@ -345,3 +345,30 @@ export async function updateGdpFile(
       return { status: 500 };
     });
 }
+
+export async function deleteGdpFile(id: string): Promise<{ status: number }> {
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+  const myHeaders = new Headers({
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  });
+
+  const myInit: RequestInit = {
+    method: 'DELETE',
+    headers: myHeaders,
+    mode: 'cors',
+    cache: 'default',
+  };
+
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/files/${id}`, myInit)
+      .then((response) => {
+        return { status: response.status };
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(error);
+        return { status: 500 };
+      });
+}
+

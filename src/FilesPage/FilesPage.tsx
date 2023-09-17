@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, ReactNode } from 'react';
 import styles from './FilesPage.module.scss';
 import { Button, Input, Select } from 'projex-ui';
 import { QueryParameters } from '../../models/DirectusModel';
-import { DeleteOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import { selectCompanyEntities } from '../../store/reducers/companyEntitiesReducer';
 import GlobalFilters from '../components/GlobalFiltersComponents/GlobalFilters';
@@ -20,6 +20,8 @@ import FileIcon from '../../public/file.svg';
 import FileImageIcon from '../../public/file-image.svg';
 import Link from 'next/link';
 import { DateTime } from "luxon";
+import FilesInfo from "../components/FilesInfo/FilesInfo";
+import {UploadStatusEnum} from "../components/filesForms/UploadFilesForm/UploadFilesForm";
 const { publicRuntimeConfig } = getConfig();
 
 type FilesFiltersType = {
@@ -86,6 +88,9 @@ const FilesPage = ({
   const [filesFilters, setFilesFilters] = useState<FilesFiltersType>(FilesFiltersInitialState);
   const [projectsFilters, setProjectsFilters] = useState<ProjectsFiltersType>(projectsFiltersInitialState);
 
+  const [isFilesInfoModalOpen, setIsFilesInfoModalOpen] = useState<boolean>(false);
+
+  const [selectedFile, setSelectedFile] = useState<Partial<GdpFilesModel> | null>(null);
   function updateSpecificFilters() {
     updateSpecificFilesFilters();
     updateSpecificProjectsFilters();
@@ -129,6 +134,11 @@ const FilesPage = ({
     setFilesFilters(FilesFiltersInitialState);
     setProjectsFilters(projectsFiltersInitialState);
     updateSpecificFilters();
+  }
+
+  function handleFileClick(file : Partial<GdpFilesModel>) {
+    setIsFilesInfoModalOpen(true);
+    setSelectedFile(file);
   }
 
   useEffect(() => {
@@ -367,7 +377,7 @@ const FilesPage = ({
                   : files.map((file) => ({
                       file: file,
                       type: 'file',
-                      onClick: () => console.log(file),
+                      onClick: () => handleFileClick(file),
                     }))
               }
               folders={
@@ -396,9 +406,16 @@ const FilesPage = ({
                 cancelSort: 'Ne pas trier',
               }}
             />
+
           )}
         </div>
       </div>
+      <FilesInfo
+          isOpen={isFilesInfoModalOpen}
+          setIsOpen={setIsFilesInfoModalOpen}
+          disableEdition={true}
+          file={selectedFile}
+      />
     </div>
   );
 };

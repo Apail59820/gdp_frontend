@@ -8,6 +8,7 @@ import PhaseCard from '../PhaseCard/PhaseCard';
 import type { GdpPhaseModel } from '../../../models/GestionDeProjets/GdpPhaseModel';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 import { GdpFilesModel } from '../../../models/GdPModels';
+import Files from '../../../pages/files';
 
 type Props = {
   phases: Partial<GdpPhaseModel>[];
@@ -25,7 +26,7 @@ const PhasesWidget = ({ phases, onNewPhaseClick, allPhasesPageHref, displayCreat
       title="Avancement de l'affaire"
       link={
         phases.length > 0
-          ? { label: 'Voir toutes les phases', href: allPhasesPageHref || `${router.asPath}/advancement` }
+          ? { label: 'Voir toutes les phases', href: allPhasesPageHref || `${router.asPath}/phases` }
           : undefined
       }
     >

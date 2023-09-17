@@ -21,9 +21,11 @@ import FileInput from '../../FIleUpload/FileInput';
 
 export type UploadFilesFormPropsType = {
   isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
   mode: 'files' | 'images';
-  onClose: () => void;
-  fileItems: fileItemType[];
+  onClose?: () => void;
+  edit?: boolean
+  fileItems?: fileItemType[];
   project: Partial<GdpProjectsModel>;
   affair?: Partial<GdpAffairModel>;
   phase?: Partial<GdpPhaseModel>;
@@ -57,15 +59,16 @@ export type fileItemType = {
  * @param onFileUpload - callback triggered when form is submitted
  */
 export default function UploadFilesForm({
-  isOpen,
-  onClose,
-  mode = 'files',
-  fileItems,
-  project,
-  affair,
-  phase,
-  onFileUpload,
-}: UploadFilesFormPropsType) {
+                                          isOpen,
+                                          onClose,
+                                          edit,
+                                          mode = 'files',
+                                          fileItems,
+                                          project,
+                                          affair,
+                                          phase,
+                                          onFileUpload,
+                                        }: UploadFilesFormPropsType) {
   const [fileList, setFileList] = useState<fileItemType[]>(fileItems);
   const [uploadProgress, setUploadProgress] = useState<{ percent: number; fileId: string }[]>([]);
   const [showPropertiesFormOfFileIndex, setShowPropertiesFormOfFileIndex] = useState<number | undefined>();
@@ -117,11 +120,11 @@ export default function UploadFilesForm({
   function getFileUsage(file: fileItemType): GdpFileUsageEnum {
     const type = mode === 'files' ? 'file' : 'image';
     const itemLinked =
-      file.properties.affair_id != undefined && file.properties.phase_id != undefined
-        ? 'phases'
-        : file.properties.affair_id != undefined
-        ? 'affairs'
-        : 'projects';
+        file.properties.affair_id != undefined && file.properties.phase_id != undefined
+            ? 'phases'
+            : file.properties.affair_id != undefined
+                ? 'affairs'
+                : 'projects';
     return `${itemLinked}/${type}` as GdpFileUsageEnum;
   }
 
@@ -129,30 +132,30 @@ export default function UploadFilesForm({
     const fileIndex = _fileListTmp.findIndex((fileItem) => fileItem.id === fileUID);
     if (!_fileListTmp[fileIndex].file) return _fileListTmp;
     setFileList(
-      _fileListTmp.map((fileItem) => ({
-        ...fileItem,
-        uploadState: fileItem.id === fileUID ? UploadStatusEnum.UPLOADING : fileItem.uploadState,
-      }))
+        _fileListTmp.map((fileItem) => ({
+          ...fileItem,
+          uploadState: fileItem.id === fileUID ? UploadStatusEnum.UPLOADING : fileItem.uploadState,
+        }))
     );
     const uploadResponse = await uploadGdpFilesWithProgress(
-      [
-        {
-          data: _fileListTmp[fileIndex].file as File,
-          properties: {
-            filename_download: _fileListTmp[fileIndex].properties.filename_download,
-            filesize: (_fileListTmp[fileIndex].file as File).size,
-            status: _fileListTmp[fileIndex].properties.status || GdpFilesStatusEnum.VISIBLE,
-            usage: getFileUsage(_fileListTmp[fileIndex]),
-            projects_id: _fileListTmp[fileIndex].properties.projects_id || project.id,
-            affair_id: _fileListTmp[fileIndex].properties.affair_id || null,
-            phase_id: _fileListTmp[fileIndex].properties.phase_id || null,
-            is_cover: _fileListTmp[fileIndex].properties.is_cover || false,
-            document_type: _fileListTmp[fileIndex].properties.document_type || GdpAssetDocumentEnum.UNKNOWN,
-            //tags:, //tags de base en fonction du type
+        [
+          {
+            data: _fileListTmp[fileIndex].file as File,
+            properties: {
+              filename_download: _fileListTmp[fileIndex].properties.filename_download,
+              filesize: (_fileListTmp[fileIndex].file as File).size,
+              status: _fileListTmp[fileIndex].properties.status || GdpFilesStatusEnum.VISIBLE,
+              usage: getFileUsage(_fileListTmp[fileIndex]),
+              projects_id: _fileListTmp[fileIndex].properties.projects_id || project.id,
+              affair_id: _fileListTmp[fileIndex].properties.affair_id || null,
+              phase_id: _fileListTmp[fileIndex].properties.phase_id || null,
+              is_cover: _fileListTmp[fileIndex].properties.is_cover || false,
+              document_type: _fileListTmp[fileIndex].properties.document_type || GdpAssetDocumentEnum.UNKNOWN,
+              //tags:, //tags de base en fonction du type
+            },
           },
-        },
-      ],
-      (progressEvent) => onUploadProgress(progressEvent, fileUID)
+        ],
+        (progressEvent) => onUploadProgress(progressEvent, fileUID)
     );
     setUploadProgress([...uploadProgress.filter((progressItem) => progressItem.fileId !== fileUID)]);
     if (isRequestSuccessful(uploadResponse.status)) {
@@ -162,9 +165,9 @@ export default function UploadFilesForm({
         properties: {
           ...fileItem.properties,
           id:
-            fileItem.id === fileUID && (uploadResponse.data as Partial<GdpFilesModel>)?.id
-              ? (uploadResponse.data as Partial<GdpFilesModel>)?.id
-              : fileItem.properties.id,
+              fileItem.id === fileUID && (uploadResponse.data as Partial<GdpFilesModel>)?.id
+                  ? (uploadResponse.data as Partial<GdpFilesModel>)?.id
+                  : fileItem.properties.id,
         },
         uploadState: fileItem.id === fileUID ? UploadStatusEnum.DONE : fileItem.uploadState,
       }));
@@ -196,9 +199,9 @@ export default function UploadFilesForm({
       ...fileList.map((fileItem) => ({
         ...fileItem,
         uploadState:
-          fileItem.uploadState === UploadStatusEnum.PENDING
-            ? UploadStatusEnum.WAITING_FOR_UPLOAD
-            : fileItem.uploadState,
+            fileItem.uploadState === UploadStatusEnum.PENDING
+                ? UploadStatusEnum.WAITING_FOR_UPLOAD
+                : fileItem.uploadState,
       })),
     ]);
     await new Promise((resolve) => setTimeout(resolve, 500));
@@ -260,7 +263,18 @@ export default function UploadFilesForm({
       if (modifiedFile.properties.id) {
         const modifiedProperties: Partial<GdpFilesModel> = getOnlyModifiedProperties(modifiedFile, fileList[fileIndex]);
 
-        await updateGdpFile(modifiedFile.properties.id, modifiedProperties);
+        if(modifiedProperties?.filename_download){
+          modifiedProperties.title = modifiedProperties.filename_download.substring(0, modifiedProperties.filename_download.lastIndexOf('.'));
+        }
+
+        await updateGdpFile(modifiedFile.properties.id, modifiedProperties).then((res) => {
+          if(isRequestSuccessful(res.status)){
+            message.success("Modification appliquée.");
+          }
+          else{
+            message.error("Une erreur est survenue lors de la modification du fichier.");
+          }
+        })
       }
     }
     const newFileList = [...fileList];
@@ -273,9 +287,9 @@ export default function UploadFilesForm({
     const fileProgress = uploadProgress.find((fileProgress) => fileProgress.fileId === fileUID);
     if (!fileProgress) return <></>;
     return (
-      <div className={styles.FileItemProgressBar}>
-        <div className={styles.FileItemProgressBarFilled} style={{ width: `${fileProgress.percent}%` }} />
-      </div>
+        <div className={styles.FileItemProgressBar}>
+          <div className={styles.FileItemProgressBarFilled} style={{ width: `${fileProgress.percent}%` }} />
+        </div>
     );
   }
 
@@ -284,56 +298,61 @@ export default function UploadFilesForm({
   }
 
   return (
-    <Modal
-      title={mode === 'files' ? 'Ajouter des fichiers' : 'Ajouter des images'}
-      open={isOpen}
-      closable
-      onCancel={onClose}
-      footer={null}
-      destroyOnClose
-      width={1000}
-    >
-      <div className={styles.FormContainer}>
-        <div className={styles.UploadFilesSide}>
-          {fileList.length > 0 && (
-            <div className={styles.FileListContainer}>
-              {fileList.map((fileItem, index) => (
-                <ShadowCard width="192px" height="192px">
-                  <div key={index} className={styles.FileItem} onClick={() => setShowPropertiesFormOfFileIndex(index)}>
-                    <Image src={'/file.svg'} alt={'file icon'} width={48} height={77} />
-                    <div className={styles.FileItemName}>
-                      {fileItem.properties.filename_download || fileItem.file?.name || 'fichier sans nom'}
-                    </div>
-                    {fileItem.uploadState === UploadStatusEnum.UPLOADING && displayProgressBar(fileItem.id)}
+      <Modal
+          title={edit ? "Modifier un fichier" : mode === 'files' ? 'Ajouter des fichiers' : 'Ajouter des images'}
+          open={isOpen}
+          closable
+          onCancel={onClose}
+          footer={null}
+          destroyOnClose
+          width={1000}
+      >
+        <div className={styles.FormContainer}>
+          <div className={styles.UploadFilesSide}>
+            {fileList?.length > 0 && (
+                <div className={styles.FileListContainer}>
+                  {fileList.map((fileItem, index) => (
+                      <ShadowCard width="192px" height="192px">
+                        <div key={index} className={styles.FileItem} onClick={() => setShowPropertiesFormOfFileIndex(index)}>
+                          <Image src={'/file.svg'} alt={'file icon'} width={48} height={77} />
+                          <div className={styles.FileItemName}>
+                            {fileItem.properties.filename_download || fileItem.file?.name || 'fichier sans nom'}
+                          </div>
+                          {fileItem.uploadState === UploadStatusEnum.UPLOADING && displayProgressBar(fileItem.id)}
+                        </div>
+                      </ShadowCard>
+                  ))}
+                </div>
+            )}
+            {!edit && (
+                <FileInput multiple={true} onChange={onFilesUploadChange} />
+            )}
+
+              {!edit && (
+                  <div className={styles.UploadActionsButtons}>
+                    <Button style="primary" onClick={handleUpload} >
+                      Envoyer les fichiers
+                    </Button>
+                    <Button style="text_gray" onClick={handleCancel}>
+                      Fermer
+                    </Button>
                   </div>
-                </ShadowCard>
-              ))}
-            </div>
-          )}
-          <FileInput multiple={true} onChange={onFilesUploadChange} />
-          <div className={styles.UploadActionsButtons}>
-            <Button style="primary" onClick={handleUpload} disabled={isUploadButtonDisabled()}>
-              Envoyer les fichiers
-            </Button>
-            <Button style="text_gray" onClick={handleCancel}>
-              Fermer
-            </Button>
+              )}
           </div>
+          {(showPropertiesFormOfFileIndex !== undefined || edit) && (
+              <FilePropertiesForm
+                  mode={mode}
+                  file={fileList[edit ? 0 : showPropertiesFormOfFileIndex]}
+                  onConfirm={(newFileProperties) => onFilePropertiesChange(newFileProperties, edit ? 0 : showPropertiesFormOfFileIndex)}
+                  onCancel={() => setShowPropertiesFormOfFileIndex(undefined)}
+                  project={project}
+                  affair={affair}
+                  affairsOptions={affairsOptions}
+                  phasesOptions={phasesOptions}
+                  phase={phase}
+              />
+          )}
         </div>
-        {showPropertiesFormOfFileIndex !== undefined && (
-          <FilePropertiesForm
-            mode={mode}
-            file={fileList[showPropertiesFormOfFileIndex]}
-            onConfirm={(newFileProperties) => onFilePropertiesChange(newFileProperties, showPropertiesFormOfFileIndex)}
-            onCancel={() => setShowPropertiesFormOfFileIndex(undefined)}
-            project={project}
-            affair={affair}
-            affairsOptions={affairsOptions}
-            phasesOptions={phasesOptions}
-            phase={phase}
-          />
-        )}
-      </div>
-    </Modal>
+      </Modal>
   );
 }

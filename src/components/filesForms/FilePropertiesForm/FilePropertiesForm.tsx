@@ -21,16 +21,16 @@ type PropsTypes = {
 };
 
 export default function FilePropertiesForm({
-  mode = 'files',
-  file,
-  onConfirm,
-  onCancel,
-  project,
-  affair,
-  phase,
-  affairsOptions,
-  phasesOptions,
-}: PropsTypes) {
+                                             mode = 'files',
+                                             file,
+                                             onConfirm,
+                                             onCancel,
+                                             project,
+                                             affair,
+                                             phase,
+                                             affairsOptions,
+                                             phasesOptions,
+                                           }: PropsTypes) {
   const [fileTmp, setFileTmp] = useState<fileItemType>(file);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
@@ -105,91 +105,91 @@ export default function FilePropertiesForm({
 
   if (!file) return <></>;
   return (
-    <div className={styles.formContainer}>
-      <h3>{fileTmp.properties.filename_download}</h3>
-      <div className={styles.filesInformations}>
-        <p>Taille: {getFileSize(fileTmp.file?.size || fileTmp.properties.filesize)}</p>
-        <p>Type de fichier : {getFileType(fileTmp.file?.name || fileTmp.properties.filename_download)}</p>
-        <p>
-          Modifié le :{' '}
-          {getLastModifiedDate((fileTmp.file?.lastModified as unknown as Date) || fileTmp.properties.modified_on)}
-        </p>
+      <div className={styles.formContainer}>
+        <h3>{fileTmp.properties.filename_download}</h3>
+        <div className={styles.filesInformations}>
+          <p>Taille: {getFileSize(fileTmp.file?.size || fileTmp.properties.filesize)}</p>
+          <p>Type de fichier : {getFileType(fileTmp.file?.name || fileTmp.properties.filename_download)}</p>
+          <p>
+            Modifié le :{' '}
+            {getLastModifiedDate((fileTmp.file?.lastModified as unknown as Date) || fileTmp.properties.modified_on)}
+          </p>
+        </div>
+        <div className={styles.filesInputsGroup}>
+          <Input
+              label="Renommer le fichier"
+              value={fileTmp.properties.filename_download || ''}
+              setValue={(value) =>
+                  setFileTmp({
+                    ...fileTmp,
+                    properties: { ...fileTmp.properties, filename_download: `${value}` },
+                  })
+              }
+              disabled={fileTmp.uploadState === UploadStatusEnum.PENDING}
+          />
+        </div>
+        <div className={styles.filesInputsGroup}>
+          <Input
+              label="Associer à..."
+              value={project.name || project.id?.toString() || 'projet inconnu'}
+              setValue={() => {}}
+              disabled={true}
+          />
+          <Select
+              displayNullOption={true}
+              options={affairsOptions.map((affair) => ({ value: `${affair.id}`, text: affair.name as string }))}
+              nullOptionText="Aucune Affaire"
+              value={fileTmp.properties.affair_id != undefined ? `${fileTmp.properties.affair_id}` : ''}
+              setValue={(value) =>
+                  setFileTmp({
+                    ...fileTmp,
+                    properties: { ...fileTmp.properties, affair_id: parseInt(value), phase_id: undefined },
+                  })
+              }
+              disabled={!!affair}
+          />
+          <Select
+              displayNullOption={true}
+              nullOptionText="Aucune Phase"
+              options={phasesOptions
+                  .filter((phase) => phase.affairs_id != undefined && phase.affairs_id === fileTmp.properties.affair_id)
+                  .map((phase) => ({
+                    value: `${phase.id}`,
+                    text: phase.name as string,
+                  }))}
+              value={fileTmp.properties.phase_id != undefined ? `${fileTmp.properties.phase_id}` : ''}
+              setValue={(value) =>
+                  setFileTmp({
+                    ...fileTmp,
+                    properties: { ...fileTmp.properties, phase_id: parseInt(value) },
+                  })
+              }
+              disabled={!!phase}
+          />
+        </div>
+        <div className={styles.filesIsPublishedContainer}>
+          <Switch
+              checked={fileTmp.properties.status == GdpFilesStatusEnum.VISIBLE}
+              onChange={(value) => {
+                setFileTmp({
+                  ...fileTmp,
+                  properties: {
+                    ...fileTmp.properties,
+                    status: value ? GdpFilesStatusEnum.VISIBLE : GdpFilesStatusEnum.HIDDEN,
+                  },
+                });
+              }}
+          />
+          <label>Publié</label>
+        </div>
+        <div className={styles.filesActionButtonsContainer}>
+          <Button style="primary" onClick={onConfirmButton} disabled={isLoading}>
+            {getConfirmText(fileTmp)}
+          </Button>
+          <Button style="text_gray" onClick={onCancel}>
+            Annuler
+          </Button>
+        </div>
       </div>
-      <div className={styles.filesInputsGroup}>
-        <Input
-          label="Renommer le fichier"
-          value={fileTmp.properties.filename_download || ''}
-          setValue={(value) =>
-            setFileTmp({
-              ...fileTmp,
-              properties: { ...fileTmp.properties, filename_download: `${value}` },
-            })
-          }
-          disabled={fileTmp.uploadState === UploadStatusEnum.PENDING}
-        />
-      </div>
-      <div className={styles.filesInputsGroup}>
-        <Input
-          label="Associer à..."
-          value={project.name || project.id?.toString() || 'projet inconnu'}
-          setValue={() => {}}
-          disabled={true}
-        />
-        <Select
-          displayNullOption={true}
-          options={affairsOptions.map((affair) => ({ value: `${affair.id}`, text: affair.name as string }))}
-          nullOptionText="Aucune Affaire"
-          value={fileTmp.properties.affair_id != undefined ? `${fileTmp.properties.affair_id}` : ''}
-          setValue={(value) =>
-            setFileTmp({
-              ...fileTmp,
-              properties: { ...fileTmp.properties, affair_id: parseInt(value), phase_id: undefined },
-            })
-          }
-          disabled={!!affair}
-        />
-        <Select
-          displayNullOption={true}
-          nullOptionText="Aucune Phase"
-          options={phasesOptions
-            .filter((phase) => phase.affairs_id != undefined && phase.affairs_id === fileTmp.properties.affair_id)
-            .map((phase) => ({
-              value: `${phase.id}`,
-              text: phase.name as string,
-            }))}
-          value={fileTmp.properties.phase_id != undefined ? `${fileTmp.properties.phase_id}` : ''}
-          setValue={(value) =>
-            setFileTmp({
-              ...fileTmp,
-              properties: { ...fileTmp.properties, phase_id: parseInt(value) },
-            })
-          }
-          disabled={!!phase}
-        />
-      </div>
-      <div className={styles.filesIsPublishedContainer}>
-        <Switch
-          checked={fileTmp.properties.status == GdpFilesStatusEnum.VISIBLE}
-          onChange={(value) => {
-            setFileTmp({
-              ...fileTmp,
-              properties: {
-                ...fileTmp.properties,
-                status: value ? GdpFilesStatusEnum.VISIBLE : GdpFilesStatusEnum.HIDDEN,
-              },
-            });
-          }}
-        />
-        <label>Publié</label>
-      </div>
-      <div className={styles.filesActionButtonsContainer}>
-        <Button style="primary" onClick={onConfirmButton} disabled={isLoading}>
-          {getConfirmText(fileTmp)}
-        </Button>
-        <Button style="text_gray" onClick={onCancel}>
-          Annuler
-        </Button>
-      </div>
-    </div>
   );
 }

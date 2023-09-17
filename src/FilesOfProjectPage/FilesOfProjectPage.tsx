@@ -17,18 +17,18 @@ import { GdpAffairModel } from '../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel } from '../../models/GestionDeProjets/GdpPhaseModel';
 import { useRouter } from 'next/router';
 import FilesGridDisplay, { GridFolderItem } from '../components/FilesGridDisplay/FilesGridDisplay';
-import { LoadingOutlined } from '@ant-design/icons';
 import UploadFilesForm, {
   fileItemType,
   UploadStatusEnum,
 } from '../components/filesForms/UploadFilesForm/UploadFilesForm';
 import PageHeaderBanner from '../components/PageHeaderBanner/PageHeaderBanner';
-import { Table } from 'antd';
+import {Table} from 'antd';
 import FolderIcon from '../../public/folder.svg';
 import FileImageIcon from '../../public/file-image.svg';
 import FileIcon from '../../public/file.svg';
 import FileArrayLeftLong from '../../public/arrow-left-long.svg';
 import Link from 'next/link';
+import FilesInfo from "../components/FilesInfo/FilesInfo";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -97,6 +97,8 @@ const FilesOfProjectPage = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
   const [filesToUpdate, setFilesToUpdate] = useState<fileItemType[]>([]);
 
   function UpdateFiles(filesToUpdate: fileItemType[]) {
@@ -106,9 +108,12 @@ const FilesOfProjectPage = ({
 
   function onFileModalClose() {
     setFilesToUpdate([]);
+    setIsEditing(false);
     setIsUploadModalOpen(false);
   }
+  const [isFilesInfoModalOpen, setIsFilesInfoModalOpen] = useState<boolean>(false);
 
+  const [selectedFile, setSelectedFile] = useState<Partial<GdpFilesModel> | null>(null);
   function updateSpecificFilters() {
     const filterRules: any[] = [];
     let search: string | undefined = undefined;
@@ -171,6 +176,17 @@ const FilesOfProjectPage = ({
     }
   }
 
+  function handleAddFile() {
+    setIsUploadModalOpen(true);
+    setIsEditing(false);
+    setSelectedFile(null);
+  }
+
+  function onFileSelected(file : Partial<GdpFilesModel>) {
+    setSelectedFile(file);
+    setIsFilesInfoModalOpen(true);
+  }
+
   //lazy loading
   useEffect(() => {
     setIsLoading(false);
@@ -179,6 +195,20 @@ const FilesOfProjectPage = ({
       if (pageRef && pageRef.current) pageRef.current.removeEventListener('scroll', onScrollEvent);
     };
   }, [filesCount, files, lazyLoadingState]);
+
+  useEffect(() => {
+    if(isEditing){
+          selectedFile.id &&
+          UpdateFiles([
+            {
+              id: selectedFile.id,
+              file: undefined,
+              properties: selectedFile,
+              uploadState: UploadStatusEnum.DONE,
+            },
+          ]);
+    }
+  }, [isEditing]);
 
   function getFolders(): GridFolderItem[] {
     const folders: GridFolderItem[] = [];
@@ -227,7 +257,7 @@ const FilesOfProjectPage = ({
       const affair = (project.affairs_ids as GdpAffairModel[]).find(
         (affair) => affair.id === (FilesLevelFilter.affair as { id: string | number; name: string }).id
       );
-      if (affair)
+      if (affair?.affairs_phases_ids)
         folders.push(
           ...(affair.affairs_phases_ids as GdpPhaseModel[]).map((phase) => ({
             folder: {
@@ -385,7 +415,7 @@ const FilesOfProjectPage = ({
         <div className={styles.titleBar}>
           <h1 className={styles.title}>Fichiers</h1>
           <div className={styles.buttonAddFileContainer}>
-            <Button style={'primary'} onClick={() => setIsUploadModalOpen(true)} small={true}>
+            <Button style={'primary'} onClick={handleAddFile} small={true}>
               Ajouter un fichier
             </Button>
           </div>
@@ -454,16 +484,7 @@ const FilesOfProjectPage = ({
                   ? []
                   : files.map((file) => ({
                       file: file,
-                      onClick: () =>
-                        file.id &&
-                        UpdateFiles([
-                          {
-                            id: file.id,
-                            file: undefined,
-                            properties: file,
-                            uploadState: UploadStatusEnum.DONE,
-                          },
-                        ]),
+                      onClick: () => onFileSelected(file),
                       type: 'file',
                     }))
               }
@@ -487,12 +508,20 @@ const FilesOfProjectPage = ({
       <UploadFilesForm
         isOpen={isUploadModalOpen}
         onClose={onFileModalClose}
+        edit={isEditing}
         mode={'files'}
         fileItems={filesToUpdate}
         project={FilesLevelFilter.project}
         affair={FilesLevelFilter.affair}
         phase={FilesLevelFilter.phase}
       />
+      <FilesInfo
+          isOpen={isFilesInfoModalOpen}
+          setIsOpen={setIsFilesInfoModalOpen}
+          setEditButtonState={setIsEditing}
+          file={selectedFile}
+      />
+
     </div>
   );
 };

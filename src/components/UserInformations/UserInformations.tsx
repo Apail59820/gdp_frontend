@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from './UserInformations.module.scss';
 import { UsUserModel } from '../../../models/UsModels';
 import { capitalize } from '../../../utils/capitalize';
@@ -6,7 +6,6 @@ import { CompanyEnum } from '../../../models/UsModels';
 import Link from 'next/link';
 import { getAsset } from '../../../services/userService/UsAssets';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
-import getConfig from 'next/config';
 
 export type UserInformationsProps = {
   user: Partial<UsUserModel>;
@@ -14,11 +13,8 @@ export type UserInformationsProps = {
 };
 
 const UserInformations = ({ user }: UserInformationsProps) => {
-  const { publicRuntimeConfig } = getConfig();
-
-  const { avatar, title, company} = user;
+  const { avatar, first_name, last_name, title, company, number, email } = user;
   const [currentUserAvatar, setCurrentUserAvatar] = useState<string | undefined>(undefined);
-
   useEffect(() => {
     if (!avatar) return;
     getAsset(avatar as string).then((res) => {
@@ -27,7 +23,6 @@ const UserInformations = ({ user }: UserInformationsProps) => {
       }
     });
   }, [avatar, user]);
-
   const getColorByCompany = () => {
     switch (company?.toLocaleLowerCase()) {
       case CompanyEnum.AMEXIA:
@@ -48,15 +43,15 @@ const UserInformations = ({ user }: UserInformationsProps) => {
     <div className={styles.userInformations}>
       <img className={styles.image} src={currentUserAvatar} alt={`Photo de ${user.first_name} ${user.last_name}`} />
       <div className={styles.informationsContainer}>
-        <Link href={`${publicRuntimeConfig.USER_SERVICE_URL}/user/${user.id}`}>
+        <Link href={`/users/${user.id}`}>
           <h4 className={styles.name}>
-            {user?.first_name ? capitalize(user.first_name) : ''} {user?.last_name ? user.last_name.toUpperCase() : ''}
+            {user?.first_name ? capitalize(user.first_name) : ''} {user?.last_name ? capitalize(user.last_name) : ''}
           </h4>
         </Link>
         <span className={`${styles.job} ${getColorByCompany()}`}>
           {title ? capitalize(title) : ''}
           {title && company ? ' — ' : ''}
-          {company ? company.toUpperCase() : ''}
+          {company ? capitalize(company) : ''}
         </span>
         <ul className={`small ${styles.informations}`}>
           {user?.number ? (
