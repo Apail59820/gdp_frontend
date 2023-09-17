@@ -7,10 +7,10 @@ import defaultImage from '../../../public/default-affair-image.png';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 import { getUsCompanyEntity } from '../../../services/userService/UsCompanyEntities';
 import Link from 'next/link';
-import { getGdpFile } from '../../../services/gestionDeProjets/GdpFiles';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
 import getConfig from 'next/config';
 import { Tooltip } from 'antd';
+import {downloadGdPFile} from "../../../services/gestionDeProjets/GdpFiles";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -40,12 +40,11 @@ const ProjectCard = ({ project, projectManagerName }: Props) => {
   const [isNameTooLong, setIsNameTooLong] = useState(false);
 
   useEffect(() => {
-    if (image) {
-      getGdpFile(image, undefined)
-        .then(({ status, data }) => {
-          if (isRequestSuccessful(status)) setProjectImage(data as string);
-        })
-        .catch((err) => console.log(err));
+    if (image !== null && image !== undefined) {
+      downloadGdPFile(image).then(({ status, data }) => {
+        if (isRequestSuccessful(status) && data) setProjectImage(data);
+        else setProjectImage(defaultImage.src);
+      }).catch((err) => console.log(err));;
     }
   }, [image]);
 

@@ -134,7 +134,7 @@ type createFieldsToOmit = 'id' | 'uploaded_by' | 'uploaded_on' | 'modified_by' |
  * @return an object with the request STATUS and the file DATA
  */
 export async function uploadGdpFile(
-  fileProperties: Omit<GdpFilesModel, createFieldsToOmit>,
+  fileProperties: Partial<Omit<GdpFilesModel, createFieldsToOmit>>,
   file: string | Blob
 ): Promise<{ status: number; data?: Partial<GdpFilesModel> }> {
   function isValidKeyOfCreateAssetModel(value: string): value is keyof typeof fileProperties {

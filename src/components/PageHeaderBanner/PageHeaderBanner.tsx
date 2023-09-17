@@ -62,7 +62,6 @@ const PageHeaderBanner = ({ data }: Props) => {
         <>
           <MainMessage
             project={data}
-            onManageThumbnailClick={() => console.log('open modal ?')}
             resizeTitleProps={{
               entityLogoWidth: companyEntityLogoRef.current?.clientWidth as number,
             }}
