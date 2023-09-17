@@ -58,7 +58,7 @@ export async function createGdpEmailLogs(
     body: JSON.stringify(data),
   };
 
-  return fetch(`${publicRuntimeConfig.DIRECTUS_HOST}/items/emails_logs`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/emails_logs`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response

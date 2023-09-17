@@ -11,6 +11,10 @@ import { GdpPythagoreFactureModel } from '../../models/GestionDeProjets/GdpPytha
 import { getGdpPythagoreFactures } from '../../services/gestionDeProjets/GdpPythagoreFactures';
 import { compileGlobalFiltersToPythagoreFacturesFilter } from '../../src/RetrieveGlobalData/filterCompilers/pythagore_affaires';
 import { selectPythagoreFactures, selectPythagoreFacturesCount } from '../../store/reducers/pythagoreFacturesReducer';
+import ConfigureWidget from '../../src/components/ConfigureWidget/ConfigureWidget';
+import BillingWidget from '../../src/components/BillingWidget/BillingWidget';
+import ConfigureFacturationForm from '../../src/components/ConfigureFacturationForm/ConfigureFacturationForm';
+import { GdpProjectsModel } from '../../models/GdPModels';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -27,6 +31,11 @@ const Factures = () => {
     offset: 0,
     action: 'REPLACE',
   });
+
+  const [isConfigureFacturationFormOpen, setIsConfigureFacturationFormOpen] = useState<boolean>(false);
+  const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
+
+  const [affairInvoices, setAffairInvoices] = useState<Partial<GdpPythagoreFactureModel>[]>([]);
 
   async function retrieveData() {
     const additionalClients = await RetrieveClientsOfClientsCompanyEntities(globalFilters);
@@ -82,13 +91,26 @@ const Factures = () => {
   }, [globalFactures]);
 
   return (
-    <FacturesPage
-      files={factures}
-      setSpecificFilters={setFacturesQueryParameters}
-      filesCount={facturesCount}
-      lazyLoadingState={lazyLoadingState}
-      setLazyLoadingState={setLazyLoadingState}
-    />
+    <>
+      <ConfigureFacturationForm isOpen={isConfigureFacturationFormOpen} setIsOpen={setIsConfigureFacturationFormOpen} />
+      {factures.length > 0 ? (
+        <FacturesPage
+          files={factures}
+          setSpecificFilters={setFacturesQueryParameters}
+          filesCount={facturesCount}
+          lazyLoadingState={lazyLoadingState}
+          setLazyLoadingState={setLazyLoadingState}
+        />
+      ) : (
+        <div style={{ padding: '1.5rem' }}>
+          <BillingWidget
+            invoices={affairInvoices}
+            onConfigureBillingClick={() => setIsConfigureFacturationFormOpen(true)}
+            displayConfigureButton={true}
+          />
+        </div>
+      )}
+    </>
   );
 };
 

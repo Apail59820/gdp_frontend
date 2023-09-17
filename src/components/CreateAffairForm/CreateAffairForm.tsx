@@ -1,15 +1,18 @@
 import React from 'react';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { Form, Input, message, Modal, Select } from 'antd';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import styles from './CreateAffairForm.module.scss';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectCompanyEntities } from '../../../store/reducers/companyEntitiesReducer';
 import { UsCompanyEntityModel } from '../../../models/UserService/UsCompanyEntityModel';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { createGdpAffair, updateGdpAffair } from '../../../services/gestionDeProjets/GdpAffairs';
 import { messages } from '../../../constants/messages';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
+import { selectAffairs, setAffairs } from '../../../store/reducers/affairsReducer';
+import { selectProjects, setProjects } from '../../../store/reducers/projectsReducer';
+import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
 
 type props = {
   project: Partial<GdpProjectsModel>;
@@ -26,6 +29,10 @@ type formValues = {
 
 const CreateAffairForm = ({ project, affair, isOpen, setIsOpen }: props) => {
   const companyEntities: Partial<UsCompanyEntityModel>[] = useSelector(selectCompanyEntities);
+  const dispatch = useDispatch();
+
+  const affairs = useSelector(selectAffairs);
+  const projects = useSelector(selectProjects);
 
   async function createAffair(values: formValues) {
     if (project.id) {
@@ -33,10 +40,18 @@ const CreateAffairForm = ({ project, affair, isOpen, setIsOpen }: props) => {
         name: values.affairName,
         company_entity: values.entity,
         projects_id: project.id,
-        affairs_phases_ids: [],
+        //affairs_phases_ids: [],
       });
       if (isRequestSuccessful(response.status) && response.data) {
         message.success(messages.general.success());
+        dispatch(setAffairs([...affairs, response.data]));
+        if (projects.filter((globalProject) => globalProject.id === project.id)) {
+          getGdpProjectById(project.id).then((res) => {
+            if (isRequestSuccessful(res.status) && res.data) {
+              dispatch(setProjects([...projects.filter((globalProject) => globalProject.id !== project.id), res.data]));
+            }
+          });
+        }
         setIsOpen(false);
       } else message.error(messages.general.error());
     } else {
@@ -48,6 +63,7 @@ const CreateAffairForm = ({ project, affair, isOpen, setIsOpen }: props) => {
     const response = await updateGdpAffair(affairId, { name: values.affairName, company_entity: values.entity });
     if (isRequestSuccessful(response.status) && response.data) {
       message.success(messages.general.success());
+      dispatch(setAffairs([...affairs.filter((affair) => affair.id !== affairId), response.data]));
       setIsOpen(false);
     } else message.error(messages.general.error());
   }
@@ -121,7 +137,7 @@ const CreateAffairForm = ({ project, affair, isOpen, setIsOpen }: props) => {
         </Form.Item>
         <footer className={styles.footer}>
           <Button small htmlType={'submit'}>
-            Créer l&apos;affaire
+            {affair ? 'Modifier' : 'Créer'} l&apos;affaire
           </Button>
           <Button small style={'text'} onClick={() => setIsOpen(false)}>
             Annuler

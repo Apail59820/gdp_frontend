@@ -1,9 +1,9 @@
 import { Form, Input, message, Modal, Select } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel, GdpPhaseStatusEnum } from '../../../models/GestionDeProjets/GdpPhaseModel';
-import { Button } from '@projex/ui';
+import { Button } from 'projex-ui';
 import styles from './CreatePhaseForm.module.scss';
 import {
   createGdpAffairPhase,
@@ -13,13 +13,15 @@ import {
 import { messages } from '../../../constants/messages';
 import { DeleteOutlined, WarningOutlined } from '@ant-design/icons';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
+import PhasesTemplates from '../../../constants/PhasesTemplates';
 
 type props = {
-  project: GdpProjectsModel;
-  affair: GdpAffairModel;
+  project: Partial<GdpProjectsModel>;
+  affair: Partial<GdpAffairModel>;
   isOpen: boolean;
   phase?: GdpPhaseModel;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onUpdate?: () => void;
 };
 
 type formValues = {
@@ -36,8 +38,15 @@ enum displayStatus {
   'completed' = 'Terminée',
 }
 
-const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) => {
+const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }: props) => {
   const statusOptions: GdpPhaseStatusEnum[] = Object.values(GdpPhaseStatusEnum);
+  const [form] = Form.useForm();
+
+  const [description, setDescription] = React.useState<string>('');
+
+  useEffect(() => {
+    form.setFieldValue('description', description);
+  }, [description, form]);
 
   const showConfirmDelete = () => {
     if (phase) {
@@ -47,7 +56,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
         okText: 'Oui',
         cancelText: 'Non',
         okType: 'danger',
-        icon: <WarningOutlined />,
+        icon: <WarningOutlined rev={undefined} />,
         closable: true,
         maskClosable: true,
         footer: [
@@ -57,11 +66,15 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
               style={'alert'}
               onClick={() => {
                 deleteAffairsPhases([phase.id]).then((res) => {
-                  if (res && res.status !== 200) {
+                  if (res && !isRequestSuccessful(res.status)) {
                     message.error(messages.general.error());
                   } else {
                     message.success(messages.general.success());
+                    if (onUpdate) {
+                      onUpdate();
+                    }
                     setIsOpen(false);
+                    Modal.destroyAll();
                   }
                 });
               }}
@@ -78,17 +91,22 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
   };
 
   async function createAffairPhase(values: formValues) {
-    const response = await createGdpAffairPhase({
-      affairs_id: affair.id,
-      name: values.name,
-      status: values.status,
-      description: values.description,
-      order: affair.affairs_phases_ids.length + 1,
-    });
-    if (isRequestSuccessful(response.status) && response.data) {
-      message.success(messages.general.success());
-      setIsOpen(false);
-    } else message.error(messages.general.error());
+    if (affair.id && affair.affairs_phases_ids) {
+      const response = await createGdpAffairPhase({
+        affairs_id: affair.id!,
+        name: values.name,
+        status: values.status,
+        description: values.description,
+        order: affair.affairs_phases_ids.length + 1,
+      });
+      if (isRequestSuccessful(response.status) && response.data) {
+        message.success(messages.general.success());
+        if (onUpdate) {
+          onUpdate();
+        }
+        setIsOpen(false);
+      } else message.error(messages.general.error());
+    }
   }
 
   async function updateAffairPhase(phaseId: number, values: formValues) {
@@ -99,6 +117,9 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
     });
     if (isRequestSuccessful(response.status) && response.data) {
       message.success(messages.general.success());
+      if (onUpdate) {
+        onUpdate();
+      }
       setIsOpen(false);
     } else message.error(messages.general.error());
   }
@@ -122,6 +143,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
         autoComplete={'off'}
         layout={'vertical'}
         onFinish={onSubmit}
+        form={form}
         initialValues={{
           projectName: project.name,
           affairName: affair.name,
@@ -152,7 +174,20 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
             },
           ]}
         >
-          <Input type={'text'} placeholder={'Entrez le nom de votre étape'} />
+          <Select
+            placeholder={'Selectionnez votre phase'}
+            onChange={(e) => {
+              const a = PhasesTemplates.find((template) => template.name === e);
+              if (a) setDescription(a.description);
+              else setDescription('');
+            }}
+          >
+            {PhasesTemplates.map((template) => (
+              <Select.Option key={template.key} value={template.name}>
+                {template.name}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item
           label={"État d'avancement"}
@@ -183,7 +218,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
             },
           ]}
         >
-          <Input.TextArea placeholder={'Entrez la description de votre étape'} />
+          <Input.TextArea placeholder={'Entrez la description de votre étape'} value={description} />
         </Form.Item>
         <footer className={styles.footer}>
           <Button small htmlType={'submit'}>
@@ -200,7 +235,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen }: props) =
                 onClick={() => {
                   showConfirmDelete();
                 }}
-                icon={<DeleteOutlined />}
+                icon={<DeleteOutlined rev={undefined} />}
               >
                 Supprimer l&apos;étape
               </Button>

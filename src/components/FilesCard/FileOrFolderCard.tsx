@@ -1,6 +1,5 @@
 import React from 'react';
 import styles from './FilesCard.module.scss';
-import { ShadowCard } from '@projex/ui';
 import { GdpFilesModel } from '../../../models/GestionDeProjets/GdpFilesModel';
 import FolderIcon from '../../../public/folder.svg';
 import ArrowLeftLong from '../../../public/arrow-left-long.svg';
@@ -36,7 +35,7 @@ const FileOrFolderCard = ({ asset, type, onClick, href }: PropsFile | PropsFolde
     return FileIcon;
   };
 
-  const title = type === 'file' ? asset?.title : asset?.name;
+  const title = type === 'file' ? asset?.filename_download : asset?.name;
 
   return href ? (
     <Link href={href}>

@@ -18,7 +18,7 @@ import pictoProjex from '../public/picto-projex.svg';
 
 import { CompanyEnum } from '../models/UsModels';
 
-export const getImagesByCompany = (company: string): { logo: string; picto: string } => {
+export const getImagesByCompany = (company: string | null | undefined): { logo: string; picto: string } => {
   switch (typeof company === 'string' ? company.toLowerCase() : '') {
     case CompanyEnum.AMEXIA:
       return {

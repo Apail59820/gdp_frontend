@@ -1,6 +1,6 @@
 import React from 'react';
 import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
-import { Section } from '@projex/ui';
+import { Section } from 'projex-ui';
 import { useRouter } from 'next/router';
 import SatisfactionCard from '../SatisfactionCard/SatisfactionCard';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';

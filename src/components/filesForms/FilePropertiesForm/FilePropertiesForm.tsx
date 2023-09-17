@@ -1,7 +1,7 @@
 import { fileItemType, UploadStatusEnum } from '../UploadFilesForm/UploadFilesForm';
 import { useEffect, useState } from 'react';
 import styles from './FilePropertiesForm.module.scss';
-import { Button, Input, Select } from '@projex/ui';
+import { Button, Input, Select } from 'projex-ui';
 import { GdpAffairModel } from '../../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel } from '../../../../models/GestionDeProjets/GdpPhaseModel';
 import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';
@@ -31,13 +31,13 @@ export default function FilePropertiesForm({
   affairsOptions,
   phasesOptions,
 }: PropsTypes) {
-  const [FileTmp, setFileTmp] = useState<fileItemType>(file);
+  const [fileTmp, setFileTmp] = useState<fileItemType>(file);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     setFileTmp(file);
   }, [file]);
 
-  function getFileSize(size: number | undefined): string {
+  function getFileSize(size: number | null | undefined): string {
     if (!size) return 'inconnue';
     const sizeInKo = size / 1000;
     if (sizeInKo < 1000) return `${sizeInKo} ko`;
@@ -48,7 +48,8 @@ export default function FilePropertiesForm({
    * returns the file type to display.
    * @param name of the file with its extension
    */
-  function getFileType(name: string) {
+  function getFileType(name: string | undefined) {
+    if (!name) return 'inconnu';
     const fileExtension = name.split('.').pop();
     if (!fileExtension) return 'inconnu';
     switch (fileExtension.toLowerCase()) {
@@ -73,7 +74,8 @@ export default function FilePropertiesForm({
    * returns the last modified date as "dd/mm/yyyy à hh/mm".
    * @param lastModified
    */
-  function getLastModifiedDate(lastModified: Date) {
+  function getLastModifiedDate(lastModified: Date | null | undefined) {
+    if (!lastModified) return 'inconnue';
     const date = new Date(lastModified);
     const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
     const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
@@ -97,36 +99,39 @@ export default function FilePropertiesForm({
 
   async function onConfirmButton() {
     setIsLoading(true);
-    await onConfirm(FileTmp);
+    await onConfirm(fileTmp);
     setIsLoading(false);
   }
 
   if (!file) return <></>;
   return (
     <div className={styles.formContainer}>
-      <h3>{FileTmp.properties.filename_download}</h3>
+      <h3>{fileTmp.properties.filename_download}</h3>
       <div className={styles.filesInformations}>
-        <p>Taille: {getFileSize(FileTmp.file.size)}</p>
-        <p>Type de fichier : {getFileType(FileTmp.file.name)}</p>
-        <p>Modifié le : {getLastModifiedDate(FileTmp.file.lastModified as unknown as Date)}</p>
+        <p>Taille: {getFileSize(fileTmp.file?.size || fileTmp.properties.filesize)}</p>
+        <p>Type de fichier : {getFileType(fileTmp.file?.name || fileTmp.properties.filename_download)}</p>
+        <p>
+          Modifié le :{' '}
+          {getLastModifiedDate((fileTmp.file?.lastModified as unknown as Date) || fileTmp.properties.modified_on)}
+        </p>
       </div>
       <div className={styles.filesInputsGroup}>
         <Input
           label="Renommer le fichier"
-          value={FileTmp.properties.filename_download || ''}
+          value={fileTmp.properties.filename_download || ''}
           setValue={(value) =>
             setFileTmp({
-              ...FileTmp,
-              properties: { ...FileTmp.properties, filename_download: `${value}` },
+              ...fileTmp,
+              properties: { ...fileTmp.properties, filename_download: `${value}` },
             })
           }
-          disabled={FileTmp.uploadState === UploadStatusEnum.PENDING}
+          disabled={fileTmp.uploadState === UploadStatusEnum.PENDING}
         />
       </div>
       <div className={styles.filesInputsGroup}>
         <Input
           label="Associer à..."
-          value={project.name || project.id || 'projet inconnu'}
+          value={project.name || project.id?.toString() || 'projet inconnu'}
           setValue={() => {}}
           disabled={true}
         />
@@ -134,11 +139,11 @@ export default function FilePropertiesForm({
           displayNullOption={true}
           options={affairsOptions.map((affair) => ({ value: `${affair.id}`, text: affair.name as string }))}
           nullOptionText="Aucune Affaire"
-          value={FileTmp.properties.affair_id != undefined ? `${FileTmp.properties.affair_id}` : ''}
+          value={fileTmp.properties.affair_id != undefined ? `${fileTmp.properties.affair_id}` : ''}
           setValue={(value) =>
             setFileTmp({
-              ...FileTmp,
-              properties: { ...FileTmp.properties, affair_id: parseInt(value), phase_id: undefined },
+              ...fileTmp,
+              properties: { ...fileTmp.properties, affair_id: parseInt(value), phase_id: undefined },
             })
           }
           disabled={!!affair}
@@ -147,16 +152,16 @@ export default function FilePropertiesForm({
           displayNullOption={true}
           nullOptionText="Aucune Phase"
           options={phasesOptions
-            .filter((phase) => phase.affairs_id != undefined && phase.affairs_id === FileTmp.properties.affair_id)
+            .filter((phase) => phase.affairs_id != undefined && phase.affairs_id === fileTmp.properties.affair_id)
             .map((phase) => ({
               value: `${phase.id}`,
               text: phase.name as string,
             }))}
-          value={FileTmp.properties.phase_id != undefined ? `${FileTmp.properties.phase_id}` : ''}
+          value={fileTmp.properties.phase_id != undefined ? `${fileTmp.properties.phase_id}` : ''}
           setValue={(value) =>
             setFileTmp({
-              ...FileTmp,
-              properties: { ...FileTmp.properties, phase_id: parseInt(value) },
+              ...fileTmp,
+              properties: { ...fileTmp.properties, phase_id: parseInt(value) },
             })
           }
           disabled={!!phase}
@@ -164,12 +169,12 @@ export default function FilePropertiesForm({
       </div>
       <div className={styles.filesIsPublishedContainer}>
         <Switch
-          checked={FileTmp.properties.status == GdpFilesStatusEnum.VISIBLE}
+          checked={fileTmp.properties.status == GdpFilesStatusEnum.VISIBLE}
           onChange={(value) => {
             setFileTmp({
-              ...FileTmp,
+              ...fileTmp,
               properties: {
-                ...FileTmp.properties,
+                ...fileTmp.properties,
                 status: value ? GdpFilesStatusEnum.VISIBLE : GdpFilesStatusEnum.HIDDEN,
               },
             });
@@ -179,7 +184,7 @@ export default function FilePropertiesForm({
       </div>
       <div className={styles.filesActionButtonsContainer}>
         <Button style="primary" onClick={onConfirmButton} disabled={isLoading}>
-          {getConfirmText(FileTmp)}
+          {getConfirmText(fileTmp)}
         </Button>
         <Button style="text_gray" onClick={onCancel}>
           Annuler

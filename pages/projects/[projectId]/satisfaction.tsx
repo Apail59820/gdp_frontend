@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../../store/reducers/projectsReducer';
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
-import { Breadcrumb, Grid, Section } from '@projex/ui';
+import { Breadcrumb, Grid, Section } from 'projex-ui';
 import styles from '../../../styles/Project.module.scss';
 import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
 import { getGdpSatisfactions } from '../../../services/gestionDeProjets/GdpAffairsSatisfaction';
@@ -15,6 +15,7 @@ import PreviewAffairSatisfactionCard from '../../../src/components/PreviewAffair
 import { selectAffairs, setAffairs } from '../../../store/reducers/affairsReducer';
 import { getGdpAffairs } from '../../../services/gestionDeProjets/GdpAffairs';
 import Link from 'next/link';
+import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 
 const ProjectSatisfaction = () => {
   const router = useRouter();
@@ -25,7 +26,9 @@ const ProjectSatisfaction = () => {
   const affairs = useSelector(selectAffairs);
 
   const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
+  const [projectAffairs, setProjectAffairs] = useState<Partial<GdpAffairModel>[]>([]);
   const [projectSatisfactions, setProjectSatisfactions] = useState<Partial<GdpSatisfactionModel>[]>([]);
+  const [affairsIdsToFetch, setAffairsIdsToFetch] = useState<any[]>([]);
 
   useEffect(() => {
     if (projectId) {
@@ -55,28 +58,38 @@ const ProjectSatisfaction = () => {
   }, [project]);
 
   useEffect(() => {
-    const affairsIdsToFetch: number[] = [];
+    const existingAffairs: Partial<GdpAffairModel>[] = [];
     project.affairs_ids?.forEach((affair) => {
       if (typeof affair === 'number') {
-        if (affairs.filter((affair) => affair.id === affair).length === 0) {
-          affairsIdsToFetch.push(affair);
+        /* TODO check NextJs documentation
+            to see if we can get affairs from context then remove >= 0 and fix case by vase
+         */
+        if (affairs.filter((affairFromContext) => affairFromContext.id === affair).length >= 0) {
+          setAffairsIdsToFetch([...affairsIdsToFetch, affair]);
         }
       } else {
-        if (affairs.filter((affair) => affair.id === affair.id).length === 0) {
-          affairsIdsToFetch.push(affair.id);
-        }
+        if (affairs.filter((affairFromContext) => affairFromContext.id === affair.id).length === 0) {
+          setAffairsIdsToFetch([...affairsIdsToFetch, affair.id]);
+        } else existingAffairs.push(affair);
       }
     });
-    if (affairsIdsToFetch.length > 0) {
+  }, [affairs, dispatch, project.affairs_ids]);
+
+  useEffect(() => {
+    const existingAffairs: Partial<GdpAffairModel>[] = [];
+    if (affairsIdsToFetch.length) {
       getGdpAffairs({
         filter: {
           id: { _in: affairsIdsToFetch },
         },
       }).then((res) => {
-        if (res.status === 200 && res.data) dispatch(setAffairs([...affairs, ...res.data]));
+        if (res.status === 200 && res.data) {
+          dispatch(setAffairs([...affairs, ...res.data]));
+          setProjectAffairs([...existingAffairs, ...res.data]);
+        }
       });
     }
-  }, [affairs, dispatch, project.affairs_ids]);
+  }, [projectSatisfactions]);
 
   return (
     <div className={'page'}>
@@ -96,11 +109,11 @@ const ProjectSatisfaction = () => {
         </section>
         <Section title={'Par affaire'}>
           <Grid>
-            {project.affairs_ids?.map((affairId, index) => (
-              <Link href={'/affairs/' + affairId + '/satisfaction'} key={index}>
+            {projectAffairs.map((affair, index) => (
+              <Link href={'/affairs/' + affair.id + '/satisfaction'} key={index}>
                 <PreviewAffairSatisfactionCard
-                  affair={affairs.filter((affair) => affair.id === affairId)[0]}
-                  satisfactions={projectSatisfactions.filter((satisfaction) => satisfaction.affairs_id === affairId)}
+                  affair={affair}
+                  satisfactions={projectSatisfactions.filter((satisfaction) => satisfaction.affairs_id === affair.id)}
                 />
               </Link>
             ))}

@@ -94,7 +94,7 @@ const ProjectsList = ({ projects }: Props) => {
 
   useEffect(() => {
     const formattedProject: DataType[] = projects.map((project) => ({
-      key: project.id || '',
+      key: project.id?.toString() || '',
       project_name: (
         <Link className={styles.projectName} href={`/projects/${project.id}`}>
           {project.name}
