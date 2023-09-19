@@ -104,7 +104,6 @@ const FileInfo = ({isOpen, setIsOpen , disableEdition, setEditButtonState, file}
                                 deleteGdpFile(file?.id).then((res) => {
                                     if(isRequestSuccessful(res.status)){
                                         message.success("Fichier supprimé.");
-                                        window.location.reload();
                                     }
                                     else{
                                         message.error("Une erreur est survenue.");
