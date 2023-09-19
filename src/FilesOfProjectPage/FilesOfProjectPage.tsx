@@ -22,14 +22,13 @@ import UploadFilesForm, {
   UploadStatusEnum,
 } from '../components/filesForms/UploadFilesForm/UploadFilesForm';
 import PageHeaderBanner from '../components/PageHeaderBanner/PageHeaderBanner';
-import {message, Table} from 'antd';
+import {Table} from 'antd';
 import FolderIcon from '../../public/folder.svg';
 import FileImageIcon from '../../public/file-image.svg';
 import FileIcon from '../../public/file.svg';
 import FileArrayLeftLong from '../../public/arrow-left-long.svg';
 import Link from 'next/link';
 import FilesInfo from "../components/FilesInfo/FilesInfo";
-import {is} from "immutable";
 
 const { publicRuntimeConfig } = getConfig();
 
