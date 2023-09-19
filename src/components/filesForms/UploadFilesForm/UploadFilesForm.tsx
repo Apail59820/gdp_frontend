@@ -222,8 +222,6 @@ export default function UploadFilesForm({
   };
 
   async function onFilesUploadChange(files: FileList) {
-    console.log(fileList);
-    console.log(typeof fileList);
     const newFileList = Array.from(files);
     const filesToAdd = newFileList.map((file) => ({
       id: Math.floor(Math.random() * 1000000000).toString(),
