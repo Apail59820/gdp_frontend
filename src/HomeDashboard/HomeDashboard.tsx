@@ -28,8 +28,7 @@ const HomeDashboard = () => {
 
   const [isCreateNewProjectModalOpen, setIsCreateNewProjectModalOpen] = useState(false);
 
-  useEffect(
-    function retrieveCurrentUsersProjects() {
+  useEffect(() => {
       if (!userProfile || !userProfile.role || !userProfile.id) return;
 
       const queryParameters: QueryParameters = {
@@ -63,10 +62,7 @@ const HomeDashboard = () => {
             const myProjects = result.data.map(
               (projectCollaborators) => projectCollaborators.projects_id as Partial<GdpProjectsModel>
             );
-            const projects = globalProjects.filter((project) => {
-              return myProjects.some((myProject) => myProject.id === project.id);
-            });
-            setCurrentUsersProjects(projects);
+            setCurrentUsersProjects(myProjects);
           }
         });
       }

@@ -26,7 +26,7 @@ const PhasesWidget = ({ phases, onNewPhaseClick, allPhasesPageHref, displayCreat
       title="Avancement de l'affaire"
       link={
         phases.length > 0
-          ? { label: 'Voir toutes les phases', href: allPhasesPageHref || `${router.asPath}/phases` }
+          ? { label: 'Voir toutes les phases', href: allPhasesPageHref || `${router.asPath}/advancement` }
           : undefined
       }
     >
