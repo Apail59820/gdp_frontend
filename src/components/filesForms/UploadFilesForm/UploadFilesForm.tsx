@@ -223,23 +223,21 @@ export default function UploadFilesForm({
 
   async function onFilesUploadChange(files: FileList) {
     const newFileList = Array.from(files);
-    setFileList([
-      ...fileList,
-      ...newFileList.map((file) => ({
-        id: Math.floor(Math.random() * 1000000000).toString(),
-        file: file,
-        properties: {
-          filename_download: file.name,
-          projects_id: project.id,
-          affair_id: affair?.id,
-          phase_id: phase?.id,
-          document_type: GdpAssetDocumentEnum.WRITTEN,
-          status: GdpFilesStatusEnum.VISIBLE,
-          is_cover: false,
-        },
-        uploadState: UploadStatusEnum.PENDING,
-      })),
-    ]);
+    const filesToAdd = newFileList.map((file) => ({
+      id: Math.floor(Math.random() * 1000000000).toString(),
+      file: file,
+      properties: {
+        filename_download: file.name,
+        projects_id: project.id,
+        affair_id: affair?.id,
+        phase_id: phase?.id,
+        document_type: GdpAssetDocumentEnum.WRITTEN,
+        status: GdpFilesStatusEnum.VISIBLE,
+        is_cover: false,
+      },
+      uploadState: UploadStatusEnum.PENDING,
+    }));
+    setFileList([...fileList, ...filesToAdd]);
   }
 
   function getOnlyModifiedProperties(newFile: fileItemType, oldFile: fileItemType): Partial<GdpFilesModel> {
