@@ -12,12 +12,16 @@ const GlobalFilters = () => {
 
     useEffect(() => {
         if(localStorage.getItem("autoGlobalFilters") !== null){
-            let projectId = parseInt(localStorage.getItem("autoGlobalFilters"), 10);
+            let ids = JSON.parse(localStorage.getItem("autoGlobalFilters"));
 
-            if(globalFilters?.projects?.list.includes(projectId)){
-                const newFilter: GlobalFiltersModel = { ...globalFilters };
+            if(globalFilters?.projects?.list.includes(ids?.project_id)){
+                let newFilter: GlobalFiltersModel = { ...globalFilters };
                 newFilter.projects = { ...newFilter.projects };
+                newFilter.affairs = { ...newFilter.affairs};
+
                 newFilter.projects.list = [];
+
+                if(ids.affair_id) newFilter.affairs.list = [];
 
                 dispatch(setGlobalFilters(newFilter));
                 localStorage.removeItem("autoGlobalFilters");

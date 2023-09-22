@@ -130,23 +130,40 @@ const FacturesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState,
     }
   }
 
-  useEffect(() => {
-    if(disableGlobalFilters){ // come from project page
-      //get project id from url :
-      // TODO Find a better way to know current project/affair ID
-      let splitPath = router.asPath.split('/');
-      const projectId = parseInt(splitPath[splitPath.length - 2]);
+  function extractIdsFromUrl(path) {
 
-      if(!globalFilters?.projects?.list.includes(projectId)){
-        // check if gotten id is valid
-        getGdpProjectById(projectId).then((res) => {
+    const splitPath = path.split('/');
+    const projectIndex = splitPath.indexOf('projects');
+
+    if (projectIndex === -1) {
+      return null;
+    }
+
+    const project_id = parseInt(splitPath[projectIndex + 1], 10);
+    const affairIndex = splitPath.indexOf('affairs');
+    const affair_id = affairIndex !== -1 ? parseInt(splitPath[affairIndex + 1], 10) : null;
+
+    return { project_id, affair_id };
+  }
+
+  useEffect(() => {
+    if(disableGlobalFilters){
+      const ids = extractIdsFromUrl(router.asPath);
+
+      if(!globalFilters?.projects?.list.includes(ids?.project_id) && ids.project_id !== null){
+        getGdpProjectById(ids.project_id).then((res) => {
           if(isRequestSuccessful(res.status)){
-            const newFilter: GlobalFiltersModel = { ...globalFilters };
+            let newFilter: GlobalFiltersModel = { ...globalFilters };
             newFilter.projects = { ...newFilter.projects };
             newFilter.projects.list = [...newFilter.projects.list, res.data?.id];
 
+            if (ids.affair_id) {
+              newFilter.affairs = { ...newFilter.affairs};
+              newFilter.affairs.list = [...newFilter.affairs.list, ids.affair_id];
+            }
+
             dispatch(setGlobalFilters(newFilter));
-            localStorage.setItem("autoGlobalFilters", projectId.toString());
+            localStorage.setItem("autoGlobalFilters", JSON.stringify({ project_id: ids.project_id, affair_id: ids.affair_id }));
           }
         })
       }
