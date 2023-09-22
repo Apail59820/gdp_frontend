@@ -11,6 +11,7 @@ type Props = PreviewFilesListProps & {
 
 const FilesWidget = ({ files, max, onNewFileClick, allFilesPageHref, displayConfigureButton }: Props) => {
   const router = useRouter();
+  var splitPath = router.asPath.split('/');
 
   return (
     <Section
@@ -21,7 +22,7 @@ const FilesWidget = ({ files, max, onNewFileClick, allFilesPageHref, displayConf
               label: `Voir ${files.length > 1 ? `tous les ${files.length}` : 'le'} fichier${
                 files.length > 1 ? 's' : ''
               }`,
-              href: allFilesPageHref || `${router.asPath}/files`,
+                href: allFilesPageHref || `${router.asPath}/../../files?affairId=${splitPath.pop()}`,
             }
           : undefined
       }

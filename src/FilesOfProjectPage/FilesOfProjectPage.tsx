@@ -197,6 +197,21 @@ const FilesOfProjectPage = ({
   }, [filesCount, files, lazyLoadingState]);
 
   useEffect(() => {
+    const { affairId } = router.query;
+    if(project?.affairs_ids) {
+      project.affairs_ids.forEach((affair) => {
+        if(affair?.id == affairId){
+          onFolderClick({
+            id: (affair as GdpAffairModel).id,
+            name: (affair as GdpAffairModel).name,
+            type: 'affair' as 'affair',
+          });
+        }
+      })
+    }
+  }, []);
+
+  useEffect(() => {
     if(isEditing){
           selectedFile.id &&
           UpdateFiles([
