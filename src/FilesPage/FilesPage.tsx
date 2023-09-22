@@ -166,7 +166,7 @@ const FilesPage = ({
       clearTimeout(timerSearch);
       timerSearch = setTimeout(() => {
         updateSpecificFilters();
-      }, 1000);
+      }, 500);
     }
   }, [isFilesInfoModalOpen]);
   function onScrollEvent(event: Event) {
