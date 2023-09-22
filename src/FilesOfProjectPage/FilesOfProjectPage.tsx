@@ -80,6 +80,7 @@ const FilesOfProjectPage = ({
   lazyLoadingState,
   setLazyLoadingState,
 }: Props) => {
+
   const pageRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -115,6 +116,7 @@ const FilesOfProjectPage = ({
 
   const [selectedFile, setSelectedFile] = useState<Partial<GdpFilesModel> | null>(null);
   function updateSpecificFilters() {
+
     const filterRules: any[] = [];
     let search: string | undefined = undefined;
     if (filesFilters.search.length > 0) search = filesFilters.search;
@@ -195,6 +197,15 @@ const FilesOfProjectPage = ({
       if (pageRef && pageRef.current) pageRef.current.removeEventListener('scroll', onScrollEvent);
     };
   }, [filesCount, files, lazyLoadingState]);
+
+  useEffect(() => {
+    if(!isFilesInfoModalOpen){
+      clearTimeout(timerSearch);
+      timerSearch = setTimeout(() => {
+        updateSpecificFilters();
+      }, 500);
+    }
+  }, [isFilesInfoModalOpen]);
 
   useEffect(() => {
     if(isEditing){
