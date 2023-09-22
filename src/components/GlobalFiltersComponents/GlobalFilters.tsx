@@ -20,6 +20,7 @@ const GlobalFilters = () => {
                 newFilter.projects.list = [];
 
                 dispatch(setGlobalFilters(newFilter));
+                localStorage.removeItem("autoGlobalFilters");
             }
         }
     }, []);
