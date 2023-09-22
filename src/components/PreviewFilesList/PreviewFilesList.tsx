@@ -51,7 +51,7 @@ const PreviewFilesList = ({ files, max = 4, allFilesPageHref }: PreviewFilesList
                       <div className={styles.imageContainer}>
                         <Image src={getImage().src} fill alt="Icon" className={styles.image} />
                       </div>
-                      <Link href={'#'} className={styles.title} onClick={() => {onFileClicked(files[index])}}>{title}</Link>
+                      <span className={styles.title} onClick={() => {onFileClicked(files[index])}}>{title}</span>
                     </div>
                     {type && (
                         <span className={styles.type}>{displayType[type as keyof typeof displayType] ?? 'Inconnu'}</span>
