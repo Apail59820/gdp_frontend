@@ -553,6 +553,7 @@ const Affair = () => {
               files={files}
               onNewFileClick={() => setIsUploadFilesFormVisible(true)}
               displayConfigureButton={isUserAffairManager || isUserClassicCollaborator || isUserClient}
+              fromAffairPage={true}
             />
             <SatisfactionWidget satisfactions={affairSatisfactions} />
           </Grid>
