@@ -116,7 +116,6 @@ const FilesOfProjectPage = ({
 
   const [selectedFile, setSelectedFile] = useState<Partial<GdpFilesModel> | null>(null);
   function updateSpecificFilters() {
-
     const filterRules: any[] = [];
     let search: string | undefined = undefined;
     if (filesFilters.search.length > 0) search = filesFilters.search;
@@ -197,6 +196,21 @@ const FilesOfProjectPage = ({
       if (pageRef && pageRef.current) pageRef.current.removeEventListener('scroll', onScrollEvent);
     };
   }, [filesCount, files, lazyLoadingState]);
+
+  useEffect(() => {
+    const { affairId } = router.query;
+    if(project?.affairs_ids) {
+      project.affairs_ids.forEach((affair) => {
+        if(affair?.id == affairId){
+          onFolderClick({
+            id: (affair as GdpAffairModel).id,
+            name: (affair as GdpAffairModel).name,
+            type: 'affair' as 'affair',
+          });
+        }
+      })
+    }
+  }, []);
 
   useEffect(() => {
     if(!isFilesInfoModalOpen){
