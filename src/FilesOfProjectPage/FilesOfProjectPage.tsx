@@ -364,7 +364,7 @@ const FilesOfProjectPage = ({
         name: (
           <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}>
             <img src={file.type === 'image/png' ? FileImageIcon.src : FileIcon.src} width={20} height={20} alt="Icon" />
-            <Link href={'#'} style={{ display: 'inline-flex', marginLeft: '8px' }} onClick={() => {onFileSelected(file);}}>file.title</Link>
+            <Link href={'#'} style={{ display: 'inline-flex', marginLeft: '8px' }} onClick={() => {onFileSelected(file);}}>{file?.title}</Link>
           </div>
         ),
         type: file.type,
