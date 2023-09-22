@@ -48,6 +48,7 @@ import ConfigureFacturationForm from '../../../src/components/ConfigureFacturati
 import UploadFilesFormUploadFilesForm from '../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
 import {selectUserProfile} from '../../../store/reducers/authReducer';
 import ManageProjectManagers from '../../../src/components/ManageProjectManagers/ManageProjectManagers';
+import {selectGlobalFilters} from "../../../store/reducers/globalFilterReducer";
 
 const Project = () => {
   const router = useRouter();
@@ -58,6 +59,7 @@ const Project = () => {
   const projects = useSelector(selectProjects);
   const affairs = useSelector(selectAffairs);
   const clientCompanies = useSelector(selectClientsCompanyEntities);
+  const globalFilters = useSelector(selectGlobalFilters);
 
   const [isUserProjectManager, setIsUserProjectManager] = useState<boolean>(false);
   const [isUserClassicCollaborator, setIsUserClassicCollaborator] = useState<boolean>(false);

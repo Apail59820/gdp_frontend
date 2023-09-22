@@ -133,20 +133,23 @@ const FacturesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState,
   useEffect(() => {
     if(disableGlobalFilters){ // come from project page
       //get project id from url :
+      // TODO Find a better way to know current project/affair ID
       let splitPath = router.asPath.split('/');
       const projectId = parseInt(splitPath[splitPath.length - 2]);
 
-      // check if gotten id is valid
-      getGdpProjectById(projectId).then((res) => {
-        if(isRequestSuccessful(res.status)){
-          const newFilter: GlobalFiltersModel = { ...globalFilters };
-          newFilter.projects = { ...newFilter.projects };
-          newFilter.projects.list = [...newFilter.projects.list, res.data?.id];
+      if(!globalFilters?.projects?.list.includes(projectId)){
+        // check if gotten id is valid
+        getGdpProjectById(projectId).then((res) => {
+          if(isRequestSuccessful(res.status)){
+            const newFilter: GlobalFiltersModel = { ...globalFilters };
+            newFilter.projects = { ...newFilter.projects };
+            newFilter.projects.list = [...newFilter.projects.list, res.data?.id];
 
-          dispatch(setGlobalFilters(newFilter));
-        }
-      })
-
+            dispatch(setGlobalFilters(newFilter));
+            localStorage.setItem("autoGlobalFilters", projectId.toString());
+          }
+        })
+      }
     }
   }, []);
 
