@@ -239,7 +239,7 @@ const FilesPage = ({
         name: (
           <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}>
             <img src={file.type === 'image/png' ? FileImageIcon.src : FileIcon.src} width={20} height={20} alt="Icon" />
-            <span style={{ display: 'inline-flex', marginLeft: '8px' }}>{file.title}</span>
+            <Link href={'#'} style={{ display: 'inline-flex', marginLeft: '8px' }} onClick={() => {handleFileClick(file);}}>{file?.title}</Link>
           </div>
         ),
         type: file.type,
