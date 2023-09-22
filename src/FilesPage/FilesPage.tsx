@@ -163,7 +163,8 @@ const FilesPage = ({
 
   useEffect(() => {
     if(!isFilesInfoModalOpen){
-      setTimeout(() => {
+      clearTimeout(timerSearch);
+      timerSearch = setTimeout(() => {
         updateSpecificFilters();
       }, 1000);
     }
