@@ -80,6 +80,7 @@ const FilesOfProjectPage = ({
   lazyLoadingState,
   setLazyLoadingState,
 }: Props) => {
+
   const pageRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -210,6 +211,15 @@ const FilesOfProjectPage = ({
       })
     }
   }, []);
+
+  useEffect(() => {
+    if(!isFilesInfoModalOpen){
+      clearTimeout(timerSearch);
+      timerSearch = setTimeout(() => {
+        updateSpecificFilters();
+      }, 500);
+    }
+  }, [isFilesInfoModalOpen]);
 
   useEffect(() => {
     if(isEditing){

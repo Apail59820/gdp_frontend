@@ -160,6 +160,15 @@ const FilesPage = ({
     }, 500);
   }, [projectsFilters]);
 
+
+  useEffect(() => {
+    if(!isFilesInfoModalOpen){
+      clearTimeout(timerSearch);
+      timerSearch = setTimeout(() => {
+        updateSpecificFilters();
+      }, 500);
+    }
+  }, [isFilesInfoModalOpen]);
   function onScrollEvent(event: Event) {
     if (pageRef && pageRef.current) {
       const page = pageRef.current;
