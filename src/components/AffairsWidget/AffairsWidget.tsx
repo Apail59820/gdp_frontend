@@ -12,10 +12,11 @@ type Props = {
   affairs: Partial<GdpAffairModel>[];
   onNewAffairClick: React.MouseEventHandler<HTMLButtonElement>;
   allAffairsPageHref?: string;
+  max?: number;
   displayCreateCard?: boolean;
 };
 
-const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref, displayCreateCard }: Props) => {
+const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref, max = 6, displayCreateCard }: Props) => {
   const router = useRouter();
 
   return (
@@ -28,7 +29,7 @@ const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref, displayC
       }
     >
       <Grid>
-        {affairs.map((affair: Partial<GdpAffairModel>) => (
+        {[...affairs].slice(0,max).map((affair: Partial<GdpAffairModel>) => (
           <Link key={affair.id} href={`${router.asPath}/affairs/${affair.id}`}>
             {/* TODO Handle onClick */}
             <AffairCard affair={affair} onKebabMenuClick={() => console.log('handle click ?')} />
