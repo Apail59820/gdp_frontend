@@ -41,8 +41,11 @@ import CreatePhaseForm from '../../../../../src/components/CreatePhaseForm/Creat
 import ConfigureFacturationForm from '../../../../../src/components/ConfigureFacturationForm/ConfigureFacturationForm';
 import ManageAffairUsersForm from '../../../../../src/components/ManageAffairUsersForm/ManageAffairUsersForm';
 import { getGdpProjectsUsersClients } from '../../../../../services/gestionDeProjets/GdpProjectsUsersClients';
-import UploadFilesFormUploadFilesForm from '../../../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
+import UploadFilesFormUploadFilesForm, {
+  fileItemType
+} from '../../../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
 import { selectAffairs } from '../../../../../store/reducers/affairsReducer';
+import UploadFilesForm from "../../../../../src/components/filesForms/UploadFilesForm/UploadFilesForm";
 
 const Affair = () => {
   const { query } = useRouter();
@@ -71,6 +74,22 @@ const Affair = () => {
   const [isUploadFilesFormVisible, setIsUploadFilesFormVisible] = useState<boolean>(false);
 
   const [affairUsersFormType, setAffairUsersFormType] = useState<'collaborator' | 'client'>('client');
+
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const [filesToUpdate, setFilesToUpdate] = useState<fileItemType[]>([]);
+
+  function UpdateFiles(filesToUpdate: fileItemType[]) {
+    setFilesToUpdate(filesToUpdate);
+    setIsUploadModalOpen(true);
+  }
+
+  function onFileModalClose() {
+    setFilesToUpdate([]);
+    setIsEditing(false);
+    setIsUploadModalOpen(false);
+  }
 
   const progressPercentage = useMemo(() => {
     const requiredProps = ['name', 'company_entity', 'projects_id'];
@@ -470,12 +489,14 @@ const Affair = () => {
             affair={affair}
             userType={affairUsersFormType}
           />
-          <UploadFilesFormUploadFilesForm
-            isOpen={isUploadFilesFormVisible}
-            mode={'files'}
-            setIsOpen={setIsUploadFilesFormVisible}
-            project={affairProject}
-            affair={affair}
+          <UploadFilesForm
+              isOpen={isUploadFilesFormVisible}
+              onClose={onFileModalClose}
+              edit={isEditing}
+              mode={'files'}
+              fileItems={filesToUpdate}
+              project={affairProject}
+              affair={affair}
           />
           {/* end ---------------- EVERY FORM GOES HERE ---------------- end */}
           <h1 className={styles.title}>{affair.name ? capitalize(affair.name) : `Affaire ${affair.id}`}</h1>

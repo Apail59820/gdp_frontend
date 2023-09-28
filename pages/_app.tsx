@@ -12,11 +12,10 @@ import {SideBar, TopBar} from "projex-ui";
 import {getMyUsProfile} from "../services/userService/UsUsers";
 import {isRequestSuccessful} from "../utils/isRequestSuccessful";
 import {UsUserModel} from "../models/UserService/UsUserModel";
-// import getConfig from "next/config";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
 
 export default function App({Component, pageProps}: AppProps) {
-  // const { publicRuntimeConfig } = getConfig();
-
   const [user, setUser] = useState<Partial<UsUserModel>>({});
   const [userProfilePicture, setUserProfilePicture] = useState<string | undefined>(undefined);
   useEffect(() => {
@@ -49,7 +48,7 @@ export default function App({Component, pageProps}: AppProps) {
             <TopBar
               items={[
                 {label: 'Gestion de projet', href: '/href', active: true},
-                {label: 'Catalogue des solutions alternatives', href: '/href', active: false},
+                {label: 'Catalogue des solutions alternatives', href: `${publicRuntimeConfig.CATALOG_APP_URL}/`, active: false},
               ]}
               user={user}
               avatar={userProfilePicture}
