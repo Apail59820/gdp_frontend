@@ -147,7 +147,7 @@ const AffairsPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState, 
                         </div>
                     </div>
                 <div className={styles.content}>
-                    {(files?.length) && (
+                    {(files?.length > 0) ? (
                         <Grid>
                             {[...files].map((affair: Partial<GdpAffairModel>) => (
                                 <Link key={affair.id} href={`${router.asPath}/${affair.id}`}>
@@ -155,6 +155,10 @@ const AffairsPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState, 
                                 </Link>
                             ))}
                         </Grid>
+                    ) : (
+                        <h1>
+                            Aucun résultat.
+                        </h1>
                     )}
                 </div>
             </div>

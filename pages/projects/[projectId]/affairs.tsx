@@ -110,7 +110,6 @@ const AffairsFromProject = () => {
 
     return (
         <>
-            {affairs.length > 0  ? (
                 <AffairsPage files={affairs}
                              filesCount={affairsCount}
                              setSpecificFilters={setAffairsQueryParameters}
@@ -118,11 +117,6 @@ const AffairsFromProject = () => {
                              setLazyLoadingState={setLazyLoadingState}
                              disableGlobalFilters={true}
                 />
-            ) : (
-                <>
-                    <h1>No affairs</h1>
-                </>
-            )};
         </>
     );
 };
