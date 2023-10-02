@@ -345,7 +345,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
           )}
           {nom_fichierpdf_facture && (
             <Button small>
-              <Link href={nom_fichierpdf_facture} download={nom_fichierpdf_facture}>
+              <Link href={`export_factures/${nom_fichierpdf_facture.replaceAll("-","_")}`}>
                 Télécharger la facture {nom_fichierpdf_facture}
               </Link>
             </Button>
