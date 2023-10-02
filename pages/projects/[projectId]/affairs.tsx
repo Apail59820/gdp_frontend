@@ -60,18 +60,19 @@ const AffairsFromProject = () => {
                     affairsToFetch.push(id);
                 });
             }
+        }).finally(() => {
+            getGdpAffairs({...affairsQueryParameters,
+                limit: lazyLoadingState.limit,
+                offset: lazyLoadingState.offset,
+                filter: filterRules.length > 0 ?
+                    { _and: filterRules, id: {_in: affairsToFetch}} : {id: {_in: affairsToFetch}}}).then((projectsResponse
+            ) => {
+                if (isRequestSuccessful(projectsResponse.status) && projectsResponse.data) {
+                    if (lazyLoadingState.action == 'REPLACE') setAffairs(projectsResponse.data);
+                    else setAffairs([...affairs, ...projectsResponse.data]);
+                }
+            });
         });
-
-        const projectsResponse = await getGdpAffairs({
-            ...affairsQueryParameters,
-            limit: lazyLoadingState.limit,
-            offset: lazyLoadingState.offset,
-            filter: filterRules.length > 0 ? { _and: filterRules, id: {_in: affairsToFetch}} : {id: {_in: affairsToFetch}},
-        });
-        if (isRequestSuccessful(projectsResponse.status) && projectsResponse.data) {
-            if (lazyLoadingState.action == 'REPLACE') setAffairs(projectsResponse.data);
-            else setAffairs([...affairs, ...projectsResponse.data]);
-        }
     }
 
     async function retrieveCount() {
@@ -87,10 +88,10 @@ const AffairsFromProject = () => {
             filter: filterRules.length > 0 ? { _and: filterRules } : undefined,
             limit: undefined,
             offset: undefined,
-            aggregate: { count: 'num_facture' },
+            aggregate: { count: 'id' },
         });
         if (isRequestSuccessful(projectsCountResponse.status) && projectsCountResponse.data)
-            setAffairsCount(parseInt((projectsCountResponse.data as any)[0].count.num_facture));
+            setAffairsCount(parseInt((projectsCountResponse.data as any)[0].count.id));
     }
 
     useEffect(() => {
@@ -115,6 +116,7 @@ const AffairsFromProject = () => {
                              setSpecificFilters={setAffairsQueryParameters}
                              lazyLoadingState={lazyLoadingState}
                              setLazyLoadingState={setLazyLoadingState}
+                             disableGlobalFilters={true}
                 />
             ) : (
                 <>
