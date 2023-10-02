@@ -24,7 +24,7 @@ const AffairsWidget = ({ affairs, onNewAffairClick, allAffairsPageHref, max = 6,
       title="Les affaires"
       link={
         affairs.length > 0
-          ? { label: 'Voir toutes les affaires', href: allAffairsPageHref || `${router.asPath}/affairs` }
+          ? { label: `Voir toutes les ${affairs.length} affaires`, href: allAffairsPageHref || `${router.asPath}/affairs` }
           : undefined
       }
     >
