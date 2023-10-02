@@ -1,20 +1,41 @@
+import AffairsPage from "../../../src/AffairsPage/AffairsPage";
+import {useEffect, useState} from "react";
 import {GdpAffairModel} from "../../../models/GestionDeProjets/GdpAffairModel";
-import Link from "next/link";
-import AffairCard from "../../../src/components/AffairCard/AffairCard";
-import Grid from "../../../src/components/Grid/Grid";
-import React, {useEffect, useRef, useState} from "react";
-import {useRouter} from "next/router";
-import {getGdpAffairs} from "../../../services/gestionDeProjets/GdpAffairs";
-import {getGdpProjectById} from "../../../services/gestionDeProjets/GdpProjects";
-import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
+import {useSelector} from "react-redux";
+import {selectAffairs, selectAffairsCount} from "../../../store/reducers/affairsReducer";
+import {QueryParameters} from "../../../models/DirectusModel";
 import {LazyLoadingStateType} from "../../../models/LazyLoadingStateType";
 import getConfig from "next/config";
+import {
+    RetrieveClientsOfClientsCompanyEntities
+} from "../../../src/RetrieveGlobalData/RetrieveClientsOfClientsCompanyEntities";
+import {
+    compileGlobalFiltersToPythagoreFacturesFilter
+} from "../../../src/RetrieveGlobalData/filterCompilers/pythagore_affaires";
+import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
+import {getGdpAffairs} from "../../../services/gestionDeProjets/GdpAffairs";
+import {selectGlobalFilters} from "../../../store/reducers/globalFilterReducer";
+import {getGdpProjectById} from "../../../services/gestionDeProjets/GdpProjects";
+import {useRouter} from "next/router";
+import {getGdpPythagoreFactures} from "../../../services/gestionDeProjets/GdpPythagoreFactures";
 
 const { publicRuntimeConfig } = getConfig();
-let isNewDataLoading = false;
 const AffairsFromProject = () => {
 
-    const pageRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
+
+    const globalAffairs = useSelector(selectAffairs);
+    const globalAffairsCount = useSelector(selectAffairsCount);
+    const globalFilters = useSelector(selectGlobalFilters);
+
+    const projectId = parseInt(router.query.projectId as string);
+
+    const [affairs, setAffairs] = useState<Partial<GdpAffairModel>[]>(globalAffairs);
+
+    const [affairsQueryParameters, setAffairsQueryParameters] = useState<Omit<QueryParameters, 'limit' | 'offset'>>({});
+
+    const [affairsCount, setAffairsCount] = useState<number | null>(null);
+
 
     const [lazyLoadingState, setLazyLoadingState] = useState<LazyLoadingStateType>({
         limit: publicRuntimeConfig.PROJECTS_CHUNK_SIZE,
@@ -22,56 +43,86 @@ const AffairsFromProject = () => {
         action: 'REPLACE',
     });
 
-    const router = useRouter();
-
-    const projectId = parseInt(router.query.projectId as string);
-
-    const [projectAffairs, setProjectAffairs] = useState<Partial<GdpAffairModel>[] | null>(null);
-
-    useEffect(() => {
+    async function retrieveData() {
+        const additionalClients = await RetrieveClientsOfClientsCompanyEntities(globalFilters);
+        const globalFilterRules = compileGlobalFiltersToPythagoreFacturesFilter(globalFilters, additionalClients);
 
         const affairsToFetch: number[] = [];
-        const tmpAffairs: Partial<GdpAffairModel>[] = [];
+
+        const filterRules = [];
+
+        if (globalFilterRules.length > 0) filterRules.push({ _or: globalFilterRules });
+        if (affairsQueryParameters.filter) filterRules.push(affairsQueryParameters.filter);
 
         getGdpProjectById(projectId).then(res => {
-            if(isRequestSuccessful(res?.status)){
+            if (isRequestSuccessful(res?.status)) {
                 res?.data.affairs_ids.forEach(id => {
                     affairsToFetch.push(id);
                 });
             }
-        }).finally(() => {
-            if (affairsToFetch.length > 0) {
-                getGdpAffairs({
-                    filter: {id: {_in: affairsToFetch},}
-                }).then((res) => {
-                    if (res.status === 200 && res.data) {
-                        tmpAffairs.push(...res.data);
-                        console.log(...res?.data);
-                    }
-                }).finally(() => {
-                    if(tmpAffairs.length){
-                        setProjectAffairs(tmpAffairs);
-                    }
-                });
-            }
         });
 
-    }, []);
+        const projectsResponse = await getGdpAffairs({
+            ...affairsQueryParameters,
+            limit: lazyLoadingState.limit,
+            offset: lazyLoadingState.offset,
+            filter: filterRules.length > 0 ? { _and: filterRules, id: {_in: affairsToFetch}} : {id: {_in: affairsToFetch}},
+        });
+        if (isRequestSuccessful(projectsResponse.status) && projectsResponse.data) {
+            if (lazyLoadingState.action == 'REPLACE') setAffairs(projectsResponse.data);
+            else setAffairs([...affairs, ...projectsResponse.data]);
+        }
+    }
+
+    async function retrieveCount() {
+        const additionalClients = await RetrieveClientsOfClientsCompanyEntities(globalFilters);
+        const globalFilterRules = compileGlobalFiltersToPythagoreFacturesFilter(globalFilters, additionalClients);
+
+        const filterRules = [];
+        if (globalFilterRules.length > 0) filterRules.push({ _or: globalFilterRules });
+        if (affairsQueryParameters.filter) filterRules.push(affairsQueryParameters.filter);
+        const projectsCountResponse = await getGdpAffairs({
+            ...globalFilters.projects.queryParameters,
+            ...affairsQueryParameters,
+            filter: filterRules.length > 0 ? { _and: filterRules } : undefined,
+            limit: undefined,
+            offset: undefined,
+            aggregate: { count: 'num_facture' },
+        });
+        if (isRequestSuccessful(projectsCountResponse.status) && projectsCountResponse.data)
+            setAffairsCount(parseInt((projectsCountResponse.data as any)[0].count.num_facture));
+    }
+
+    useEffect(() => {
+        if (Object.keys(affairsQueryParameters).length > 0 || lazyLoadingState.action !== 'REPLACE') retrieveData();
+        else setAffairs(globalAffairs);
+    }, [affairsQueryParameters, lazyLoadingState]);
+
+    useEffect(() => {
+        if (Object.keys(affairsQueryParameters).length > 0) retrieveCount();
+        else setAffairsCount(globalAffairsCount);
+    }, [affairsQueryParameters]);
+
+    useEffect(() => {
+        if (Object.keys(affairsQueryParameters).length == 0) setAffairs(globalAffairs);
+    }, [globalAffairs]);
 
     return (
-            <div style={{margin: "2rem"}}>
-                {(projectAffairs?.length) && (
-                    <Grid>
-                        {[...projectAffairs].map((affair: Partial<GdpAffairModel>) => (
-                            <Link key={affair.id} href={`${router.asPath}/${affair.id}`}>
-                                <AffairCard affair={affair} onKebabMenuClick={() => console.log('Click')} />
-                            </Link>
-                        ))}
-                    </Grid>
-                )}
-            </div>
+        <>
+            {affairs.length > 0  ? (
+                <AffairsPage files={affairs}
+                             filesCount={affairsCount}
+                             setSpecificFilters={setAffairsQueryParameters}
+                             lazyLoadingState={lazyLoadingState}
+                             setLazyLoadingState={setLazyLoadingState}
+                />
+            ) : (
+                <>
+                    <h1>No affairs</h1>
+                </>
+            )};
+        </>
     );
-
 };
 
 export default AffairsFromProject;
