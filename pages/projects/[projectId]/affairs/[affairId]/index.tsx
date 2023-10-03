@@ -89,6 +89,7 @@ const Affair = () => {
     setFilesToUpdate([]);
     setIsEditing(false);
     setIsUploadModalOpen(false);
+    setIsUploadFilesFormVisible(false);
   }
 
   const progressPercentage = useMemo(() => {
