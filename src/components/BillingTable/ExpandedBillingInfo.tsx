@@ -21,6 +21,7 @@ import { getGdpProjectsUsersClients } from '../../../services/gestionDeProjets/G
 import Link from 'next/link';
 import {useRouter} from "next/router";
 import {retrieveToken} from "../../../services/auth";
+import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -58,19 +59,21 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
   const TIME_BETWEEN_FACTURES_EMAILS_ALERTS =
     publicRuntimeConfig.DIGITAL_SOLUTIONS_TIME_BETWEEN_FACTURES_EMAILS_ALERTS || 72;
 
-  const [go, setGo] = useState(true);
-  const urlToFile = `export_factures/${nom_fichierpdf_facture.replaceAll("-", "_")}`
+  const [isRequestBillingFileDone, setIsRequestBillingFileDone] = useState(false);
+  const [isBillingFileCanBeFetch, setIsBillingFileCanBeFetch] = useState((soldeht_facture == 0 && soldettc_facture == 0 && etatreglt_facture == "Reglee"));
+  const urlToFile = `/export_factures/${nom_fichierpdf_facture.replaceAll("-", "_")}`
 
-  async function checkBill(){
-    const token = await retrieveToken();
-    const request = new XMLHttpRequest();
-    request.open( 'GET', urlToFile, true );
-    request.setRequestHeader( 'Authorization', `Bearer${token}`)
-
-    request.onload = ()=>{
-      setGo(request.status < 400);
-    }
-    request.send();
+  if(isBillingFileCanBeFetch) {
+    (async () => {
+      const token = await retrieveToken();
+      const request = new XMLHttpRequest();
+      request.open( 'GET', urlToFile, true );
+      request.setRequestHeader( 'Authorization', `Bearer${token}`)
+      request.onload = ()=> {
+        setIsRequestBillingFileDone(isRequestSuccessful(request.status));
+      }
+      request.send();
+    })();
   }
 
   async function retrieveFacturesEmailsAlerts() {
@@ -360,13 +363,12 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
               </Button>
             </>
           )}
-            {checkBill() && go && (
+            {isBillingFileCanBeFetch && isRequestBillingFileDone && (
             <Button small>
-              <Link href={urlToFile}>
+              <Link href={urlToFile} target="_blank"  download={nom_fichierpdf_facture.replaceAll("-", "_")}>
                 Télécharger la facture {nom_fichierpdf_facture}
               </Link>
-            </Button>
-          )}
+            </Button>)}
         </div>
       </div>
     </div>
