@@ -19,6 +19,8 @@ import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProject
 import { GdpProjectsClientsModel } from '../../../models/GestionDeProjets/GdpProjectsClientsModel';
 import { getGdpProjectsUsersClients } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
 import Link from 'next/link';
+import {useRouter} from "next/router";
+import {retrieveToken} from "../../../services/auth";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -55,6 +57,21 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
   const isCollaborator = myUser?.role == publicRuntimeConfig.ROLE_COLLABORATOR_ID;
   const TIME_BETWEEN_FACTURES_EMAILS_ALERTS =
     publicRuntimeConfig.DIGITAL_SOLUTIONS_TIME_BETWEEN_FACTURES_EMAILS_ALERTS || 72;
+
+  const [go, setGo] = useState(true);
+  const urlToFile = `export_factures/${nom_fichierpdf_facture.replaceAll("-", "_")}`
+
+  async function checkBill(){
+    const token = await retrieveToken();
+    const request = new XMLHttpRequest();
+    request.open( 'GET', urlToFile, true );
+    request.setRequestHeader( 'Authorization', `Bearer${token}`)
+
+    request.onload = ()=>{
+      setGo(request.status < 400);
+    }
+    request.send();
+  }
 
   async function retrieveFacturesEmailsAlerts() {
     if (emails_logs && emails_logs.length > 0 && typeof emails_logs[0] !== 'number') {
@@ -284,7 +301,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
           }`}
         </div>
         <div className={styles.buttonContainer}>
-          {etatreglt_facture !== 'Reglee' && isCollaborator && true && (
+          {etatreglt_facture !== 'Reglee' && isCollaborator && (
             <>
               <Modal open={isModalOpen} footer={null} closable={true} onCancel={() => setIsModalOpen(false)}>
                 <div className={styles.modalBody}>
@@ -343,9 +360,9 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
               </Button>
             </>
           )}
-          {nom_fichierpdf_facture && (
+            {checkBill() && go && (
             <Button small>
-              <Link href={`export_factures/${nom_fichierpdf_facture.replaceAll("-","_")}`}>
+              <Link href={urlToFile}>
                 Télécharger la facture {nom_fichierpdf_facture}
               </Link>
             </Button>
