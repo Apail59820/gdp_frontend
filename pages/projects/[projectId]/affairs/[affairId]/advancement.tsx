@@ -21,6 +21,7 @@ import CreatePhaseForm from '../../../../../src/components/CreatePhaseForm/Creat
 import {selectUserProfile} from '../../../../../store/reducers/authReducer';
 import {getGdpSatisfactions} from '../../../../../services/gestionDeProjets/GdpAffairsSatisfaction';
 import getConfig from 'next/config';
+import {capitalize} from "../../../../../utils/capitalize";
 interface IsatisfactionContext {
   setHasSubmitSatisfaction: React.Dispatch<React.SetStateAction<boolean>>;
   hasSubmitSatisfaction: boolean;
@@ -130,7 +131,7 @@ const Advancement = () => {
           <div className={styles.advancementPage}>
             <Breadcrumb dynamicRoutesLabel={[project.name!, affair.name!]}/>
             <div className={styles.head}>
-              <h1>Nom de l&apos;affaire - Avancement</h1>
+              <h1>{capitalize(affair?.name ? affair.name : "Nom du projet")} - Avancement</h1>
               <Button
                 small
                 icon={<PlusOutlined rev={undefined}/>}
