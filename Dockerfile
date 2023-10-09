@@ -12,7 +12,7 @@ RUN npm install --production
 # Rebuild the source code only when needed
 FROM node:16.13.0-alpine AS builder
 WORKDIR /app
-ENV NODE_OPTIONS --max_old_space_size=4096
+ENV NODE_OPTIONS --max_old_space_size=5120
 COPY --from=deps /app/node_modules ./node_modules
 COPY . ./
 # RUN export NODE_OPTIONS=--openssl-legacy-provider
