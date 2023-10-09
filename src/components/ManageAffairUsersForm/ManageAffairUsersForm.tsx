@@ -303,6 +303,8 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
         });
       }
     }
+
+    setIsOpen(false);
   };
 
   return (
