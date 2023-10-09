@@ -285,7 +285,7 @@ const Affair = () => {
         }
       });
     }
-  }, [affair, me]);
+  }, [affair, me, affairClients]);
 
   // Retrieve activities
   useEffect(() => {
