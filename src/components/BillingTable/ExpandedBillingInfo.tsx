@@ -19,7 +19,7 @@ import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProject
 import { GdpProjectsClientsModel } from '../../../models/GestionDeProjets/GdpProjectsClientsModel';
 import { getGdpProjectsUsersClients } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
 import Link from 'next/link';
-import {useRouter} from "next/router";
+import {GdpEmailsLogsModel} from "../../../models/GestionDeProjets/GdpEmailsLogsModel";
 import {retrieveToken} from "../../../services/auth";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 
@@ -81,7 +81,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
   async function retrieveFacturesEmailsAlerts() {
     if (emails_logs && emails_logs.length > 0 && typeof emails_logs[0] !== 'number') {
       setTimeSinceLastMail(
-        Interval.fromDateTimes(DateTime.fromJSDate(emails_logs[0].date_created), DateTime.now()).length('hours'),
+        Interval.fromDateTimes(DateTime.fromISO(emails_logs[0].date_created as string), DateTime.now()).length('hours'),
       );
     } else setTimeSinceLastMail(null);
   }
@@ -100,9 +100,14 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
       type: 'invoice_manual_alert',
     });
     if (factureEmailAlertResponse.status == 200) {
-      message.success(messages.reminder.success);
+      message.success(messages.reminder.manual.success);
       setTimeSinceLastMail(0);
-    } else message.error(messages.reminder.error);
+      if(factureEmailAlertResponse?.data){
+        setLastReminder(factureEmailAlertResponse.data);
+      }
+    } else message.error(messages.reminder.manual.error);
+
+    setIsModalOpen(false);
   }
 
   async function sendAutomaticFactureEmailAlert() {
@@ -120,9 +125,14 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
       type: 'invoice_generated_alert',
     });
     if (factureEmailAlertResponse.status == 200) {
-      message.success(messages.reminder.success);
+      message.success(messages.reminder.generated.success);
       setTimeSinceLastMail(0);
-    } else message.error(messages.reminder.error);
+      if(factureEmailAlertResponse?.data){
+        setLastReminder(factureEmailAlertResponse.data);
+      }
+    } else message.error(messages.reminder.generated.error);
+
+    setIsModalOpen(false);
   }
 
   const getButtonColor = () =>
@@ -142,7 +152,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
         })
       }
     }
-  }, [num_facture, isCollaborator, isRequestBillingFileDone]);
+  }, [num_facture, isCollaborator]);
 
   useEffect(() => {
     async function fetchData() {
