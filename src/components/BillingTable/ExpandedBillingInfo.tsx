@@ -8,7 +8,7 @@ import getConfig from 'next/config';
 import { InvoiceStateEnum } from './BillingTable';
 import { useSelector } from 'react-redux';
 import { selectUserProfile } from '../../../store/reducers/authReducer';
-import { createGdpEmailLogs } from '../../../services/gestionDeProjets/GdpEmailsLogs';
+import {createGdpEmailLogs, getGdpEmailsLogs} from '../../../services/gestionDeProjets/GdpEmailsLogs';
 import { messages } from '../../../constants/messages';
 import { GdpAffairsUsersModel } from '../../../models/GestionDeProjets/GdpAffairsUsersModel';
 import { getGdpPythagoreAffaire } from '../../../services/gestionDeProjets/GdpPythagoreAffairs';
@@ -61,6 +61,8 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
 
   const [isRequestBillingFileDone, setIsRequestBillingFileDone] = useState(false);
   const [isBillingFileCanBeFetch, setIsBillingFileCanBeFetch] = useState((soldeht_facture == 0 && soldettc_facture == 0 && etatreglt_facture == "Reglee"));
+  const [lastReminder, setLastReminder] = useState<Partial< GdpEmailsLogsModel> | undefined>(undefined);
+
   const urlToFile = `/export_factures/${nom_fichierpdf_facture.replaceAll("-", "_")}`
 
   if(isBillingFileCanBeFetch) {
@@ -127,10 +129,20 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
     invoiceState === 'late' ? 'alert' : invoiceState === 'soonToExpire' ? 'warning' : 'primary';
 
   useEffect(() => {
-    if (num_facture && isCollaborator) {
-      retrieveFacturesEmailsAlerts();
+    if(emails_logs !== undefined && (num_facture && isCollaborator))
+    {
+      if(emails_logs?.length && typeof emails_logs[emails_logs.length - 1] == 'number'){
+        let last_reminder_id = emails_logs[emails_logs.length - 1];
+
+        getGdpEmailsLogs({filter : {id : last_reminder_id}}).then((res) => {
+          if(isRequestSuccessful(res.status)){
+            setLastReminder(res?.data[0]);
+            setTimeSinceLastMail(Interval.fromDateTimes(DateTime.fromISO(res?.data[0].date_created), DateTime.now()).length('hours'));
+          }
+        })
+      }
     }
-  }, [num_facture, isCollaborator]);
+  }, [num_facture, isCollaborator, isRequestBillingFileDone]);
 
   useEffect(() => {
     async function fetchData() {
@@ -295,11 +307,9 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
         <div>
           <b>Derniere relance:</b>{' '}
           {`${
-            emails_logs &&
-            emails_logs.length > 0 &&
-            typeof emails_logs[0] !== 'number' &&
-            DateTime.fromJSDate(emails_logs[0].date_created).toLocaleString()
-              ? DateTime.fromJSDate(emails_logs[0].date_created).toLocaleString()
+              lastReminder &&
+              DateTime.fromISO(lastReminder?.date_created as string).toLocaleString()
+                  ? DateTime.fromISO(lastReminder.date_created as string).toLocaleString()
               : 'Aucune relance déclarée'
           }`}
         </div>
