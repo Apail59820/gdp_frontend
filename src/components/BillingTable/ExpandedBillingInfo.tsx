@@ -115,7 +115,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
       facture_id: num_facture,
       recipients: clientsEmails,
       status: 'draft',
-      type: 'invoice_manual_alert',
+      type: 'invoice_generated_alert',
     });
     if (factureEmailAlertResponse.status == 200) {
       message.success(messages.reminder.success);
