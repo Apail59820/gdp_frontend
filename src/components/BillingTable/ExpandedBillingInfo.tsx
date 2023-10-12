@@ -34,6 +34,7 @@ type props = {
   invoiceState: InvoiceStateEnum;
 };
 
+let timerSearch: NodeJS.Timeout;
 const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) => {
   const {
     num_facture,
@@ -139,11 +140,13 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
       a.href = url;
       a.download = nom_fichierpdf_facture;
       a.click();
-      setTimeout(() => {
+      timerSearch = setTimeout(() => {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-      }, 200)
-    }
+      clearTimeout(timerSearch);
+    }, 50)
+
+  }
   }
 
   const getButtonColor = () =>
