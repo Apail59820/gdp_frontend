@@ -3,10 +3,46 @@ import concatenateQueryParameters from '../../utils/queryParamsFormatter';
 import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
 import { GdpPythagoreFactureModel } from '../../models/GdPModels';
+import exp from "constants";
+import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
+
 
 const { publicRuntimeConfig } = getConfig();
 
 const defaultFields = ['*', 'num_affaire.*'].join(',');
+
+export async function downloadGdpPythagoreFacture(
+    urlToFile : string
+): Promise<{status: number, data?: Blob}> {
+
+  const token = await retrieveToken();
+
+  const reqHeaders = new Headers({
+    Authorization: `Bearer ${token}`,
+  });
+
+  const reqInit: RequestInit = {
+    method: 'GET',
+    headers: reqHeaders,
+    mode: 'cors',
+    cache: 'default',
+  };
+
+  return fetch(`http://localhost:3001/${urlToFile}`, reqInit).then(
+      (res) => {
+        if (isRequestSuccessful(res.status)) {
+          return res.blob().then((blob) => {
+            return {status: res.status, data: blob};
+          });
+        } else {
+          return {status: res.status}
+        }
+      }
+  ).catch(() => {
+    return {status: 500};
+  });
+}
+
 
 /**
  * Retrieve gdp pythagore factures respecting the query parameters.
