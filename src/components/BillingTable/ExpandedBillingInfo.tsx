@@ -389,13 +389,14 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
               </Button>
             </>
           )}
-            {isBillingFileCanBeFetch && isRequestBillingFileDone && (
+            { isBillingFileCanBeFetch && isRequestBillingFileDone && (
                 <Button
                     small={true}
-                    onClick={() => {downloadBilling()}}
-                >
-
-                </Button>)}
+                    onClick={() => {downloadBilling()}}>
+                  Télécharger la facture {nom_fichierpdf_facture}
+                </Button>
+              )
+            }
         </div>
       </div>
     </div>
