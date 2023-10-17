@@ -28,8 +28,9 @@ export async function downloadGdpPythagoreFacture(
     cache: 'default',
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_URL}/${urlToFile}`, reqInit).then(
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_URL}/api/download/${urlToFile}`, reqInit).then(
       (res) => {
+        console.log('res', res)
         if (isRequestSuccessful(res.status)) {
           return res.blob().then((blob) => {
             return {status: res.status, data: blob};

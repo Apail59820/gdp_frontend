@@ -65,7 +65,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
 
   const [isRequestBillingFileDone, setIsRequestBillingFileDone] = useState(false);
   const [isBillingFileCanBeFetch, setIsBillingFileCanBeFetch] = useState((soldeht_facture == 0 && soldettc_facture == 0 && etatreglt_facture == "Reglee"));
-  const urlToFile = `/export_factures/${nom_fichierpdf_facture.replaceAll("-", "_")}`
+  const urlToFile = `/${nom_fichierpdf_facture.replaceAll("-", "_")}`
   const [billingFile, setBillingFile] = useState<Blob | null>(null);
 
 
@@ -83,9 +83,6 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
         if(isRequestSuccessful(res?.status)){
           setIsRequestBillingFileDone(true);
           setBillingFile(res?.data);
-        }
-        else{
-
         }
       })
     }
