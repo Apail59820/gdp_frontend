@@ -29,17 +29,15 @@ type Props={
     setOpen:React.Dispatch<any>,
     disableButton?:boolean, //
 }
-const myCap=(user)=>{return user.first_name?
-    (capitalize(user.first_name)+' '+capitalize(user.last_name))
-    :user.first_name+' '+user.last_name}
+
 export default function Logo({user, setOpen, disableButton}:Props){
     const userId= user.id
     const {data} = useAsync({promiseFn: mineLogo, userId});
      if(data) {
         return (
             <div className={styles.line}> {/*TODO: Faire mieux que ça*/}
-                <span>{myCap(user)}</span>
-                <Popconfirm title={`Ajouter une entité à ${myCap(user)}?`}
+                <span>{capitalize(user.first_name)+' '+capitalize(user.last_name)}</span>
+                <Popconfirm title={`Ajouter une entité à ${capitalize(user.first_name)+' '+capitalize(user.last_name)}?`}
                             okText={'Oui'} onConfirm={()=>setOpen(true)}
                             cancelText={'Non'}>
 
