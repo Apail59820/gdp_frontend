@@ -6,7 +6,7 @@ import {GdpProjectsModel} from '../../../models/GestionDeProjets/GdpProjectsMode
 import {Button} from 'projex-ui';
 import {selectUsers} from '../../../store/reducers/usersReducer';
 import getConfig from 'next/config';
-import {MinusCircleOutlined} from '@ant-design/icons';
+import {CheckCircleTwoTone, MinusCircleOutlined} from '@ant-design/icons';
 import styles from './ManageAffairUsersForm.module.scss';
 import {UsUserModel} from '../../../models/UserService/UsUserModel';
 import {getUsUsers} from '../../../services/userService/UsUsers';
@@ -22,6 +22,8 @@ import {
   createGdpProjectUsersClients,
   deleteProjectsUsersClient,
 } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
+import Logo from "../LogoPersonalise/LogoPersonalise";
+import CreateClientEntity from "../CreateClientEntity/CreateClientEntity";
 
 const {publicRuntimeConfig} = getConfig();
 
@@ -46,11 +48,17 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
       (user) => user.role === publicRuntimeConfig[UserRoles[userType as keyof typeof UserRoles]]
     )
   );
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [currentUser, setCurrentUser] = useState<string>()
   const [affairUsers, setAffairUsers] = useState<Partial<UsUserModel>[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<Partial<string | undefined>[]>([]);
   const [affairDirectusUsersId, setAffairDirectusUsersId] = useState<string[]>([]);
 
   let timeout: ReturnType<typeof setTimeout> | null;
+  const makeSelectOptions = (user)=>{
+    return {label: <Logo user={user} setOpen={setIsCreateOpen}/>, value: user.id}
+  }
+  const selectOptions= users.map((user)=>makeSelectOptions(user))
 
   useEffect(() => {
     const tmpAffairDirectusUsersId: string[] = [];
@@ -344,67 +352,66 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
         </Form.Item>
         <Form.List name={'users'} initialValue={affairUsers.map((user) => ({user: user.id}))}>
           {(fields, {add, remove}) => (
-            <>
-              <p className={styles.customLabel}>{userType}</p>
-              {fields.map(({key, name, ...restFields}) => (
-                <div key={key} className={styles.formListItems}>
-                  <Form.Item className={styles.formItem} {...restFields} name={[name, 'user']}>
-                    <Select
-                      showSearch
-                      showArrow={false}
-                      filterOption={false}
-                      placeholder={'Sélectionnez un ' + userType}
-                      options={users.map((user) => ({
-                        label: user.first_name + ' ' + user.last_name,
-                        value: user.id,
-                        disabled: selectedUsers
-                          .filter((user) => users.map((user) => user.id).includes(user))
-                          .some((id) => id === user.id),
-                      }))}
-                      onSearch={(value) => {
-                        if (value.length > 2) {
-                          fetchData(
-                            getUsUsers,
-                            {
-                              filter: {
-                                _or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}],
-                              },
-                            },
-                            setUsers
-                          ).catch((err) => console.error(err));
-                        }
-                      }}
-                      onChange={(value) => {
-                        if (value) {
-                          const tmp = form.getFieldValue('users');
-                          setSelectedUsers(tmp.map((user: any) => user.responsable));
-                        }
-                      }}
-                      notFoundContent={
-                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucun utilisateur trouvé'}/>
-                      }
-                    />
-                  </Form.Item>
-                  <MinusCircleOutlined
-                    rev={undefined}
-                    onClick={() => {
-                      const tmp = [...selectedUsers];
-                      if (form.getFieldValue('users')[name]) {
-                        const index = tmp.indexOf(form.getFieldValue('users')[name].responsable);
-                        tmp.splice(index, 1);
-                        setSelectedUsers(tmp);
-                      }
-                      remove(name);
-                    }}
-                  />
-                </div>
-              ))}
-              <Form.Item>
-                <Button small onClick={() => add()} style={'text'}>
-                  Ajouter un {userType}
-                </Button>
-              </Form.Item>
-            </>
+              <>
+                <p className={styles.customLabel}>{userType}</p>
+                {fields.map(({key, name, ...restFields}) => (
+                    <div key={key} className={styles.formListItems}>
+                      <Form.Item className={styles.formItem} {...restFields} name={[name, 'user']}>
+                        <Select
+                            size={'large'}
+                            showSearch
+                            allowClear
+                            menuItemSelectedIcon={<CheckCircleTwoTone rev={undefined}/>}
+                            filterOption={false}
+                            placeholder={'Sélectionnez un ' + userType}
+                            options={selectOptions} // [{label:'', value:''}]
+                            onSearch={(value) => {
+                              if (value.length > 2) {
+                                fetchData(
+                                    getUsUsers,
+                                    {
+                                      filter: {
+                                        _or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}],
+                                      },
+                                    },
+                                    setUsers
+                                ).catch((err) => console.error(err));
+                              }
+                            }}
+                            onChange={(value) => {
+                              if (value) {
+                                console.log( typeof value, value );
+                                setCurrentUser(value);
+                                const tmp = form.getFieldValue('users');
+                                setSelectedUsers(tmp.map((user: any) => user));
+                              }
+                            }}
+                            notFoundContent={
+                              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucun utilisateur trouvé'}/>
+                            }
+                        />
+                      </Form.Item>
+
+                      <MinusCircleOutlined
+                          rev={undefined} style={{color:'red'}}
+                          onClick={() => {
+                            const tmp = [...selectedUsers];
+                            if (form.getFieldValue('users')[name]) {
+                              const index = tmp.indexOf(form.getFieldValue('users')[name]);
+                              tmp.splice(index, 1);
+                              setSelectedUsers(tmp);
+                            }
+                            remove(name);
+                          }}
+                      />
+                    </div>
+                ))}
+                <Form.Item>
+                  <Button small onClick={() => add()} style={'text'}>
+                    Ajouter un {userType}
+                  </Button>
+                </Form.Item>
+              </>
           )}
         </Form.List>
         <footer className={styles.footer}>
@@ -416,6 +423,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
           </Button>
         </footer>
       </Form>
+      <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} client={currentUser}/>
     </Modal>
   );
 };
