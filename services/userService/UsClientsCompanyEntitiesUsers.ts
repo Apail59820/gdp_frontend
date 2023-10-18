@@ -3,6 +3,7 @@ import { QueryParameters } from '../../models/DirectusModel';
 import concatenateQueryParameters from '../../utils/queryParamsFormatter';
 import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
+import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -174,7 +175,7 @@ export async function updateUsClientCompanyEntityUser(
     myInit
   )
     .then((response) => {
-      if (response.status === 200) {
+      if (isRequestSuccessful( response.status )) {
         return response
           .json()
           .then((responseData: { data: UsClientsCompanyEntitiesUsersModel }) => {

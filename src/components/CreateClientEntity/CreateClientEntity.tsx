@@ -7,8 +7,10 @@ import Upload, { RcFile, UploadFile } from 'antd/lib/upload';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import {
     createUsClientCompanyEntity, getUsClientsCompanyEntities,
-    updateUsClientCompanyEntity //TODO: use this
 } from "../../../services/userService/UsClientsCompanyEntities";
+import {
+    getUsClientsCompanyEntitiesUsers, updateUsClientCompanyEntityUser
+} from '../../../services/userService/UsClientsCompanyEntitiesUsers'
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {createUsClientCompanyEntityUser} from "../../../services/userService/UsClientsCompanyEntitiesUsers";
 
@@ -86,26 +88,48 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, client = null }: CreateClie
         <div>{loadingImage && uploadProgress && <CircularProgressWithLabel value={uploadProgress} />}</div>
     );
 
-    const onFinish= (values: any)=>{
-        getUsClientsCompanyEntities({filter:{name:values.entityName}})
-            .then((res)=>{
-                if (isRequestSuccessful( res.status )&&res.data[0]?.id){
-                    const entityId = res.data[0].id;
-                    createUsClientCompanyEntityUser({
-                        clients_company_entities_id: entityId,
-                        directus_users_id: client,
-                        is_leader: null,
-                        is_current_job: true,
-                        job_title: '',
-                        start_date: undefined,
-                        end_date: undefined
+    const onFinish = (values: any)=>{
+        getUsClientsCompanyEntities({filter:{name:values.entityName}, fields:'id'})
+            .then(entityResult=>{
+                if( entityResult.data.length>0 ){// entity already exists
+                    console.log('/entity:exists')
+                    const entityId = entityResult.data[0].id
+                    getUsClientsCompanyEntitiesUsers({
+                        filter:{directus_users_id:client},
                     })
-                        .then((res)=>{
-                            if(isRequestSuccessful( res.status )){
-                                message.success('Client <— Entity');
+                        .then(associationResult=>{
+                            if(isRequestSuccessful( associationResult.status )){
+                                console.log('/client:associated')
+                                console.log(
+                                    associationResult.data
+                                    .filter(assoc=>assoc.is_current_job)
+                                )
+                                associationResult.data
+                                    .filter(assoc=>assoc.is_current_job)
+                                    .forEach(assoc=>{
+                                        console.log(new Date());
+                                        updateUsClientCompanyEntityUser(
+                                            `${assoc.id}`,
+                                            {end_date:new Date(),is_current_job:false})
+                                    })
                             }
                         })
-                } else {
+                        .finally(()=>{
+                            createUsClientCompanyEntityUser({
+                                is_leader: null,
+                                job_title: null,
+                                start_date: null,
+                                end_date: null,
+
+                                is_current_job: true,
+                                clients_company_entities_id: entityId,
+                                directus_users_id: client,
+                            })
+                                .then(createRes=>{
+                                    console.log(createRes)
+                                })
+                        })
+                } else {// entity doesn't exist
                     createUsClientCompanyEntity({
                         siren: values.siren,
                         name: values.entityName,
@@ -121,28 +145,47 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, client = null }: CreateClie
                         parameters: null,
                         users: null
                     })
-                        .then((res)=>{
-                            if(isRequestSuccessful( res.status )){
-                                message.success('okay okay')
-                                getUsClientsCompanyEntities({filter:{name:values.entityName}})
-                                    .then((res)=>{
-                                        const entityId = res.data[0].id;
-                                        createUsClientCompanyEntityUser({
-                                            clients_company_entities_id: entityId,
-                                            directus_users_id: client,
-                                            is_leader: null,
-                                            is_current_job: true,
-                                            job_title: '',
-                                            start_date: undefined,
-                                            end_date: undefined
-                                        })
-                                            .then((res)=>{
-                                                if(isRequestSuccessful( res.status )){
-                                                    message.success('Client <— Entity');
-                                                }
-                                            })
+                        .then(createRes=>{
+                            console.log("/entity:created")
+                            getUsClientsCompanyEntities({filter:{name:values.entityName}, fields:'id'})
+                                .then(entityResult=>{
+                                    const entityId = entityResult.data[0].id
+                                    getUsClientsCompanyEntitiesUsers({
+                                        filter:{directus_users_id:client},
                                     })
-                            }
+                                        .then(associationResult=>{
+                                            if(isRequestSuccessful( associationResult.status )){
+                                                console.log('/client:associated')
+                                                console.log(
+                                                    associationResult.data
+                                                        .filter(assoc=>assoc.is_current_job)
+                                                )
+                                                associationResult.data
+                                                    .filter(assoc=>assoc.is_current_job)
+                                                    .forEach(assoc=>{
+                                                        console.log(new Date());
+                                                        updateUsClientCompanyEntityUser(
+                                                            `${assoc.id}`,
+                                                            {end_date:new Date(),is_current_job:false})
+                                                    })
+                                            }
+                                        })
+                                        .finally(()=>{
+                                            createUsClientCompanyEntityUser({
+                                                is_leader: null,
+                                                job_title: null,
+                                                start_date: null,
+                                                end_date: null,
+
+                                                is_current_job: true,
+                                                clients_company_entities_id: entityId,
+                                                directus_users_id: client,
+                                            })
+                                                .then(createRes=>{
+                                                    console.log(createRes)
+                                                })
+                                        })
+                                })
                         })
                 }
             })
