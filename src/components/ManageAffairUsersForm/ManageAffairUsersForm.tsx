@@ -45,18 +45,25 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   const [affairs, setAffairs] = useState<Partial<GdpAffairModel>[]>([]);
   const [users, setUsers] = useState<Partial<UsUserModel>[]>(
     useSelector(selectUsers).filter(
-      (user) => user.role === publicRuntimeConfig[UserRoles[userType as keyof typeof UserRoles]]
+      (user) => (user.last_name!==null) && user.role === publicRuntimeConfig[UserRoles[userType as keyof typeof UserRoles]]
     )
   );
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [modif, setModif] = useState(false)
   const [currentUser, setCurrentUser] = useState<string>()
   const [affairUsers, setAffairUsers] = useState<Partial<UsUserModel>[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<Partial<string | undefined>[]>([]);
   const [affairDirectusUsersId, setAffairDirectusUsersId] = useState<string[]>([]);
 
   let timeout: ReturnType<typeof setTimeout> | null;
+
+  const addOrModifOpen = (bool:boolean)=>{
+    // (bool==true) <=> (client is already associated with an entity)
+    setModif(bool)
+    setIsCreateOpen(true);
+  }
   const makeSelectOptions = (user)=>{
-    return {label: <Logo user={user} setOpen={setIsCreateOpen}/>, value: user.id}
+    return {label: <Logo user={user} setOpen={addOrModifOpen}/>, value: user.id}
   }
   const selectOptions= users.map((user)=>makeSelectOptions(user))
 
@@ -310,6 +317,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
         });
       }
     }
+    setIsOpen(false);
   };
 
   return (
@@ -423,7 +431,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
           </Button>
         </footer>
       </Form>
-      <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} client={currentUser}/>
+      <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} modif={modif} client={currentUser}/>
     </Modal>
   );
 };

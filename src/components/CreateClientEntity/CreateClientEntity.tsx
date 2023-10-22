@@ -17,10 +17,13 @@ import {createUsClientCompanyEntityUser} from "../../../services/userService/UsC
 type CreateClientEntityFormProps = {
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    modif: boolean,
     client?: string
 };
 
-const CreateClientEntityForm = ({ isOpen, setIsOpen, client = null }: CreateClientEntityFormProps) => {
+const CreateClientEntityForm = ({ isOpen, setIsOpen, modif, client = null }: CreateClientEntityFormProps) => {
+    const [response, setResponse] = useState<{status: number, data?:{}}>({status:undefined})
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false)
     const [loading, setLoading] = useState<boolean>(false);
     const [assetPreview, setAssetPreview] = useState<string | undefined>(undefined);
     const [loadingImage, setLoadingImage] = useState<boolean>(false);
@@ -88,47 +91,51 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, client = null }: CreateClie
         <div>{loadingImage && uploadProgress && <CircularProgressWithLabel value={uploadProgress} />}</div>
     );
 
+    const entityExists = ()=>{
+        const entityId = response.data[0].id
+        getUsClientsCompanyEntitiesUsers({
+            filter:{directus_users_id:client},
+        })
+            .then(associationResult=>{
+                if(isRequestSuccessful( associationResult.status )){
+                    console.log('/client:associated')
+                    console.log(
+                        associationResult.data
+                            .filter(assoc=>assoc.is_current_job)
+                    )
+                    associationResult.data
+                        .filter(assoc=>assoc.is_current_job)
+                        .forEach(assoc=>{
+                            console.log(new Date());
+                            updateUsClientCompanyEntityUser(
+                                `${assoc.id}`,
+                                {end_date:new Date(),is_current_job:false})
+                        })
+                }
+            })
+            .finally(()=>{
+                createUsClientCompanyEntityUser({
+                    is_leader: null,
+                    job_title: null,
+                    start_date: null,
+                    end_date: null,
+
+                    is_current_job: true,
+                    clients_company_entities_id: entityId,
+                    directus_users_id: client,
+                })
+                    .then(createRes=>{
+                        console.log(createRes)
+                    })
+            })
+    }
     const onFinish = (values: any)=>{
-        getUsClientsCompanyEntities({filter:{name:values.entityName}, fields:'id'})
+        getUsClientsCompanyEntities({filter:{name:values.entityName}})
             .then(entityResult=>{
                 if( entityResult.data.length>0 ){// entity already exists
                     console.log('/entity:exists')
-                    const entityId = entityResult.data[0].id
-                    getUsClientsCompanyEntitiesUsers({
-                        filter:{directus_users_id:client},
-                    })
-                        .then(associationResult=>{
-                            if(isRequestSuccessful( associationResult.status )){
-                                console.log('/client:associated')
-                                console.log(
-                                    associationResult.data
-                                    .filter(assoc=>assoc.is_current_job)
-                                )
-                                associationResult.data
-                                    .filter(assoc=>assoc.is_current_job)
-                                    .forEach(assoc=>{
-                                        console.log(new Date());
-                                        updateUsClientCompanyEntityUser(
-                                            `${assoc.id}`,
-                                            {end_date:new Date(),is_current_job:false})
-                                    })
-                            }
-                        })
-                        .finally(()=>{
-                            createUsClientCompanyEntityUser({
-                                is_leader: null,
-                                job_title: null,
-                                start_date: null,
-                                end_date: null,
-
-                                is_current_job: true,
-                                clients_company_entities_id: entityId,
-                                directus_users_id: client,
-                            })
-                                .then(createRes=>{
-                                    console.log(createRes)
-                                })
-                        })
+                    setResponse(entityResult);
+                    setIsConfirmOpen(true)
                 } else {// entity doesn't exist
                     createUsClientCompanyEntity({
                         siren: values.siren,
@@ -187,17 +194,19 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, client = null }: CreateClie
                                         })
                                 })
                         })
+                    setIsOpen(false)
                 }
             })
     }
-
+    const title= modif?"Modifier l'entité":"Ajouter une entité";
+    const submitText= modif?"Modifier":"Créer";
     return (
         <Modal
             open={isOpen}
             closable
             destroyOnClose
             onCancel={() => setIsOpen(false)}
-            title={`Créer une entité cliente`}
+            title={`${title} cliente`}
             footer={null}
         >
             <Form name={'editUserProfil'} autoComplete={'off'} layout={'vertical'} onFinish={onFinish}>
@@ -277,10 +286,24 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, client = null }: CreateClie
 
                 <Form.Item>
                     <Button htmlType={'submit'} loading={loading} small>
-                        Créer l&apos;entité
+                        {`${submitText} l'entité`}
                     </Button>
                 </Form.Item>
             </Form>
+            <Modal closable destroyOnClose
+                   open={isConfirmOpen}
+                   footer={null}
+                   onCancel={()=>setIsConfirmOpen(false)}>
+                {`L'entitée "${response.data[0].name}" existe déjà`}
+                <div style={{display:'flex'}}>
+                    <Button small style={"primary"} onClick={()=>{setIsOpen(false);setIsConfirmOpen(false); entityExists()}}>
+                        Associer
+                    </Button>
+                    <Button small style={"text"} onClick={()=>setIsConfirmOpen(false)}>
+                        Annuler
+                    </Button>
+                </div>
+            </Modal>
         </Modal>
     );
 };

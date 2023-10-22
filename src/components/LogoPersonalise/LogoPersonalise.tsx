@@ -24,6 +24,10 @@ const mineLogo = async ({userId})=>{
     };
 }
 
+const addOrModif = (bool:boolean)=>{
+    return bool?"Modifier l'entité de":'Ajouter une entité à'
+}
+
 type Props={
     user:UsUserModel,
     setOpen:React.Dispatch<any>,
@@ -37,8 +41,8 @@ export default function Logo({user, setOpen, disableButton}:Props){
         return (
             <div className={styles.line}> {/*TODO: Faire mieux que ça*/}
                 <span>{capitalize(user.first_name)+' '+capitalize(user.last_name)}</span>
-                <Popconfirm title={`Ajouter une entité à ${capitalize(user.first_name)+' '+capitalize(user.last_name)}?`}
-                            okText={'Oui'} onConfirm={()=>setOpen(true)}
+                <Popconfirm title={`${addOrModif(data.display)} ${capitalize(user.first_name)+' '+capitalize(user.last_name)}?`}
+                            okText={'Oui'} onConfirm={()=>setOpen(data.display)}
                             cancelText={'Non'}>
 
                     <Button small style={'text'} disabled={disableButton}>
