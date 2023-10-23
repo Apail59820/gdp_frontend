@@ -75,13 +75,6 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   const selectOptions= users.map((user)=>makeSelectOptions(user))
 
   useEffect(() => {
-    const user = users.filter(user=>user.id===currentUser)[0]
-    if(user) {
-      const userName = capitalize(user.first_name) +' '+ capitalize(user.last_name);
-      setClientName(userName);
-    }
-  }, [currentUser]);
-  useEffect(() => {
     const tmpAffairDirectusUsersId: string[] = [];
     if (affair.affairs_directus_users_ids && affair.affairs_directus_users_ids.length > 0) {
       if (userType === 'collaborator') {
@@ -383,10 +376,10 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                             size={'large'}
                             showSearch
                             allowClear
-                            menuItemSelectedIcon={<CheckCircleTwoTone rev={undefined}/>}
+                            menuItemSelectedIcon={<CheckCircleTwoTone rev={undefined} twoToneColor={'#3FB1C9'}/>}
                             filterOption={false}
                             placeholder={'Sélectionnez un ' + userType}
-                            options={selectOptions} // [{label:'', value:''}]
+                            options={selectOptions}
                             onSearch={(value) => {
                               if (value.length > 2) {
                                 fetchData(
@@ -404,6 +397,11 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                               if (value) {
                                 console.log( typeof value, value );
                                 setCurrentUser(value);
+                                const user = users.filter(user=>user.id===currentUser)[0]
+                                if(user) {
+                                  const userName = capitalize(user.first_name) +' '+ capitalize(user.last_name);
+                                  setClientName(userName);
+                                }
                                 const tmp = form.getFieldValue('users');
                                 setSelectedUsers(tmp.map((user: any) => user));
                               }
@@ -415,7 +413,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                       </Form.Item>
 
                       <MinusCircleOutlined
-                          rev={undefined} style={{color:'red'}}
+                          rev={undefined} style={{color:'#B7011A'}}
                           onClick={() => {
                             const tmp = [...selectedUsers];
                             if (form.getFieldValue('users')[name]) {
@@ -446,8 +444,8 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
         </footer>
       </Form>
       <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} client={currentUser}/>
-      <ModifClientEntity isModifyOpen={isModifyOpen} setIsModifyOpen={setIsModifyOpen} clientName={clientName} />
-      <AddClientEntity isAddOpen={isAddOpen} setIsAddOpen={setIsAddOpen} clientName={clientName} />
+      <ModifClientEntity isModifyOpen={isModifyOpen} setIsModifyOpen={setIsModifyOpen} clientName={clientName} clientId={currentUser} />
+      <AddClientEntity isAddOpen={isAddOpen} setIsAddOpen={setIsAddOpen} clientName={clientName} clientId={currentUser} />
     </Modal>
   );
 };

@@ -7,6 +7,7 @@ import {Button} from "projex-ui";
 import React from "react";
 import {UsUserModel} from "../../../models/UserService/UsUserModel";
 import {capitalize} from "../../../utils/capitalize";
+import {PlusCircleOutlined} from "@ant-design/icons";
 
 const mineLogo = async ({userId})=>{
     let res = await getUsClientsCompanyEntitiesUsers({filter:{directus_users_id: userId, is_current_job: true}});
@@ -48,18 +49,10 @@ export default function Logo({user, setOpen, disableButton}:Props){
                                 onCancel={()=>{setOpen(false, false, true)}}
                     >
                         <Button small style={"text"}>
-                            -_-
+                            <PlusCircleOutlined style={{color:'#009C3E'}}/>
                         </Button>
                     </Popconfirm>
                 )}
-                {/*<Popconfirm title={`${addOrModif(data.display)} ${capitalize(user.first_name)+' '+capitalize(user.last_name)}?`}
-                            okText={'Oui'} onConfirm={()=>setOpen(data.display)}
-                            cancelText={'Non'}>
-
-                    <Button small style={'text'} disabled={disableButton}>
-                        {data.display?(<p>{data.entite.toString()}</p>):(<p>-_-</p>)}
-                    </Button>
-                </Popconfirm>*/}
             </div>
         )
     }
