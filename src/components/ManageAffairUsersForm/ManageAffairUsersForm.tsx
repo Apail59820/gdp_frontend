@@ -28,6 +28,7 @@ import ModifClientEntity from "../ModifClientEntity/ModifClientEntity";
 import {getUsClientsCompanyEntitiesUsers} from "../../../services/userService/UsClientsCompanyEntitiesUsers";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {capitalize} from "../../../utils/capitalize";
+import {AddClientEntity} from "../AddClientEntity/AddClientEntity";
 
 const {publicRuntimeConfig} = getConfig();
 
@@ -54,41 +55,30 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   );
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isModifyOpen, setIsModifyOpen] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<string>();
   const [clientName, setClientName] = useState<string>();
-  const [isAlreadyAssociated, setIsAlreadyAssociated] = useState(false);
   const [affairUsers, setAffairUsers] = useState<Partial<UsUserModel>[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<Partial<string | undefined>[]>([]);
   const [affairDirectusUsersId, setAffairDirectusUsersId] = useState<string[]>([]);
 
   let timeout: ReturnType<typeof setTimeout> | null;
 
-  const addOrModifOpen = (isOpenModify:boolean, isOpenCreate:boolean)=>{
-    setIsModifyOpen(isOpenModify)
+  const addOrModifyOpen = (isOpenModify:boolean, isOpenCreate:boolean, isAddOpen: boolean)=>{
+    setIsModifyOpen(isOpenModify);
     setIsCreateOpen(isOpenCreate);
+    setIsAddOpen(isAddOpen);
   }
   const makeSelectOptions = (user)=>{
-    return {label: <Logo user={user} setOpen={addOrModifOpen}/>, value: user.id}
+    return {label: <Logo user={user} setOpen={addOrModifyOpen}/>, value: user.id}
   }
   const selectOptions= users.map((user)=>makeSelectOptions(user))
 
   useEffect(() => {
     const user = users.filter(user=>user.id===currentUser)[0]
     if(user) {
-      const userName = capitalize(user?.first_name) + capitalize(user?.last_name);
+      const userName = capitalize(user.first_name) +' '+ capitalize(user.last_name);
       setClientName(userName);
-      getUsClientsCompanyEntitiesUsers({filter: {directus_users_id: currentUser, is_current_job: true}})
-          .then(res => {
-            if (isRequestSuccessful(res.status)) {
-              if (res.data.length > 0) {
-                setIsAlreadyAssociated(true);
-              }
-            } else {
-              setIsAlreadyAssociated(false);
-            }
-          })
-          .finally(() => {
-          })
     }
   }, [currentUser]);
   useEffect(() => {
@@ -456,7 +446,8 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
         </footer>
       </Form>
       <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} client={currentUser}/>
-      <ModifClientEntity isModifyOpen={isModifyOpen} setIsModifyOpen={setIsModifyOpen} clientName={clientName} isAlreadyAssociated={isAlreadyAssociated} />
+      <ModifClientEntity isModifyOpen={isModifyOpen} setIsModifyOpen={setIsModifyOpen} clientName={clientName} />
+      <AddClientEntity isAddOpen={isAddOpen} setIsAddOpen={setIsAddOpen} clientName={clientName} />
     </Modal>
   );
 };

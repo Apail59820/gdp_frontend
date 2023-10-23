@@ -26,7 +26,7 @@ const mineLogo = async ({userId})=>{
 
 type Props={
     user:UsUserModel,
-    setOpen:(isOpenModif:boolean, isOpenCreate:boolean)=>void,
+    setOpen:(isOpenModify:boolean, isOpenCreate:boolean, isAddOpen: boolean)=>void,
     disableButton?:boolean, //
 }
 
@@ -38,13 +38,14 @@ export default function Logo({user, setOpen, disableButton}:Props){
             <div className={styles.line}> {/*TODO: Faire mieux que ça*/}
                 <span>{capitalize(user.first_name)+' '+capitalize(user.last_name)}</span>
                 {data.display?(
-                    <Button small style={"text"} onClick={()=>setOpen(true, false)}>
+                    <Button small style={"text"} onClick={()=>setOpen(true, false, false)}>
                         {data.entite.toString()}
                     </Button>
                 ):(
                     <Popconfirm title={"Créer une entité ou sélectionner une entité existante ?"}
                                 okText={"Créer"} cancelText={"Sélectionner"}
-                                //okButtonProps={}
+                                onConfirm={()=>{setOpen(false, true, false)}}
+                                onCancel={()=>{setOpen(false, false, true)}}
                     >
                         <Button small style={"text"}>
                             -_-

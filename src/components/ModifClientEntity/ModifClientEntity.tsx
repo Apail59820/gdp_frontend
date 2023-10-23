@@ -13,49 +13,55 @@ type props={
     isModifyOpen: boolean,
     setIsModifyOpen: React.Dispatch<boolean>,
     clientName: string,
-    isAlreadyAssociated: boolean,
+    title ?: string,
 }
 
-const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, isAlreadyAssociated}:props)=>{
+const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, title="Modifier l'entité de"}:props)=>{
     const [companyEntities, setCompanyEntities] = useState([])
-    const title = isAlreadyAssociated?"Modifier l'entité de":"Ajouter une entité à";
     getUsClientsCompanyEntities().then(res=>{
         if(isRequestSuccessful( res.status )){
             setCompanyEntities(res.data);
         }
     })
+
+    const onFinish = (values)=>{
+        console.log(values.entity);
+        setIsModifyOpen(false);
+    }
+
     return <>
         <Modal closable destroyOnClose footer={null}
                open={isModifyOpen}
                onCancel={()=>setIsModifyOpen(false)}
                title={`${title} ${clientName}`}
         >
-            <Form.Item
-                label={'Entité'}
-                name={'entity'}
-                id={'entity'}
-                rules={[
-                    {
-                        required: true,
-                        message: 'Veuillez sélectionner une entité.',
-                    },
-                ]}
-            >
-                <Select showSearch
-                        placeholder={"Sélectionnez une entité cliente"}
-                        options={companyEntities?.map((entity: Partial<UsClientsCompanyEntitiesModel>) => {
-                            return {
-                                label: entity.name,
-                                value: entity.id,
-                            };
-                        })}
-                />
-            </Form.Item>
+            <Form onFinish={onFinish}>
+                <Form.Item
+                    label={'Entité'}
+                    name={'entity'}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Veuillez sélectionner une entité.',
+                        },
+                    ]}
+                >
+                    <Select showSearch
+                            placeholder={"Sélectionnez une entité cliente"}
+                            options={companyEntities?.map((entity: Partial<UsClientsCompanyEntitiesModel>) => {
+                                return {
+                                    label: entity.name,
+                                    value: entity.id,
+                                };
+                            })}
+                    />
+                </Form.Item>
 
-            <div style={{display:"flex"}}>
-                <Button small style={"primary"}>Ayé</Button>
-                <Button small style={"text"}>Annuler</Button>
-            </div>
+                <div style={{display:"flex"}}>
+                    <Button small htmlType={"submit"}>Confirmer</Button>
+                    <Button small style={"text"}>Annuler</Button>
+                </div>
+            </Form>
         </Modal>
     </>
 }
