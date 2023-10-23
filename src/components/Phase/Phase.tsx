@@ -22,6 +22,7 @@ import getConfig from 'next/config';
 import { useSelector } from 'react-redux';
 import { selectUserProfile } from '../../../store/reducers/authReducer';
 import Link from 'next/link';
+import {message} from "antd";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -156,21 +157,20 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, fi
             <h2 className={styles.title}>{phase.name}</h2>
             <div className={styles.descriptionContainer}>
               <p>{phase.description}</p>
-
-              <button
-                className={`text-small ${styles.editButton}`}
-                onClick={() => {
-                  setIsOpen(true);
-                }}
-              >
-                <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M10.668 1.92188C11.0781 2.35156 11.0781 3.03516 10.668 3.46484L4.55469 9.57812C4.32031 9.79297 4.04688 9.96875 3.75391 10.0469L1.39062 10.75C1.27344 10.7695 1.15625 10.75 1.07812 10.6719C1 10.5938 0.960938 10.4766 1 10.3594L1.70312 7.99609C1.78125 7.70312 1.95703 7.42969 2.17188 7.19531L8.28516 1.08203C8.71484 0.671875 9.39844 0.671875 9.82812 1.08203L10.668 1.92188ZM7.66016 2.60547L9.14453 4.08984L10.2188 3.03516C10.3945 2.83984 10.3945 2.54688 10.2188 2.37109L9.37891 1.53125C9.20312 1.35547 8.91016 1.35547 8.71484 1.53125L7.66016 2.60547ZM7.21094 3.03516L2.62109 7.64453C2.46484 7.78125 2.34766 7.97656 2.28906 8.17188L1.76172 9.98828L3.57812 9.46094C3.77344 9.40234 3.96875 9.28516 4.10547 9.12891L8.69531 4.53906L7.21094 3.03516Z"
-                    fill="#002559"
-                  />
-                </svg>
-                Modifier l&apos;étape
-              </button>
+              {(phase.user_created == user.id) && (
+                  <button
+                      className={`text-small ${styles.editButton}`}
+                      onClick={() => {setIsOpen(true);}}
+                  >
+                    <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                          d="M10.668 1.92188C11.0781 2.35156 11.0781 3.03516 10.668 3.46484L4.55469 9.57812C4.32031 9.79297 4.04688 9.96875 3.75391 10.0469L1.39062 10.75C1.27344 10.7695 1.15625 10.75 1.07812 10.6719C1 10.5938 0.960938 10.4766 1 10.3594L1.70312 7.99609C1.78125 7.70312 1.95703 7.42969 2.17188 7.19531L8.28516 1.08203C8.71484 0.671875 9.39844 0.671875 9.82812 1.08203L10.668 1.92188ZM7.66016 2.60547L9.14453 4.08984L10.2188 3.03516C10.3945 2.83984 10.3945 2.54688 10.2188 2.37109L9.37891 1.53125C9.20312 1.35547 8.91016 1.35547 8.71484 1.53125L7.66016 2.60547ZM7.21094 3.03516L2.62109 7.64453C2.46484 7.78125 2.34766 7.97656 2.28906 8.17188L1.76172 9.98828L3.57812 9.46094C3.77344 9.40234 3.96875 9.28516 4.10547 9.12891L8.69531 4.53906L7.21094 3.03516Z"
+                          fill="#002559"
+                      />
+                    </svg>
+                    Modifier l&apos;étape
+                  </button>
+              )}
             </div>
 
             {(user?.role === publicRuntimeConfig.ROLE_COLLABORATOR_ID ||

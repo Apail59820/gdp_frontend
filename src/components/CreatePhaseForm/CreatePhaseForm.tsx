@@ -134,7 +134,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
       open={isOpen}
       closable
       onCancel={() => setIsOpen(false)}
-      title={`${phase ? `Modiifer l'étape ${phase.name}` : `Créer une étape pour l'affaire ${affair.name}`}`}
+      title={`${phase ? `Modifier l'étape ${phase.name}` : `Créer une étape pour l'affaire ${affair.name}`}`}
       footer={null}
       destroyOnClose
     >
