@@ -260,7 +260,7 @@ const Affair = () => {
   useEffect(() => {
     setIsUserClient(false);
     if (affair.id && me && me.id) {
-      getGdpProjectsUsersClients({ filter: { projects_id: { _eq: affair.id } } }).then((response) => {
+      getGdpProjectsUsersClients({ filter: { affairs_id: { _eq: affair.id } } }).then((response) => {
         if (response.status === 200 && response.data) {
           const clientsToRetrieve: string[] = [];
           const clients: Partial<UsUserModel>[] = [];
@@ -286,7 +286,7 @@ const Affair = () => {
         }
       });
     }
-  }, [affair, me]);
+  }, [affair, me, affairClients]);
 
   // Retrieve activities
   useEffect(() => {
