@@ -8,7 +8,7 @@ import getConfig from 'next/config';
 import { InvoiceStateEnum } from './BillingTable';
 import { useSelector } from 'react-redux';
 import { selectUserProfile } from '../../../store/reducers/authReducer';
-import { createGdpEmailLogs } from '../../../services/gestionDeProjets/GdpEmailsLogs';
+import {createGdpEmailLogs, getGdpEmailsLogs} from '../../../services/gestionDeProjets/GdpEmailsLogs';
 import { messages } from '../../../constants/messages';
 import { GdpAffairsUsersModel } from '../../../models/GestionDeProjets/GdpAffairsUsersModel';
 import { getGdpPythagoreAffaire } from '../../../services/gestionDeProjets/GdpPythagoreAffairs';
@@ -19,7 +19,7 @@ import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProject
 import { GdpProjectsClientsModel } from '../../../models/GestionDeProjets/GdpProjectsClientsModel';
 import { getGdpProjectsUsersClients } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
 import Link from 'next/link';
-import {useRouter} from "next/router";
+import {GdpEmailsLogsModel} from "../../../models/GestionDeProjets/GdpEmailsLogsModel";
 import {retrieveToken} from "../../../services/auth";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {blob} from "stream/consumers";
@@ -72,7 +72,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
   async function retrieveFacturesEmailsAlerts() {
     if (emails_logs && emails_logs.length > 0 && typeof emails_logs[0] !== 'number') {
       setTimeSinceLastMail(
-        Interval.fromDateTimes(DateTime.fromJSDate(emails_logs[0].date_created), DateTime.now()).length('hours'),
+        Interval.fromDateTimes(DateTime.fromISO(emails_logs[0].date_created as string), DateTime.now()).length('hours'),
       );
     } else setTimeSinceLastMail(null);
   }
@@ -103,9 +103,14 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
       type: 'invoice_manual_alert',
     });
     if (factureEmailAlertResponse.status == 200) {
-      message.success(messages.reminder.success);
+      message.success(messages.reminder.manual.success);
       setTimeSinceLastMail(0);
-    } else message.error(messages.reminder.error);
+      if(factureEmailAlertResponse?.data){
+        setLastReminder(factureEmailAlertResponse.data);
+      }
+    } else message.error(messages.reminder.manual.error);
+
+    setIsModalOpen(false);
   }
 
   async function sendAutomaticFactureEmailAlert() {
@@ -120,12 +125,17 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
       facture_id: num_facture,
       recipients: clientsEmails,
       status: 'draft',
-      type: 'invoice_manual_alert',
+      type: 'invoice_generated_alert',
     });
     if (factureEmailAlertResponse.status == 200) {
-      message.success(messages.reminder.success);
+      message.success(messages.reminder.generated.success);
       setTimeSinceLastMail(0);
-    } else message.error(messages.reminder.error);
+      if(factureEmailAlertResponse?.data){
+        setLastReminder(factureEmailAlertResponse.data);
+      }
+    } else message.error(messages.reminder.generated.error);
+
+    setIsModalOpen(false);
   }
 
   const downloadBilling = () => {
@@ -150,8 +160,18 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
     invoiceState === 'late' ? 'alert' : invoiceState === 'soonToExpire' ? 'warning' : 'primary';
 
   useEffect(() => {
-    if (num_facture && isCollaborator) {
-      retrieveFacturesEmailsAlerts();
+    if(emails_logs !== undefined && (num_facture && isCollaborator))
+    {
+      if(emails_logs?.length && typeof emails_logs[emails_logs.length - 1] == 'number'){
+        let last_reminder_id = emails_logs[emails_logs.length - 1];
+
+        getGdpEmailsLogs({filter : {id : last_reminder_id}}).then((res) => {
+          if(isRequestSuccessful(res.status)){
+            setLastReminder(res?.data[0]);
+            setTimeSinceLastMail(Interval.fromDateTimes(DateTime.fromISO(res?.data[0].date_created), DateTime.now()).length('hours'));
+          }
+        })
+      }
     }
   }, [num_facture, isCollaborator]);
 
@@ -318,11 +338,9 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
         <div>
           <b>Derniere relance:</b>{' '}
           {`${
-            emails_logs &&
-            emails_logs.length > 0 &&
-            typeof emails_logs[0] !== 'number' &&
-            DateTime.fromJSDate(emails_logs[0].date_created).toLocaleString()
-              ? DateTime.fromJSDate(emails_logs[0].date_created).toLocaleString()
+              lastReminder &&
+              DateTime.fromISO(lastReminder?.date_created as string).toLocaleString()
+                  ? DateTime.fromISO(lastReminder.date_created as string).toLocaleString()
               : 'Aucune relance déclarée'
           }`}
         </div>

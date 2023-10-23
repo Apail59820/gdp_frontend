@@ -67,8 +67,14 @@ export const messages = {
   },
 
   reminder: {
-    success: 'Envoi de relance manuelle enregistré !',
-    error: "Échec de l'enregistrement de la relance manuelle.",
+    manual: {
+      success: 'Envoi de relance manuelle enregistré !',
+      error: "Échec de l'enregistrement de la relance manuelle.",
+    },
+    generated: {
+      success: 'Envoi de relance automatique enregistré !',
+      error: "Échec de l'enregistrement de la relance automatique.",
+    }
   },
 
   satisfaction: {
