@@ -17,11 +17,11 @@ import {createUsClientCompanyEntityUser} from "../../../services/userService/UsC
 type CreateClientEntityFormProps = {
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    modif: boolean,
+   // modif: boolean,
     client?: string
 };
 
-const CreateClientEntityForm = ({ isOpen, setIsOpen, modif, client = null }: CreateClientEntityFormProps) => {
+const CreateClientEntityForm = ({ isOpen, setIsOpen, client = null }: CreateClientEntityFormProps) => {
     const [response, setResponse] = useState<{status: number, data?:{}}>({status:undefined})
     const [isConfirmOpen, setIsConfirmOpen] = useState(false)
     const [loading, setLoading] = useState<boolean>(false);
@@ -198,15 +198,14 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, modif, client = null }: Cre
                 }
             })
     }
-    const title= modif?"Modifier l'entité":"Ajouter une entité";
-    const submitText= modif?"Modifier":"Créer";
+
     return (
         <Modal
             open={isOpen}
             closable
             destroyOnClose
             onCancel={() => setIsOpen(false)}
-            title={`${title} cliente`}
+            title={"Ajouter une entité cliente"}
             footer={null}
         >
             <Form name={'editUserProfil'} autoComplete={'off'} layout={'vertical'} onFinish={onFinish}>
@@ -286,7 +285,7 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, modif, client = null }: Cre
 
                 <Form.Item>
                     <Button htmlType={'submit'} loading={loading} small>
-                        {`${submitText} l'entité`}
+                        {"Créer l'entité"}
                     </Button>
                 </Form.Item>
             </Form>
@@ -294,7 +293,7 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, modif, client = null }: Cre
                    open={isConfirmOpen}
                    footer={null}
                    onCancel={()=>setIsConfirmOpen(false)}>
-                {`L'entitée "${response.data[0].name}" existe déjà`}
+                {response.data&&`L'entitée "${response?.data[0].name}" existe déjà`}
                 <div style={{display:'flex'}}>
                     <Button small style={"primary"} onClick={()=>{setIsOpen(false);setIsConfirmOpen(false); entityExists()}}>
                         Associer

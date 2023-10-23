@@ -24,6 +24,10 @@ import {
 } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
 import Logo from "../LogoPersonalise/LogoPersonalise";
 import CreateClientEntity from "../CreateClientEntity/CreateClientEntity";
+import ModifClientEntity from "../ModifClientEntity/ModifClientEntity";
+import {getUsClientsCompanyEntitiesUsers} from "../../../services/userService/UsClientsCompanyEntitiesUsers";
+import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
+import {capitalize} from "../../../utils/capitalize";
 
 const {publicRuntimeConfig} = getConfig();
 
@@ -48,25 +52,45 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
       (user) => (user.last_name!==null) && user.role === publicRuntimeConfig[UserRoles[userType as keyof typeof UserRoles]]
     )
   );
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [modif, setModif] = useState(false)
-  const [currentUser, setCurrentUser] = useState<string>()
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isModifyOpen, setIsModifyOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<string>();
+  const [clientName, setClientName] = useState<string>();
+  const [isAlreadyAssociated, setIsAlreadyAssociated] = useState(false);
   const [affairUsers, setAffairUsers] = useState<Partial<UsUserModel>[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<Partial<string | undefined>[]>([]);
   const [affairDirectusUsersId, setAffairDirectusUsersId] = useState<string[]>([]);
 
   let timeout: ReturnType<typeof setTimeout> | null;
 
-  const addOrModifOpen = (bool:boolean)=>{
-    // (bool==true) <=> (client is already associated with an entity)
-    setModif(bool)
-    setIsCreateOpen(true);
+  const addOrModifOpen = (isOpenModify:boolean, isOpenCreate:boolean)=>{
+    setIsModifyOpen(isOpenModify)
+    setIsCreateOpen(isOpenCreate);
   }
   const makeSelectOptions = (user)=>{
     return {label: <Logo user={user} setOpen={addOrModifOpen}/>, value: user.id}
   }
   const selectOptions= users.map((user)=>makeSelectOptions(user))
 
+  useEffect(() => {
+    const user = users.filter(user=>user.id===currentUser)[0]
+    if(user) {
+      const userName = capitalize(user?.first_name) + capitalize(user?.last_name);
+      setClientName(userName);
+      getUsClientsCompanyEntitiesUsers({filter: {directus_users_id: currentUser, is_current_job: true}})
+          .then(res => {
+            if (isRequestSuccessful(res.status)) {
+              if (res.data.length > 0) {
+                setIsAlreadyAssociated(true);
+              }
+            } else {
+              setIsAlreadyAssociated(false);
+            }
+          })
+          .finally(() => {
+          })
+    }
+  }, [currentUser]);
   useEffect(() => {
     const tmpAffairDirectusUsersId: string[] = [];
     if (affair.affairs_directus_users_ids && affair.affairs_directus_users_ids.length > 0) {
@@ -431,7 +455,8 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
           </Button>
         </footer>
       </Form>
-      <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} modif={modif} client={currentUser}/>
+      <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} client={currentUser}/>
+      <ModifClientEntity isModifyOpen={isModifyOpen} setIsModifyOpen={setIsModifyOpen} clientName={clientName} isAlreadyAssociated={isAlreadyAssociated} />
     </Modal>
   );
 };
