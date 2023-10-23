@@ -43,7 +43,8 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   const [affairs, setAffairs] = useState<Partial<GdpAffairModel>[]>([]);
   const [users, setUsers] = useState<Partial<UsUserModel>[]>(
     useSelector(selectUsers).filter(
-      (user) => user.role === publicRuntimeConfig[UserRoles[userType as keyof typeof UserRoles]]
+      (user) =>
+          (user.last_name!==null)&&(user.role === publicRuntimeConfig[UserRoles[userType as keyof typeof UserRoles]])
     )
   );
   const [affairUsers, setAffairUsers] = useState<Partial<UsUserModel>[]>([]);
@@ -306,7 +307,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
 
   return (
     <Modal
-      title={`Gèrer l'équipe`}
+      title={`Gérer l'équipe`}
       open={isOpen}
       closable
       onCancel={() => setIsOpen(false)}
