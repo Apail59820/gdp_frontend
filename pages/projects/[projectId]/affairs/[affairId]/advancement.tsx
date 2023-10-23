@@ -1,15 +1,11 @@
 import {PlusOutlined} from '@ant-design/icons';
 import {Breadcrumb, Button} from 'projex-ui';
-import React, {createContext, useContext, useEffect, useState} from 'react';
-import {CompanyEnum} from '../../../../../models/UsModels';
+import React, {createContext, useEffect, useState} from 'react';
 import ActivitiesWidget from '../../../../../src/components/ActivitiesWidget/ActivitiesWidget';
 import PageHeaderBanner from '../../../../../src/components/PageHeaderBanner/PageHeaderBanner';
 import Phase from '../../../../../src/components/Phase/Phase';
 import styles from '../../../../../styles/Advancement.module.scss';
-import {useDispatch, useSelector} from 'react-redux';
-import {selectGlobalFilters} from '../../../../../store/reducers/globalFilterReducer';
-import {selectProjects, selectProjectsCount, setProjects} from '../../../../../store/reducers/projectsReducer';
-import {globalAgent} from 'http';
+import {useSelector} from 'react-redux';
 import {useRouter} from 'next/router';
 import {
   GdpActivitiesModel,
@@ -19,21 +15,13 @@ import {
   GdpProjectsModel,
   GdpSatisfactionModel,
 } from '../../../../../models/GdPModels';
-import {getGdpProjectById} from '../../../../../services/gestionDeProjets/GdpProjects';
-import {getUsCompanyEntity} from '../../../../../services/userService/UsCompanyEntities';
 import {getGdpAffair} from '../../../../../services/gestionDeProjets/GdpAffairs';
-import {selectAffairs} from '../../../../../store/reducers/affairsReducer';
-import {getGdpAffairsPhases} from '../../../../../services/gestionDeProjets/GdpPhases';
-import {getGdpFiles} from '../../../../../services/gestionDeProjets/GdpFiles';
 import {isRequestSuccessful} from '../../../../../utils/isRequestSuccessful';
-import {getGdpActivities} from '../../../../../services/gestionDeProjets/GdpActivities';
 import CreatePhaseForm from '../../../../../src/components/CreatePhaseForm/CreatePhaseForm';
 import {selectUserProfile} from '../../../../../store/reducers/authReducer';
 import {getGdpSatisfactions} from '../../../../../services/gestionDeProjets/GdpAffairsSatisfaction';
 import getConfig from 'next/config';
-
-const {publicRuntimeConfig} = getConfig();
-
+import {capitalize} from "../../../../../utils/capitalize";
 interface IsatisfactionContext {
   setHasSubmitSatisfaction: React.Dispatch<React.SetStateAction<boolean>>;
   hasSubmitSatisfaction: boolean;
@@ -143,7 +131,7 @@ const Advancement = () => {
           <div className={styles.advancementPage}>
             <Breadcrumb dynamicRoutesLabel={[project.name!, affair.name!]}/>
             <div className={styles.head}>
-              <h1>Nom de l&apos;affaire - Avancement</h1>
+              <h1>{capitalize(affair?.name ? affair.name : "Nom du projet")} - Avancement</h1>
               <Button
                 small
                 icon={<PlusOutlined rev={undefined}/>}

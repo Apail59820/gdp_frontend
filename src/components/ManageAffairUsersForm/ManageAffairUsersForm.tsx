@@ -314,6 +314,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
           valuesToAdd.map((value: any) => ({
             projects_id: typeof affair.projects_id !== 'number' ? affair.projects_id?.id : affair.projects_id,
             directus_users_id: value.user,
+            affairs_id: affair.id
           }))
         ).then((res) => {
           if (res.status === 200) {
@@ -324,12 +325,13 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
         });
       }
     }
+
     setIsOpen(false);
   };
 
   return (
     <Modal
-      title={`Gèrer l'équipe`}
+      title={`Gérer l'équipe`}
       open={isOpen}
       closable
       onCancel={() => setIsOpen(false)}

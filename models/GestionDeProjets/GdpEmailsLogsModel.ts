@@ -9,7 +9,7 @@ export type GdpEmailsLogsModel = {
   status: string | null; //TODO Enum
 
   user_created: string;
-  date_created: Date;
+  date_created: Date | string;
 
   recipients: string[] | UsUserModel[];
   facture_id: string | GdpPythagoreFactureModel | null;

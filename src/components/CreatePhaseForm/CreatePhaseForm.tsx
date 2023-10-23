@@ -41,11 +41,11 @@ enum displayStatus {
 const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }: props) => {
   const statusOptions: GdpPhaseStatusEnum[] = Object.values(GdpPhaseStatusEnum);
   const [form] = Form.useForm();
-
   const [description, setDescription] = React.useState<string>('');
-
   useEffect(() => {
-    form.setFieldValue('description', description);
+    if(!phase) {
+      form.setFieldValue('description', description);
+    }
   }, [description, form]);
 
   const showConfirmDelete = () => {
@@ -134,7 +134,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
       open={isOpen}
       closable
       onCancel={() => setIsOpen(false)}
-      title={`${phase ? `Modiifer l'étape ${phase.name}` : `Créer une étape pour l'affaire ${affair.name}`}`}
+      title={`${phase ? `Modifier l'étape ${phase.name}` : `Créer une étape pour l'affaire ${affair.name}`}`}
       footer={null}
       destroyOnClose
     >

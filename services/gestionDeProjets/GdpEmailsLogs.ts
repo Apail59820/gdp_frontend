@@ -28,7 +28,7 @@ export async function getGdpEmailsLogs(
   };
 
   return fetch(
-    `${publicRuntimeConfig.DIRECTUS_HOST}/items/emails_logs?${concatenateQueryParameters(props)}`,
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/emails_logs?${concatenateQueryParameters(props)}`,
     myInit
   ).then((res) => {
     if (res.status == 200)
