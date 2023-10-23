@@ -22,6 +22,9 @@ import Link from 'next/link';
 import {GdpEmailsLogsModel} from "../../../models/GestionDeProjets/GdpEmailsLogsModel";
 import {retrieveToken} from "../../../services/auth";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
+import {blob} from "stream/consumers";
+import {downloadGdpPythagoreFacture} from "../../../services/gestionDeProjets/GdpPythagoreFactures";
+
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -31,6 +34,7 @@ type props = {
   invoiceState: InvoiceStateEnum;
 };
 
+let timerSearch: NodeJS.Timeout;
 const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) => {
   const {
     num_facture,
@@ -61,22 +65,9 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
 
   const [isRequestBillingFileDone, setIsRequestBillingFileDone] = useState(false);
   const [isBillingFileCanBeFetch, setIsBillingFileCanBeFetch] = useState((soldeht_facture == 0 && soldettc_facture == 0 && etatreglt_facture == "Reglee"));
-  const [lastReminder, setLastReminder] = useState<Partial< GdpEmailsLogsModel> | undefined>(undefined);
+  const urlToFile = `/${nom_fichierpdf_facture.replaceAll("-", "_")}`
+  const [billingFile, setBillingFile] = useState<Blob | null>(null);
 
-  const urlToFile = `/export_factures/${nom_fichierpdf_facture.replaceAll("-", "_")}`
-
-  if(isBillingFileCanBeFetch) {
-    (async () => {
-      const token = await retrieveToken();
-      const request = new XMLHttpRequest();
-      request.open( 'GET', urlToFile, true );
-      request.setRequestHeader( 'Authorization', `Bearer${token}`)
-      request.onload = ()=> {
-        setIsRequestBillingFileDone(isRequestSuccessful(request.status));
-      }
-      request.send();
-    })();
-  }
 
   async function retrieveFacturesEmailsAlerts() {
     if (emails_logs && emails_logs.length > 0 && typeof emails_logs[0] !== 'number') {
@@ -85,6 +76,18 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
       );
     } else setTimeSinceLastMail(null);
   }
+
+  useEffect(() => {
+    if(isBillingFileCanBeFetch && !isRequestBillingFileDone){
+      downloadGdpPythagoreFacture(urlToFile).then((res) => {
+        if(isRequestSuccessful(res?.status)){
+          setIsRequestBillingFileDone(true);
+          setBillingFile(res?.data);
+        }
+      })
+    }
+  }, [isBillingFileCanBeFetch]);
+
 
   async function declareManualFactureEmailAlert() {
     if (!num_facture) return;
@@ -133,6 +136,24 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
     } else message.error(messages.reminder.generated.error);
 
     setIsModalOpen(false);
+  }
+
+  const downloadBilling = () => {
+    if(billingFile)
+    {
+      const a = document.createElement('a');
+      document.body.appendChild(a);
+      const url = window.URL.createObjectURL(billingFile);
+      a.href = url;
+      a.download = nom_fichierpdf_facture;
+      a.click();
+      timerSearch = setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      clearTimeout(timerSearch);
+    }, 50)
+
+  }
   }
 
   const getButtonColor = () =>
@@ -383,12 +404,14 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
               </Button>
             </>
           )}
-            {isBillingFileCanBeFetch && isRequestBillingFileDone && (
-            <Button small>
-              <Link href={urlToFile} target="_blank"  download={nom_fichierpdf_facture.replaceAll("-", "_")}>
-                Télécharger la facture {nom_fichierpdf_facture}
-              </Link>
-            </Button>)}
+            { isBillingFileCanBeFetch && isRequestBillingFileDone && (
+                <Button
+                    small={true}
+                    onClick={() => {downloadBilling()}}>
+                  Télécharger la facture {nom_fichierpdf_facture}
+                </Button>
+              )
+            }
         </div>
       </div>
     </div>
