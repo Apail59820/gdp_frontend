@@ -68,7 +68,7 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
   const urlToFile = `/${nom_fichierpdf_facture.replaceAll("-", "_")}`
   const [billingFile, setBillingFile] = useState<Blob | null>(null);
 
-
+  const [lastReminder, setLastReminder] = useState<Partial<GdpEmailsLogsModel> | null>(null)
   async function retrieveFacturesEmailsAlerts() {
     if (emails_logs && emails_logs.length > 0 && typeof emails_logs[0] !== 'number') {
       setTimeSinceLastMail(
