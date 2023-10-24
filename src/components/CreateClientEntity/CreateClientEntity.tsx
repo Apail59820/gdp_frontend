@@ -93,7 +93,7 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, client = null }: CreateClie
         getUsClientsCompanyEntities({filter:{name: values.entityName}})
             .then(res=>{
                 console.log(res)
-                if(isRequestSuccessful( res.status )){
+                if(isRequestSuccessful( res.status ) && res.data.length>0){
                     message.error("Cette entité existe déjà")
                 } else {
                     createUsClientCompanyEntity({
