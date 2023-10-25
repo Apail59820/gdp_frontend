@@ -6,6 +6,8 @@ import { CompanyEnum } from '../../../models/UsModels';
 import Link from 'next/link';
 import { getAsset } from '../../../services/userService/UsAssets';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
+import userPlaceholderPicto from '../../../public/user-solid.svg';
+
 
 export type UserInformationsProps = {
   user: Partial<UsUserModel>;
@@ -41,7 +43,7 @@ const UserInformations = ({ user }: UserInformationsProps) => {
   };
   return (
     <div className={styles.userInformations}>
-      <img className={styles.image} src={currentUserAvatar} alt={`Photo de ${user.first_name} ${user.last_name}`} />
+      <img className={styles.image} src={currentUserAvatar || userPlaceholderPicto.src} alt={`Photo de ${user.first_name} ${user.last_name}`} />
       <div className={styles.informationsContainer}>
         <Link href={`/users/${user.id}`}>
           <h4 className={styles.name}>
