@@ -29,6 +29,8 @@ import {getUsClientsCompanyEntitiesUsers} from "../../../services/userService/Us
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {capitalize} from "../../../utils/capitalize";
 import {AddClientEntity} from "../AddClientEntity/AddClientEntity";
+import Link from "next/link";
+import {getUsClientsCompanyEntities} from "../../../services/userService/UsClientsCompanyEntities";
 
 const {publicRuntimeConfig} = getConfig();
 
@@ -69,10 +71,6 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
     setIsCreateOpen(isOpenCreate);
     setIsAddOpen(isAddOpen);
   }
-  const makeSelectOptions = (user)=>{
-    return {label: <Logo user={user} setOpen={addOrModifyOpen}/>, value: user.id}
-  }
-  const selectOptions= users.map((user)=>makeSelectOptions(user))
 
   useEffect(() => {
     const tmpAffairDirectusUsersId: string[] = [];
@@ -164,6 +162,35 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
       }
     }
   }, [affair.affairs_directus_users_ids, affair.projects_id, userType]);
+
+  const changeClientEntity = async (form, key : number) => {
+    const clientId : string = form.getFieldsValue('users').users[key]?.user;
+
+    let hasEntity = false;
+    let resUsName= await getUsUsers({filter:{id:clientId}});
+    let usName = 'undefined';
+
+    if(isRequestSuccessful(resUsName.status)){
+       usName = resUsName?.data[0].first_name + ' ' + resUsName?.data[0].last_name;
+    }
+    await getUsClientsCompanyEntitiesUsers({filter: {directus_users_id : clientId}}).then((res) => {
+      if(isRequestSuccessful(res.status)){
+        for(const result of res?.data){
+          if(result.is_current_job){
+            hasEntity = true;
+          }
+        }
+      }
+    }).finally(() => {
+      setCurrentUser(clientId);
+      if(hasEntity){
+        setClientName(usName);
+        setIsModifyOpen(true);
+      }else{
+        setIsCreateOpen(true);
+      }
+    });
+  }
 
   useEffect(() => {
     setSelectedUsers(affairUsers.map((user) => user.id));
@@ -372,61 +399,74 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
               <>
                 <p className={styles.customLabel}>{userType}</p>
                 {fields.map(({key, name, ...restFields}) => (
-                    <div key={key} className={styles.formListItems}>
-                      <Form.Item className={styles.formItem} {...restFields} name={[name, 'user']}>
-                        <Select
-                            size={'large'}
-                            showSearch
-                            allowClear
-                            menuItemSelectedIcon={<CheckCircleTwoTone rev={undefined} twoToneColor={'#3FB1C9'}/>}
-                            filterOption={false}
-                            placeholder={'Sélectionnez un ' + userType}
-                            options={selectOptions}
-                            onSearch={(value) => {
-                              if (value.length > 2) {
-                                fetchData(
-                                    getUsUsers,
-                                    {
-                                      filter: {
-                                        _or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}],
+                    <>
+                      <div style={{textAlign: 'right'}}>
+                        <Link href={'#'} onClick={() => changeClientEntity(form, name)}>
+                          Entité du client
+                        </Link>
+                      </div>
+                      <div key={key} className={styles.formListItems}>
+                        <Form.Item className={styles.formItem} {...restFields} name={[name, 'user']}>
+                          <Select
+                              size={'large'}
+                              showSearch
+                              allowClear
+                              menuItemSelectedIcon={<CheckCircleTwoTone rev={undefined} twoToneColor={'#3FB1C9'}/>}
+                              filterOption={false}
+                              placeholder={'Sélectionnez un ' + userType}
+                              options={users.map((user) => ({
+                                label: user.first_name + ' ' + user.last_name,
+                                value: user.id,
+                                disabled: selectedUsers
+                                    .filter((user) => users.map((user) => user.id).includes(user))
+                                    .some((id) => id === user.id),
+                              }))}
+                              onSearch={(value) => {
+                                if (value.length > 2) {
+                                  fetchData(
+                                      getUsUsers,
+                                      {
+                                        filter: {
+                                          _or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}],
+                                        },
                                       },
-                                    },
-                                    setUsers
-                                ).catch((err) => console.error(err));
-                              }
-                            }}
-                            onChange={(value) => {
-                              if (value) {
-                                console.log( typeof value, value );
-                                setCurrentUser(value);
-                                const user = users.filter(user=>user.id===currentUser)[0]
-                                if(user) {
-                                  const userName = capitalize(user.first_name) +' '+ capitalize(user.last_name);
-                                  setClientName(userName);
+                                      setUsers
+                                  ).catch((err) => console.error(err));
                                 }
-                                const tmp = form.getFieldValue('users');
-                                setSelectedUsers(tmp.map((user: any) => user));
+                              }}
+                              onChange={(value) => {
+                                if (value) {
+                                  console.log( typeof value, value );
+                                  setCurrentUser(value);
+                                  const user = users.filter(user=>user.id===currentUser)[0]
+                                  if(user) {
+                                    const userName = capitalize(user.first_name) +' '+ capitalize(user.last_name);
+                                    setClientName(userName);
+                                  }
+                                  const tmp = form.getFieldValue('users');
+                                  setSelectedUsers(tmp.map((user: any) => user));
+                                }
+                              }}
+                              notFoundContent={
+                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucun utilisateur trouvé'}/>
                               }
-                            }}
-                            notFoundContent={
-                              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucun utilisateur trouvé'}/>
-                            }
-                        />
-                      </Form.Item>
+                          />
+                        </Form.Item>
 
-                      <MinusCircleOutlined
-                          rev={undefined} style={{color:'#B7011A'}}
-                          onClick={() => {
-                            const tmp = [...selectedUsers];
-                            if (form.getFieldValue('users')[name]) {
-                              const index = tmp.indexOf(form.getFieldValue('users')[name]);
-                              tmp.splice(index, 1);
-                              setSelectedUsers(tmp);
-                            }
-                            remove(name);
-                          }}
-                      />
-                    </div>
+                        <MinusCircleOutlined
+                            rev={undefined} style={{color:'#B7011A'}}
+                            onClick={() => {
+                              const tmp = [...selectedUsers];
+                              if (form.getFieldValue('users')[name]) {
+                                const index = tmp.indexOf(form.getFieldValue('users')[name]);
+                                tmp.splice(index, 1);
+                                setSelectedUsers(tmp);
+                              }
+                              remove(name);
+                            }}
+                        />
+                      </div>
+                    </>
                 ))}
                 <Form.Item>
                   <Button small onClick={() => add()} style={'text'}>
