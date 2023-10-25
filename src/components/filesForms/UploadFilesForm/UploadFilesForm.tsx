@@ -18,6 +18,7 @@ import { isRequestSuccessful } from '../../../../utils/isRequestSuccessful';
 import { getGdpAffairs } from '../../../../services/gestionDeProjets/GdpAffairs';
 import { getGdpAffairsPhases } from '../../../../services/gestionDeProjets/GdpPhases';
 import FileInput from '../../FIleUpload/FileInput';
+import {AxiosProgressEvent} from "axios";
 
 export type UploadFilesFormPropsType = {
   isOpen: boolean;
@@ -74,6 +75,8 @@ export default function UploadFilesForm({
   const [showPropertiesFormOfFileIndex, setShowPropertiesFormOfFileIndex] = useState<number | undefined>();
   const [affairsOptions, setAffairsOptions] = useState<Partial<GdpAffairModel>[]>([]);
   const [phasesOptions, setPhasesOptions] = useState<Partial<GdpPhaseModel>[]>([]);
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setFileList(fileItems);
@@ -172,7 +175,6 @@ export default function UploadFilesForm({
         uploadState: fileItem.id === fileUID ? UploadStatusEnum.DONE : fileItem.uploadState,
       }));
       setFileList(updatedFileList);
-      onClose()
       if (onFileUpload) {
         onFileUpload();
       }
@@ -184,7 +186,6 @@ export default function UploadFilesForm({
         uploadState: fileItem.id === fileUID ? UploadStatusEnum.ERROR : fileItem.uploadState,
       }));
       setFileList(updatedFileList);
-      onClose()
       if (onFileUpload) {
         onFileUpload();
       }
@@ -193,6 +194,7 @@ export default function UploadFilesForm({
   };
 
   const handleUpload = async () => {
+    setIsLoading(true);
     setShowPropertiesFormOfFileIndex(undefined);
     const files = fileList.filter((fileItem) => fileItem.uploadState === UploadStatusEnum.PENDING);
     setFileList([
@@ -206,10 +208,13 @@ export default function UploadFilesForm({
     ]);
     await new Promise((resolve) => setTimeout(resolve, 500));
     let _fileList = [...fileList];
+
     for (let i = 0; i < files.length; i++) {
       _fileList = [...(await uploadOneFile(files[i].id, _fileList))];
     }
-    onClose()
+
+    setIsLoading(false);
+    onClose();
   };
 
   const handleCancel = () => {
@@ -328,10 +333,10 @@ export default function UploadFilesForm({
 
               {!edit && (
                   <div className={styles.UploadActionsButtons}>
-                    <Button style="primary" onClick={handleUpload} >
+                    <Button style="primary" onClick={handleUpload} loading={isLoading} >
                       Envoyer les fichiers
                     </Button>
-                    <Button style="text_gray" onClick={handleCancel}>
+                    <Button style="text_gray" onClick={handleCancel} loading={isLoading}>
                       Fermer
                     </Button>
                   </div>

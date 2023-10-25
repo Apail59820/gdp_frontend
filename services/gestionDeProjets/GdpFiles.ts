@@ -3,6 +3,8 @@ import { QueryParameters } from '../../models/DirectusModel';
 import concatenateQueryParameters from '../../utils/queryParamsFormatter';
 import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
+import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
+import axios, {AxiosProgressEvent} from "axios";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -179,34 +181,18 @@ export async function uploadGdpFile(
   }
 }
 
-/**
- * new Upload With Progress
- * @param files array of files to upload
- * @param onUploadProgress function to set the upload progress
- */
-export async function uploadGdpFilesWithProgress(
-  files: { properties: Partial<Omit<GdpFilesModel, createFieldsToOmit>>; data: Blob | string }[],
-  onUploadProgress?: (progressEvent: ProgressEvent) => void
-): Promise<{ status: number; data?: Partial<GdpFilesModel>[] | Partial<GdpFilesModel> }> {
-  const token = await retrieveToken();
-  if (!token) return Promise.resolve({ status: 401 });
+const xhrReq = async(data : FormData, signed: boolean,
+                     onUploadProgress?: (progressEvent: ProgressEvent) => void)
+    : Promise<{ status: number; data?: Partial<GdpFilesModel>[] | Partial<GdpFilesModel> }> => {
+  return new Promise(async (resolve) => {
 
-  const formData = new FormData();
-  for (const file of files) {
-    for (const prop in file.properties) {
-      formData.append(
-        prop,
-        typeof file.properties[prop as keyof typeof file.properties] === 'string'
-          ? (file.properties[prop as keyof typeof file.properties] as string)
-          : JSON.stringify(file.properties[prop as keyof typeof file.properties])
-      );
-    }
-    formData.append('file', file.data);
-  }
+    const token = await retrieveToken();
+    if (!token) return Promise.resolve({status: 401});
 
-  return new Promise((resolve) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/files`, true);
+    xhr.open('POST', signed ? `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/signed-url/write`
+        : `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/files`, true);
+
     xhr.setRequestHeader('Authorization', `Bearer ${token}`);
 
     if (onUploadProgress) {
@@ -214,24 +200,92 @@ export async function uploadGdpFilesWithProgress(
     }
     xhr.onload = () => {
       if (xhr.status !== 200 && xhr.status !== 204) {
-        resolve({ status: 500 });
+        resolve({status: 500});
       } else {
         try {
           const resData: { data: Partial<GdpFilesModel>[] | Partial<GdpFilesModel> } | undefined = JSON.parse(
-            xhr.responseText
+              xhr.responseText
           );
           if (!resData) {
-            resolve({ status: xhr.status });
+            resolve({status: xhr.status});
           } else {
-            resolve({ status: xhr.status, data: resData.data });
+            resolve({status: xhr.status, data: resData.data});
           }
         } catch {
-          resolve({ status: xhr.status });
+          resolve({status: xhr.status});
         }
       }
     };
-    xhr.send(formData);
+
+    xhr.send(data);
   });
+}
+
+
+/**
+ * Upload With Progress
+ * @param files Tableau d'objets de fichiers à télécharger
+ * @param onUploadProgress Fonction pour suivre la progression de l'upload
+ */
+export async function uploadGdpFilesWithProgress(
+    files: { properties: Partial<Omit<GdpFilesModel, createFieldsToOmit>>; data: Blob | string }[],
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void
+): Promise<{ status: number; data?: Partial<GdpFilesModel>[] | Partial<GdpFilesModel> }> {
+
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+
+  const axiosInstance = axios.create({
+    onUploadProgress,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const formData = new FormData();
+  const signedFormData = new FormData();
+
+  for (const file of files) {
+    for (const prop in file.properties) {
+      if ((file.properties.filesize / (1024 * 1024)) > 32) {
+        signedFormData.append(
+            prop,
+            typeof file.properties[prop as keyof typeof file.properties] === 'string'
+                ? (file.properties[prop as keyof typeof file.properties] as string)
+                : JSON.stringify(file.properties[prop as keyof typeof file.properties])
+        );
+      } else {
+        formData.append(
+            prop,
+            typeof file.properties[prop as keyof typeof file.properties] === 'string'
+                ? (file.properties[prop as keyof typeof file.properties] as string)
+                : JSON.stringify(file.properties[prop as keyof typeof file.properties])
+        );
+      }
+    }
+
+    if ((file.properties.filesize / (1024 * 1024)) > 32) {
+      signedFormData.append('file', file.data);
+    } else {
+      formData.append('file', file.data);
+    }
+  }
+
+  let hasFormData = Array.from(formData).length;
+  let hasSignedFormData = Array.from(signedFormData).length;
+
+  const unsignedUploadPromise = hasFormData ? axiosInstance.post(
+      `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/files`, formData) : Promise.resolve({ status: 200 });
+  const signedUploadPromise = hasSignedFormData ? axiosInstance.post(
+      `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/signed-url/write`, signedFormData) : Promise.resolve({ status: 200 });
+
+  const [unsignedResponse, signedResponse] = await Promise.all([unsignedUploadPromise, signedUploadPromise]);
+
+  if (isRequestSuccessful(unsignedResponse.status) || isRequestSuccessful(signedResponse.status)) {
+    return { status: 200 };
+  } else {
+    return { status: 500 };
+  }
 }
 
 /**
