@@ -158,7 +158,7 @@ export default function UploadFilesForm({
             },
           },
         ],
-        (progressEvent) => onUploadProgress(progressEvent, fileUID)
+        (progressEvent) => onUploadProgress(progressEvent as any, fileUID)
     );
     setUploadProgress([...uploadProgress.filter((progressItem) => progressItem.fileId !== fileUID)]);
     if (isRequestSuccessful(uploadResponse.status)) {
