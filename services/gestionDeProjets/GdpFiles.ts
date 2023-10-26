@@ -221,6 +221,36 @@ async function uploadGdpFileViaSignedUrl(
   });
 }
 
+async function registerDirectusFile(fileData: Partial<GdpFilesModel>)
+    : Promise<{status: number, data?: Partial<GdpFilesModel>}> {
+
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+
+  const myHeaders = new Headers({
+    Authorization: `Bearer ${token}`,
+    "Content-Type" : "application/json"
+  });
+
+  const myInit: RequestInit = {
+    method: 'POST',
+    headers: myHeaders,
+    mode: 'cors',
+    cache: 'default',
+    body: JSON.stringify({
+      FileData: fileData
+    }),
+  };
+
+  await fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/signed-url/register-file`, myInit).then((res) => {
+    if(isRequestSuccessful(res.status)){
+      return {status: res.status};
+    }
+  })
+
+  return {status: 401};
+}
+
 /**
  * Upload With Progress
  * @param file Objet du fichier à uploader
@@ -271,6 +301,9 @@ export async function uploadGdpFileWithProgress(
         if(signed_url){
           const response = await uploadGdpFileViaSignedUrl(file, signed_url, onUploadProgress as any);
           if(isRequestSuccessful(response.status)){
+            await registerDirectusFile(res.data?.payload).then((res) => {
+              return {status: response.status};
+            })
             return {status : response.status};
           }
         }
