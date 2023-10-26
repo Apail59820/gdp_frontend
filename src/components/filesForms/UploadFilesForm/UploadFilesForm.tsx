@@ -7,7 +7,7 @@ import FilePropertiesForm from '../FilePropertiesForm/FilePropertiesForm';
 import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';
 import { GdpAffairModel } from '../../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel } from '../../../../models/GestionDeProjets/GdpPhaseModel';
-import { updateGdpFile, uploadGdpFilesWithProgress } from '../../../../services/gestionDeProjets/GdpFiles';
+import { updateGdpFile, uploadGdpFileWithProgress } from '../../../../services/gestionDeProjets/GdpFiles';
 import {
   GdpAssetDocumentEnum,
   GdpFilesModel,
@@ -140,9 +140,8 @@ export default function UploadFilesForm({
           uploadState: fileItem.id === fileUID ? UploadStatusEnum.UPLOADING : fileItem.uploadState,
         }))
     );
-    const uploadResponse = await uploadGdpFilesWithProgress(
-        [
-          {
+    const uploadResponse = await uploadGdpFileWithProgress(
+        {
             data: _fileListTmp[fileIndex].file as File,
             properties: {
               filename_download: _fileListTmp[fileIndex].properties.filename_download,
@@ -154,15 +153,14 @@ export default function UploadFilesForm({
               phase_id: _fileListTmp[fileIndex].properties.phase_id || null,
               is_cover: _fileListTmp[fileIndex].properties.is_cover || false,
               document_type: _fileListTmp[fileIndex].properties.document_type || GdpAssetDocumentEnum.UNKNOWN,
-              //tags:, //tags de base en fonction du type
             },
           },
-        ],
         (progressEvent) => onUploadProgress(progressEvent as any, fileUID)
     );
     setUploadProgress([...uploadProgress.filter((progressItem) => progressItem.fileId !== fileUID)]);
     if (isRequestSuccessful(uploadResponse.status)) {
       message.success(`Le fichier ${_fileListTmp[fileIndex].properties.filename_download} a bien été uploadé.`);
+
       const updatedFileList = _fileListTmp.map((fileItem) => ({
         ...fileItem,
         properties: {
