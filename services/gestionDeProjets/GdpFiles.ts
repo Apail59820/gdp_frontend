@@ -185,30 +185,40 @@ export async function uploadGdpFile(
 }
 
 async function uploadGdpFileViaSignedUrl(
-    file: { properties: Partial<Omit<GdpFilesModel, createFieldsToOmit>>; data: Blob | string},
+    file: { properties: Partial<Omit<GdpFilesModel, createFieldsToOmit>>; data: Blob | string },
     url: string,
-): Promise<{status: number; data?: Partial<GdpFilesModel>}> {
-
+    onUploadProgress?: (progressEvent: ProgressEvent) => void
+): Promise<{ status: number; data?: Partial<GdpFilesModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
-  const myHeaders = new Headers({
-    Authorization: `Bearer ${token}`,
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', url, true);
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
     //@ts-ignore
-    "Content-Type" : file.data?.type
+    xhr.setRequestHeader('Content-Type', file.data?.type);
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        resolve({ status: 200 });
+      } else {
+        reject({ status: 500 });
+      }
+    };
+
+    xhr.onerror = () => {
+      reject({ status: 500 });
+    };
+
+    if (onUploadProgress) {
+      xhr.upload.addEventListener('progress', (e) => {
+        onUploadProgress(e);
+      });
+    }
+
+    xhr.send(file.data);
   });
-
-  const myInit: RequestInit = {
-    method: 'PUT',
-    headers: myHeaders,
-    mode: 'cors',
-    cache: 'default',
-    body: file.data
-  };
-
-  const res = await fetch(url, myInit);
-  if (!res || (res.status !== 200 && res.status !== 204)) return { status: 500 };
-  else return {status: 200};
 }
 
 /**
@@ -225,13 +235,13 @@ export async function uploadGdpFileWithProgress(
   if (!token) return Promise.resolve({ status: 401 });
 
   const axiosConfig = {
-    onUploadProgress,
     headers: {
       Authorization: `Bearer ${token}`,
       //@ts-ignore
       "Content-Type": file.data?.type
     },
   };
+
 
   const axiosInstance = axios.create(axiosConfig);
 
@@ -260,7 +270,7 @@ export async function uploadGdpFileWithProgress(
       {
         const signed_url = res.data?.url;
         if(signed_url){
-          const response = await uploadGdpFileViaSignedUrl(file, signed_url);
+          const response = await uploadGdpFileViaSignedUrl(file, signed_url, onUploadProgress as any);
           if(isRequestSuccessful(response.status)){
             return {status : response.status};
           }
