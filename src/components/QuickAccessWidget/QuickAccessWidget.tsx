@@ -13,7 +13,8 @@ const QuickAccessWidget = ({ children }: Props) => {
     }
 
     useEffect(() => {
-        setDisplayQuickAccessSection(localStorage.getItem("isQuickAccessOpen")=='true');
+        if (localStorage.getItem("isQuickAccessOpen") === null) setDisplayQuickAccessSection(true);
+        else setDisplayQuickAccessSection(localStorage.getItem("isQuickAccessOpen") === 'true');
     }, []);
   return (
     <Section

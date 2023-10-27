@@ -6,10 +6,10 @@ import { UsUserModel } from '../../../models/UsModels';
 import { Tooltip } from 'antd';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 import UserInformations from '../UserInformations/UserInformations';
-import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 import Image from 'next/image';
 import { getAsset } from '../../../services/userService/UsAssets';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
+import userPlaceholderPicto from '../../../public/user-solid.svg';
 
 export type TeamCardProps = {
   users: Partial<UsUserModel>[];
@@ -45,7 +45,7 @@ const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClic
                   <div className={styles.userIcon}>
                     <Image
                       fill={true}
-                      src={currentUserAvatar || getImagesByCompany(user.company!).picto}
+                      src={currentUserAvatar || userPlaceholderPicto.src}
                       alt={`Photo de ${user.first_name} ${user.last_name}`}
                     />
                   </div>
