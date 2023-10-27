@@ -165,15 +165,21 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
     }
   }, [affair.affairs_directus_users_ids, affair.projects_id, userType]);
 
-  const setMap = (key, name, display)=>{
+  const setMap = async(key, name, display)=>{
     setLoadingForButton(true);
     const clientId = form.getFieldValue('users')[name]?.user;
-    message.info(clientId)
-    let text: number = null;
-    getUsClientsCompanyEntitiesUsers({filter: {directus_users_id : clientId, is_current_job: true}, fields:'clients_company_entities_id'})
-        .then(clientEntityRelationResponse=>{
-          if(isRequestSuccessful(clientEntityRelationResponse.status)&&clientEntityRelationResponse?.data.length>0){
-            text = clientEntityRelationResponse.data[0].clients_company_entities_id as number;
+    let text: string = null;
+    await getUsClientsCompanyEntitiesUsers({filter: {directus_users_id : clientId, is_current_job: true}, fields:'clients_company_entities_id'})
+        .then(async (clientEntityRelationResponse) => {
+          if(isRequestSuccessful(clientEntityRelationResponse.status)){
+            if(clientEntityRelationResponse?.data.length == 1){
+              let clientEntityData = clientEntityRelationResponse.data;
+              await getUsClientsCompanyEntities({filter: {id: clientEntityData[0].clients_company_entities_id}}).then((entityRes) => {
+                if(isRequestSuccessful(entityRes.status) && entityRes?.data.length == 1){
+                  text = entityRes.data[0].name;
+                }
+              })
+            }else text = 'Créer une entité';
           }
         })
         .finally(()=>{
