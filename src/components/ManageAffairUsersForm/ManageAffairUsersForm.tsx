@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Empty, Form, message, Modal, Select} from 'antd';
+import {Empty, Form, message, Modal, Popconfirm, Select} from 'antd';
 import {GdpAffairModel} from '../../../models/GestionDeProjets/GdpAffairModel';
 import {useSelector} from 'react-redux';
 import {GdpProjectsModel} from '../../../models/GestionDeProjets/GdpProjectsModel';
@@ -179,20 +179,36 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                   text = entityRes.data[0].name;
                 }
               })
-            }else text = 'Créer une entité';
+            }
           }
         })
         .finally(()=>{
-          const value = {
+          let value = {
             display: display,
-            button: text? text: null
+            button: null //text? text: null
           }
+          if(text){
+            value.button = <Button small style={"text"} onClick={()=>changeClientEntity(form, name)}>{text}</Button>
+          } else {
+            value.button =
+                <Popconfirm title={"Voulez-vous créer une entité ou sélectionner une entité existante ?"}
+                            okText={'Créer'} onConfirm={()=>changeClientEntity(form, name)}
+                            cancelText={'Sélectionner'} onCancel={()=>changeClientEntity(form, name, true)}
+                >
+                  <Button small style={"text"}>Ajouter</Button>
+                </Popconfirm>
+          }
+
           displayButton.set(key, value)
           setDisplayButton(displayButton)
           setLoadingForButton(false);
         })
   }
-  const changeClientEntity = async (form, key : number) => {
+  const changeClientEntity = async (form, key : number, add ?: boolean) => {
+    if(add){
+      setIsAddOpen(true)
+      return
+    }
     const clientId : string = form.getFieldsValue('users').users[key]?.user;
 
     let hasEntity = false;
@@ -429,14 +445,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                 <p className={styles.customLabel}>{userType}</p>
                 {fields.map(({key, name, ...restFields}) => (
                     <>
-                      <div style={{textAlign: 'right'}}>
-                        {displayButton.get(key)?.display && true && (
-                          <Button small style={"text"} loading={loadingForButton}
-                                  onClick={() => changeClientEntity(form, name)}>
-                            {displayButton.get(key).button}
-                          </Button>
-                          )}
-                      </div>
+                      {displayButton.get(key)?.display && displayButton.get(key).button}
                       <div key={key} className={styles.formListItems}>
                         <Form.Item className={styles.formItem} {...restFields} name={[name, 'user']}>
                           <Select
