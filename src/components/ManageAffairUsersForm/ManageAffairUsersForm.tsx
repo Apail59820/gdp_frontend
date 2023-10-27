@@ -64,6 +64,8 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   const [selectedUsers, setSelectedUsers] = useState<Partial<string | undefined>[]>([]);
   const [affairDirectusUsersId, setAffairDirectusUsersId] = useState<string[]>([]);
 
+  const [displayButton, setDisplayButton] = useState<Map<number, any>>(new Map());
+  const [loadingForButton, setLoadingForButton] = useState<boolean>();
   let timeout: ReturnType<typeof setTimeout> | null;
 
   const addOrModifyOpen = (isOpenModify:boolean, isOpenCreate:boolean, isAddOpen: boolean)=>{
@@ -163,6 +165,27 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
     }
   }, [affair.affairs_directus_users_ids, affair.projects_id, userType]);
 
+  const setMap = (key, name, display)=>{
+    setLoadingForButton(true);
+    const clientId = form.getFieldValue('users')[name]?.user;
+    message.info(clientId)
+    let text: number = null;
+    getUsClientsCompanyEntitiesUsers({filter: {directus_users_id : clientId, is_current_job: true}, fields:'clients_company_entities_id'})
+        .then(clientEntityRelationResponse=>{
+          if(isRequestSuccessful(clientEntityRelationResponse.status)&&clientEntityRelationResponse?.data.length>0){
+            text = clientEntityRelationResponse.data[0].clients_company_entities_id as number;
+          }
+        })
+        .finally(()=>{
+          const value = {
+            display: display,
+            button: text? text: null
+          }
+          displayButton.set(key, value)
+          setDisplayButton(displayButton)
+          setLoadingForButton(false);
+        })
+  }
   const changeClientEntity = async (form, key : number) => {
     const clientId : string = form.getFieldsValue('users').users[key]?.user;
 
@@ -171,7 +194,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
     let usName = 'undefined';
 
     if(isRequestSuccessful(resUsName.status)){
-       usName = resUsName?.data[0].first_name + ' ' + resUsName?.data[0].last_name;
+       usName = capitalize(resUsName?.data[0].first_name.toLowerCase()) + ' ' + capitalize(resUsName?.data[0].last_name.toLowerCase());
     }
     await getUsClientsCompanyEntitiesUsers({filter: {directus_users_id : clientId}}).then((res) => {
       if(isRequestSuccessful(res.status)){
@@ -401,9 +424,12 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                 {fields.map(({key, name, ...restFields}) => (
                     <>
                       <div style={{textAlign: 'right'}}>
-                        <Link href={'#'} onClick={() => changeClientEntity(form, name)}>
-                          Entité du client
-                        </Link>
+                        {displayButton.get(key)?.display && true && (
+                          <Button small style={"text"} loading={loadingForButton}
+                                  onClick={() => changeClientEntity(form, name)}>
+                            {displayButton.get(key).button}
+                          </Button>
+                          )}
                       </div>
                       <div key={key} className={styles.formListItems}>
                         <Form.Item className={styles.formItem} {...restFields} name={[name, 'user']}>
@@ -415,7 +441,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                               filterOption={false}
                               placeholder={'Sélectionnez un ' + userType}
                               options={users.map((user) => ({
-                                label: user.first_name + ' ' + user.last_name,
+                                label: capitalize(user.first_name.toLowerCase()) + ' ' + capitalize(user.last_name.toLowerCase()),
                                 value: user.id,
                                 disabled: selectedUsers
                                     .filter((user) => users.map((user) => user.id).includes(user))
@@ -443,6 +469,8 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                                     const userName = capitalize(user.first_name) +' '+ capitalize(user.last_name);
                                     setClientName(userName);
                                   }
+
+                                  setMap(key, name, true)
                                   const tmp = form.getFieldValue('users');
                                   setSelectedUsers(tmp.map((user: any) => user));
                                 }
@@ -463,6 +491,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                                 setSelectedUsers(tmp);
                               }
                               remove(name);
+                              setMap(key, name, false)
                             }}
                         />
                       </div>

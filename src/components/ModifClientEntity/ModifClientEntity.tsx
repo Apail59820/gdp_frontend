@@ -69,18 +69,9 @@ const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId,
                title={`${title} ${clientName}`}
         >
             <Form onFinish={onFinish}>
-                <Form.Item
-                    label={'Entité'}
-                    name={'entity'}
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Veuillez sélectionner une entité.',
-                        },
-                    ]}
-                >
-                    <Select showSearch
+                    <Select showSearch filterOption={false}
                             placeholder={"Sélectionnez une entité cliente"}
+                            style={{width:'100%'}}
                             options={companyEntities?.map((entity: Partial<UsClientsCompanyEntitiesModel>) => {
                                 return {
                                     label: entity.name,
@@ -88,11 +79,9 @@ const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId,
                                 };
                             })}
                     />
-                </Form.Item>
-
                 <div style={{display:"flex"}}>
                     <Button small htmlType={"submit"}>Confirmer</Button>
-                    <Button small style={"text"}>Annuler</Button>
+                    <Button small style={"text"} onClick={()=>setIsModifyOpen(false)}>Annuler</Button>
                 </div>
             </Form>
         </Modal>

@@ -49,7 +49,7 @@ export default function Logo({user, setOpen, disableButton}:Props){
                                 onCancel={()=>{setOpen(false, false, true)}}
                     >
                         <Button small style={"text"}>
-                            <PlusCircleOutlined style={{color:'#009C3E'}}/>
+                            <PlusCircleOutlined rev={undefined} style={{color:'#009C3E'}}/>
                         </Button>
                     </Popconfirm>
                 )}
