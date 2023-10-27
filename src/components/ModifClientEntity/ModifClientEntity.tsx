@@ -18,6 +18,7 @@ type props={
 }
 
 const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId, title="Modifier l'entité de"}:props)=>{
+    const [entityName, setEntityName] = useState<string>()
     const [companyEntities, setCompanyEntities] = useState([])
     useEffect(() => {
         getUsClientsCompanyEntities().then(res=>{
@@ -26,14 +27,14 @@ const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId,
             }
         })
     }, []);
+    const allCompanyEntities = companyEntities?companyEntities:null;
 
-    const onFinish = (values)=>{
-        getUsClientsCompanyEntitiesUsers({filter:{directus_users_id:clientId, is_current_job: true},})
+    const onFinish = (entityName)=>{
+        getUsClientsCompanyEntitiesUsers({filter:{directus_users_id:clientId, is_current_job: true}})
             .then(associationResult=>{
                 if(isRequestSuccessful( associationResult.status )){
                     associationResult.data
                         .forEach(association=>{
-                            //console.log(new Date());
                             updateUsClientCompanyEntityUser(
                                 `${association.id}`,
                                 {end_date:new Date(),is_current_job:false})
@@ -48,7 +49,7 @@ const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId,
                 end_date: null,
 
                 is_current_job: true,
-                clients_company_entities_id: values.entity,
+                clients_company_entities_id: entityName,
                 directus_users_id: clientId,
             })
                 .then(res=>{
@@ -68,7 +69,7 @@ const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId,
                onCancel={()=>setIsModifyOpen(false)}
                title={`${title} ${clientName}`}
         >
-            <Form onFinish={onFinish}>
+            <Form onFinish={()=>onFinish(entityName)}>
                     <Select showSearch filterOption={false}
                             placeholder={"Sélectionnez une entité cliente"}
                             style={{width:'100%'}}
@@ -78,6 +79,21 @@ const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId,
                                     value: entity.id,
                                 };
                             })}
+                            onSearch={value=>{
+                                if(value.length>2){
+                                    const tempCompanies = []
+                                    companyEntities.forEach(companyEntity => {
+                                        if (companyEntity.name.startsWith(value)) {
+                                            tempCompanies.push(companyEntity)
+                                        }
+                                    })
+                                    setCompanyEntities(tempCompanies)
+                                }
+                            }}
+                            onChange={(value)=>{
+                                setEntityName(value)
+                                setCompanyEntities(allCompanyEntities)
+                            }}
                     />
                 <div style={{display:"flex"}}>
                     <Button small htmlType={"submit"}>Confirmer</Button>

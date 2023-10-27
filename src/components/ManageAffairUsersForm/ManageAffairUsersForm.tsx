@@ -22,14 +22,12 @@ import {
   createGdpProjectUsersClients,
   deleteProjectsUsersClient,
 } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
-import Logo from "../LogoPersonalise/LogoPersonalise";
 import CreateClientEntity from "../CreateClientEntity/CreateClientEntity";
 import ModifClientEntity from "../ModifClientEntity/ModifClientEntity";
 import {getUsClientsCompanyEntitiesUsers} from "../../../services/userService/UsClientsCompanyEntitiesUsers";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {capitalize} from "../../../utils/capitalize";
 import {AddClientEntity} from "../AddClientEntity/AddClientEntity";
-import Link from "next/link";
 import {getUsClientsCompanyEntities} from "../../../services/userService/UsClientsCompanyEntities";
 
 const {publicRuntimeConfig} = getConfig();

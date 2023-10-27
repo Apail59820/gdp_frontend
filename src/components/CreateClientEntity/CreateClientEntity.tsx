@@ -17,7 +17,6 @@ import {createUsClientCompanyEntityUser} from "../../../services/userService/UsC
 type CreateClientEntityFormProps = {
     isOpen: boolean;
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-   // modif: boolean,
     client?: string
 };
 
