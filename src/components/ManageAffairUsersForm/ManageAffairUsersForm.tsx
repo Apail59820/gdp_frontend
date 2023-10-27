@@ -68,12 +68,6 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   const [loadingForButton, setLoadingForButton] = useState<boolean>();
   let timeout: ReturnType<typeof setTimeout> | null;
 
-  const addOrModifyOpen = (isOpenModify:boolean, isOpenCreate:boolean, isAddOpen: boolean)=>{
-    setIsModifyOpen(isOpenModify);
-    setIsCreateOpen(isOpenCreate);
-    setIsAddOpen(isAddOpen);
-  }
-
   useEffect(() => {
     const tmpAffairDirectusUsersId: string[] = [];
     if (affair.affairs_directus_users_ids && affair.affairs_directus_users_ids.length > 0) {
@@ -165,7 +159,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
     }
   }, [affair.affairs_directus_users_ids, affair.projects_id, userType]);
 
-  const setMap = async(key, name, display)=>{
+  const setMap = async(key, display, name?:number)=>{
     setLoadingForButton(true);
     const clientId = form.getFieldValue('users')[name]?.user;
     let text: string = null;
@@ -188,53 +182,34 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
             button: null //text? text: null
           }
           if(text){
-            value.button = <Button small style={"text"} onClick={()=>changeClientEntity(form, name)}>{text}</Button>
+            value.button = <Button small style={"text"} onClick={()=>changeClientEntity(clientId, 'modify')}>{text}</Button>
           } else {
             value.button =
                 <Popconfirm title={"Voulez-vous créer une entité ou sélectionner une entité existante ?"}
-                            okText={'Créer'} onConfirm={()=>changeClientEntity(form, name)}
-                            cancelText={'Sélectionner'} onCancel={()=>changeClientEntity(form, name, true)}
+                            okText={'Créer'} onConfirm={()=>changeClientEntity(clientId, 'create')}
+                            cancelText={'Sélectionner'} onCancel={()=>changeClientEntity(clientId, 'add')}
                 >
                   <Button small style={"text"}>Ajouter</Button>
                 </Popconfirm>
           }
-
+          console.log(value.button.children)
           displayButton.set(key, value)
           setDisplayButton(displayButton)
           setLoadingForButton(false);
         })
   }
-  const changeClientEntity = async (form, key : number, add ?: boolean) => {
-    if(add){
-      setIsAddOpen(true)
-      return
-    }
-    const clientId : string = form.getFieldsValue('users').users[key]?.user;
-
-    let hasEntity = false;
+  const openModal= new Map<string, React.Dispatch<React.SetStateAction<boolean>>>();
+  openModal.set('add', setIsAddOpen);  openModal.set('modify', setIsModifyOpen);  openModal.set('create', setIsCreateOpen)
+  const changeClientEntity = async (clientId: string, modalType: string) => {
     let resUsName= await getUsUsers({filter:{id:clientId}});
-    let usName = 'undefined';
+    let usName:string = null;
 
     if(isRequestSuccessful(resUsName.status)){
        usName = capitalize(resUsName?.data[0].first_name.toLowerCase()) + ' ' + capitalize(resUsName?.data[0].last_name.toLowerCase());
+       setClientName(usName)
     }
-    await getUsClientsCompanyEntitiesUsers({filter: {directus_users_id : clientId}}).then((res) => {
-      if(isRequestSuccessful(res.status)){
-        for(const result of res?.data){
-          if(result.is_current_job){
-            hasEntity = true;
-          }
-        }
-      }
-    }).finally(() => {
-      setCurrentUser(clientId);
-      if(hasEntity){
-        setClientName(usName);
-        setIsModifyOpen(true);
-      }else{
-        setIsCreateOpen(true);
-      }
-    });
+
+    openModal.get(modalType)(true);
   }
 
   useEffect(() => {
@@ -445,7 +420,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                 <p className={styles.customLabel}>{userType}</p>
                 {fields.map(({key, name, ...restFields}) => (
                     <>
-                      {displayButton.get(key)?.display && displayButton.get(key).button}
+                      <div className={styles.entityButton}>{displayButton.get(key)?.display && displayButton.get(key).button}</div>
                       <div key={key} className={styles.formListItems}>
                         <Form.Item className={styles.formItem} {...restFields} name={[name, 'user']}>
                           <Select
@@ -477,7 +452,6 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                               }}
                               onChange={(value) => {
                                 if (value) {
-                                  console.log( typeof value, value );
                                   setCurrentUser(value);
                                   const user = users.filter(user=>user.id===currentUser)[0]
                                   if(user) {
@@ -485,7 +459,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                                     setClientName(userName);
                                   }
 
-                                  setMap(key, name, true)
+                                  setMap(key, true, name)
                                   const tmp = form.getFieldValue('users');
                                   setSelectedUsers(tmp.map((user: any) => user));
                                 }
@@ -506,7 +480,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                                 setSelectedUsers(tmp);
                               }
                               remove(name);
-                              setMap(key, name, false)
+                              setMap(key, false)
                             }}
                         />
                       </div>
