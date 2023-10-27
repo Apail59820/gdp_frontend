@@ -290,8 +290,6 @@ export async function uploadGdpFileWithProgress(
   formData.append('file', file.data);
 
   let exceptSignedUrl = ((file.properties.filesize / (1024 * 1024)) > 32);
-
-  exceptSignedUrl = true;
   
   let fetchUrl = publicRuntimeConfig.GESTION_DE_PROJET_API_URL + ((exceptSignedUrl) ? '/signed-url/write' : '/files');
 
