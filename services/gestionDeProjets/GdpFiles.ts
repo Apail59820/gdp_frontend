@@ -8,6 +8,7 @@ import axios, {AxiosProgressEvent} from "axios";
 import {message} from "antd";
 import {Readable} from "stream";
 import {fileToReadableStream} from "../../utils/fileToStream";
+import exp from "constants";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -290,6 +291,8 @@ export async function uploadGdpFileWithProgress(
 
   let exceptSignedUrl = ((file.properties.filesize / (1024 * 1024)) > 32);
 
+  exceptSignedUrl = true;
+  
   let fetchUrl = publicRuntimeConfig.GESTION_DE_PROJET_API_URL + ((exceptSignedUrl) ? '/signed-url/write' : '/files');
 
   return await axiosInstance.post(fetchUrl, formData).then(async(res) => {

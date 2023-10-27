@@ -345,7 +345,7 @@ export default function UploadFilesForm({
                   mode={mode}
                   file={fileList[edit ? 0 : showPropertiesFormOfFileIndex]}
                   onConfirm={(newFileProperties) => onFilePropertiesChange(newFileProperties, edit ? 0 : showPropertiesFormOfFileIndex)}
-                  onCancel={() => setShowPropertiesFormOfFileIndex(undefined)}
+                  onCancel={() => onClose()}
                   project={project}
                   affair={affair}
                   affairsOptions={affairsOptions}
