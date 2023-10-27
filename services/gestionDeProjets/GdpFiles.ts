@@ -3,6 +3,12 @@ import { QueryParameters } from '../../models/DirectusModel';
 import concatenateQueryParameters from '../../utils/queryParamsFormatter';
 import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
+import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
+import axios, {AxiosProgressEvent} from "axios";
+import {message} from "antd";
+import {Readable} from "stream";
+import {fileToReadableStream} from "../../utils/fileToStream";
+import exp from "constants";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -179,59 +185,135 @@ export async function uploadGdpFile(
   }
 }
 
-/**
- * new Upload With Progress
- * @param files array of files to upload
- * @param onUploadProgress function to set the upload progress
- */
-export async function uploadGdpFilesWithProgress(
-  files: { properties: Partial<Omit<GdpFilesModel, createFieldsToOmit>>; data: Blob | string }[],
-  onUploadProgress?: (progressEvent: ProgressEvent) => void
-): Promise<{ status: number; data?: Partial<GdpFilesModel>[] | Partial<GdpFilesModel> }> {
+async function uploadGdpFileViaSignedUrl(
+    file: { properties: Partial<Omit<GdpFilesModel, createFieldsToOmit>>; data: Blob | string },
+    url: string,
+    onUploadProgress?: (progressEvent: ProgressEvent) => void
+): Promise<{ status: number; data?: Partial<GdpFilesModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
-  const formData = new FormData();
-  for (const file of files) {
-    for (const prop in file.properties) {
-      formData.append(
-        prop,
-        typeof file.properties[prop as keyof typeof file.properties] === 'string'
-          ? (file.properties[prop as keyof typeof file.properties] as string)
-          : JSON.stringify(file.properties[prop as keyof typeof file.properties])
-      );
-    }
-    formData.append('file', file.data);
-  }
-
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/files`, true);
+    xhr.open('PUT', url, true);
     xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    //@ts-ignore
+    xhr.setRequestHeader('Content-Type', file.data?.type);
 
-    if (onUploadProgress) {
-      xhr.upload.onprogress = onUploadProgress;
-    }
     xhr.onload = () => {
-      if (xhr.status !== 200 && xhr.status !== 204) {
-        resolve({ status: 500 });
+      if (xhr.status === 200) {
+        resolve({ status: 200 });
       } else {
-        try {
-          const resData: { data: Partial<GdpFilesModel>[] | Partial<GdpFilesModel> } | undefined = JSON.parse(
-            xhr.responseText
-          );
-          if (!resData) {
-            resolve({ status: xhr.status });
-          } else {
-            resolve({ status: xhr.status, data: resData.data });
-          }
-        } catch {
-          resolve({ status: xhr.status });
-        }
+        reject({ status: 500 });
       }
     };
-    xhr.send(formData);
+
+    xhr.onerror = () => {
+      reject({ status: 500 });
+    };
+
+    if (onUploadProgress) {
+      xhr.upload.addEventListener('progress', (e) => {
+        onUploadProgress(e);
+      });
+    }
+
+    xhr.send(file.data);
   });
+}
+
+async function registerDirectusFile(fileData: Partial<GdpFilesModel>)
+    : Promise<{status: number, data?: Partial<GdpFilesModel>}> {
+
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+
+  const myHeaders = new Headers({
+    Authorization: `Bearer ${token}`,
+    "Content-Type" : "application/json"
+  });
+
+  const myInit: RequestInit = {
+    method: 'POST',
+    headers: myHeaders,
+    mode: 'cors',
+    cache: 'default',
+    body: JSON.stringify({
+      FileData: fileData
+    }),
+  };
+
+  await fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/signed-url/register-file`, myInit).then((res) => {
+    if(isRequestSuccessful(res.status)){
+      return {status: res.status};
+    }
+  })
+
+  return {status: 401};
+}
+
+/**
+ * Upload With Progress
+ * @param file Objet du fichier à uploader
+ * @param onUploadProgress Fonction pour suivre la progression de l'upload
+ */
+export async function uploadGdpFileWithProgress(
+    file: { properties: Partial<Omit<GdpFilesModel, createFieldsToOmit>>; data: Blob | string },
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void
+): Promise<{ status: number; data?: Partial<GdpFilesModel>[] | Partial<GdpFilesModel> }> {
+
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+
+  const axiosConfig = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      //@ts-ignore
+      "Content-Type": file.data?.type
+    },
+  };
+
+
+  const axiosInstance = axios.create(axiosConfig);
+
+  const formData = new FormData();
+
+  for(const prop in file.properties) {
+      formData.append(
+          prop,
+          typeof file.properties[prop as keyof typeof file.properties] === 'string'
+              ? (file.properties[prop as keyof typeof file.properties] as string)
+              : JSON.stringify(file.properties[prop as keyof typeof file.properties])
+      );
+  }
+
+  formData.append('file', file.data);
+
+  let exceptSignedUrl = ((file.properties.filesize / (1024 * 1024)) > 32);
+  
+  let fetchUrl = publicRuntimeConfig.GESTION_DE_PROJET_API_URL + ((exceptSignedUrl) ? '/signed-url/write' : '/files');
+
+  return await axiosInstance.post(fetchUrl, formData).then(async(res) => {
+
+    if(isRequestSuccessful(res.status)){
+      if(exceptSignedUrl)
+      {
+        const signed_url = res.data?.url;
+        if(signed_url){
+          const response = await uploadGdpFileViaSignedUrl(file, signed_url, onUploadProgress as any);
+          if(isRequestSuccessful(response.status)){
+            await registerDirectusFile(res.data?.payload).then((res) => {
+              return {status: response.status};
+            })
+            return {status : response.status};
+          }
+        }
+      }
+      else return {status : res.status};
+    }
+    return {status : 401};
+  });
+
 }
 
 /**

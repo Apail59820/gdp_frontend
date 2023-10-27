@@ -17,7 +17,7 @@ import CreatePhaseForm from '../CreatePhaseForm/CreatePhaseForm';
 import { Button } from 'projex-ui';
 import { PlusOutlined, SmileOutlined } from '@ant-design/icons';
 import SatisfactionForm from '../SatisfactionForm/SatisfactionForm';
-import UploadFilesFormUploadFilesForm from '../filesForms/UploadFilesForm/UploadFilesForm';
+import UploadFilesForm from '../filesForms/UploadFilesForm/UploadFilesForm';
 import getConfig from 'next/config';
 import { useSelector } from 'react-redux';
 import { selectUserProfile } from '../../../store/reducers/authReducer';
@@ -127,7 +127,7 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, fi
         isOpen={isOpenSatisfactionForm}
         setIsOpen={setIsOpenSatisfactionForm}
       ></SatisfactionForm>
-      <UploadFilesFormUploadFilesForm
+      <UploadFilesForm
         isOpen={isOpenFilesForm}
         setIsOpen={setIsOpenFilesForm}
         project={project}
@@ -135,7 +135,7 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, fi
         phase={phase}
         onFileUpload={() => setIsPhaseUpdated(true)}
         mode="files"
-      ></UploadFilesFormUploadFilesForm>
+      ></UploadFilesForm>
 
       <div className={styles.phase}>
         <section className={styles.aside}>

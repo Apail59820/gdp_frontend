@@ -7,7 +7,7 @@ import FilePropertiesForm from '../FilePropertiesForm/FilePropertiesForm';
 import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';
 import { GdpAffairModel } from '../../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel } from '../../../../models/GestionDeProjets/GdpPhaseModel';
-import { updateGdpFile, uploadGdpFilesWithProgress } from '../../../../services/gestionDeProjets/GdpFiles';
+import { updateGdpFile, uploadGdpFileWithProgress } from '../../../../services/gestionDeProjets/GdpFiles';
 import {
   GdpAssetDocumentEnum,
   GdpFilesModel,
@@ -18,6 +18,7 @@ import { isRequestSuccessful } from '../../../../utils/isRequestSuccessful';
 import { getGdpAffairs } from '../../../../services/gestionDeProjets/GdpAffairs';
 import { getGdpAffairsPhases } from '../../../../services/gestionDeProjets/GdpPhases';
 import FileInput from '../../FIleUpload/FileInput';
+import {AxiosProgressEvent} from "axios";
 
 export type UploadFilesFormPropsType = {
   isOpen: boolean;
@@ -74,6 +75,8 @@ export default function UploadFilesForm({
   const [showPropertiesFormOfFileIndex, setShowPropertiesFormOfFileIndex] = useState<number | undefined>();
   const [affairsOptions, setAffairsOptions] = useState<Partial<GdpAffairModel>[]>([]);
   const [phasesOptions, setPhasesOptions] = useState<Partial<GdpPhaseModel>[]>([]);
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setFileList(fileItems);
@@ -137,9 +140,8 @@ export default function UploadFilesForm({
           uploadState: fileItem.id === fileUID ? UploadStatusEnum.UPLOADING : fileItem.uploadState,
         }))
     );
-    const uploadResponse = await uploadGdpFilesWithProgress(
-        [
-          {
+    const uploadResponse = await uploadGdpFileWithProgress(
+        {
             data: _fileListTmp[fileIndex].file as File,
             properties: {
               filename_download: _fileListTmp[fileIndex].properties.filename_download,
@@ -151,15 +153,14 @@ export default function UploadFilesForm({
               phase_id: _fileListTmp[fileIndex].properties.phase_id || null,
               is_cover: _fileListTmp[fileIndex].properties.is_cover || false,
               document_type: _fileListTmp[fileIndex].properties.document_type || GdpAssetDocumentEnum.UNKNOWN,
-              //tags:, //tags de base en fonction du type
             },
           },
-        ],
-        (progressEvent) => onUploadProgress(progressEvent, fileUID)
+        (progressEvent) => onUploadProgress(progressEvent as any, fileUID)
     );
     setUploadProgress([...uploadProgress.filter((progressItem) => progressItem.fileId !== fileUID)]);
     if (isRequestSuccessful(uploadResponse.status)) {
       message.success(`Le fichier ${_fileListTmp[fileIndex].properties.filename_download} a bien été uploadé.`);
+
       const updatedFileList = _fileListTmp.map((fileItem) => ({
         ...fileItem,
         properties: {
@@ -172,7 +173,6 @@ export default function UploadFilesForm({
         uploadState: fileItem.id === fileUID ? UploadStatusEnum.DONE : fileItem.uploadState,
       }));
       setFileList(updatedFileList);
-      onClose()
       if (onFileUpload) {
         onFileUpload();
       }
@@ -184,7 +184,6 @@ export default function UploadFilesForm({
         uploadState: fileItem.id === fileUID ? UploadStatusEnum.ERROR : fileItem.uploadState,
       }));
       setFileList(updatedFileList);
-      onClose()
       if (onFileUpload) {
         onFileUpload();
       }
@@ -193,6 +192,7 @@ export default function UploadFilesForm({
   };
 
   const handleUpload = async () => {
+    setIsLoading(true);
     setShowPropertiesFormOfFileIndex(undefined);
     const files = fileList.filter((fileItem) => fileItem.uploadState === UploadStatusEnum.PENDING);
     setFileList([
@@ -206,10 +206,13 @@ export default function UploadFilesForm({
     ]);
     await new Promise((resolve) => setTimeout(resolve, 500));
     let _fileList = [...fileList];
+
     for (let i = 0; i < files.length; i++) {
       _fileList = [...(await uploadOneFile(files[i].id, _fileList))];
     }
-    onClose()
+
+    setIsLoading(false);
+    onClose();
   };
 
   const handleCancel = () => {
@@ -328,10 +331,10 @@ export default function UploadFilesForm({
 
               {!edit && (
                   <div className={styles.UploadActionsButtons}>
-                    <Button style="primary" onClick={handleUpload} >
+                    <Button style="primary" onClick={handleUpload} loading={isLoading} >
                       Envoyer les fichiers
                     </Button>
-                    <Button style="text_gray" onClick={handleCancel}>
+                    <Button style="text_gray" onClick={handleCancel} loading={isLoading}>
                       Fermer
                     </Button>
                   </div>
@@ -342,7 +345,7 @@ export default function UploadFilesForm({
                   mode={mode}
                   file={fileList[edit ? 0 : showPropertiesFormOfFileIndex]}
                   onConfirm={(newFileProperties) => onFilePropertiesChange(newFileProperties, edit ? 0 : showPropertiesFormOfFileIndex)}
-                  onCancel={() => setShowPropertiesFormOfFileIndex(undefined)}
+                  onCancel={() => onClose()}
                   project={project}
                   affair={affair}
                   affairsOptions={affairsOptions}
