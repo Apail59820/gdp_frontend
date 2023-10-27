@@ -308,8 +308,9 @@ export async function uploadGdpFileWithProgress(
           }
         }
       }
+      else return {status : res.status};
     }
-    return {status : 500};
+    return {status : 401};
   });
 
 }
