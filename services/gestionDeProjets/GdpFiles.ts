@@ -265,11 +265,13 @@ export async function uploadGdpFileWithProgress(
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
 
+  let exceptSignedUrl = ((file.properties.filesize / (1024 * 1024)) > 32);
+
   const axiosConfig = {
     headers: {
       Authorization: `Bearer ${token}`,
       //@ts-ignore
-      "Content-Type": file.data?.type
+      "Content-Type": exceptSignedUrl ? "application/json" : file.data?.type
     },
   };
 
@@ -288,12 +290,16 @@ export async function uploadGdpFileWithProgress(
   }
 
   formData.append('file', file.data);
-
-  let exceptSignedUrl = ((file.properties.filesize / (1024 * 1024)) > 32);
   
   let fetchUrl = publicRuntimeConfig.GESTION_DE_PROJET_API_URL + ((exceptSignedUrl) ? '/signed-url/write' : '/files');
 
-  return await axiosInstance.post(fetchUrl, formData).then(async(res) => {
+  const myInit = exceptSignedUrl ? {
+    ...file?.properties,
+    //@ts-ignore
+    mimeType: file.data?.type
+  } : formData;
+
+  return await axiosInstance.post(fetchUrl, myInit).then(async(res) => {
 
     if(isRequestSuccessful(res.status)){
       if(exceptSignedUrl)
