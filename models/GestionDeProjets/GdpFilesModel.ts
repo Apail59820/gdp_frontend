@@ -1,3 +1,4 @@
+import React from "react";
 import { GdpAffairModel } from './GdpAffairModel';
 import { GdpPhaseModel } from './GdpPhaseModel';
 import { UsUserModel } from '../UserService/UsUserModel';
@@ -57,4 +58,12 @@ export type GdpFilesModel = {
   affair_id: number | GdpAffairModel | null;
   phase_id: number | GdpPhaseModel | null;
   activities_id: number[] | GdpActivitiesModel[];
+};
+
+export type FileInfoProps = {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  disableEdition?: boolean;
+  setEditButtonState?: React.Dispatch<React.SetStateAction<boolean>>;
+  file : Partial<GdpFilesModel>
 };

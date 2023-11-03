@@ -2,6 +2,7 @@ import {message, Modal} from "antd";
 import {GdpFilesModel} from "../../../models/GestionDeProjets/GdpFilesModel";
 import React, {useEffect, useState} from "react";
 import {GdpProjectsModel} from "../../../models/GestionDeProjets/GdpProjectsModel";
+import {FileInfoProps} from "../../../models/GestionDeProjets/GdpFilesModel";
 import {UsUserModel} from '../../../models/UsModels';
 
 import {getGdpProjectById} from "../../../services/gestionDeProjets/GdpProjects";
@@ -12,40 +13,17 @@ import Link from "next/link";
 import {getMyUsProfile} from "../../../services/userService/UsUsers";
 import {deleteGdpFile, downloadGdPFile} from "../../../services/gestionDeProjets/GdpFiles";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
-import {downloadFile} from "../../../utils/downloadFile";
+import {downloadFile, downloadFileFromGCS} from "../../../utils/downloadFile";
+import {getFileSize} from "../../../utils/files";
 
 import {capitalize} from "../../../utils/capitalize";
 import Image from "next/image";
 
-type FileInfoProps = {
-    isOpen: boolean;
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    disableEdition?: boolean;
-    setEditButtonState?: React.Dispatch<React.SetStateAction<boolean>>;
-    file : Partial<GdpFilesModel>
-};
 const FileInfo = ({isOpen, setIsOpen , disableEdition, setEditButtonState, file} : FileInfoProps) => {
     const [gdpProject, setGdpProject] = useState<Partial<GdpProjectsModel> | null>(null);
     const [myUsProfile, setMyUsProfile] = useState<Partial<UsUserModel>>(null);
     const [filePreview, setFilePreview] = useState<string | undefined>(undefined);
-    function getFileSize(bytes, si=false, dp=1) : string {
-        const thresh : number = si ? 1000 : 1024;
-
-        if (Math.abs(bytes) < thresh) {
-            return bytes > 1 ? bytes + ' octets' : bytes + ' octet';
-        }
-
-        const units = !si ? ['ko', 'Mo', 'Go', 'To'] : ['Kio', 'Mio', 'Gio', 'Tio'];
-        let u = -1;
-        const r = 10**dp;
-
-        do {
-            bytes /= thresh;
-            ++u;
-        } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
-
-        return bytes.toFixed(dp) + ' ' + units[u];
-    }
+    const [isFileBigSize, setIsFileBigSize] = useState<boolean>(false);
 
     function formatDate(dateToFormat: Date) {
         const date = new Date(dateToFormat);
@@ -142,6 +120,7 @@ const FileInfo = ({isOpen, setIsOpen , disableEdition, setEditButtonState, file}
             });
         }
         getFilePreview();
+        setIsFileBigSize(((file?.filesize / (1024 * 1024)) > 32));
     }, [file]);
 
     useEffect(() => {
@@ -183,7 +162,7 @@ const FileInfo = ({isOpen, setIsOpen , disableEdition, setEditButtonState, file}
                     </div>
                     <Button style={"primary"}
                             small={true}
-                            onClick={() => {downloadFile(file); }}
+                            onClick={() => isFileBigSize ? downloadFileFromGCS(file) : downloadFile(file)}
                             icon={
                                 <svg
                                     width="16"

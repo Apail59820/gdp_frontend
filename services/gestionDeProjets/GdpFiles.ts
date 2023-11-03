@@ -130,6 +130,39 @@ export async function downloadGdPFile(id: string, param?: string): Promise<{ sta
     });
 }
 
+export async function downloadGdPFileFromGCS(id: string, param?: string): Promise<{ status: number; data?: string }> {
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+  const myHeaders = new Headers({
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  });
+
+  const myInit: RequestInit = {
+    method: 'POST',
+    headers: myHeaders,
+    mode: 'cors',
+    cache: 'default',
+    body: JSON.stringify({
+      filename_download: id
+    }),
+  };
+
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/signed-url/read`, myInit)
+      .then((res) => {
+        if (isRequestSuccessful(res.status)) {
+          return res.json().then((data) => {
+            return { status: res.status, data: data?.file_download_url as string};
+          });
+        }
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error(err);
+        return { status: 500 };
+      });
+}
+
 type createFieldsToOmit = 'id' | 'uploaded_by' | 'uploaded_on' | 'modified_by' | 'modified_on' | 'activities_id';
 
 /**
@@ -299,7 +332,11 @@ export async function uploadGdpFileWithProgress(
     mimeType: file.data?.type
   } : formData;
 
-  return await axiosInstance.post(fetchUrl, myInit).then(async(res) => {
+  return await axiosInstance.post(fetchUrl, myInit, {
+    onUploadProgress: progressEvent => {
+      !exceptSignedUrl && onUploadProgress(progressEvent);
+    }
+  }).then(async(res) => {
 
     if(isRequestSuccessful(res.status)){
       if(exceptSignedUrl)
