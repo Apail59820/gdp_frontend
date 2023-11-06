@@ -1,5 +1,6 @@
 import cookie from 'js-cookie';
 import getConfig from 'next/config';
+import {isRequestSuccessful} from "../utils/isRequestSuccessful";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -62,11 +63,12 @@ export const refreshToken = () => {
 };
 
 /**
- * @param email user email
+ * @param params
  */
 export async function inviteNewUsers(
-  email: string | string[]
-): Promise<{ status: number; data?: { id: string; email: string }[] }> {
+    email: string,
+    entity_id: number
+): Promise<{ status: number; data?: { id: string; email: string; entity_id: number }[] }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
   const myHeaders = new Headers({
@@ -75,8 +77,10 @@ export async function inviteNewUsers(
   });
   const body = JSON.stringify({
     email: email,
+    entity_id: entity_id,
     invite_url: publicRuntimeConfig.INVITE_URL,
   });
+  console.log(body)
   const myInit: RequestInit = {
     method: 'POST',
     headers: myHeaders,
@@ -87,7 +91,7 @@ export async function inviteNewUsers(
 
   return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/register/invite`, myInit)
     .then((response) => {
-      if (response.status === 200) {
+      if (isRequestSuccessful(response.status)) {
         return response
           .json()
           .then((responseData) => {

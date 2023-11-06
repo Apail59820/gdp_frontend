@@ -27,8 +27,10 @@ import ModifClientEntity from "../ModifClientEntity/ModifClientEntity";
 import {getUsClientsCompanyEntitiesUsers} from "../../../services/userService/UsClientsCompanyEntitiesUsers";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {capitalize} from "../../../utils/capitalize";
+import {getFullName} from "../../../utils/fullName";
 import {AddClientEntity} from "../AddClientEntity/AddClientEntity";
 import {getUsClientsCompanyEntities} from "../../../services/userService/UsClientsCompanyEntities";
+import CreateClient from "../CreateClient/CreateClient";
 
 const {publicRuntimeConfig} = getConfig();
 
@@ -50,9 +52,10 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   const [affairs, setAffairs] = useState<Partial<GdpAffairModel>[]>([]);
   const [users, setUsers] = useState<Partial<UsUserModel>[]>(
     useSelector(selectUsers).filter(
-      (user) => (user.last_name!==null) && user.role === publicRuntimeConfig[UserRoles[userType as keyof typeof UserRoles]]
+      (user) => user.role === publicRuntimeConfig[UserRoles[userType as keyof typeof UserRoles]]
     )
   );
+  const [isCreateClientOpen, setIsCreateClientOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isModifyOpen, setIsModifyOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -65,6 +68,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   const [displayButton, setDisplayButton] = useState<Map<number, any>>(new Map());
   const [loadingForButton, setLoadingForButton] = useState<boolean>();
   let timeout: ReturnType<typeof setTimeout> | null;
+
 
   useEffect(() => {
     const tmpAffairDirectusUsersId: string[] = [];
@@ -203,7 +207,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
     let usName:string = null;
 
     if(isRequestSuccessful(resUsName.status)){
-       usName = capitalize(resUsName?.data[0].first_name.toLowerCase()) + ' ' + capitalize(resUsName?.data[0].last_name.toLowerCase());
+       usName = getFullName(resUsName?.data[0])
        setClientName(usName)
     }
 
@@ -429,7 +433,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                               filterOption={false}
                               placeholder={'Sélectionnez un ' + userType}
                               options={users.map((user) => ({
-                                label: capitalize(user.first_name.toLowerCase()) + ' ' + capitalize(user.last_name.toLowerCase()),
+                                label: getFullName(user),
                                 value: user.id,
                                 disabled: selectedUsers
                                     .filter((user) => users.map((user) => user.id).includes(user))
@@ -441,7 +445,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                                       getUsUsers,
                                       {
                                         filter: {
-                                          _or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}],
+                                          _or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}, {email: {_starts_with: value}}],
                                         },
                                       },
                                       setUsers
@@ -485,9 +489,14 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                     </>
                 ))}
                 <Form.Item>
-                  <Button small onClick={() => add()} style={'text'}>
-                    Ajouter un {userType}
-                  </Button>
+                  <div style={{display:'flex'}}>
+                    <Button small onClick={() => add()} style={'text'}>
+                      Ajouter un {userType}
+                    </Button>
+                    <Button small style={"text"} onClick={()=>setIsCreateClientOpen(true)}>
+                      Créer un client
+                    </Button>
+                  </div>
                 </Form.Item>
               </>
           )}
@@ -504,6 +513,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
       <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} client={currentUser}/>
       <ModifClientEntity isModifyOpen={isModifyOpen} setIsModifyOpen={setIsModifyOpen} clientName={clientName} clientId={currentUser} />
       <AddClientEntity isAddOpen={isAddOpen} setIsAddOpen={setIsAddOpen} clientName={clientName} clientId={currentUser} />
+      <CreateClient  isOpen={isCreateClientOpen} setIsOpen={setIsCreateClientOpen} />
     </Modal>
   );
 };
