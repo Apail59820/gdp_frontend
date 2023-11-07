@@ -88,74 +88,93 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, client = null }: CreateClie
         <div>{loadingImage && uploadProgress && <CircularProgressWithLabel value={uploadProgress} />}</div>
     );
 
-    const onFinish = (values: any)=>{
-        getUsClientsCompanyEntities({filter:{name: values.entityName}})
-            .then(res=>{
-                console.log(res)
-                if(isRequestSuccessful( res.status ) && res.data.length>0){
-                    message.error("Cette entité existe déjà")
-                } else {
-                    createUsClientCompanyEntity({
-                        siren: values.siren,
-                        name: values.entityName,
-                        address: values.address,
-                        country: values.country,
-                        phone: values.phone,
-                        zip_code: values.zip_code,
-                        city: values.city,
-                        is_prospect: values.is_prospect,
-                        image: null,
-                        activities_id : null,
-                        clients_company_interactions_id: null,
-                        parameters: null,
-                        users: null
-                    })
-                        .then(createRes=>{
-                            console.log("/entity:created")
-                            getUsClientsCompanyEntities({filter:{name:values.entityName}, fields:'id'})
-                                .then(entityResult=>{
-                                    const entityId = entityResult.data[0].id
-                                    getUsClientsCompanyEntitiesUsers({
-                                        filter:{directus_users_id:client},
-                                    })
-                                        .then(associationResult=>{
-                                            if(isRequestSuccessful( associationResult.status )){
-                                                console.log('/client:associated')
-                                                console.log(
-                                                    associationResult.data
-                                                        .filter(assoc=>assoc.is_current_job)
-                                                )
-                                                associationResult.data
-                                                    .filter(assoc=>assoc.is_current_job)
-                                                    .forEach(assoc=>{
-                                                        console.log(new Date());
-                                                        updateUsClientCompanyEntityUser(
-                                                            `${assoc.id}`,
-                                                            {end_date:new Date(),is_current_job:false})
-                                                    })
-                                            }
-                                        })
-                                        .finally(()=>{
-                                            createUsClientCompanyEntityUser({
-                                                is_leader: null,
-                                                job_title: null,
-                                                start_date: null,
-                                                end_date: null,
+    const onFinish = async (values: any) => {
+        const companyEntityRes = await getUsClientsCompanyEntities({
+            filter: { name: values?.entityName },
+        });
+        if (
+            isRequestSuccessful(companyEntityRes.status) &&
+            companyEntityRes?.data.length > 0
+        ) {
+            return message.error(
+                `Une entité cliente ayant pour nom ${values?.entityName} existe déjà.`
+            );
+        }
 
-                                                is_current_job: true,
-                                                clients_company_entities_id: entityId,
-                                                directus_users_id: client,
-                                            })
-                                                .then(createRes=>{
-                                                    console.log(createRes)
-                                                })
-                                        })
-                                })
-                        })
-                    setIsOpen(false)
-                }
-            })
-    }
+        const createCompanyEntityRes = await createUsClientCompanyEntity({
+            siren: values.siren,
+            name: values.entityName,
+            address: values.address,
+            country: values.country,
+            phone: values.phone,
+            zip_code: values.zip_code,
+            city: values.city,
+            is_prospect: values.is_prospect,
+            image: null,
+            activities_id: null,
+            clients_company_interactions_id: null,
+            parameters: null,
+            users: null,
+        });
+
+        if (!isRequestSuccessful(createCompanyEntityRes.status)) {
+            return message.error(messages.general.error());
+        }
+
+        const clientsCompanyEntitiesRes = await getUsClientsCompanyEntities({
+            filter: { name: values.entityName },
+            fields: "id",
+        });
+
+        if (
+            !isRequestSuccessful(clientsCompanyEntitiesRes.status) ||
+            !clientsCompanyEntitiesRes?.data.length
+        ) {
+            return message.error(messages.general.error());
+        }
+
+        const clientsCompanyEntitiesUsersRes = await getUsClientsCompanyEntitiesUsers(
+            { filter: { directus_users_id: client } }
+        );
+
+        if (
+            !isRequestSuccessful(clientsCompanyEntitiesRes.status) ||
+            !clientsCompanyEntitiesUsersRes?.data
+        ) {
+            return message.error(messages.general.error());
+        }
+
+        let entityId = clientsCompanyEntitiesRes.data[0].id;
+
+        clientsCompanyEntitiesUsersRes.data
+            .filter((assoc) => assoc.is_current_job)
+            .forEach((assoc) => {
+                updateUsClientCompanyEntityUser(`${assoc.id}`, {
+                    end_date: new Date(),
+                    is_current_job: false,
+                });
+            });
+
+        const createClientCompanyEntityUserRes =
+            await createUsClientCompanyEntityUser({
+                is_leader: null,
+                job_title: null,
+                start_date: null,
+                end_date: null,
+
+                is_current_job: true,
+                clients_company_entities_id: entityId,
+                directus_users_id: client,
+            });
+
+        if (isRequestSuccessful(createClientCompanyEntityUserRes.status)) {
+            message.success(messages.general.success("Votre demande", true, false));
+        } else {
+            message.error(messages.general.error());
+        }
+        setIsOpen(false);
+    };
+
     return (
         <Modal
             open={isOpen}
