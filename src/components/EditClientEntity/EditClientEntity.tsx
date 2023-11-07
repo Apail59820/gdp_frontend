@@ -52,7 +52,7 @@ const EditClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId, 
 
                         if(isRequestSuccessful(res.status)){
                             await updateUsClientCompanyEntityUser(`${id.id}`, {end_date:new Date(),is_current_job:false});
-                            messages.general.success("Votre demande", true, false);
+                            message.success(messages.general.success("Votre demande", true, false));
                         }
                     }
                 }
@@ -60,10 +60,10 @@ const EditClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId, 
                     res = await updateUsClientCompanyEntityUser(`${id.id}`, {end_date:new Date(),is_current_job:false});
                 }
                 if(!isRequestSuccessful(res.status)){
-                    return messages.general.error();
+                    return message.error(messages.general.error());
                 }
             }
-        } else return messages.general.error();
+        } else return message.error(messages.general.error());
 
 
         if(shouldInsert){
@@ -79,8 +79,8 @@ const EditClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId, 
             })
 
             if(isRequestSuccessful(createEntityUserResponse.status)){
-                messages.general.success("Votre demande", true, false);
-            }else return messages.general.error();
+                message.success(messages.general.success("Votre demande", true, false));
+            }else return message.error(messages.general.error());
         }
 
 

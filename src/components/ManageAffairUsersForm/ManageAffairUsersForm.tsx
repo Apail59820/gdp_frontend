@@ -23,7 +23,7 @@ import {
   deleteProjectsUsersClient,
 } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
 import CreateClientEntity from "../CreateClientEntity/CreateClientEntity";
-import EditClientEntity from "../ModifClientEntity/ModifClientEntity";
+import EditClientEntity from "../EditClientEntity/EditClientEntity";
 import {getUsClientsCompanyEntitiesUsers} from "../../../services/userService/UsClientsCompanyEntitiesUsers";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {capitalize} from "../../../utils/capitalize";

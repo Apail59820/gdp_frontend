@@ -1,4 +1,4 @@
-import ModifClientEntity from "../ModifClientEntity/ModifClientEntity";
+import ModifClientEntity from "../EditClientEntity/EditClientEntity";
 import React from "react";
 
 type props = {
