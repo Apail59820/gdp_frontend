@@ -23,7 +23,7 @@ import {
   deleteProjectsUsersClient,
 } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
 import CreateClientEntity from "../CreateClientEntity/CreateClientEntity";
-import ModifClientEntity from "../ModifClientEntity/ModifClientEntity";
+import EditClientEntity from "../ModifClientEntity/ModifClientEntity";
 import {getUsClientsCompanyEntitiesUsers} from "../../../services/userService/UsClientsCompanyEntitiesUsers";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {capitalize} from "../../../utils/capitalize";
@@ -67,6 +67,10 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
 
   const [displayButton, setDisplayButton] = useState<Map<number, any>>(new Map());
   const [loadingForButton, setLoadingForButton] = useState<boolean>();
+  const [selectedClientKey, setSelectedClientKey] = useState<number | undefined>(undefined);
+  const [selectedClientId, setSelectedClientId] = useState<string | undefined>(undefined);
+  const [selectedClientText, setSelectedClientText] = useState<string | undefined>(undefined);
+
   let timeout: ReturnType<typeof setTimeout> | null;
 
 
@@ -161,6 +165,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
     }
   }, [affair.affairs_directus_users_ids, affair.projects_id, userType]);
 
+
   const setMap = async(key, display, name?:number)=>{
     setLoadingForButton(true);
     const clientId = form.getFieldValue('users')[name]?.user;
@@ -184,27 +189,33 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
             button: null //text? text: null
           }
           if(text){
-            value.button = <Button small style={"text"} onClick={()=>changeClientEntity(clientId, 'modify')}>{text}</Button>
+            setSelectedClientText(text);
+            value.button = <Button small style={"text"} onClick={()=>changeClientEntity(clientId, 'modify', key)}>{text}</Button>
           } else {
             value.button =
                 <Popconfirm title={"Voulez-vous créer une entité ou sélectionner une entité existante ?"}
-                            okText={'Créer'} onConfirm={()=>changeClientEntity(clientId, 'create')}
-                            cancelText={'Sélectionner'} onCancel={()=>changeClientEntity(clientId, 'add')}
+                            okText={'Créer'} onConfirm={()=>changeClientEntity(clientId, 'create', key)}
+                            cancelText={'Sélectionner'} onCancel={()=>changeClientEntity(clientId, 'add', key)}
                 >
                   <Button small style={"text"}>Ajouter</Button>
                 </Popconfirm>
           }
-          console.log(value.button.children)
+
           displayButton.set(key, value)
+
           setDisplayButton(displayButton)
           setLoadingForButton(false);
         })
   }
   const openModal= new Map<string, React.Dispatch<React.SetStateAction<boolean>>>();
   openModal.set('add', setIsAddOpen);  openModal.set('modify', setIsModifyOpen);  openModal.set('create', setIsCreateOpen)
-  const changeClientEntity = async (clientId: string, modalType: string) => {
+  const changeClientEntity = async (clientId: string, modalType: string, key: number) => {
     let resUsName= await getUsUsers({filter:{id:clientId}});
     let usName:string = null;
+
+    setSelectedClientKey(key);
+    setSelectedClientId(clientId);
+
 
     if(isRequestSuccessful(resUsName.status)){
        usName = getFullName(resUsName?.data[0])
@@ -511,7 +522,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
         </footer>
       </Form>
       <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} client={currentUser}/>
-      <ModifClientEntity isModifyOpen={isModifyOpen} setIsModifyOpen={setIsModifyOpen} clientName={clientName} clientId={currentUser} />
+      <EditClientEntity isModifyOpen={isModifyOpen} setIsModifyOpen={setIsModifyOpen} clientName={clientName} clientId={currentUser}/>
       <AddClientEntity isAddOpen={isAddOpen} setIsAddOpen={setIsAddOpen} clientName={clientName} clientId={currentUser} />
       <CreateClient  isOpen={isCreateClientOpen} setIsOpen={setIsCreateClientOpen} />
     </Modal>

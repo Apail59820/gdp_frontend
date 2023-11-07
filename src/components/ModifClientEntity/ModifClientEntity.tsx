@@ -8,6 +8,8 @@ import {
     createUsClientCompanyEntityUser,
     getUsClientsCompanyEntitiesUsers, updateUsClientCompanyEntityUser
 } from "../../../services/userService/UsClientsCompanyEntitiesUsers";
+import {messages} from "../../../constants/messages";
+
 
 type props={
     isModifyOpen: boolean,
@@ -17,7 +19,7 @@ type props={
     title ?: string,
 }
 
-const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId, title="Modifier l'entité de"}:props)=>{
+const EditClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId, title="Modifier l'entité de"}:props)=>{
     const [entityName, setEntityName] = useState<string>()
     const [companyEntities, setCompanyEntities] = useState([])
     useEffect(() => {
@@ -29,20 +31,43 @@ const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId,
     }, []);
     const allCompanyEntities = companyEntities?companyEntities:null;
 
-    const onFinish = (entityName)=>{
-        getUsClientsCompanyEntitiesUsers({filter:{directus_users_id:clientId, is_current_job: true}})
-            .then(associationResult=>{
-                if(isRequestSuccessful( associationResult.status )){
-                    associationResult.data
-                        .forEach(association=>{
-                            updateUsClientCompanyEntityUser(
-                                `${association.id}`,
-                                {end_date:new Date(),is_current_job:false})
-                        })
+    const onFinish = async(entityName)=>{
+
+        const currentJobsResponse = await getUsClientsCompanyEntitiesUsers({filter:{directus_users_id:clientId, is_current_job: true}});
+        const previousJobsResponse = await getUsClientsCompanyEntitiesUsers({filter:{directus_users_id:clientId, is_current_job: false}});
+        let shouldInsert = true;
+
+        if(isRequestSuccessful(currentJobsResponse.status)){
+            let ids = currentJobsResponse?.data;
+            for(const id of ids){
+                let res : {status:number, data?: Partial<UsClientsCompanyEntitiesModel> };
+                for(const prevJob of previousJobsResponse.data) {
+                    if(prevJob.clients_company_entities_id == entityName && shouldInsert){
+                        res = await updateUsClientCompanyEntityUser(`${prevJob.id}`, {
+                            end_date:null,
+                            start_date: new Date(),
+                            is_current_job:true});
+
+                        shouldInsert = false;
+
+                        if(isRequestSuccessful(res.status)){
+                            await updateUsClientCompanyEntityUser(`${id.id}`, {end_date:new Date(),is_current_job:false});
+                            messages.general.success("Votre demande", true, false);
+                        }
+                    }
                 }
-            })
-        .finally(()=>{
-            createUsClientCompanyEntityUser({
+                if(shouldInsert) {
+                    res = await updateUsClientCompanyEntityUser(`${id.id}`, {end_date:new Date(),is_current_job:false});
+                }
+                if(!isRequestSuccessful(res.status)){
+                    return messages.general.error();
+                }
+            }
+        } else return messages.general.error();
+
+
+        if(shouldInsert){
+            const createEntityUserResponse = await createUsClientCompanyEntityUser({
                 is_leader: null,
                 job_title: null,
                 start_date: null,
@@ -52,15 +77,14 @@ const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId,
                 clients_company_entities_id: entityName,
                 directus_users_id: clientId,
             })
-                .then(res=>{
-                    if(isRequestSuccessful( res.status )){
-                        message.success('Votre demande a été prise en compte')
-                    } else {
-                        message.error("Votre demande n'a pas été prise en compte")
-                    }
-                })
-            setIsModifyOpen(false);
-        })
+
+            if(isRequestSuccessful(createEntityUserResponse.status)){
+                messages.general.success("Votre demande", true, false);
+            }else return messages.general.error();
+        }
+
+
+        setIsModifyOpen(false);
     }
 
     return <>
@@ -103,4 +127,4 @@ const ModifClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId,
         </Modal>
     </>
 }
-export default ModifClientEntity
+export default EditClientEntity
