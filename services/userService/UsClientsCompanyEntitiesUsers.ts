@@ -40,7 +40,6 @@ export async function getUsClientsCompanyEntitiesUsers(
   )
     .then((res) => {
       if (res.status == 200){
-        console.log("fetch end");
         return res.json().then((data) => {
           return { status: res.status, data: data.data };
         });
@@ -117,11 +116,8 @@ export async function createUsClientCompanyEntityUser(
     body: JSON.stringify(clientCompanyEntityUser),
   };
 
-  console.log(myInit);
-
   return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_entities_directus_users`, myInit)
     .then((response) => {
-      console.log("then fetch");
       if (response.status === 200 || response.status === 204) {
         return response
           .json()
@@ -134,7 +130,6 @@ export async function createUsClientCompanyEntityUser(
             return { status: response.status };
           });
       } else {
-        console.log("res not ok");
         return { status: response.status };
       }
     })
@@ -186,7 +181,6 @@ export async function updateUsClientCompanyEntityUser(
     .then(async (response) => {
       if (isRequestSuccessful(response.status)) {
         try {
-          console.log("end update request");
           const responseData = await response
               .json();
           return {status: response.status, data: responseData.data};

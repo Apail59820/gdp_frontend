@@ -66,12 +66,21 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   const [affairDirectusUsersId, setAffairDirectusUsersId] = useState<string[]>([]);
 
   const [displayButton, setDisplayButton] = useState<Map<number, any>>(new Map());
-  const [loadingForButton, setLoadingForButton] = useState<boolean>();
-  const [selectedClientKey, setSelectedClientKey] = useState<number | undefined>(undefined);
-  const [selectedClientId, setSelectedClientId] = useState<string | undefined>(undefined);
-  const [selectedClientText, setSelectedClientText] = useState<string | undefined>(undefined);
+
+  const [newEntity, setNewEntity] = useState<{user: string, entityName: string} | null>(null);
+  const [selectedClientKey, setSelectedClientKey] = useState<number | null>(null);
 
   let timeout: ReturnType<typeof setTimeout> | null;
+
+  useEffect(() => {
+    if(selectedClientKey){
+      const currDisplayBtn = displayButton.get(selectedClientKey);
+      currDisplayBtn.button.innerHTML = newEntity.entityName;
+
+      displayButton.set(selectedClientKey, currDisplayBtn)
+      setDisplayButton(displayButton);
+    }
+  }, [newEntity]);
 
 
   useEffect(() => {
@@ -167,7 +176,6 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
 
 
   const setMap = async(key, display, name?:number)=>{
-    setLoadingForButton(true);
     const clientId = form.getFieldValue('users')[name]?.user;
     let text: string = null;
     await getUsClientsCompanyEntitiesUsers({filter: {directus_users_id : clientId, is_current_job: true}, fields:'clients_company_entities_id'})
@@ -189,7 +197,6 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
             button: null //text? text: null
           }
           if(text){
-            setSelectedClientText(text);
             value.button = <Button small style={"text"} onClick={()=>changeClientEntity(clientId, 'modify', key)}>{text}</Button>
           } else {
             value.button =
@@ -204,7 +211,6 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
           displayButton.set(key, value)
 
           setDisplayButton(displayButton)
-          setLoadingForButton(false);
         })
   }
   const openModal= new Map<string, React.Dispatch<React.SetStateAction<boolean>>>();
@@ -213,14 +219,12 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
     let resUsName= await getUsUsers({filter:{id:clientId}});
     let usName:string = null;
 
-    setSelectedClientKey(key);
-    setSelectedClientId(clientId);
-
-
     if(isRequestSuccessful(resUsName.status)){
        usName = getFullName(resUsName?.data[0])
        setClientName(usName)
     }
+
+    setSelectedClientKey(key);
 
     openModal.get(modalType)(true);
   }
@@ -521,7 +525,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
           </Button>
         </footer>
       </Form>
-      <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} client={currentUser}/>
+      <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} newEntity={newEntity} setNewEntity={setNewEntity} client={currentUser}/>
       <EditClientEntity isModifyOpen={isModifyOpen} setIsModifyOpen={setIsModifyOpen} clientName={clientName} clientId={currentUser}/>
       <AddClientEntity isAddOpen={isAddOpen} setIsAddOpen={setIsAddOpen} clientName={clientName} clientId={currentUser} />
       <CreateClient  isOpen={isCreateClientOpen} setIsOpen={setIsCreateClientOpen} />
