@@ -68,19 +68,24 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   const [displayButton, setDisplayButton] = useState<Map<number, any>>(new Map());
 
   const [newEntity, setNewEntity] = useState<{user: string, entityName: string} | null>(null);
-  const [selectedClientKey, setSelectedClientKey] = useState<number | null>(null);
+  const [selectedClientKey, setSelectedClientKey] = useState<number | undefined>(undefined);
 
   let timeout: ReturnType<typeof setTimeout> | null;
 
   useEffect(() => {
-    if(selectedClientKey){
-      const currDisplayBtn = displayButton.get(selectedClientKey);
-      currDisplayBtn.button.innerHTML = newEntity.entityName;
+    if (selectedClientKey !== undefined && newEntity) {
+        const currDisplayBtn = displayButton.get(selectedClientKey);
+        currDisplayBtn.button = (
+            <Button small style={"text"} onClick={() => changeClientEntity(newEntity.user, 'modify', selectedClientKey)}>
+              {newEntity.entityName}
+            </Button>
+        );
 
-      displayButton.set(selectedClientKey, currDisplayBtn)
-      setDisplayButton(displayButton);
-    }
-  }, [newEntity]);
+        displayButton.set(selectedClientKey, currDisplayBtn);
+        setDisplayButton(new Map(displayButton));
+        setNewEntity(null);
+      }
+  }, [newEntity, selectedClientKey]);
 
 
   useEffect(() => {
@@ -204,7 +209,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                             okText={'Créer'} onConfirm={()=>changeClientEntity(clientId, 'create', key)}
                             cancelText={'Sélectionner'} onCancel={()=>changeClientEntity(clientId, 'add', key)}
                 >
-                  <Button small style={"text"}>Ajouter</Button>
+                  <Button small style={"text"}>Entité</Button>
                 </Popconfirm>
           }
 
@@ -467,7 +472,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                                   ).catch((err) => console.error(err));
                                 }
                               }}
-                              onChange={(value) => {
+                              onChange={async (value) => {
                                 if (value) {
                                   setCurrentUser(value);
                                   const user = users.filter(user=>user.id===currentUser)[0]
@@ -476,7 +481,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                                     setClientName(userName);
                                   }
 
-                                  setMap(key, true, name)
+                                  await setMap(key, true, name)
                                   const tmp = form.getFieldValue('users');
                                   setSelectedUsers(tmp.map((user: any) => user));
                                 }
@@ -525,9 +530,9 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
           </Button>
         </footer>
       </Form>
-      <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} newEntity={newEntity} setNewEntity={setNewEntity} client={currentUser}/>
-      <EditClientEntity isModifyOpen={isModifyOpen} setIsModifyOpen={setIsModifyOpen} clientName={clientName} clientId={currentUser}/>
-      <AddClientEntity isAddOpen={isAddOpen} setIsAddOpen={setIsAddOpen} clientName={clientName} clientId={currentUser} />
+      <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} setNewEntity={setNewEntity} client={currentUser}/>
+      <EditClientEntity isModifyOpen={isModifyOpen} setIsModifyOpen={setIsModifyOpen} clientName={clientName} setNewEntity={setNewEntity} clientId={currentUser}/>
+      <AddClientEntity isAddOpen={isAddOpen} setIsAddOpen={setIsAddOpen} clientName={clientName} setNewEntity={setNewEntity} clientId={currentUser} />
       <CreateClient  isOpen={isCreateClientOpen} setIsOpen={setIsCreateClientOpen} />
     </Modal>
   );

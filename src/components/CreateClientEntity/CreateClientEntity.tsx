@@ -17,12 +17,11 @@ import {createUsClientCompanyEntityUser} from "../../../services/userService/UsC
 type CreateClientEntityFormProps = {
     client?: string;
     isOpen: boolean;
-    newEntity: { user: string, entityName: string }
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
     setNewEntity: React.Dispatch<React.SetStateAction<{ user: string, entityName: string }>>
 };
 
-const CreateClientEntityForm = ({ isOpen, setIsOpen, newEntity, setNewEntity, client = null }: CreateClientEntityFormProps) => {
+const CreateClientEntityForm = ({ isOpen, setIsOpen, setNewEntity, client = null }: CreateClientEntityFormProps) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [assetPreview, setAssetPreview] = useState<string | undefined>(undefined);
     const [loadingImage, setLoadingImage] = useState<boolean>(false);
@@ -138,7 +137,7 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, newEntity, setNewEntity, cl
         }
 
         const entityId = clientsCompanyEntitiesRes.data[0].id;
-        const entityName = clientsCompanyEntitiesRes.data[0].name;
+
 
         clientsCompanyEntitiesUsersRes.data
             .filter((assoc) => assoc.is_current_job)
@@ -162,7 +161,7 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, newEntity, setNewEntity, cl
             });
 
         if (isRequestSuccessful(createClientCompanyEntityUserRes.status)) {
-            setNewEntity({user: client, entityName: entityName})
+            setNewEntity({user: client, entityName: values.entityName})
             message.success(messages.general.success("Votre demande", true, false));
         } else {
             message.error(messages.general.error());

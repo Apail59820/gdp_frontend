@@ -11,15 +11,16 @@ import {
 import {messages} from "../../../constants/messages";
 
 
-type props={
+type props= {
+    clientId: string,
+    clientName: string,
     isModifyOpen: boolean,
     setIsModifyOpen: React.Dispatch<boolean>,
-    clientName: string,
-    clientId: string,
-    title ?: string,
+    setNewEntity: React.Dispatch<React.SetStateAction<{ user: string, entityName: string }>>,
+    title?: string
 }
 
-const EditClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId, title="Modifier l'entité de"}:props)=>{
+const EditClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId, setNewEntity, title="Modifier l'entité de"}:props)=>{
     const [entityName, setEntityName] = useState<string>()
     const [companyEntities, setCompanyEntities] = useState([])
     useEffect(() => {
@@ -30,11 +31,18 @@ const EditClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId, 
         })
     }, []);
     const allCompanyEntities = companyEntities?companyEntities:null;
-
     const onFinish = async(entityName)=>{
 
         const currentJobsResponse = await getUsClientsCompanyEntitiesUsers({filter:{directus_users_id:clientId, is_current_job: true}});
         const previousJobsResponse = await getUsClientsCompanyEntitiesUsers({filter:{directus_users_id:clientId, is_current_job: false}});
+        const newEntityRes = await getUsClientsCompanyEntities({filter:{id: entityName}});
+
+        if(!isRequestSuccessful(newEntityRes.status) || !newEntityRes?.data.length){
+            return message.error(messages.general.error());
+        }
+
+        let newEntityName = newEntityRes.data[0].name;
+
         let shouldInsert = true;
 
         if(isRequestSuccessful(currentJobsResponse.status)){
@@ -53,6 +61,7 @@ const EditClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId, 
                         if(isRequestSuccessful(res.status)){
                             await updateUsClientCompanyEntityUser(`${id.id}`, {end_date:new Date(),is_current_job:false});
                             message.success(messages.general.success("Votre demande", true, false));
+                            setNewEntity({user: clientId, entityName: newEntityName})
                         }
                     }
                 }
@@ -80,6 +89,7 @@ const EditClientEntity = ({isModifyOpen, setIsModifyOpen, clientName, clientId, 
 
             if(isRequestSuccessful(createEntityUserResponse.status)){
                 message.success(messages.general.success("Votre demande", true, false));
+                setNewEntity({user: clientId, entityName: newEntityName})
             }else return message.error(messages.general.error());
         }
 

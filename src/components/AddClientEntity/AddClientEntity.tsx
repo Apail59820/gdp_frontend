@@ -1,15 +1,17 @@
-import ModifClientEntity from "../EditClientEntity/EditClientEntity";
 import React from "react";
+import EditClientEntity from "../EditClientEntity/EditClientEntity";
 
 type props = {
+    clientId: string,
+    clientName: string,
     isAddOpen: boolean,
     setIsAddOpen: React.Dispatch<boolean>,
-    clientName: string,
-    clientId: string,
+    setNewEntity: React.Dispatch<React.SetStateAction<{ user: string, entityName: string }>>
 }
 
-export const AddClientEntity = ({isAddOpen, setIsAddOpen, clientName, clientId}:props)=>{
-    return <ModifClientEntity isModifyOpen={isAddOpen} setIsModifyOpen={setIsAddOpen}
+export const AddClientEntity = ({isAddOpen, setIsAddOpen, clientName, clientId, setNewEntity}:props)=>{
+    return <EditClientEntity isModifyOpen={isAddOpen} setIsModifyOpen={setIsAddOpen}
                               clientName={clientName} clientId={clientId}
+                                setNewEntity={setNewEntity}
                               title={"Sélectionner une entité pour"} />
 }
