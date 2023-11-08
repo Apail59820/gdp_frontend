@@ -303,7 +303,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
     timeout = setTimeout(getData, 300);
   };
 
-  const onFinish = (values: any) => {
+  const onFinish = async(values: any) => {
     const valuesToDelete = affairUsers.filter((user) => {
       return !values.users.find((value: any) => value.user === user.id);
     });
@@ -339,7 +339,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
       });
       if (valuesToDelete.length > 0 && remainingRelations.filter((relation) => relation.project_manager).length > 0) {
         // Suppression des collaborateurs
-        deleteGdpAffairUsers(relationToRemove);
+        await deleteGdpAffairUsers(relationToRemove);
       }
       if (valuesToAdd.length > 0) {
         // Ajout des collaborateurs
@@ -375,11 +375,11 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
       }
       if (valuesToDelete.length > 0) {
         // Suppression des clients
-        deleteProjectsUsersClient(relationToRemove);
+        await deleteProjectsUsersClient(relationToRemove);
       }
       if (valuesToAdd.length > 0) {
         // Ajout des clients
-        createGdpProjectUsersClients(
+        await createGdpProjectUsersClients(
           valuesToAdd.map((value: any) => ({
             projects_id: typeof affair.projects_id !== 'number' ? affair.projects_id?.id : affair.projects_id,
             directus_users_id: value.user,
