@@ -155,6 +155,7 @@ const Team = () => {
             <ClientTeamWidget
               users={projectClients}
               clientCompany={(project.clients_company_entity as Partial<UsClientsCompanyEntitiesModel> | null) || {}}
+              projectType={'project'}
             />
             <CollaboratorTeamWidget users={projectManagers} companyEntity={companyEntity?.name || ''} />
           </Grid>

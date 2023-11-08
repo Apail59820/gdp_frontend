@@ -466,6 +466,7 @@ const Project = () => {
                 clientCompany={projectClientCompany}
                 onAddClientClick={() => console.log('clicked')}
                 displayConfigureButton={false}
+                projectType={'project'}
               />
               <CollaboratorTeamWidget
                 users={projectManagers}

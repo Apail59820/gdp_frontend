@@ -1,24 +1,25 @@
 import { useRouter } from 'next/router';
-import React, {useState} from 'react';
+import React from 'react';
 import ClientTeamCard, { ClientTeamCardProps } from '../ClientTeamCard/ClientTeamCard';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
-import {Button, Section} from 'projex-ui';
-import {Dropdown, MenuProps, message} from "antd";
+import {Section} from 'projex-ui';
+import {MenuProps} from "antd";
 
 type Props = Omit<ClientTeamCardProps, 'allUsersPageHref' | 'onKebabMenuClick'> & {
   onAddClientClick?: React.MouseEventHandler<HTMLButtonElement>;
   clientTeamPageHref?: string;
   displayConfigureButton?: boolean;
+  projectType?: 'affair' | 'project'
 };
 
 
 const ClientTeamWidget = (props: Props) => {
-  const { onAddClientClick, clientTeamPageHref, displayConfigureButton } = props;
+  const { onAddClientClick, clientTeamPageHref, displayConfigureButton, projectType } = props;
   const router = useRouter();
 
   const items: MenuProps['items'] = [
     {
-      label: <a>Ajouter un client à l'affaire</a>,
+      label: projectType == 'affair' ? <a>Ajouter un client à l'affaire</a> : <a>Ajouter un client au projet</a>,
       key: '0',
     },
   ];
@@ -27,8 +28,6 @@ const ClientTeamWidget = (props: Props) => {
     items,
     onClick: onAddClientClick,
   };
-
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
     <Section
@@ -41,7 +40,7 @@ const ClientTeamWidget = (props: Props) => {
                 onKebabMenuClick={(e) => {
                   (e) => e.preventDefault()
                 }}
-                dropDownItems={DropDownMenuProps}
+                dropDownItems={DropDownMenuProps as any}
             />
       ) : (
         <ConfigureWidget

@@ -201,6 +201,7 @@ const Team = () => {
                 setIsModalOpen(true);
               }}
               displayConfigureButton
+              projectType={'affair'}
             />
             <CollaboratorTeamWidget
               users={projectManagers}

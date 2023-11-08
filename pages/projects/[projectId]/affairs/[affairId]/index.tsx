@@ -549,6 +549,7 @@ const Affair = () => {
               clientCompany={{ name: 'Client' }}
               onAddClientClick={() => handleManageUsersFormType('client')}
               displayConfigureButton={isUserAffairManager}
+              projectType={'affair'}
             />
             <CollaboratorTeamWidget
               type="affair"

@@ -3,7 +3,7 @@ import styles from './TeamCard.module.scss';
 import { ShadowCard } from 'projex-ui';
 import Link from 'next/link';
 import { UsUserModel } from '../../../models/UsModels';
-import {Dropdown, MenuProps, Tooltip} from 'antd';
+import {MenuProps, Tooltip} from 'antd';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 import UserInformations from '../UserInformations/UserInformations';
 import Image from 'next/image';

@@ -1,9 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import styles from './KebabMenuForCards.module.scss';
 import kebabMenu from '../../../public/ellipsis-vertical.svg';
 import {Dropdown, MenuProps} from "antd";
-import {Simulate} from "react-dom/test-utils";
-import drop = Simulate.drop;
 
 type Props = {
   onClick: React.MouseEventHandler<HTMLButtonElement>;
