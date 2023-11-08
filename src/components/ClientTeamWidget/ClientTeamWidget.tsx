@@ -17,9 +17,11 @@ const ClientTeamWidget = (props: Props) => {
   const { onAddClientClick, clientTeamPageHref, displayConfigureButton, projectType } = props;
   const router = useRouter();
 
+  const displayKebabMenu : boolean = (projectType != 'project');
+
   const items: MenuProps['items'] = [
     {
-      label: projectType == 'affair' ? <a>Ajouter un client à l'affaire</a> : <a>Ajouter un client au projet</a>,
+      label:  <a>Ajouter un client à l'affaire</a>,
       key: '0',
     },
   ];
@@ -41,6 +43,7 @@ const ClientTeamWidget = (props: Props) => {
                   (e) => e.preventDefault()
                 }}
                 dropDownItems={DropDownMenuProps as any}
+                displayKebabMenu={displayKebabMenu}
             />
       ) : (
         <ConfigureWidget

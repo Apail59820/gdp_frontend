@@ -6,11 +6,12 @@ import {MenuProps} from "antd";
 
 export type ClientTeamCardProps = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
   clientCompany: Partial<UsClientsCompanyEntitiesModel>;
-  dropDownItems?: MenuProps
+  dropDownItems?: MenuProps;
+  displayKebabMenu?: boolean;
 };
 
 const ClientTeamCard = (props: ClientTeamCardProps) => {
-  const { clientCompany, dropDownItems } = props;
+  const { clientCompany, dropDownItems, displayKebabMenu } = props;
   const aside = (
     <section className={styles.clientCompanyDetails}>
       <h4 className={styles.title}>{clientCompany.name}</h4>

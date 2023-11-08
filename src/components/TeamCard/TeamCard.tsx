@@ -17,11 +17,12 @@ export type TeamCardProps = {
   allUsersPageHref: string;
   aside: React.ReactNode;
   onKebabMenuClick: React.MouseEventHandler<HTMLButtonElement>;
-  dropDownItems?: MenuProps
+  dropDownItems?: MenuProps;
+  displayKebabMenu?: boolean;
 };
 
 
-const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClick, dropDownItems}: TeamCardProps) => {
+const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClick, dropDownItems, displayKebabMenu}: TeamCardProps) => {
   const [currentUser, setCurrentUser] = useState<Partial<UsUserModel>>(users[0]);
   const [currentUserAvatar, setCurrentUserAvatar] = useState<string | undefined>(undefined);
   useEffect(() => {
@@ -66,8 +67,9 @@ const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClic
           </ul>
         </div>
 
-          <KebabMenuForCards onClick={() => onKebabMenuClick} dropDownItems={dropDownItems}></KebabMenuForCards>
-
+        {displayKebabMenu && (
+            <KebabMenuForCards onClick={() => onKebabMenuClick} dropDownItems={dropDownItems}></KebabMenuForCards>
+        )}
       </div>
     </ShadowCard>
   );
