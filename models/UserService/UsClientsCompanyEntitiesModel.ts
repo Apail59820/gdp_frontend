@@ -14,6 +14,7 @@ export type UsClientsCompanyEntitiesModel = {
   zip_code: string | null;
   city: string | null;
   country: string | null;
+  is_prospect: boolean | null;
 
   user_created: string | UsUserModel;
   date_created: Date;

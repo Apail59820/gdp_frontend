@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Empty, Form, message, Modal, Select} from 'antd';
+import {Empty, Form, message, Modal, Popconfirm, Select} from 'antd';
 import {GdpAffairModel} from '../../../models/GestionDeProjets/GdpAffairModel';
 import {useSelector} from 'react-redux';
 import {GdpProjectsModel} from '../../../models/GestionDeProjets/GdpProjectsModel';
 import {Button} from 'projex-ui';
 import {selectUsers} from '../../../store/reducers/usersReducer';
 import getConfig from 'next/config';
-import {MinusCircleOutlined} from '@ant-design/icons';
+import {CheckCircleTwoTone, MinusCircleOutlined} from '@ant-design/icons';
 import styles from './ManageAffairUsersForm.module.scss';
 import {UsUserModel} from '../../../models/UserService/UsUserModel';
 import {getUsUsers} from '../../../services/userService/UsUsers';
@@ -22,6 +22,15 @@ import {
   createGdpProjectUsersClients,
   deleteProjectsUsersClient,
 } from '../../../services/gestionDeProjets/GdpProjectsUsersClients';
+import CreateClientEntity from "../CreateClientEntity/CreateClientEntity";
+import EditClientEntity from "../EditClientEntity/EditClientEntity";
+import {getUsClientsCompanyEntitiesUsers} from "../../../services/userService/UsClientsCompanyEntitiesUsers";
+import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
+import {capitalize} from "../../../utils/capitalize";
+import {getFullName} from "../../../utils/fullName";
+import {AddClientEntity} from "../AddClientEntity/AddClientEntity";
+import {getUsClientsCompanyEntities} from "../../../services/userService/UsClientsCompanyEntities";
+import CreateClient from "../CreateClient/CreateClient";
 
 const {publicRuntimeConfig} = getConfig();
 
@@ -43,15 +52,41 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   const [affairs, setAffairs] = useState<Partial<GdpAffairModel>[]>([]);
   const [users, setUsers] = useState<Partial<UsUserModel>[]>(
     useSelector(selectUsers).filter(
-      (user) =>
-          (user.last_name!==null)&&(user.role === publicRuntimeConfig[UserRoles[userType as keyof typeof UserRoles]])
+      (user) => user.role === publicRuntimeConfig[UserRoles[userType as keyof typeof UserRoles]]
     )
   );
+  const [isCreateClientOpen, setIsCreateClientOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isModifyOpen, setIsModifyOpen] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<string>();
+  const [clientName, setClientName] = useState<string>();
   const [affairUsers, setAffairUsers] = useState<Partial<UsUserModel>[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<Partial<string | undefined>[]>([]);
   const [affairDirectusUsersId, setAffairDirectusUsersId] = useState<string[]>([]);
 
+  const [displayButton, setDisplayButton] = useState<Map<number, any>>(new Map());
+
+  const [newEntity, setNewEntity] = useState<{user: string, entityName: string} | null>(null);
+  const [selectedClientKey, setSelectedClientKey] = useState<number | undefined>(undefined);
+
   let timeout: ReturnType<typeof setTimeout> | null;
+
+  useEffect(() => {
+    if (selectedClientKey !== undefined && newEntity) {
+        const currDisplayBtn = displayButton.get(selectedClientKey);
+        currDisplayBtn.button = (
+            <Button small style={"text"} onClick={() => changeClientEntity(newEntity.user, 'modify', selectedClientKey)}>
+              {newEntity.entityName}
+            </Button>
+        );
+
+        displayButton.set(selectedClientKey, currDisplayBtn);
+        setDisplayButton(new Map(displayButton));
+        setNewEntity(null);
+      }
+  }, [newEntity, selectedClientKey]);
+
 
   useEffect(() => {
     const tmpAffairDirectusUsersId: string[] = [];
@@ -144,6 +179,61 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
     }
   }, [affair.affairs_directus_users_ids, affair.projects_id, userType]);
 
+
+  const setMap = async(key, display, name?:number)=>{
+    const clientId = form.getFieldValue('users')[name]?.user;
+    let text: string = null;
+    await getUsClientsCompanyEntitiesUsers({filter: {directus_users_id : clientId, is_current_job: true}, fields:'clients_company_entities_id'})
+        .then(async (clientEntityRelationResponse) => {
+          if(isRequestSuccessful(clientEntityRelationResponse.status)){
+            if(clientEntityRelationResponse?.data.length == 1){
+              let clientEntityData = clientEntityRelationResponse.data;
+              await getUsClientsCompanyEntities({filter: {id: clientEntityData[0].clients_company_entities_id}}).then((entityRes) => {
+                if(isRequestSuccessful(entityRes.status) && entityRes?.data.length == 1){
+                  text = entityRes.data[0].name;
+                }
+              })
+            }
+          }
+        })
+        .finally(()=>{
+          let value = {
+            display: display,
+            button: null //text? text: null
+          }
+          if(text){
+            value.button = <Button small style={"text"} onClick={()=>changeClientEntity(clientId, 'modify', key)}>{text}</Button>
+          } else {
+            value.button =
+                <Popconfirm title={"Voulez-vous créer une entité ou sélectionner une entité existante ?"}
+                            okText={'Créer'} onConfirm={()=>changeClientEntity(clientId, 'create', key)}
+                            cancelText={'Sélectionner'} onCancel={()=>changeClientEntity(clientId, 'add', key)}
+                >
+                  <Button small style={"text"}>Entité</Button>
+                </Popconfirm>
+          }
+
+          displayButton.set(key, value)
+
+          setDisplayButton(displayButton)
+        })
+  }
+  const openModal= new Map<string, React.Dispatch<React.SetStateAction<boolean>>>();
+  openModal.set('add', setIsAddOpen);  openModal.set('modify', setIsModifyOpen);  openModal.set('create', setIsCreateOpen)
+  const changeClientEntity = async (clientId: string, modalType: string, key: number) => {
+    let resUsName= await getUsUsers({filter:{id:clientId}});
+    let usName:string = null;
+
+    if(isRequestSuccessful(resUsName.status)){
+       usName = getFullName(resUsName?.data[0])
+       setClientName(usName)
+    }
+
+    setSelectedClientKey(key);
+
+    openModal.get(modalType)(true);
+  }
+
   useEffect(() => {
     setSelectedUsers(affairUsers.map((user) => user.id));
   }, [affairUsers]);
@@ -213,7 +303,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
     timeout = setTimeout(getData, 300);
   };
 
-  const onFinish = (values: any) => {
+  const onFinish = async(values: any) => {
     const valuesToDelete = affairUsers.filter((user) => {
       return !values.users.find((value: any) => value.user === user.id);
     });
@@ -249,7 +339,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
       });
       if (valuesToDelete.length > 0 && remainingRelations.filter((relation) => relation.project_manager).length > 0) {
         // Suppression des collaborateurs
-        deleteGdpAffairUsers(relationToRemove);
+        await deleteGdpAffairUsers(relationToRemove);
       }
       if (valuesToAdd.length > 0) {
         // Ajout des collaborateurs
@@ -285,11 +375,11 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
       }
       if (valuesToDelete.length > 0) {
         // Suppression des clients
-        deleteProjectsUsersClient(relationToRemove);
+        await deleteProjectsUsersClient(relationToRemove);
       }
       if (valuesToAdd.length > 0) {
         // Ajout des clients
-        createGdpProjectUsersClients(
+        await createGdpProjectUsersClients(
           valuesToAdd.map((value: any) => ({
             projects_id: typeof affair.projects_id !== 'number' ? affair.projects_id?.id : affair.projects_id,
             directus_users_id: value.user,
@@ -348,67 +438,87 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
         </Form.Item>
         <Form.List name={'users'} initialValue={affairUsers.map((user) => ({user: user.id}))}>
           {(fields, {add, remove}) => (
-            <>
-              <p className={styles.customLabel}>{userType}</p>
-              {fields.map(({key, name, ...restFields}) => (
-                <div key={key} className={styles.formListItems}>
-                  <Form.Item className={styles.formItem} {...restFields} name={[name, 'user']}>
-                    <Select
-                      showSearch
-                      showArrow={false}
-                      filterOption={false}
-                      placeholder={'Sélectionnez un ' + userType}
-                      options={users.map((user) => ({
-                        label: user.first_name + ' ' + user.last_name,
-                        value: user.id,
-                        disabled: selectedUsers
-                          .filter((user) => users.map((user) => user.id).includes(user))
-                          .some((id) => id === user.id),
-                      }))}
-                      onSearch={(value) => {
-                        if (value.length > 2) {
-                          fetchData(
-                            getUsUsers,
-                            {
-                              filter: {
-                                _or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}],
-                              },
-                            },
-                            setUsers
-                          ).catch((err) => console.error(err));
-                        }
-                      }}
-                      onChange={(value) => {
-                        if (value) {
-                          const tmp = form.getFieldValue('users');
-                          setSelectedUsers(tmp.map((user: any) => user.responsable));
-                        }
-                      }}
-                      notFoundContent={
-                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucun utilisateur trouvé'}/>
-                      }
-                    />
-                  </Form.Item>
-                  <MinusCircleOutlined
-                    rev={undefined}
-                    onClick={() => {
-                      const tmp = [...selectedUsers];
-                      if (form.getFieldValue('users')[name]) {
-                        const index = tmp.indexOf(form.getFieldValue('users')[name].responsable);
-                        tmp.splice(index, 1);
-                        setSelectedUsers(tmp);
-                      }
-                      remove(name);
-                    }}
-                  />
-                </div>
-              ))}
-              <Form.Item>
-                <Button small onClick={() => add()} style={'text'}>
-                  Ajouter un {userType}
-                </Button>
-              </Form.Item>
-            </>
+              <>
+                <p className={styles.customLabel}>{userType}</p>
+                {fields.map(({key, name, ...restFields}) => (
+                    <>
+                      <div className={styles.entityButton}>{displayButton.get(key)?.display && displayButton.get(key).button}</div>
+                      <div key={key} className={styles.formListItems}>
+                        <Form.Item className={styles.formItem} {...restFields} name={[name, 'user']}>
+                          <Select
+                              size={'large'}
+                              showSearch
+                              allowClear
+                              menuItemSelectedIcon={<CheckCircleTwoTone rev={undefined} twoToneColor={'#3FB1C9'}/>}
+                              filterOption={false}
+                              placeholder={'Sélectionnez un ' + userType}
+                              options={users.map((user) => ({
+                                label: getFullName(user),
+                                value: user.id,
+                                disabled: selectedUsers
+                                    .filter((user) => users.map((user) => user.id).includes(user))
+                                    .some((id) => id === user.id),
+                              }))}
+                              onSearch={(value) => {
+                                if (value.length > 2) {
+                                  fetchData(
+                                      getUsUsers,
+                                      {
+                                        filter: {
+                                          _or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}, {email: {_starts_with: value}}],
+                                        },
+                                      },
+                                      setUsers
+                                  ).catch((err) => console.error(err));
+                                }
+                              }}
+                              onChange={async (value) => {
+                                if (value) {
+                                  setCurrentUser(value);
+                                  const user = users.filter(user=>user.id===currentUser)[0]
+                                  if(user) {
+                                    const userName = capitalize(user.first_name) +' '+ capitalize(user.last_name);
+                                    setClientName(userName);
+                                  }
+
+                                  await setMap(key, true, name)
+                                  const tmp = form.getFieldValue('users');
+                                  setSelectedUsers(tmp.map((user: any) => user));
+                                }
+                              }}
+                              notFoundContent={
+                                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucun utilisateur trouvé'}/>
+                              }
+                          />
+                        </Form.Item>
+
+                        <MinusCircleOutlined
+                            rev={undefined} style={{color:'#B7011A'}}
+                            onClick={() => {
+                              const tmp = [...selectedUsers];
+                              if (form.getFieldValue('users')[name]) {
+                                const index = tmp.indexOf(form.getFieldValue('users')[name]);
+                                tmp.splice(index, 1);
+                                setSelectedUsers(tmp);
+                              }
+                              remove(name);
+                              setMap(key, false)
+                            }}
+                        />
+                      </div>
+                    </>
+                ))}
+                <Form.Item>
+                  <div style={{display:'flex'}}>
+                    <Button small onClick={() => add()} style={'text'}>
+                      Ajouter un {userType}
+                    </Button>
+                    <Button small style={"text"} onClick={()=>setIsCreateClientOpen(true)}>
+                      Créer un client
+                    </Button>
+                  </div>
+                </Form.Item>
+              </>
           )}
         </Form.List>
         <footer className={styles.footer}>
@@ -420,6 +530,10 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
           </Button>
         </footer>
       </Form>
+      <CreateClientEntity isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} setNewEntity={setNewEntity} client={currentUser}/>
+      <EditClientEntity isModifyOpen={isModifyOpen} setIsModifyOpen={setIsModifyOpen} clientName={clientName} setNewEntity={setNewEntity} clientId={currentUser}/>
+      <AddClientEntity isAddOpen={isAddOpen} setIsAddOpen={setIsAddOpen} clientName={clientName} setNewEntity={setNewEntity} clientId={currentUser} />
+      <CreateClient  isOpen={isCreateClientOpen} setIsOpen={setIsCreateClientOpen} />
     </Modal>
   );
 };

@@ -3,6 +3,7 @@ import { QueryParameters } from '../../models/DirectusModel';
 import concatenateQueryParameters from '../../utils/queryParamsFormatter';
 import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
+import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -38,10 +39,12 @@ export async function getUsClientsCompanyEntitiesUsers(
     myInit
   )
     .then((res) => {
-      if (res.status == 200)
+      if (res.status == 200){
         return res.json().then((data) => {
           return { status: res.status, data: data.data };
         });
+      }
+
       else return { status: res.status };
     })
     .catch(() => {
@@ -96,8 +99,10 @@ type createFieldsToOmit = 'id' | 'user_created' | 'user_updated' | 'date_created
 export async function createUsClientCompanyEntityUser(
   clientCompanyEntityUser: Omit<UsClientsCompanyEntitiesUsersModel, createFieldsToOmit>
 ): Promise<{ status: number; data?: Partial<UsClientsCompanyEntitiesUsersModel> }> {
+
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
+
   const myHeaders = new Headers({
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
@@ -173,29 +178,27 @@ export async function updateUsClientCompanyEntityUser(
     `${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_entities_directus_users/${id}`,
     myInit
   )
-    .then((response) => {
-      if (response.status === 200) {
-        return response
-          .json()
-          .then((responseData: { data: UsClientsCompanyEntitiesUsersModel }) => {
-            return { status: response.status, data: responseData.data };
-          })
-          .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            return { status: response.status };
-          });
+    .then(async (response) => {
+      if (isRequestSuccessful(response.status)) {
+        try {
+          const responseData = await response
+              .json();
+          return {status: response.status, data: responseData.data};
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error(error);
+          return {status: response.status};
+        }
       } else {
-        return response
-          .json()
-          .then((responseData) => {
-            return { status: response.status, error: responseData.errors[0].message };
-          })
-          .catch((error) => {
-            // eslint-disable-next-line no-console
-            console.error(error);
-            return { status: response.status };
-          });
+        try {
+          const responseData_1 = await response
+              .json();
+          return {status: response.status, error: responseData_1.errors[0].message};
+        } catch (error_1) {
+          // eslint-disable-next-line no-console
+          console.error(error_1);
+          return {status: response.status};
+        }
       }
     })
     .catch((error) => {
