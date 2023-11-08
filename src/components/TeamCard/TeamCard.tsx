@@ -3,7 +3,7 @@ import styles from './TeamCard.module.scss';
 import { ShadowCard } from 'projex-ui';
 import Link from 'next/link';
 import { UsUserModel } from '../../../models/UsModels';
-import { Tooltip } from 'antd';
+import {Dropdown, MenuProps, Tooltip} from 'antd';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 import UserInformations from '../UserInformations/UserInformations';
 import Image from 'next/image';
@@ -17,9 +17,11 @@ export type TeamCardProps = {
   allUsersPageHref: string;
   aside: React.ReactNode;
   onKebabMenuClick: React.MouseEventHandler<HTMLButtonElement>;
+  dropDownItems?: MenuProps
 };
 
-const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClick }: TeamCardProps) => {
+
+const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClick, dropDownItems}: TeamCardProps) => {
   const [currentUser, setCurrentUser] = useState<Partial<UsUserModel>>(users[0]);
   const [currentUserAvatar, setCurrentUserAvatar] = useState<string | undefined>(undefined);
   useEffect(() => {
@@ -63,7 +65,9 @@ const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClic
             ) : null}
           </ul>
         </div>
-        <KebabMenuForCards onClick={() => onKebabMenuClick}></KebabMenuForCards>
+
+          <KebabMenuForCards onClick={() => onKebabMenuClick} dropDownItems={dropDownItems}></KebabMenuForCards>
+
       </div>
     </ShadowCard>
   );

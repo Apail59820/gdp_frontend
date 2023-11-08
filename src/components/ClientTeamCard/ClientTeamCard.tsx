@@ -2,13 +2,15 @@ import React from 'react';
 import styles from './ClientTeamCard.module.scss';
 import TeamCard, { TeamCardProps } from '../TeamCard/TeamCard';
 import { UsClientsCompanyEntitiesModel } from '../../../models/UserService/UsClientsCompanyEntitiesModel';
+import {MenuProps} from "antd";
 
 export type ClientTeamCardProps = Omit<TeamCardProps, 'renderUserDetails' | 'aside'> & {
   clientCompany: Partial<UsClientsCompanyEntitiesModel>;
+  dropDownItems?: MenuProps
 };
 
 const ClientTeamCard = (props: ClientTeamCardProps) => {
-  const { clientCompany } = props;
+  const { clientCompany, dropDownItems } = props;
   const aside = (
     <section className={styles.clientCompanyDetails}>
       <h4 className={styles.title}>{clientCompany.name}</h4>
@@ -21,7 +23,7 @@ const ClientTeamCard = (props: ClientTeamCardProps) => {
     </section>
   );
 
-  return <TeamCard {...props} aside={aside} />;
+  return <TeamCard {...props} aside={aside} dropDownItems={dropDownItems} />;
 };
 
 export default ClientTeamCard;
