@@ -24,7 +24,7 @@ export async function getChangelog(): Promise<{status: number, data?: UpdateMode
         cache: 'default',
     };
 
-    return fetch(`/api/download/changelog`, reqInit).then(
+    return fetch(`/api/changelogs/changelog`, reqInit).then(
         (res) => {
             if (isRequestSuccessful(res.status)) {
                 return res.json().then((json_data) => {
