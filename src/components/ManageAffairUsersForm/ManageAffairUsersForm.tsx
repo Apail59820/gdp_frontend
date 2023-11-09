@@ -31,6 +31,7 @@ import {getFullName} from "../../../utils/fullName";
 import {AddClientEntity} from "../AddClientEntity/AddClientEntity";
 import {getUsClientsCompanyEntities} from "../../../services/userService/UsClientsCompanyEntities";
 import CreateClient from "../CreateClient/CreateClient";
+import {GdpProjectsClientsModel} from "../../../models/GestionDeProjets/GdpProjectsClientsModel";
 
 const {publicRuntimeConfig} = getConfig();
 
@@ -70,6 +71,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   const [newEntity, setNewEntity] = useState<{user: string, entityName: string} | null>(null);
   const [selectedClientKey, setSelectedClientKey] = useState<number | undefined>(undefined);
 
+  const [newClient, setNewClient] = useState<boolean>(false)
   let timeout: ReturnType<typeof setTimeout> | null;
 
   useEffect(() => {
