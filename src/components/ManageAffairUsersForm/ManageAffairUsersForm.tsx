@@ -467,7 +467,10 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                                       getUsUsers,
                                       {
                                         filter: {
-                                          _or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}, {email: {_starts_with: value}}],
+                                          _and:[
+                                              {_or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}, {email: {_starts_with: value}}]},
+                                              {role: publicRuntimeConfig.ROLE_CLIENT_ID}
+                                          ],
                                         },
                                       },
                                       setUsers
