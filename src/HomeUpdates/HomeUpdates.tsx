@@ -1,99 +1,36 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './HomeUpdates.module.scss';
-
-type Update = {
-  id: string;
-  title: string;
-  date: string;
-  content: React.ReactNode;
-};
-
-// TODO
-const UPDATES: Update[] = [
-  {
-    id: '1',
-    title: 'Mise à jour de la plateforme',
-    date: '12/12/2022',
-    content: (
-      <>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam lobortis feugiat odio, id placerat augue
-          luctus in. Donec aliquet rutrum velit, eu mattis sem tristique quis. Aenean at consequat metus.
-        </p>
-        <p>
-          Donec nec ullamcorper nisi, faucibus sollicitudin risus. Maecenas porttitor, dui sit amet semper sodales,
-          lectus odio cursus arcu, ut finibus turpis ipsum sit amet leo. Class aptent taciti sociosqu ad litora torquent
-          per conubia nostra, per inceptos himenaeos. Nunc vitae nisl non augue suscipit dignissim eget pretium orci.
-        </p>
-      </>
-    ),
-  },
-  {
-    id: '2',
-    title: 'Mise à jour de la plateforme',
-    date: '12/12/2022',
-    content: (
-      <>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam lobortis feugiat odio, id placerat augue
-          luctus in. Donec aliquet rutrum velit, eu mattis sem tristique quis. Aenean at consequat metus.
-        </p>
-        <p>
-          Donec nec ullamcorper nisi, faucibus sollicitudin risus. Maecenas porttitor, dui sit amet semper sodales,
-          lectus odio cursus arcu, ut finibus turpis ipsum sit amet leo. Class aptent taciti sociosqu ad litora torquent
-          per conubia nostra, per inceptos himenaeos. Nunc vitae nisl non augue suscipit dignissim eget pretium orci.
-        </p>
-      </>
-    ),
-  },
-  {
-    id: '3',
-    title: 'Mise à jour de la plateforme',
-    date: '12/12/2022',
-    content: (
-      <>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam lobortis feugiat odio, id placerat augue
-          luctus in. Donec aliquet rutrum velit, eu mattis sem tristique quis. Aenean at consequat metus.
-        </p>
-        <p>
-          Donec nec ullamcorper nisi, faucibus sollicitudin risus. Maecenas porttitor, dui sit amet semper sodales,
-          lectus odio cursus arcu, ut finibus turpis ipsum sit amet leo. Class aptent taciti sociosqu ad litora torquent
-          per conubia nostra, per inceptos himenaeos. Nunc vitae nisl non augue suscipit dignissim eget pretium orci.
-        </p>
-      </>
-    ),
-  },
-  {
-    id: '4',
-    title: 'Mise à jour de la plateforme',
-    date: '12/12/2022',
-    content: (
-      <>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam lobortis feugiat odio, id placerat augue
-          luctus in. Donec aliquet rutrum velit, eu mattis sem tristique quis. Aenean at consequat metus.
-        </p>
-        <p>
-          Donec nec ullamcorper nisi, faucibus sollicitudin risus. Maecenas porttitor, dui sit amet semper sodales,
-          lectus odio cursus arcu, ut finibus turpis ipsum sit amet leo. Class aptent taciti sociosqu ad litora torquent
-          per conubia nostra, per inceptos himenaeos. Nunc vitae nisl non augue suscipit dignissim eget pretium orci.
-        </p>
-      </>
-    ),
-  },
-];
+import {getChangelog, UpdateModel} from "../../utils/getChangelog";
+import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
+import {messages} from "../../constants/messages";
+import {message} from "antd";
 
 const HomeUpdates = () => {
+
+    const [updates, setUpdates] = useState<UpdateModel[]>([])
+    useEffect(() => {
+        getChangelog().then((res) => {
+            if(isRequestSuccessful(res.status)){
+                setUpdates(res?.data);
+            }else{
+                message.error(messages.general.error());
+            }
+        })
+    }, []);
+
+
   return (
     <div className={styles.homeUpdates}>
-      {UPDATES.map((update: Update) => (
+      {updates.map((update: UpdateModel) => (
         <section key={update.id} className={styles.update}>
           <h3 className={styles.title}>
             {update.date} - {update.title}
           </h3>
-          {update.content}
+            <>
+                <div className={styles.content} dangerouslySetInnerHTML={{ __html: update.content }} />
+            </>
         </section>
+
       ))}
     </div>
   );
