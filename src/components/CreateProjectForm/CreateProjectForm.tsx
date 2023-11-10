@@ -12,7 +12,7 @@ import { createGdpProject, updateGdpProject } from '../../../services/gestionDeP
 import { messages } from '../../../constants/messages';
 import { QueryParameters } from '../../../models/DirectusModel';
 import {
-  createUsClientCompanyEntity,
+  createUsClientCompanyEntityByName,
   getUsClientsCompanyEntities
 } from '../../../services/userService/UsClientsCompanyEntities';
 import { selectProjects, setProjects } from '../../../store/reducers/projectsReducer';
@@ -46,7 +46,7 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
         .then(getEntity=>{
           if(isRequestSuccessful(getEntity.status)){
             if(getEntity?.data.length==0){
-              createUsClientCompanyEntity(clientName)
+              createUsClientCompanyEntityByName(clientName)
                   .then(resCreate=>{
                     if(isRequestSuccessful(resCreate.status)){
                       message.success('Votre nouveau client est enregistré');
@@ -149,9 +149,9 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
                         Nom du client
                         <Button small
                                 onClick={()=>setIsNewClient(!isNewClient)}
-                                style={isNewClient?"text":'text_gray'}
+                                style={"text"}
                         >
-                          Nouveau client
+                          {isNewClient?'Ancien client':'Nouveau client ?'}
                         </Button>
                     </div>
             }
@@ -165,12 +165,13 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
             ]}
         >
           {isNewClient?(
-              <Input placeholder={'Sélectionnez la société cliente de votre projet'} />
+              <Input className={styles.inputNewClient}
+                     placeholder={'Entrez le client de votre projet'} />
           ):(
               <Select
                   showSearch
                   filterOption={false}
-                  placeholder={'Sélectionnez la société cliente de votre projet'}
+                  placeholder={'Sélectionnez le client de votre projet'}
                   options={clientsCompanyEntities.map((entity: Partial<UsClientsCompanyEntitiesModel>) => {
                     return {
                       label: entity.name?.toUpperCase(),
