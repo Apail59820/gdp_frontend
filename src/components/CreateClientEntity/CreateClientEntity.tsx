@@ -1,5 +1,5 @@
-import {Form, Input, Modal, Progress, Switch, message} from 'antd';
-import React, { useState } from 'react';
+import {Form, Input, Modal, Progress, Switch, message, Dropdown, Menu, MenuItemProps, MenuProps} from 'antd';
+import React, {useEffect, useState} from 'react';
 import { Button } from 'projex-ui';
 import styles from './CreateClientEntity.module.scss';
 import { messages } from '../../../constants/messages';
@@ -13,6 +13,11 @@ import {
 } from '../../../services/userService/UsClientsCompanyEntitiesUsers'
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {createUsClientCompanyEntityUser} from "../../../services/userService/UsClientsCompanyEntitiesUsers";
+import PlacesAutocomplete, {geocodeByAddress, Suggestion} from "react-places-autocomplete";
+import getConfig from "next/config";
+import {Loader} from "@googlemaps/js-api-loader";
+
+const { publicRuntimeConfig } = getConfig();
 
 type CreateClientEntityFormProps = {
     client?: string;
@@ -27,6 +32,33 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, setNewEntity, client = null
     const [loadingImage, setLoadingImage] = useState<boolean>(false);
     const [uploadProgress, setUploadProgress] = useState<number | undefined>(0);
 
+    const [address, setAddress] = useState('');
+    const [mapsApiLoaded, setMapsApiLoaded] = useState<boolean>(false);
+
+    const [form] = Form.useForm();
+
+    const [geocodingData, setGeocodingData] = useState({
+        streetNumber: '',
+        route: '',
+        locality: '',
+        country: '',
+        postalCode: '',
+    });
+
+    useEffect(() => {
+        if(!mapsApiLoaded){
+
+            const loader = new Loader({
+                apiKey: `${publicRuntimeConfig.GOOGLE_MAPS_API_KEY}`,
+                version: "weekly",
+            });
+
+            loader.importLibrary("places").then(async () => {
+                setMapsApiLoaded(true);
+            });
+
+        }
+    }, []);
     /**
      * Before uploading the image: distinguish between Jpg or Png image formats
      * And check the image size which should be less than 4mb
@@ -79,6 +111,50 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, setNewEntity, client = null
     const uploadButton = (
         <div>{loadingImage && uploadProgress && <CircularProgressWithLabel value={uploadProgress} />}</div>
     );
+
+    // @ts-ignore
+    const handleChange = (newAddress) => {
+        setAddress(newAddress);
+    };
+
+    // @ts-ignore
+    const handleSelect = (newAddress) => {
+        geocodeByAddress(newAddress)
+            .then((results) => {
+                if (results && results.length > 0) {
+                    const result = results[0];
+                    const addressComponents = result.address_components;
+
+                    const newData = {
+                        streetNumber: '',
+                        route: '',
+                        locality: '',
+                        country: '',
+                        postalCode: '',
+                    };
+
+                    addressComponents.forEach((component) => {
+                        switch (component.types[0]) {
+                            case 'street_number':newData.streetNumber = component.long_name;break;
+                            case 'route': newData.route = component.long_name; break;
+                            case 'locality': newData.locality = component.long_name; break;
+                            case 'country': newData.country = component.long_name; break;
+                            case 'postal_code': newData.postalCode = component.long_name; break;
+                        }
+                    });
+
+                    setGeocodingData(newData);
+
+                    form.setFieldsValue({
+                        zip_code: newData.postalCode,
+                        city: newData.locality,
+                        country: newData.country,
+                        address: parseInt(newData?.streetNumber) ? newData.streetNumber + ' ' + newData.route : newData.route
+                    });
+                }
+            })
+            .catch((error) => console.error('Error', error));
+    };
 
     const onFinish = async (values: any) => {
         const companyEntityRes = await getUsClientsCompanyEntities({
@@ -178,7 +254,7 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, setNewEntity, client = null
             title={"Ajouter une entité cliente"}
             footer={null}
         >
-            <Form name={'editUserProfil'} autoComplete={'off'} layout={'vertical'} onFinish={onFinish}>
+            <Form name={'editUserProfil'} form={form} autoComplete={'off'} layout={'vertical'} onFinish={onFinish}>
                 {loadingImage
                     ? uploadButton
                     : assetPreview && (
@@ -206,9 +282,42 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, setNewEntity, client = null
                 <Form.Item label={'N° SIREN'} id={'siren'} name={'siren'}>
                     <Input type={'text'}></Input>
                 </Form.Item>
-                <Form.Item label={'Adresse'} id={'address'} name={'address'}>
-                    <Input type={'text'}></Input>
-                </Form.Item>
+                {mapsApiLoaded && (
+                    <Form.Item
+                        label="Adresse"
+                        name="address"
+                        id="address"
+                    >
+                        <PlacesAutocomplete
+                            value={address || ''}
+                            onChange={handleChange}
+                            onSelect={handleSelect}
+                            shouldFetchSuggestions={address.length > 2}
+                            searchOptions={{
+                                componentRestrictions: { country: publicRuntimeConfig.ADDRESS_AUTO_COMPLETE_COUNTRY_LIST.split(',') },
+                                types: ['address'],
+                            }}
+                        >
+                            {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                                <Dropdown
+                                    menu={{items:
+                                            suggestions.map((suggestion: Suggestion, index: number) => ({
+                                                label: (
+                                                    <Menu.Item {...getSuggestionItemProps(suggestion) as MenuItemProps}>
+                                                        {suggestion.description}
+                                                    </Menu.Item>
+                                                ),
+                                                key: index,
+                                            })) as MenuProps['items']
+                                    }}
+                                    open={suggestions.length > 0}
+                                >
+                                    <Input {...getInputProps()}/>
+                                </Dropdown>
+                            )}
+                        </PlacesAutocomplete>
+                    </Form.Item>
+                )}
                 <div className={styles.row}>
                     <Form.Item label={'Code postal'} id={'zip_code'} name={'zip_code'}>
                         <Input type={'text'}></Input>

@@ -22,6 +22,7 @@ import { getUsUsers } from '../../../../../services/userService/UsUsers';
 import ManageAffairUsersForm from '../../../../../src/components/ManageAffairUsersForm/ManageAffairUsersForm';
 import ManageAffairManagerForm from '../../../../../src/components/ManageAffairManagerForm/ManageAffairManagerForm';
 import { getUsCompanyEntity } from '../../../../../services/userService/UsCompanyEntities';
+import {getGdpProjectsUsersClients} from "../../../../../services/gestionDeProjets/GdpProjectsUsersClients";
 
 const Team = () => {
   const router = useRouter();
@@ -183,6 +184,32 @@ const Team = () => {
     retrieveAffairCollaborators();
   }, [project, affair]);
 
+  useEffect(() => {
+    if (affair.id) {
+      getGdpProjectsUsersClients({filter: {affairs_id: {_eq: affair.id}}}).then((response) => {
+        if (response.status === 200 && response.data) {
+          const clientsToRetrieve: string[] = [];
+          const clients: Partial<UsUserModel>[] = [];
+          response.data.forEach((relation) => {
+            if (relation.directus_users_id) {
+              if (typeof relation.directus_users_id === 'string') clientsToRetrieve.push(relation.directus_users_id);
+              else clients.push(relation.directus_users_id);
+            }
+          });
+          if (clientsToRetrieve.length > 0) {
+            getUsUsers({filter: {id: {_in: clientsToRetrieve}}}).then((response) => {
+              if (response.status === 200 && response.data) {
+                setProjectClients([...clients, ...response.data]);
+              }
+            });
+          } else {
+            setProjectClients(clients);
+          }
+        }
+      });
+    }
+  }, [isModalOpen]);
+
   if (isLoading) return null;
 
   return (
@@ -201,6 +228,7 @@ const Team = () => {
                 setIsModalOpen(true);
               }}
               displayConfigureButton
+              projectType={'affair'}
             />
             <CollaboratorTeamWidget
               users={projectManagers}

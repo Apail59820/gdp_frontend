@@ -31,6 +31,7 @@ import {getFullName} from "../../../utils/fullName";
 import {AddClientEntity} from "../AddClientEntity/AddClientEntity";
 import {getUsClientsCompanyEntities} from "../../../services/userService/UsClientsCompanyEntities";
 import CreateClient from "../CreateClient/CreateClient";
+import {GdpProjectsClientsModel} from "../../../models/GestionDeProjets/GdpProjectsClientsModel";
 
 const {publicRuntimeConfig} = getConfig();
 
@@ -70,6 +71,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
   const [newEntity, setNewEntity] = useState<{user: string, entityName: string} | null>(null);
   const [selectedClientKey, setSelectedClientKey] = useState<number | undefined>(undefined);
 
+  const [newClient, setNewClient] = useState<boolean>(false)
   let timeout: ReturnType<typeof setTimeout> | null;
 
   useEffect(() => {
@@ -465,7 +467,10 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                                       getUsUsers,
                                       {
                                         filter: {
-                                          _or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}, {email: {_starts_with: value}}],
+                                          _and:[
+                                              {_or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}, {email: {_starts_with: value}}]},
+                                              {role: publicRuntimeConfig.ROLE_CLIENT_ID}
+                                          ],
                                         },
                                       },
                                       setUsers

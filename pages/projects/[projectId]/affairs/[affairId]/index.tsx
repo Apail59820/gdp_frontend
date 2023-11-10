@@ -78,6 +78,8 @@ const Affair = () => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
+  const [onAddClient, setOnAddClient] = useState<boolean>(false);
+
   const [filesToUpdate, setFilesToUpdate] = useState<fileItemType[]>([]);
 
   function UpdateFiles(filesToUpdate: fileItemType[]) {
@@ -286,7 +288,7 @@ const Affair = () => {
         }
       });
     }
-  }, [affair, me]);
+  }, [affair, me, isManageAffairUsersFormVisible]);
 
   // Retrieve activities
   useEffect(() => {
@@ -549,6 +551,7 @@ const Affair = () => {
               clientCompany={{ name: 'Client' }}
               onAddClientClick={() => handleManageUsersFormType('client')}
               displayConfigureButton={isUserAffairManager}
+              projectType={'affair'}
             />
             <CollaboratorTeamWidget
               type="affair"
