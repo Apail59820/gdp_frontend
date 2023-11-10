@@ -92,7 +92,8 @@ type createFieldsToOmit = 'id' | 'user_created' | 'user_updated' | 'date_created
  * @returns Status and data containing client company entity properties.
  */
 export async function createUsClientCompanyEntity(
-  clientCompanyEntity: Omit<UsClientsCompanyEntitiesModel, createFieldsToOmit>
+    name?:string,
+    clientCompanyEntity?: Omit<UsClientsCompanyEntitiesModel, createFieldsToOmit>
 ): Promise<{ status: number; data?: Partial<UsClientsCompanyEntitiesModel> }> {
   const token = await retrieveToken();
   if (!token) return Promise.resolve({ status: 401 });
@@ -106,7 +107,7 @@ export async function createUsClientCompanyEntity(
     headers: myHeaders,
     mode: 'cors',
     cache: 'default',
-    body: JSON.stringify(clientCompanyEntity),
+    body: name? JSON.stringify({name: name}): JSON.stringify(clientCompanyEntity),
   };
 
   return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/items/clients_company_entities`, myInit)

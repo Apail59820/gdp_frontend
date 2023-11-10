@@ -11,8 +11,12 @@ import styles from './CreateProjectForm.module.scss';
 import { createGdpProject, updateGdpProject } from '../../../services/gestionDeProjets/GdpProjects';
 import { messages } from '../../../constants/messages';
 import { QueryParameters } from '../../../models/DirectusModel';
-import { getUsClientsCompanyEntities } from '../../../services/userService/UsClientsCompanyEntities';
+import {
+  createUsClientCompanyEntity,
+  getUsClientsCompanyEntities
+} from '../../../services/userService/UsClientsCompanyEntities';
 import { selectProjects, setProjects } from '../../../store/reducers/projectsReducer';
+import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 
 type CreateProjectFormProps = {
   project?: Partial<GdpProjectsModel>;
@@ -27,6 +31,7 @@ interface FormProps {
 }
 
 const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProps) => {
+  const [isNewClient, setIsNewClient] = useState(false);
   const dispatch = useDispatch();
   const projects = useSelector(selectProjects);
   const companyEntities: Partial<UsCompanyEntityModel>[] = useSelector(selectCompanyEntities);
@@ -36,7 +41,23 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
 
   let timeout: ReturnType<typeof setTimeout> | null;
 
-  const onFinish = (values: FormProps) => {
+  const newClientHandler = (clientName:string)=>{
+    getUsClientsCompanyEntities({filter:{name:clientName}})
+        .then(getEntity=>{
+          if(isRequestSuccessful(getEntity.status)){
+            if(getEntity?.data.length==0){
+              createUsClientCompanyEntity(clientName)
+                  .then(resCreate=>{
+                    if(isRequestSuccessful(resCreate.status)){
+                      message.success('Votre nouveau client est enregistré');
+                    }
+                  })
+            }
+          }
+        })
+  }
+  const onFinish = async (values: FormProps) => {
+    await newClientHandler(values.clientEntity);
     if (project && project.id) {
       updateGdpProject(project.id, {
         name: values.projectName,
@@ -123,46 +144,59 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
           <Input type={'text'} placeholder={'Entrez le nom du projet'} />
         </Form.Item>
         <Form.Item
-          label={'Nom du client'}
-          name={'clientEntity'}
-          id={'clientEntity'}
-          rules={[
-            {
-              required: true,
-              message: 'Veuillez selectionner une société cliente.',
-            },
-          ]}
-        >
-          <Select
-            showSearch
-            showArrow={false}
-            filterOption={false}
-            placeholder={'Sélectionnez la société cliente de votre projet'}
-            options={clientsCompanyEntities.map((entity: Partial<UsClientsCompanyEntitiesModel>) => {
-              return {
-                label: entity.name?.toUpperCase(),
-                value: entity.name,
-              };
-            })}
-            onSearch={(value) => {
-              if (value.length > 2) {
-                fetchData(
-                  getUsClientsCompanyEntities,
-                  {
-                    filter: {
-                      name: {
-                        _starts_with: value,
-                      },
-                    },
-                  },
-                  setClientsCompanyEntities
-                );
-              }
-            }}
-            notFoundContent={
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucune société cliente trouvée.'} />
+            label={
+                    <div style={{display:"flex", alignItems:"center"}}>
+                        Nom du client
+                        <Button small
+                                onClick={()=>setIsNewClient(!isNewClient)}
+                                style={isNewClient?"text":'text_gray'}
+                        >
+                          Nouveau client
+                        </Button>
+                    </div>
             }
-          />
+            name={'clientEntity'}
+            id={'clientEntity'}
+            rules={[
+              {
+                required: true,
+                message: 'Veuillez selectionner une société cliente.',
+              },
+            ]}
+        >
+          {isNewClient?(
+              <Input placeholder={'Sélectionnez la société cliente de votre projet'} />
+          ):(
+              <Select
+                  showSearch
+                  filterOption={false}
+                  placeholder={'Sélectionnez la société cliente de votre projet'}
+                  options={clientsCompanyEntities.map((entity: Partial<UsClientsCompanyEntitiesModel>) => {
+                    return {
+                      label: entity.name?.toUpperCase(),
+                      value: entity.name,
+                    };
+                  })}
+                  onSearch={(value) => {
+                    if (value.length > 2) {
+                      fetchData(
+                          getUsClientsCompanyEntities,
+                          {
+                            filter: {
+                              name: {
+                                _starts_with: value,
+                              },
+                            },
+                          },
+                          setClientsCompanyEntities
+                      );
+                    }
+                  }}
+                  notFoundContent={
+                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucune société cliente trouvée.'} />
+                  }
+              />
+          )}
         </Form.Item>
         <Form.Item
           label={'Entité'}
