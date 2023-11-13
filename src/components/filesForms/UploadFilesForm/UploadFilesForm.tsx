@@ -18,7 +18,8 @@ import { isRequestSuccessful } from '../../../../utils/isRequestSuccessful';
 import { getGdpAffairs } from '../../../../services/gestionDeProjets/GdpAffairs';
 import { getGdpAffairsPhases } from '../../../../services/gestionDeProjets/GdpPhases';
 import FileInput from '../../FIleUpload/FileInput';
-import {AxiosProgressEvent} from "axios";
+import { v4 as uuid } from 'uuid';
+import {setFiles} from "../../../../store/reducers/filesReducer";
 
 export type UploadFilesFormPropsType = {
   isOpen: boolean;
@@ -70,7 +71,7 @@ export default function UploadFilesForm({
                                           phase,
                                           onFileUpload,
                                         }: UploadFilesFormPropsType) {
-  const [fileList, setFileList] = useState<fileItemType[]>(fileItems);
+  const [fileList, setFileList] = useState<fileItemType[]>([]);
   const [uploadProgress, setUploadProgress] = useState<{ percent: number; fileId: string }[]>([]);
   const [showPropertiesFormOfFileIndex, setShowPropertiesFormOfFileIndex] = useState<number | undefined>();
   const [affairsOptions, setAffairsOptions] = useState<Partial<GdpAffairModel>[]>([]);
@@ -79,7 +80,7 @@ export default function UploadFilesForm({
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    setFileList(fileItems);
+    setFileList(fileItems ? fileItems : []);
   }, [fileItems]);
 
   /**
@@ -226,8 +227,8 @@ export default function UploadFilesForm({
 
   async function onFilesUploadChange(files: FileList) {
     const newFileList = Array.from(files);
-    const filesToAdd = newFileList.map((file) => ({
-      id: Math.floor(Math.random() * 1000000000).toString(),
+    const filesToAdd :  fileItemType[] = newFileList.map((file) => ({
+      id: uuid(),
       file: file,
       properties: {
         filename_download: file.name,
@@ -240,7 +241,8 @@ export default function UploadFilesForm({
       },
       uploadState: UploadStatusEnum.PENDING,
     }));
-    setFileList([...fileList, ...filesToAdd]);
+
+    setFileList((!fileList.length) ? filesToAdd : ([...fileList, ...filesToAdd]));
   }
 
   function getOnlyModifiedProperties(newFile: fileItemType, oldFile: fileItemType): Partial<GdpFilesModel> {
@@ -292,10 +294,6 @@ export default function UploadFilesForm({
           <div className={styles.FileItemProgressBarFilled} style={{ width: `${fileProgress.percent}%` }} />
         </div>
     );
-  }
-
-  function isUploadButtonDisabled() {
-    return fileList.filter((fileItem) => fileItem.uploadState === UploadStatusEnum.PENDING).length === 0;
   }
 
   return (
