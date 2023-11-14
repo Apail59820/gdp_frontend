@@ -33,6 +33,11 @@ interface FormProps {
   entity: number;
 }
 
+export enum GdpCreateProjectFormEnum {
+  CREATE = 'create',
+  UPDATE = 'update',
+}
+
 const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProps) => {
   const [isNewClient, setIsNewClient] = useState(false);
   const dispatch = useDispatch();
@@ -74,7 +79,7 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
       }
     });
   };
-  const createNewClientEntity = async (clientEntityNew:string, values: FormProps, action?: 'create' | 'update')=> {
+  const createNewClientEntity = async (clientEntityNew:string, values: FormProps, action?: GdpCreateProjectFormEnum)=> {
     return await getUsClientsCompanyEntities({
           filter: {
             name: {
@@ -104,8 +109,8 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
                                 .then(async createdClientEntity=> {
                                   if(isRequestSuccessful(createdClientEntity.status) && createdClientEntity.data){
                                     message.success(`Votre nouveau client ${clientEntityNew} est enregistré !`);
-                                    if(action === 'update' || !action) await updateProject(project, values);
-                                    if(action === 'create') await createProject(values);
+                                    if(action === GdpCreateProjectFormEnum.UPDATE || !action) await updateProject(project, values);
+                                    if(action === GdpCreateProjectFormEnum.CREATE) await createProject(values);
                                   } else {
                                     message.error(`Impossible d\'enregitrer le client ${clientEntityNew} !`);
                                   }
@@ -133,13 +138,13 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
 
     if (project && project.id) {
       if(isClientEntityNewExist && values.clientEntityNew) {
-        await createNewClientEntity(values.clientEntityNew.toLowerCase(), values, 'update');
+        await createNewClientEntity(values.clientEntityNew.toLowerCase(), values, GdpCreateProjectFormEnum.UPDATE);
       } else {
         await updateProject(project, values);
       }
     } else {
       if(isClientEntityNewExist && values.clientEntityNew) {
-        await createNewClientEntity(values.clientEntityNew.toLowerCase(), values, 'create');
+        await createNewClientEntity(values.clientEntityNew.toLowerCase(), values, GdpCreateProjectFormEnum.CREATE);
       } else {
         await createProject(values);
       }
