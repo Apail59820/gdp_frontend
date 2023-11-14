@@ -23,6 +23,7 @@ import ManageAffairUsersForm from '../../../../../src/components/ManageAffairUse
 import ManageAffairManagerForm from '../../../../../src/components/ManageAffairManagerForm/ManageAffairManagerForm';
 import { getUsCompanyEntity } from '../../../../../services/userService/UsCompanyEntities';
 import {getGdpProjectsUsersClients} from "../../../../../services/gestionDeProjets/GdpProjectsUsersClients";
+import {is} from "immutable";
 
 const Team = () => {
   const router = useRouter();
@@ -36,6 +37,7 @@ const Team = () => {
 
   const [affairManagers, setAffairManagers] = useState<Partial<UsUserModel>[]>([]);
   const [affairCollaborators, setAffairCollaborators] = useState<Partial<UsUserModel>[]>([]);
+  const [affairClients, setAffairClients] = useState<Partial<UsUserModel>[]>([]);
 
   const [companyEntity, setCompanyEntity] = useState<Partial<UsCompanyEntityModel>>();
 
@@ -177,15 +179,28 @@ const Team = () => {
     setAffairCollaborators([]);
   };
 
+  const retrieveAffairClients = async () => {
+    const retrieveIds = await getGdpProjectsUsersClients({filter: {affairs_id: affair.id}});
+    if(!isRequestSuccessful(retrieveIds.status) || !retrieveIds?.data.length) return;
+
+    getUsUsers({filter: {id: {_in : retrieveIds.data.map((client) => client.directus_users_id)}}}).then((res) => {
+      if(isRequestSuccessful(res.status) && res?.data.length){
+        setAffairClients(res.data);
+      }
+    })
+  }
+
   useEffect(() => {
     retrieveProjectClients();
     retrieveProjectManagers();
     retrieveAffairManagers();
     retrieveAffairCollaborators();
+    retrieveAffairClients();
   }, [project, affair]);
 
   useEffect(() => {
     if (affair.id) {
+      retrieveAffairClients();
       getGdpProjectsUsersClients({filter: {affairs_id: {_eq: affair.id}}}).then((response) => {
         if (response.status === 200 && response.data) {
           const clientsToRetrieve: string[] = [];
@@ -252,6 +267,22 @@ const Team = () => {
               onClick={() => {
                 setIsAddManagerModalOpen(true);
               }}
+            />
+          </Grid>
+        </Section>
+        <Section title="Clients">
+          <Grid>
+            {affairClients.map((client) => (
+                <React.Fragment key={client.id}>
+                  <UserCard user={client} />
+                </React.Fragment>
+            ))}
+            <ManageItemCard
+                label="Ajouter un client à l'affaire"
+                onClick={() => {
+                  setUserToAddType('client');
+                  setIsModalOpen(true);
+                }}
             />
           </Grid>
         </Section>
