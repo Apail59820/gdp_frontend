@@ -45,9 +45,15 @@ const Team = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddManagerModalOpen, setIsAddManagerModalOpen] = useState(false);
 
+  const [refreshProject, setRefreshProject] = useState<boolean>(true);
   const { projectId, affairId } = router.query;
 
   useEffect(() => {
+    if(refreshProject) {
+      setRefreshProject(false);
+    }
+    else { return ;}
+
     if (!projectId || typeof projectId !== 'string' || !affairId || typeof affairId !== 'string') return;
 
     setIsLoading(true);
@@ -94,7 +100,7 @@ const Team = () => {
         router.push('/404');
       })
       .finally(() => setIsLoading(false));
-  }, [router, projectId, affairId]);
+  }, [router, projectId, affairId, refreshProject]);
 
   const retrieveProjectCompanyEntity = async () => {
     if (!project.company_entity) return;
@@ -163,9 +169,12 @@ const Team = () => {
   };
 
   const retrieveAffairCollaborators = async () => {
-    const affairCollaboratorsIds: string[] = (affair.affairs_directus_users_ids as GdpAffairsUsersModel[])
+    const affairRes = await getGdpAffair(parseInt(affairId as string, 10));
+
+    const affairCollaboratorsIds: string[] = (affairRes.data?.affairs_directus_users_ids as GdpAffairsUsersModel[])
       ?.filter((user) => !user.project_manager)
       ?.map((user) => user.directus_users_id as string);
+
 
     const response = await getUsUsers({
       filter: {
@@ -199,8 +208,13 @@ const Team = () => {
   }, [project, affair]);
 
   useEffect(() => {
+    retrieveAffairCollaborators();
+    setRefreshProject(true);
+  }, [isModalOpen]);
+
+  useEffect(() => {
     if (affair.id) {
-      retrieveAffairClients();
+
       getGdpProjectsUsersClients({filter: {affairs_id: {_eq: affair.id}}}).then((response) => {
         if (response.status === 200 && response.data) {
           const clientsToRetrieve: string[] = [];
