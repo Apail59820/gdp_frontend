@@ -12,6 +12,7 @@ import styles from './ManageAffairManagerForm.module.scss';
 import { updateAffairUsers } from '../../../services/gestionDeProjets/GdpAffairsUsers';
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
 import { QueryParameters } from '../../../models/DirectusModel';
+import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -155,6 +156,25 @@ const ManageAffairManagerForm = ({ isOpen, setIsOpen, affair }: ManageAffairMana
     }
   }, []);
 
+  useEffect(() => {
+    let managerToAddToSearchResults: Partial<UsUserModel>[]= affairUsers;
+
+    if(selectedAffairManager.length){
+      getUsUsers({filter: {id: {_in : selectedAffairManager}}}).then((res) => {
+        if(isRequestSuccessful(res.status) && res?.data.length){
+          for(const usr of res.data){
+            if(affairUsers.filter(u => u.id === usr.id).length === 0){
+              managerToAddToSearchResults.push(usr);
+            }
+          }
+        }
+      });
+    }
+    if(managerToAddToSearchResults.length){
+      setAffairUsers(managerToAddToSearchResults);
+    }
+  }, [affairUsers]);
+
   const fetchData = async (
     getter: (queryParameters: QueryParameters) => any,
     queryParams: QueryParameters,
@@ -267,6 +287,9 @@ const ManageAffairManagerForm = ({ isOpen, setIsOpen, affair }: ManageAffairMana
                   </Form.Item>
                   <MinusCircleOutlined rev={undefined} onClick={() => {
                     let managerToRemove = form.getFieldValue('managers')[name];
+
+                    setAffairUsers(affairUsers.filter((user) => user.id !== managerToRemove?.responsable));
+
                     setSelectedAffairManager(selectedAffairManager.filter(id => id !== managerToRemove?.responsable));
                     remove(name)
                   }} />
