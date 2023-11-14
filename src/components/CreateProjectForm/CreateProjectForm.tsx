@@ -187,7 +187,7 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
         onFinish={onFinish}
         initialValues={{
           projectName: project?.name,
-          clientEntity: project?.client_company_name,
+          clientEntity: project?.client_company_name?.toUpperCase(),
           clientEntityNew: '',
           entity: project?.company_entity,
         }}
