@@ -44,11 +44,17 @@ const Team = () => {
   const [isAddClientOpen, setIsAddClientOpen] = useState<boolean>(false);
 
   const [selectedAffairForClient, setSelectedAffairForClient] = useState<Partial<GdpAffairModel>>();
+  const [refreshProject, setRefreshProject] = useState(true);
   const { projectId } = router.query;
 
   useEffect(() => {
+    if(refreshProject){
+      setRefreshProject(false);
+    }
+    else{
+      return;
+    }
     if (!projectId || typeof projectId !== 'string') return;
-
     setIsLoading(true);
 
     getGdpProjectById(
@@ -79,7 +85,7 @@ const Team = () => {
         router.push('/404');
       })
       .finally(() => setIsLoading(false));
-  }, [router, projectId]);
+  }, [router, projectId, refreshProject]);
 
   const retrieveProjectClients = async () => {
     const projectClientsIds: string[] = (project.projects_directus_users_clients_ids as GdpProjectsClientsModel[])?.map(
@@ -142,6 +148,10 @@ const Team = () => {
       setIsAddClientOpen(true)
     }
   }
+
+  useEffect(() => {
+    setRefreshProject(true)
+  }, [isAddClientOpen]);
 
   useEffect(() => {
     retrieveProjectClients();

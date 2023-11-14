@@ -41,9 +41,12 @@ const SelectAffair = ({isOpen, handleClose, onSelect, project} : SelectAffairPro
             onCancel={handleClose}
             title={'Selectionner une affaire pour ce client'}
             footer={
-            <>
-            <Button small style={"alert"} onClick={handleClose}>Fermer</Button>
-            </>
+            <div style={{display: "flex"}}>
+            <Button small onClick={onFinish}>
+                Enregistrer
+            </Button>
+            <Button small style={"text"} onClick={handleClose}>Annuler</Button>
+            </div>
         }
         >
             {affairs && (
@@ -65,9 +68,6 @@ const SelectAffair = ({isOpen, handleClose, onSelect, project} : SelectAffairPro
                 </Form.Item>
 
             )}
-            <Button small onClick={onFinish}>
-                Enregistrer
-            </Button>
         </Modal>
     );
 }
