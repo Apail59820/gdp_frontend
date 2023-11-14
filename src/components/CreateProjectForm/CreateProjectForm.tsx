@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Empty, Form, Input, message, Modal, Select } from 'antd';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { UsCompanyEntityModel } from '../../../models/UserService/UsCompanyEntityModel';
@@ -17,6 +17,8 @@ import {
 } from '../../../services/userService/UsClientsCompanyEntities';
 import { selectProjects, setProjects } from '../../../store/reducers/projectsReducer';
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
+import {deleteGdpFile} from "../../../services/gestionDeProjets/GdpFiles";
+import {router} from "next/client";
 
 type CreateProjectFormProps = {
   project?: Partial<GdpProjectsModel>;
@@ -26,7 +28,8 @@ type CreateProjectFormProps = {
 
 interface FormProps {
   projectName: string;
-  clientEntity: string;
+  clientEntity?: string;
+  clientEntityNew?: string;
   entity: number;
 }
 
@@ -38,53 +41,107 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
   const [clientsCompanyEntities, setClientsCompanyEntities] = useState<Partial<UsClientsCompanyEntitiesModel>[]>(
     useSelector(selectClientsCompanyEntities)
   );
-
   let timeout: ReturnType<typeof setTimeout> | null;
 
-  const newClientHandler = (clientName:string)=>{
-    getUsClientsCompanyEntities({filter:{name:clientName}})
-        .then(getEntity=>{
-          if(isRequestSuccessful(getEntity.status)){
-            if(getEntity?.data.length==0){
-              createUsClientCompanyEntityByName(clientName)
-                  .then(resCreate=>{
-                    if(isRequestSuccessful(resCreate.status)){
-                      message.success('Votre nouveau client est enregistré');
-                    }
-                  })
+  const updateProject = async (project: Partial<GdpProjectsModel>, values: FormProps) => {
+    return await updateGdpProject(project.id, {
+      name: values.projectName,
+      client_company_name: values.clientEntity ? values.clientEntity : values.clientEntityNew,
+      company_entity: values.entity,
+    }).then((res) => {
+      if (isRequestSuccessful(res.status) && res.data) {
+        message.success(messages.general.success('La modification du projet', true, false));
+        dispatch(setProjects([...projects, res.data]));
+        setIsOpen(false);
+      } else {
+        message.error(messages.general.error());
+      }
+    });
+  };
+
+  const createProject = async (values: FormProps) => {
+    return await createGdpProject({
+      name: values.projectName,
+      client_company_name: values.clientEntity ? values.clientEntity : values.clientEntityNew.toLowerCase(),
+      company_entity: values.entity,
+    }).then((res) => {
+      if (isRequestSuccessful(res.status) && res.data) {
+        message.success(messages.general.success('La création du projet', true, false));
+        dispatch(setProjects([...projects, res.data]));
+        setIsOpen(false);
+      } else {
+        message.error(messages.general.error());
+      }
+    });
+  };
+  const createNewClientEntity = async (clientEntityNew:string, values: FormProps)=> {
+    return await getUsClientsCompanyEntities({
+          filter: {
+            name: {
+              _starts_with: clientEntityNew
             }
           }
-        })
+        }).then(clientEntity=> {
+          if(isRequestSuccessful(clientEntity.status) && clientEntity.data.length > 0 || clientEntity.data.length === 0){
+            const clientEntityList = clientEntity.data;
+            const isClientEntityExist = clientEntityList.some((key) => key?.name === clientEntityNew);
+            if(isClientEntityExist) {
+              return message.error(`Le client ${clientEntityNew} existe déjà !`);
+            }
+            Modal.confirm({
+              title: `Voulez-vous créer le client ${clientEntityNew} ?`,
+              closable: true,
+              maskClosable: true,
+              footer: (
+                  <>
+                    <p>La création de ce client irréversible, souhaitez vous continuer ?</p>
+                    <div className={styles.modalFooter} style={{display:'flex'}}>
+                      <Button
+                          small
+                          style={'alert'}
+                          onClick={ async () => {
+                            await createUsClientCompanyEntityByName(clientEntityNew)
+                                .then(async createdClientEntity=> {
+                                  if(isRequestSuccessful(createdClientEntity.status) && createdClientEntity.data){
+                                    message.success(`Votre nouveau client ${clientEntityNew} est enregistré !`);
+                                    await updateProject(project, values);
+                                  } else {
+                                    message.error(`Impossible d\'enregitrer le client ${clientEntityNew} !`);
+                                  }
+                                }).finally(()=> {
+                                  Modal.destroyAll()
+                                  setIsOpen(false);
+                                });
+                          }}
+                      >
+                        Créer le client {clientEntityNew}
+                      </Button>
+                      <Button small style={'text'} onClick={() => Modal.destroyAll()}>
+                        Annuler
+                      </Button>
+                    </div>
+                  </>
+              ),
+            });
+          }
+        });
   }
   const onFinish = async (values: FormProps) => {
-    await newClientHandler(values.clientEntity);
+    const valuesKeys = Object.keys(values);
+    const isClientEntityNewExist = valuesKeys.some((key) => key === 'clientEntityNew');
+
     if (project && project.id) {
-      updateGdpProject(project.id, {
-        name: values.projectName,
-        client_company_name: values.clientEntity,
-        company_entity: values.entity,
-      }).then((res) => {
-        if (res.status === 200) {
-          message.success(messages.general.success('La modification du projet', true, false));
-        } else {
-          message.error(messages.general.error());
-        }
-      });
+      if(isClientEntityNewExist && values.clientEntityNew) {
+        await createNewClientEntity(values.clientEntityNew.toLowerCase(), values);
+      } else {
+        await updateProject(project, values);
+      }
     } else {
-      const client_company = clientsCompanyEntities.find((entity) => entity.name === values.clientEntity);
-      createGdpProject({
-        name: values.projectName,
-        client_company_name: values.clientEntity,
-        company_entity: values.entity,
-      }).then((res) => {
-        if (res.status === 200 && res.data) {
-          message.success(messages.general.success('La création du projet', true, false));
-          dispatch(setProjects([...projects, res.data]));
-          setIsOpen(false);
-        } else {
-          message.error(messages.general.error());
-        }
-      });
+      if(isClientEntityNewExist && values.clientEntityNew) {
+        await createProject(values);
+      } else {
+        await createProject(values);
+      }
     }
   };
 
@@ -125,6 +182,7 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
         initialValues={{
           projectName: project?.name,
           clientEntity: project?.client_company_name,
+          clientEntityNew: '',
           entity: project?.company_entity,
         }}
       >
@@ -143,62 +201,84 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
         >
           <Input type={'text'} placeholder={'Entrez le nom du projet'} />
         </Form.Item>
-        <Form.Item
-            label={
-                    <div style={{display:"flex", alignItems:"center"}}>
-                        Nom du client
-                        <Button small
-                                onClick={()=>setIsNewClient(!isNewClient)}
-                                style={"text"}
-                        >
-                          {isNewClient?'Ancien client':'Nouveau client ?'}
-                        </Button>
-                    </div>
-            }
-            name={'clientEntity'}
-            id={'clientEntity'}
-            rules={[
-              {
-                required: true,
-                message: 'Veuillez selectionner une société cliente.',
-              },
-            ]}
-        >
-          {isNewClient?(
-              <Input className={styles.inputNewClient}
-                     placeholder={'Entrez le client de votre projet'} />
-          ):(
-              <Select
-                  showSearch
-                  filterOption={false}
-                  placeholder={'Sélectionnez le client de votre projet'}
-                  options={clientsCompanyEntities.map((entity: Partial<UsClientsCompanyEntitiesModel>) => {
-                    return {
-                      label: entity.name?.toUpperCase(),
-                      value: entity.name,
-                    };
-                  })}
-                  onSearch={(value) => {
-                    if (value.length > 2) {
-                      fetchData(
-                          getUsClientsCompanyEntities,
-                          {
-                            filter: {
-                              name: {
-                                _starts_with: value,
-                              },
+        { isNewClient ? (
+          <Form.Item
+              label={
+                <div style={{display:"flex", alignItems:"center"}}>
+                  Nom du client
+                  <Button small
+                          onClick={()=>setIsNewClient(!isNewClient)}
+                          style={"text"}
+                  >
+                    {isNewClient?'Client existant ?':'Il s\'agit d\'un nouveau client ?'}
+                  </Button>
+                </div>
+              }
+              name={'clientEntityNew'}
+              id={'clientEntityNew'}
+              rules={[
+                {
+                  required: true,
+                  message: 'Veuillez selectionner une société cliente.',
+                },
+              ]}
+          >
+            <Input type={'text'} placeholder={'Entrez le nom du client'} />
+          </Form.Item>
+        ) : (
+          <Form.Item
+              label={
+                <div style={{display:"flex", alignItems:"center"}}>
+                  Nom du client
+                  <Button small
+                          onClick={()=>setIsNewClient(!isNewClient)}
+                          style={"text"}
+                  >
+                    {isNewClient?'Client existant':'Il s\'agit d\'un nouveau client ?'}
+                  </Button>
+                </div>
+              }
+              name={'clientEntity'}
+              id={'clientEntity'}
+              rules={[
+                {
+                  required: true,
+                  message: 'Veuillez selectionner une société cliente.',
+                },
+              ]}
+          >
+            <Select
+                showSearch
+                filterOption={false}
+                placeholder={'Sélectionnez le client de votre projet'}
+                options={clientsCompanyEntities.map((entity: Partial<UsClientsCompanyEntitiesModel>) => {
+                  return {
+                    label: entity.name?.toUpperCase(),
+                    value: entity.name,
+                  };
+                })}
+                onSearch={(value) => {
+                  if (value.length > 2) {
+                    fetchData(
+                        getUsClientsCompanyEntities,
+                        {
+                          filter: {
+                            name: {
+                              _starts_with: value,
                             },
                           },
-                          setClientsCompanyEntities
-                      );
-                    }
-                  }}
-                  notFoundContent={
-                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucune société cliente trouvée.'} />
+                        },
+                        setClientsCompanyEntities
+                    );
                   }
-              />
-          )}
-        </Form.Item>
+                }}
+                notFoundContent={
+                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucune société cliente trouvée.'} />
+                }
+            />
+          </Form.Item>
+          )
+        }
         <Form.Item
           label={'Entité'}
           name={'entity'}
