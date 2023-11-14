@@ -62,7 +62,7 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
   const createProject = async (values: FormProps) => {
     return await createGdpProject({
       name: values.projectName,
-      client_company_name: values.clientEntity ? values.clientEntity : values.clientEntityNew.toLowerCase(),
+      client_company_name: values.clientEntity ? values.clientEntity : values.clientEntityNew,
       company_entity: values.entity,
     }).then((res) => {
       if (isRequestSuccessful(res.status) && res.data) {
@@ -74,7 +74,7 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
       }
     });
   };
-  const createNewClientEntity = async (clientEntityNew:string, values: FormProps)=> {
+  const createNewClientEntity = async (clientEntityNew:string, values: FormProps, action?: 'create' | 'update')=> {
     return await getUsClientsCompanyEntities({
           filter: {
             name: {
@@ -104,7 +104,8 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
                                 .then(async createdClientEntity=> {
                                   if(isRequestSuccessful(createdClientEntity.status) && createdClientEntity.data){
                                     message.success(`Votre nouveau client ${clientEntityNew} est enregistré !`);
-                                    await updateProject(project, values);
+                                    if(action === 'update' || !action) await updateProject(project, values);
+                                    if(action === 'create') await createProject(values);
                                   } else {
                                     message.error(`Impossible d\'enregitrer le client ${clientEntityNew} !`);
                                   }
@@ -132,13 +133,13 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
 
     if (project && project.id) {
       if(isClientEntityNewExist && values.clientEntityNew) {
-        await createNewClientEntity(values.clientEntityNew.toLowerCase(), values);
+        await createNewClientEntity(values.clientEntityNew.toLowerCase(), values, 'update');
       } else {
         await updateProject(project, values);
       }
     } else {
       if(isClientEntityNewExist && values.clientEntityNew) {
-        await createProject(values);
+        await createNewClientEntity(values.clientEntityNew.toLowerCase(), values, 'create');
       } else {
         await createProject(values);
       }
