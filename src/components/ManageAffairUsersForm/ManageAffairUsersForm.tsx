@@ -463,13 +463,14 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                               }))}
                               onSearch={(value) => {
                                 if (value.length > 2) {
+                                  let roleToSeek = (userType == 'collaborator') ? publicRuntimeConfig.ROLE_COLLABORATOR_ID : publicRuntimeConfig.ROLE_CLIENT_ID;
                                   fetchData(
                                       getUsUsers,
                                       {
                                         filter: {
                                           _and:[
                                               {_or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}, {email: {_starts_with: value}}]},
-                                              {role: publicRuntimeConfig.ROLE_CLIENT_ID}
+                                              {role: roleToSeek}
                                           ],
                                         },
                                       },
