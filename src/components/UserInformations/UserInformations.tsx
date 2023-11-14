@@ -7,7 +7,9 @@ import Link from 'next/link';
 import { getAsset } from '../../../services/userService/UsAssets';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
 import userPlaceholderPicto from '../../../public/user-solid.svg';
+import getConfig from "next/config";
 
+const { publicRuntimeConfig } = getConfig();
 
 export type UserInformationsProps = {
   user: Partial<UsUserModel>;
@@ -45,7 +47,7 @@ const UserInformations = ({ user }: UserInformationsProps) => {
     <div className={styles.userInformations}>
       <img className={styles.image} src={currentUserAvatar || userPlaceholderPicto.src} alt={`Photo de ${user.first_name} ${user.last_name}`} />
       <div className={styles.informationsContainer}>
-        <Link href={`/users/${user.id}`}>
+        <Link href={`${publicRuntimeConfig.USER_SERVICE_URL}/user/${user.id}`}>
           <h4 className={styles.name}>
             {user?.first_name ? capitalize(user.first_name) : ''} {user?.last_name ? capitalize(user.last_name) : ''}
           </h4>
