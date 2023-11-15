@@ -133,6 +133,7 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, fi
         project={project}
         affair={affair}
         phase={phase}
+        onClose={() => setIsOpenFilesForm(false)}
         onFileUpload={() => setIsPhaseUpdated(true)}
         mode="files"
       ></UploadFilesForm>
