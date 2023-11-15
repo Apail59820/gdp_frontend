@@ -110,7 +110,7 @@ const ProjectSatisfaction = () => {
         <Section title={'Par affaire'}>
           <Grid>
             {projectAffairs.map((affair, index) => (
-              <Link href={'/affairs/' + affair.id + '/satisfaction'} key={index}>
+              <Link href={router.asPath.replace('satisfaction', '') + 'affairs/' + affair.id + '/satisfaction'} key={index}>
                 <PreviewAffairSatisfactionCard
                   affair={affair}
                   satisfactions={projectSatisfactions.filter((satisfaction) => satisfaction.affairs_id === affair.id)}
