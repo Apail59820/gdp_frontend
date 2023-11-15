@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import styles from '../../../styles/Project.module.scss';
 import {EditOutlined, PlusOutlined} from '@ant-design/icons';
 import {Breadcrumb, Button, QuickActionCard} from 'projex-ui';
@@ -49,6 +49,7 @@ import UploadFilesForm from '../../../src/components/filesForms/UploadFilesForm/
 import {selectUserProfile} from '../../../store/reducers/authReducer';
 import ManageProjectManagers from '../../../src/components/ManageProjectManagers/ManageProjectManagers';
 import {selectGlobalFilters} from "../../../store/reducers/globalFilterReducer";
+import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 
 const Project = () => {
   const router = useRouter();
@@ -203,11 +204,22 @@ const Project = () => {
     } else setProjectClients([]);
   }, [me, project]);
 
+  const getCollaboratorsDataStatus = useCallback(async (relationToFetch : number[]) => {
+    return await getGdpProjectsUsersCollaborators({
+      filter: {
+        id: {_in: relationToFetch},
+      },
+      fields: 'id,directus_users_id,project_manager',
+    });
+  }, []);
+
   // Get project managers
   useEffect(() => {
     const relationIds = project?.projects_directus_users_collaborators_ids;
     const relationToFetch: number[] = [];
     const tmpRelations: Partial<GdpProjectsCollaboratorsModel>[] = [];
+    const tmpRelationPM: Partial<GdpProjectsCollaboratorsModel>[] = [];
+    const tmpRelationClassic: Partial<GdpProjectsCollaboratorsModel>[] = [];
 
     if (relationIds) {
       relationIds.forEach((relationId) => {
@@ -215,36 +227,31 @@ const Project = () => {
         else tmpRelations.push(relationId);
       });
     }
+    const getCollaboratorsStatus = async (relationToFetch : number[]) => {
+      return await getCollaboratorsDataStatus(relationToFetch);
+    }
+    const setProjectManagerTmpRelations = () => {
+      tmpRelations.forEach((relation) => {
+        if (relation.project_manager) tmpRelationPM.push(relation);
+        else tmpRelationClassic.push(relation);
+      });
+      if (me && tmpRelationPM.filter((relation) => relation.directus_users_id === me.id).length > 0) {
+        setIsUserProjectManager(true);
+      } else {
+        setIsUserProjectManager(false);
+        if (me && tmpRelationClassic.filter((relation) => relation.directus_users_id === me.id).length > 0)
+          setIsUserClassicCollaborator(true);
+        else setIsUserClassicCollaborator(false);
+      }
+    };
 
     if (relationToFetch.length > 0) {
-      getGdpProjectsUsersCollaborators({
-        filter: {
-          id: {_in: relationToFetch},
-        },
-        fields: 'id,directus_users_id',
-      }).then((res) => {
-        if (res.status === 200 && res.data) {
-          tmpRelations.push(...res.data);
-        }
-      });
+      getCollaboratorsStatus(relationToFetch).then(result => {
+        if(isRequestSuccessful(result.status) && result.data) tmpRelations.push(...result.data);
+        setProjectManagerTmpRelations();
+      }).catch(err => console.error(err));
     }
-
-    const tmpRelationPM: Partial<GdpProjectsCollaboratorsModel>[] = [];
-    const tmpRelationClassic: Partial<GdpProjectsCollaboratorsModel>[] = [];
-
-    tmpRelations.forEach((relation) => {
-      if (relation.project_manager) tmpRelationPM.push(relation);
-      else tmpRelationClassic.push(relation);
-    });
-
-    if (me && tmpRelationPM.filter((relation) => relation.directus_users_id === me.id).length > 0) {
-      setIsUserProjectManager(true);
-    } else {
-      setIsUserProjectManager(false);
-      if (me && tmpRelationClassic.filter((relation) => relation.directus_users_id === me.id).length > 0)
-        setIsUserClassicCollaborator(true);
-      else setIsUserClassicCollaborator(false);
-    }
+    setProjectManagerTmpRelations();
 
     const collaboratorIds: string[] = [];
 
@@ -263,7 +270,7 @@ const Project = () => {
         } else setProjectManagers([]);
       });
     } else setProjectManagers([]);
-  }, [me, project]);
+  }, [me, project, getCollaboratorsDataStatus]);
 
   useEffect(() => {
     getGdpFiles({
