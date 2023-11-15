@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Empty, Form, Input, message, Modal, Select } from 'antd';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { UsCompanyEntityModel } from '../../../models/UserService/UsCompanyEntityModel';
@@ -11,8 +11,14 @@ import styles from './CreateProjectForm.module.scss';
 import { createGdpProject, updateGdpProject } from '../../../services/gestionDeProjets/GdpProjects';
 import { messages } from '../../../constants/messages';
 import { QueryParameters } from '../../../models/DirectusModel';
-import { getUsClientsCompanyEntities } from '../../../services/userService/UsClientsCompanyEntities';
+import {
+  createUsClientCompanyEntityByName,
+  getUsClientsCompanyEntities
+} from '../../../services/userService/UsClientsCompanyEntities';
 import { selectProjects, setProjects } from '../../../store/reducers/projectsReducer';
+import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
+import {deleteGdpFile} from "../../../services/gestionDeProjets/GdpFiles";
+import {router} from "next/client";
 
 type CreateProjectFormProps = {
   project?: Partial<GdpProjectsModel>;
@@ -22,48 +28,126 @@ type CreateProjectFormProps = {
 
 interface FormProps {
   projectName: string;
-  clientEntity: string;
+  clientEntity?: string;
+  clientEntityNew?: string;
   entity: number;
 }
 
+export enum GdpCreateProjectFormEnum {
+  CREATE = 'create',
+  UPDATE = 'update',
+}
+
 const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProps) => {
+  const [isNewClient, setIsNewClient] = useState(false);
   const dispatch = useDispatch();
   const projects = useSelector(selectProjects);
   const companyEntities: Partial<UsCompanyEntityModel>[] = useSelector(selectCompanyEntities);
   const [clientsCompanyEntities, setClientsCompanyEntities] = useState<Partial<UsClientsCompanyEntitiesModel>[]>(
     useSelector(selectClientsCompanyEntities)
   );
-
   let timeout: ReturnType<typeof setTimeout> | null;
 
-  const onFinish = (values: FormProps) => {
+  const updateProject = async (project: Partial<GdpProjectsModel>, values: FormProps) => {
+    return await updateGdpProject(project.id, {
+      name: values.projectName,
+      client_company_name: values.clientEntity ? values.clientEntity : values.clientEntityNew,
+      company_entity: values.entity,
+    }).then((res) => {
+      if (isRequestSuccessful(res.status) && res.data) {
+        message.success(messages.general.success('La modification du projet', true, false));
+        dispatch(setProjects([...projects, res.data]));
+        setIsOpen(false);
+      } else {
+        message.error(messages.general.error());
+      }
+    });
+  };
+
+  const createProject = async (values: FormProps) => {
+    return await createGdpProject({
+      name: values.projectName,
+      client_company_name: values.clientEntity ? values.clientEntity : values.clientEntityNew,
+      company_entity: values.entity,
+    }).then((res) => {
+      if (isRequestSuccessful(res.status) && res.data) {
+        message.success(messages.general.success('La création du projet', true, false));
+        dispatch(setProjects([...projects, res.data]));
+        setIsOpen(false);
+      } else {
+        message.error(messages.general.error());
+      }
+    });
+  };
+  const createNewClientEntity = async (clientEntityNew:string, values: FormProps, action?: GdpCreateProjectFormEnum)=> {
+    return await getUsClientsCompanyEntities({
+          filter: {
+            name: {
+              _starts_with: clientEntityNew
+            }
+          }
+        }).then(clientEntity=> {
+          if(isRequestSuccessful(clientEntity.status) && clientEntity.data.length > 0 || clientEntity.data.length === 0){
+            const clientEntityList = clientEntity.data;
+            const isClientEntityExist = clientEntityList.some((key) => key?.name === clientEntityNew);
+            if(isClientEntityExist) {
+              return message.error(`Le client ${clientEntityNew} existe déjà !`);
+            }
+            Modal.confirm({
+              title: `Voulez-vous créer le client ${clientEntityNew} ?`,
+              closable: true,
+              maskClosable: true,
+              footer: (
+                  <>
+                    <p>La création de ce client irréversible, souhaitez vous continuer ?</p>
+                    <div className={styles.modalFooter} style={{display:'flex'}}>
+                      <Button
+                          small
+                          style={'alert'}
+                          onClick={ async () => {
+                            await createUsClientCompanyEntityByName(clientEntityNew)
+                                .then(async createdClientEntity=> {
+                                  if(isRequestSuccessful(createdClientEntity.status) && createdClientEntity.data){
+                                    message.success(`Votre nouveau client ${clientEntityNew} est enregistré !`);
+                                    if(action === GdpCreateProjectFormEnum.UPDATE || !action) await updateProject(project, values);
+                                    if(action === GdpCreateProjectFormEnum.CREATE) await createProject(values);
+                                  } else {
+                                    message.error(`Impossible d\'enregitrer le client ${clientEntityNew} !`);
+                                  }
+                                }).finally(()=> {
+                                  Modal.destroyAll()
+                                  setIsOpen(false);
+                                });
+                          }}
+                      >
+                        Créer le client {clientEntityNew}
+                      </Button>
+                      <Button small style={'text'} onClick={() => Modal.destroyAll()}>
+                        Annuler
+                      </Button>
+                    </div>
+                  </>
+              ),
+            });
+          }
+        });
+  }
+  const onFinish = async (values: FormProps) => {
+    const valuesKeys = Object.keys(values);
+    const isClientEntityNewExist = valuesKeys.some((key) => key === 'clientEntityNew');
+
     if (project && project.id) {
-      updateGdpProject(project.id, {
-        name: values.projectName,
-        client_company_name: values.clientEntity,
-        company_entity: values.entity,
-      }).then((res) => {
-        if (res.status === 200) {
-          message.success(messages.general.success('La modification du projet', true, false));
-        } else {
-          message.error(messages.general.error());
-        }
-      });
+      if(isClientEntityNewExist && values.clientEntityNew) {
+        await createNewClientEntity(values.clientEntityNew.toLowerCase(), values, GdpCreateProjectFormEnum.UPDATE);
+      } else {
+        await updateProject(project, values);
+      }
     } else {
-      const client_company = clientsCompanyEntities.find((entity) => entity.name === values.clientEntity);
-      createGdpProject({
-        name: values.projectName,
-        client_company_name: values.clientEntity,
-        company_entity: values.entity,
-      }).then((res) => {
-        if (res.status === 200 && res.data) {
-          message.success(messages.general.success('La création du projet', true, false));
-          dispatch(setProjects([...projects, res.data]));
-          setIsOpen(false);
-        } else {
-          message.error(messages.general.error());
-        }
-      });
+      if(isClientEntityNewExist && values.clientEntityNew) {
+        await createNewClientEntity(values.clientEntityNew.toLowerCase(), values, GdpCreateProjectFormEnum.CREATE);
+      } else {
+        await createProject(values);
+      }
     }
   };
 
@@ -103,7 +187,8 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
         onFinish={onFinish}
         initialValues={{
           projectName: project?.name,
-          clientEntity: project?.client_company_name,
+          clientEntity: project?.client_company_name?.toUpperCase(),
+          clientEntityNew: '',
           entity: project?.company_entity,
         }}
       >
@@ -122,48 +207,84 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
         >
           <Input type={'text'} placeholder={'Entrez le nom du projet'} />
         </Form.Item>
-        <Form.Item
-          label={'Nom du client'}
-          name={'clientEntity'}
-          id={'clientEntity'}
-          rules={[
-            {
-              required: true,
-              message: 'Veuillez selectionner une société cliente.',
-            },
-          ]}
-        >
-          <Select
-            showSearch
-            showArrow={false}
-            filterOption={false}
-            placeholder={'Sélectionnez la société cliente de votre projet'}
-            options={clientsCompanyEntities.map((entity: Partial<UsClientsCompanyEntitiesModel>) => {
-              return {
-                label: entity.name?.toUpperCase(),
-                value: entity.name,
-              };
-            })}
-            onSearch={(value) => {
-              if (value.length > 2) {
-                fetchData(
-                  getUsClientsCompanyEntities,
-                  {
-                    filter: {
-                      name: {
-                        _starts_with: value,
-                      },
-                    },
-                  },
-                  setClientsCompanyEntities
-                );
+        { isNewClient ? (
+          <Form.Item
+              label={
+                <div style={{display:"flex", alignItems:"center"}}>
+                  Nom du client
+                  <Button small
+                          onClick={()=>setIsNewClient(!isNewClient)}
+                          style={"text"}
+                  >
+                    {isNewClient?'Client existant ?':'Il s\'agit d\'un nouveau client ?'}
+                  </Button>
+                </div>
               }
-            }}
-            notFoundContent={
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucune société cliente trouvée.'} />
-            }
-          />
-        </Form.Item>
+              name={'clientEntityNew'}
+              id={'clientEntityNew'}
+              rules={[
+                {
+                  required: true,
+                  message: 'Veuillez selectionner une société cliente.',
+                },
+              ]}
+          >
+            <Input type={'text'} placeholder={'Entrez le nom du client'} />
+          </Form.Item>
+        ) : (
+          <Form.Item
+              label={
+                <div style={{display:"flex", alignItems:"center"}}>
+                  Nom du client
+                  <Button small
+                          onClick={()=>setIsNewClient(!isNewClient)}
+                          style={"text"}
+                  >
+                    {isNewClient?'Client existant':'Il s\'agit d\'un nouveau client ?'}
+                  </Button>
+                </div>
+              }
+              name={'clientEntity'}
+              id={'clientEntity'}
+              rules={[
+                {
+                  required: true,
+                  message: 'Veuillez selectionner une société cliente.',
+                },
+              ]}
+          >
+            <Select
+                showSearch
+                filterOption={false}
+                placeholder={'Sélectionnez le client de votre projet'}
+                options={clientsCompanyEntities.map((entity: Partial<UsClientsCompanyEntitiesModel>) => {
+                  return {
+                    label: entity.name?.toUpperCase(),
+                    value: entity.name,
+                  };
+                })}
+                onSearch={(value) => {
+                  if (value.length > 2) {
+                    fetchData(
+                        getUsClientsCompanyEntities,
+                        {
+                          filter: {
+                            name: {
+                              _starts_with: value,
+                            },
+                          },
+                        },
+                        setClientsCompanyEntities
+                    );
+                  }
+                }}
+                notFoundContent={
+                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucune société cliente trouvée.'} />
+                }
+            />
+          </Form.Item>
+          )
+        }
         <Form.Item
           label={'Entité'}
           name={'entity'}
