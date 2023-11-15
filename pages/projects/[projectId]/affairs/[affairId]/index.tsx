@@ -385,7 +385,7 @@ const Affair = () => {
         setFiles(res.data);
       } else setFiles([]);
     });
-  }, [affair.id]);
+  }, [affair.id, files]);
 
   useEffect(() => {
     if (affair) {

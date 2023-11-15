@@ -275,7 +275,7 @@ const Project = () => {
         setFiles(res.data);
       } else setFiles([]);
     });
-  }, [projectId]);
+  }, [projectId, files]);
 
   useEffect(() => {
     getGdpActivities({
