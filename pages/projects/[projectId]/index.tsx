@@ -230,7 +230,7 @@ const Project = () => {
     const getCollaboratorsStatus = async (relationToFetch : number[]) => {
       return await getCollaboratorsDataStatus(relationToFetch);
     }
-    const getProjectManagerTmpRelations = () => {
+    const setProjectManagerTmpRelations = () => {
       tmpRelations.forEach((relation) => {
         if (relation.project_manager) tmpRelationPM.push(relation);
         else tmpRelationClassic.push(relation);
@@ -243,33 +243,33 @@ const Project = () => {
           setIsUserClassicCollaborator(true);
         else setIsUserClassicCollaborator(false);
       }
-
-      const collaboratorIds: string[] = [];
-
-      tmpRelationPM.forEach((relation) => {
-        if (typeof relation.directus_users_id === 'string') collaboratorIds.push(relation.directus_users_id);
-      });
-
-      if (collaboratorIds.length > 0) {
-        getUsUsers({
-          filter: {
-            id: {_in: collaboratorIds},
-          },
-        }).then((res) => {
-          if (res.status === 200 && res.data) {
-            setProjectManagers(res.data);
-          } else setProjectManagers([]);
-        });
-      } else setProjectManagers([]);
     };
 
     if (relationToFetch.length > 0) {
       getCollaboratorsStatus(relationToFetch).then(result => {
         if(isRequestSuccessful(result.status) && result.data) tmpRelations.push(...result.data);
-        getProjectManagerTmpRelations();
+        setProjectManagerTmpRelations();
       }).catch(err => console.error(err));
     }
-    getProjectManagerTmpRelations();
+    setProjectManagerTmpRelations();
+
+    const collaboratorIds: string[] = [];
+
+    tmpRelationPM.forEach((relation) => {
+      if (typeof relation.directus_users_id === 'string') collaboratorIds.push(relation.directus_users_id);
+    });
+
+    if (collaboratorIds.length > 0) {
+      getUsUsers({
+        filter: {
+          id: {_in: collaboratorIds},
+        },
+      }).then((res) => {
+        if (res.status === 200 && res.data) {
+          setProjectManagers(res.data);
+        } else setProjectManagers([]);
+      });
+    } else setProjectManagers([]);
   }, [me, project, getCollaboratorsDataStatus]);
 
   useEffect(() => {
