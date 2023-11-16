@@ -6,12 +6,15 @@ import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 import { useSelector } from 'react-redux';
 import { selectCompanyEntities } from '../../../store/reducers/companyEntitiesReducer';
 import { CompanyEnum } from '../../../models/UserService/UsCompanyEntityModel';
+import {GdpAffairModel} from "../../../models/GestionDeProjets/GdpAffairModel";
+import affairId from "../../../pages/projects/[projectId]/affairs/[affairId]";
 
 type Props = {
   data: Partial<GdpProjectsModel> | string;
+  affair?: Partial<GdpAffairModel>;
 };
 
-const PageHeaderBanner = ({ data }: Props) => {
+const PageHeaderBanner = ({ data, affair }: Props) => {
   const companyEntityLogoRef = useRef<HTMLImageElement>(null);
   const companyEntities = useSelector(selectCompanyEntities);
   const [projectCompanyEntity, setProjectCompanyEntity] = useState<string>('Entité inconnue');
@@ -36,17 +39,22 @@ const PageHeaderBanner = ({ data }: Props) => {
   // useEffect to fetch affair company entity
   useEffect(() => {
     if (typeof data === 'string') return;
-    if (data.company_entity) {
-      if (typeof data.company_entity === 'number') {
-        const companyEntity = companyEntities.find((companyEntity) => companyEntity.id === data.company_entity);
-        if (companyEntity && companyEntity.name) setProjectCompanyEntity(companyEntity.name);
+    if (data.company_entity || affair?.company_entity) {
+      if (typeof data.company_entity === 'number' || typeof affair.company_entity === 'number') {
+        const companyEntity = companyEntities
+            .find((companyEntity) => companyEntity.id === ((affair) ? affair.company_entity : data.company_entity));
+
+        if (companyEntity && companyEntity.name) {
+          setProjectCompanyEntity(companyEntity.name);
+        }
         else setProjectCompanyEntity('Entité inconnue');
       } else {
-        if (data.company_entity.name) setProjectCompanyEntity(data.company_entity.name);
+        if (data.company_entity.name || affair.company_entity.name) setProjectCompanyEntity(affair ? affair.company_entity.name : data.company_entity.name);
         else setProjectCompanyEntity('Entité inconnue');
       }
     } else setProjectCompanyEntity('Entité inconnue');
-  }, [companyEntities, data, companyEntityLogoRef.current?.clientWidth]);
+  }, [companyEntities, data, affair, companyEntityLogoRef.current?.clientWidth]);
+
 
   return (
     <div className={`${styles.pageHeaderBanner}  ${getColorByCompany}`}>
