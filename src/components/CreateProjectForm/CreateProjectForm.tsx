@@ -17,11 +17,11 @@ import {
 } from '../../../services/userService/UsClientsCompanyEntities';
 import { selectProjects, setProjects } from '../../../store/reducers/projectsReducer';
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
-import {deleteGdpFile} from "../../../services/gestionDeProjets/GdpFiles";
-import {router} from "next/client";
+
 
 type CreateProjectFormProps = {
   project?: Partial<GdpProjectsModel>;
+  setProject?: React.Dispatch<React.SetStateAction<Partial<GdpProjectsModel>>>;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -38,7 +38,7 @@ export enum GdpCreateProjectFormEnum {
   UPDATE = 'update',
 }
 
-const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProps) => {
+const CreateProjectForm = ({ project, setProject, isOpen, setIsOpen }: CreateProjectFormProps) => {
   const [isNewClient, setIsNewClient] = useState(false);
   const dispatch = useDispatch();
   const projects = useSelector(selectProjects);
@@ -57,6 +57,7 @@ const CreateProjectForm = ({ project, isOpen, setIsOpen }: CreateProjectFormProp
       if (isRequestSuccessful(res.status) && res.data) {
         message.success(messages.general.success('La modification du projet', true, false));
         dispatch(setProjects([...projects, res.data]));
+        if(typeof setProject == 'function') {setProject(res.data);}
         setIsOpen(false);
       } else {
         message.error(messages.general.error());
