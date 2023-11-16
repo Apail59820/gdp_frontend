@@ -7,6 +7,7 @@ import {DownOutlined, UpOutlined} from '@ant-design/icons';
 import styles from './BillingTable.module.scss';
 import ExpandedBillingInfo from './ExpandedBillingInfo';
 import {GdpProjectsModel} from '../../../models/GestionDeProjets/GdpProjectsModel';
+import {displayBillingStateText} from "../../../utils/displayBillingState";
 
 interface DataType extends Partial<GdpPythagoreFactureModel> {
   key: React.Key;
@@ -33,20 +34,6 @@ const BillingTable = ({factures, displayAdditionnalInfo}: props) => {
     const timeLeft = new Date(invoice.date_echeance_facture as string).getTime() - new Date().getTime();
     return parseInt((timeLeft / (1000 * 60 * 60 * 24)).toFixed(0));
   };
-
-  const displayStateText = (state: 'NonReglee' | 'Reglee' | 'RegltPartiel' | undefined) => {
-    switch (state) {
-      case 'NonReglee':
-        return 'Non réglée';
-      case 'Reglee':
-        return 'Réglée';
-      case 'RegltPartiel':
-        return 'Partiellement réglée';
-      default:
-        return 'Etat inconnu';
-    }
-  };
-
   const displayPaymentText = (invoiceState: InvoiceStateEnum, invoice: Partial<GdpPythagoreFactureModel>) => {
     switch (invoiceState) {
       case InvoiceStateEnum.LATE:
@@ -142,7 +129,7 @@ const BillingTable = ({factures, displayAdditionnalInfo}: props) => {
       dataIndex: 'etatreglt_facture',
       key: 'etatreglt_facture',
       render: (text, record) => (
-        <span className={getInvoiceColorClass(record.invoiceState)}>{displayStateText(text)}</span>
+        <span className={getInvoiceColorClass(record.invoiceState)}>{displayBillingStateText(text)}</span>
       ),
     },
     {
