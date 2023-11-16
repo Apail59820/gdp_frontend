@@ -1,7 +1,7 @@
 export function sliceModelItem<T extends { id: number }>(
     array: Partial<T>[],
     id: number,
-    updateObject: { [key in keyof Partial<T>]?: any }
+    updateObject?: { [key in keyof Partial<T>]?: any }
 ): Partial<T>[] {
     try {
         if (!Array.isArray(array) || typeof id !== 'number') {
