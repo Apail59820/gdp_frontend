@@ -292,42 +292,42 @@ const ExpandedBillingInfo = ({ billing, colorClassName, invoiceState }: props) =
     <div className={styles.globalContainer}>
       <div className={styles.container}>
         <div className={styles.amountContainer}>
-          {(montant_totalht_facture || montant_totalttc_facture) && (
+          {(montant_totalht_facture > 0 || montant_totalttc_facture > 0) && (
             <div>
-              {montant_totalht_facture && (
+              {montant_totalht_facture > 0 && (
                 <span>
                   Montant total HT <span className={colorClassName}>{montant_totalht_facture} €</span>
                 </span>
               )}
-              {montant_totalttc_facture && (
+              {montant_totalttc_facture > 0 && (
                 <span>
                   Montant total TTC <span className={colorClassName}>{montant_totalttc_facture} €</span>
                 </span>
               )}
             </div>
           )}
-          {(reglement_cumuleht_facture || reglement_cumulettc_facture) && (
+          {(reglement_cumuleht_facture > 0 || reglement_cumulettc_facture > 0) && (
             <div>
-              {reglement_cumuleht_facture && (
+              {reglement_cumuleht_facture > 0 && (
                 <span>
                   Règlement cumulé HT <span className={colorClassName}>{reglement_cumuleht_facture} €</span>
                 </span>
               )}
-              {reglement_cumulettc_facture && (
+              {reglement_cumulettc_facture > 0 && (
                 <span>
                   Règlement cumulé TTC <span className={colorClassName}>{reglement_cumulettc_facture} €</span>
                 </span>
               )}
             </div>
           )}
-          {(soldeht_facture || soldettc_facture) && (
+          {(soldeht_facture > 0 || soldettc_facture > 0) && (
             <div>
-              {soldeht_facture && (
+              {soldeht_facture > 0 && (
                 <span>
                   Solde HT <span className={colorClassName}>{soldeht_facture} €</span>
                 </span>
               )}
-              {soldettc_facture && (
+              {soldettc_facture > 0 && (
                 <span>
                   Solde TTC <span className={colorClassName}>{soldettc_facture} €</span>
                 </span>

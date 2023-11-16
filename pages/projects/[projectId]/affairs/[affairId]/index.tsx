@@ -93,6 +93,7 @@ const Affair = () => {
     setIsEditing(false);
     setIsUploadModalOpen(false);
     setIsUploadFilesFormVisible(false);
+    retrieveFiles();
   }
 
   const progressPercentage = useMemo(() => {
@@ -376,7 +377,7 @@ const Affair = () => {
     }
   }, [affair.pythagore_ids]);
 
-  useEffect(() => {
+  const retrieveFiles = () => {
     getGdpFiles({
       filter: {
         affair_id: { _eq: affair.id },
@@ -386,7 +387,11 @@ const Affair = () => {
         setFiles(res.data);
       } else setFiles([]);
     });
-  }, [affair.id, files]);
+  }
+
+  useEffect(() => {
+    retrieveFiles();
+  }, [affair.id]);
 
   useEffect(() => {
     if (affair) {

@@ -20,6 +20,7 @@ import {useRouter} from "next/router";
 import {GlobalFiltersModel} from "../../models/GlobalFiltersModel";
 import {getGdpProjectById} from "../../services/gestionDeProjets/GdpProjects";
 import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
+import {displayBillingStateText} from "../../utils/displayBillingState";
 
 
 
@@ -216,11 +217,11 @@ const FacturesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState,
                       label={'Filtrer par états'}
                       nullOptionText={'Tous les états'}
                       options={[
-                        { value: GdPPythagoreFactureReglement.REGLEE, text: GdPPythagoreFactureReglement.REGLEE },
-                        { value: GdPPythagoreFactureReglement.NON_REGLEE, text: GdPPythagoreFactureReglement.NON_REGLEE },
+                        { value: GdPPythagoreFactureReglement.REGLEE, text: displayBillingStateText(GdPPythagoreFactureReglement.REGLEE) },
+                        { value: GdPPythagoreFactureReglement.NON_REGLEE, text: displayBillingStateText(GdPPythagoreFactureReglement.NON_REGLEE) },
                         {
                           value: GdPPythagoreFactureReglement.REGLEMENT_PARTIEL,
-                          text: GdPPythagoreFactureReglement.REGLEMENT_PARTIEL,
+                          text: displayBillingStateText(GdPPythagoreFactureReglement.REGLEMENT_PARTIEL),
                         },
                       ]}
                       value={facturesFilters.etat}
