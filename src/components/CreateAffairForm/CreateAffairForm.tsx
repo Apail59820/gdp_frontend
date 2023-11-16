@@ -17,6 +17,7 @@ import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProject
 type props = {
   project: Partial<GdpProjectsModel>;
   affair?: Partial<GdpAffairModel>;
+  setUpdatedAffair?: React.Dispatch<React.SetStateAction<Partial<GdpAffairModel>>>;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -27,7 +28,7 @@ type formValues = {
   entity: number;
 };
 
-const CreateAffairForm = ({ project, affair, isOpen, setIsOpen }: props) => {
+const CreateAffairForm = ({ project, affair, setUpdatedAffair, isOpen, setIsOpen }: props) => {
   const companyEntities: Partial<UsCompanyEntityModel>[] = useSelector(selectCompanyEntities);
   const dispatch = useDispatch();
 
@@ -62,15 +63,16 @@ const CreateAffairForm = ({ project, affair, isOpen, setIsOpen }: props) => {
   async function updateAffair(affairId: number, values: formValues) {
     const response = await updateGdpAffair(affairId, { name: values.affairName, company_entity: values.entity });
     if (isRequestSuccessful(response.status) && response.data) {
-      message.success(messages.general.success());
+      message.success(messages.general.success("La modifification de l'affaire", true, false));
       dispatch(setAffairs([...affairs.filter((affair) => affair.id !== affairId), response.data]));
+      setUpdatedAffair(response.data);
       setIsOpen(false);
     } else message.error(messages.general.error());
   }
 
-  const onSubmit = (values: formValues) => {
-    if (affair && affair.id) updateAffair(affair.id, values);
-    else createAffair(values);
+  const onSubmit = async (values: formValues) => {
+    if (affair && affair.id) await updateAffair(affair.id, values);
+    else await createAffair(values);
   };
 
   return (

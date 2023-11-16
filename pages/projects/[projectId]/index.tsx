@@ -50,6 +50,7 @@ import {selectUserProfile} from '../../../store/reducers/authReducer';
 import ManageProjectManagers from '../../../src/components/ManageProjectManagers/ManageProjectManagers';
 import {selectGlobalFilters} from "../../../store/reducers/globalFilterReducer";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
+import {message} from "antd";
 
 const Project = () => {
   const router = useRouter();
@@ -73,6 +74,7 @@ const Project = () => {
   const [isManageProjectManagersFormOpen, setIsManageProjectManagersFormOpen] = React.useState<boolean>(false);
 
   const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
+  const [projectUpdate, setProjectUpdate] = useState<Partial<GdpProjectsModel>>({});
   const progressPercentage = useMemo(() => {
     const requiredProps = ['name', 'client_company_name', 'client_info', 'address', 'zip_code', 'city', 'country'];
     const propsDefined = requiredProps.reduce(
@@ -400,7 +402,7 @@ const Project = () => {
   return (
     project && (
       <div className="page">
-        <PageHeaderBanner data={project}/>
+        <PageHeaderBanner data={projectUpdate.company_entity ? projectUpdate : project}/>
         <div className={styles.projectPage}>
           <Breadcrumb dynamicRoutesLabel={[project.name!]}/>
           <div className={styles.titleContainer}>
@@ -410,6 +412,7 @@ const Project = () => {
               isOpen={isCreateProjectFormOpen}
               setIsOpen={setIsCreateProjectFormOpen}
               project={project}
+              setProject={setProjectUpdate}
             />
             <ManageProjectManagers
               open={isManageProjectManagersFormOpen}
