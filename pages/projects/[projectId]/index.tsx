@@ -272,7 +272,8 @@ const Project = () => {
     } else setProjectManagers([]);
   }, [me, project, getCollaboratorsDataStatus]);
 
-  useEffect(() => {
+
+  const retrieveFiles = () => {
     getGdpFiles({
       filter: {
         projects_id: {_eq: projectId},
@@ -282,7 +283,11 @@ const Project = () => {
         setFiles(res.data);
       } else setFiles([]);
     });
-  }, [projectId, files]);
+  }
+
+  useEffect(() => {
+    retrieveFiles();
+  }, [projectId]);
 
   useEffect(() => {
     getGdpActivities({
@@ -420,7 +425,9 @@ const Project = () => {
               isOpen={isUploadFileFormOpen}
               mode={'files'}
               setIsOpen={setIsUploadFileFormOpen}
-              onClose={() => {setIsUploadFileFormOpen(false)}}
+              onClose={() => {setIsUploadFileFormOpen(false);
+                              retrieveFiles();
+              }}
               project={project}
             />
             {/* end ---------------- EVERY FORM GOES HERE ---------------- end */}
