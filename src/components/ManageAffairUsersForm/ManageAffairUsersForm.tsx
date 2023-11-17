@@ -441,7 +441,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
         <Form.List name={'users'} initialValue={affairUsers.map((user) => ({user: user.id}))}>
           {(fields, {add, remove}) => (
               <>
-                <p className={styles.customLabel}>{userType}</p>
+                <p className={styles.customLabel}>{(userType == 'collaborator') ? 'collaborateur' : 'client'}</p>
                 {fields.map(({key, name, ...restFields}) => (
                     <>
                       <div className={styles.entityButton}>{displayButton.get(key)?.display && displayButton.get(key).button}</div>
@@ -453,7 +453,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                               allowClear
                               menuItemSelectedIcon={<CheckCircleTwoTone rev={undefined} twoToneColor={'#3FB1C9'}/>}
                               filterOption={false}
-                              placeholder={'Sélectionnez un ' + userType}
+                              placeholder={'Sélectionnez un ' + (userType == 'collaborator') ? 'collaborateur' : 'client'}
                               options={users.map((user) => ({
                                 label: getFullName(user),
                                 value: user.id,
@@ -463,13 +463,14 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                               }))}
                               onSearch={(value) => {
                                 if (value.length > 2) {
+                                  let roleToSeek = (userType == 'collaborator') ? publicRuntimeConfig.ROLE_COLLABORATOR_ID : publicRuntimeConfig.ROLE_CLIENT_ID;
                                   fetchData(
                                       getUsUsers,
                                       {
                                         filter: {
                                           _and:[
                                               {_or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}, {email: {_starts_with: value}}]},
-                                              {role: publicRuntimeConfig.ROLE_CLIENT_ID}
+                                              {role: roleToSeek}
                                           ],
                                         },
                                       },
@@ -516,7 +517,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                 <Form.Item>
                   <div style={{display:'flex'}}>
                     <Button small onClick={() => add()} style={'text'}>
-                      Ajouter un {userType}
+                      Ajouter un {(userType == 'collaborator') ? 'collaborateur' : 'client'}
                     </Button>
                     <Button small style={"text"} onClick={()=>setIsCreateClientOpen(true)}>
                       Créer un client

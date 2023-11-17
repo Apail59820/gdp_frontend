@@ -129,6 +129,50 @@ const GlobalFiltersDataSelector = () => {
       },
     ].filter((c) => c.values.length > 0)
   );
+
+  useEffect(() => {
+    //My project page > display selected value in global filters widget
+
+    let selectionEnabled = false;
+
+    // these conditions can only be triggered if the global filter has been set manually so in our case in the 'my projects' button
+    if(globalFilters.collaborators.list.length == 1){
+      for(const selectedValue of selectedValues){
+        if(selectedValue.name.singular == CategoryEnum.COLLABORATORS ){
+          if(selectedValue.values.length == 1 && selectedValue.values[0].key == globalFilters.collaborators.list[0]){
+            selectionEnabled = true;
+          }
+        }
+      }
+    }
+
+    // if the filter has been set manually and not enabled in selection yet
+    if(!selectionEnabled){
+      let newSelectedValues = [...selectedValues];
+
+      getUsUser(globalFilters.collaborators.list[0]).then((res) => {
+        if(isRequestSuccessful(res.status) && res?.data){
+          newSelectedValues.push(
+              {
+                name: {
+                  singular: CategoryEnum.COLLABORATORS,
+                  plural: CategoryEnumPlural.COLLABORATORS
+                },
+                values: [
+                  {
+                    name:getFullName(res.data),
+                    key: globalFilters.collaborators.list[0]
+                  }
+                ]
+              }
+          )
+
+          setSelectedValues(newSelectedValues);
+        }
+      })
+    }
+  }, [globalFilters]);
+
   const [data, setData] = useState<Category[]>([
     {
       name: { singular: CategoryEnum.PROJECTS, plural: CategoryEnumPlural.PROJECTS },
@@ -392,7 +436,6 @@ const GlobalFiltersDataSelector = () => {
   function onOptionClick(item: CategoryValue, categoryName: CategoryName) {
     isSelected(item, categoryName) ? onSelect(item, categoryName) : onDeselect(item, categoryName);
   }
-
   function saveSelection() {
     let newGlobalFilters: GlobalFiltersModel = {
       projects: {
