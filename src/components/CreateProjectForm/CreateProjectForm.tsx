@@ -17,6 +17,7 @@ import {
 } from '../../../services/userService/UsClientsCompanyEntities';
 import { selectProjects, setProjects } from '../../../store/reducers/projectsReducer';
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
+import {sliceModelItem} from "../../../utils/array";
 
 
 type CreateProjectFormProps = {
@@ -56,8 +57,10 @@ const CreateProjectForm = ({ project, setProject, isOpen, setIsOpen }: CreatePro
     }).then((res) => {
       if (isRequestSuccessful(res.status) && res.data) {
         message.success(messages.general.success('La modification du projet', true, false));
-        dispatch(setProjects([...projects, res.data]));
-        if(typeof setProject == 'function') {setProject(res.data);}
+        dispatch(setProjects(sliceModelItem<GdpProjectsModel>(projects, project.id, {...project, ...res.data})));
+        if(typeof setProject == 'function') {
+          setProject(res.data);
+        }
         setIsOpen(false);
       } else {
         message.error(messages.general.error());
@@ -73,7 +76,7 @@ const CreateProjectForm = ({ project, setProject, isOpen, setIsOpen }: CreatePro
     }).then((res) => {
       if (isRequestSuccessful(res.status) && res.data) {
         message.success(messages.general.success('La création du projet', true, false));
-        dispatch(setProjects([...projects, res.data]));
+        dispatch(setProjects(sliceModelItem<GdpProjectsModel>(projects, project.id, {...project, ...res.data})));
         setIsOpen(false);
       } else {
         message.error(messages.general.error());

@@ -13,6 +13,9 @@ import {
 import { downloadGdPFile, uploadGdpFile } from '../../../../services/gestionDeProjets/GdpFiles';
 import { isRequestSuccessful } from '../../../../utils/isRequestSuccessful';
 import { updateGdpProject } from '../../../../services/gestionDeProjets/GdpProjects';
+import {selectProjects, setProjects} from "../../../../store/reducers/projectsReducer";
+import {useDispatch, useSelector} from "react-redux";
+import {sliceModelItem} from "../../../../utils/array";
 
 export type MainMessageProps = {
   project: Partial<GdpProjectsModel>;
@@ -34,6 +37,8 @@ const resizeTitleCalculator = (
 };
 
 const MainMessage = ({ project, showImage = true, resizeTitleProps }: MainMessageProps) => {
+  const dispatch = useDispatch();
+  const projects = useSelector(selectProjects);
   const mainMessageTitleRef = useRef<HTMLDivElement>(null);
   const mainMessageImageRef = useRef<HTMLDivElement>(null);
   const { entityLogoWidth } = resizeTitleProps || {};
@@ -106,11 +111,16 @@ const MainMessage = ({ project, showImage = true, resizeTitleProps }: MainMessag
         document_type: GdpAssetDocumentEnum.UNKNOWN,
       };
       uploadGdpFile(proprerties, e.target.files[0]).then((res) => {
+        const uploadedFileId = res.data.id;
         if (isRequestSuccessful(res.status) && res.data && res.data.id && project.id) {
           message.success("L'image a été importée avec succès");
           updateGdpProject(project.id, { image: res.data.id }).then((res) => {
-            if (isRequestSuccessful(res.status)) {
+            if (isRequestSuccessful(res.status) && res.data) {
               message.success("L'image a été associée au projet");
+              dispatch(
+               setProjects(
+                 sliceModelItem<GdpProjectsModel>(projects, project.id, { 'image': uploadedFileId })
+              ));
             } else {
               message.error("Une erreur est survenue lors de l'association de l'image au projet");
             }
