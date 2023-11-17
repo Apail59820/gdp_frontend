@@ -24,54 +24,69 @@ export type TeamCardProps = {
 
 const TeamCard = ({ users, maxIcon = 5, allUsersPageHref, aside, onKebabMenuClick, dropDownItems, displayKebabMenu}: TeamCardProps) => {
   const [currentUser, setCurrentUser] = useState<Partial<UsUserModel>>(users[0]);
-  const [currentUserAvatar, setCurrentUserAvatar] = useState<string | undefined>(undefined);
+  const [usersWithAvatar, setUsersWithAvatar] = useState<Partial<UsUserModel>[]>([]);
   useEffect(() => {
-    if (!currentUser.avatar) return;
-    getAsset(currentUser.avatar as string).then((res) => {
-      if (isRequestSuccessful(res.status) && res.data) {
-        setCurrentUserAvatar(res.data);
+    const fetchUserAvatars = async () => {
+      try {
+        const avatarPromises = users.map(async (user) => {
+          const avatarResponse = await getAsset(user.avatar as string);
+          if (isRequestSuccessful(avatarResponse.status) && avatarResponse.data) {
+            return {
+              ...user,
+              avatar: avatarResponse.data,
+            };
+          } else {
+            return {...user, avatar: userPlaceholderPicto.src}
+          }
+        });
+        const usersWithAvatars = await Promise.all(avatarPromises);
+        setUsersWithAvatar(usersWithAvatars);
+      } catch (error) {
+        console.error(error);
       }
-    });
-  }, [currentUser.avatar]);
-  return (
-    <ShadowCard>
-      <div className={styles.teamCard}>
-        <aside className={styles.aside}>{aside}</aside>
-        <div className={styles.body}>
-          <div className={styles.userDetails}>
-            <UserInformations user={currentUser} avatar={currentUserAvatar} />
-          </div>
-          <ul className={styles.usersIconsContainer}>
-            {users.slice(0, maxIcon).map((user: Partial<UsUserModel>) => (
-              <li key={user.id} className={styles.user} onClick={() => setCurrentUser(user)}>
-                <Tooltip title={`${user.first_name} ${user.last_name}`}>
-                  <div className={styles.userIcon}>
-                    <Image
-                      fill={true}
-                      src={currentUserAvatar || userPlaceholderPicto.src}
-                      alt={`Photo de ${user.first_name} ${user.last_name}`}
-                    />
-                  </div>
-                </Tooltip>
-              </li>
-            ))}
-            {maxIcon < users.length ? (
-              <li className={styles.user}>
-                <Tooltip title="Voir toute l'équipe">
-                  <Link href={allUsersPageHref}>
-                    <div className={`text-tiny ${styles.linkIcon}`}>+{users.length - maxIcon}</div>
-                  </Link>
-                </Tooltip>
-              </li>
-            ) : null}
-          </ul>
-        </div>
+    };
+    fetchUserAvatars();
+  }, [users]);
 
-        {displayKebabMenu && (
-            <KebabMenuForCards onClick={() => onKebabMenuClick} dropDownItems={dropDownItems}></KebabMenuForCards>
-        )}
-      </div>
-    </ShadowCard>
+  return (
+      <ShadowCard>
+        <div className={styles.teamCard}>
+          <aside className={styles.aside}>{aside}</aside>
+          <div className={styles.body}>
+            <div className={styles.userDetails}>
+              <UserInformations user={currentUser} />
+            </div>
+            <ul className={styles.usersIconsContainer}>
+              {usersWithAvatar.slice(0, maxIcon).map((user: Partial<UsUserModel>) => (
+                  <li key={user.id} className={styles.user} onClick={() => setCurrentUser(user)}>
+                    <Tooltip title={`${user.first_name} ${user.last_name}`}>
+                      <div className={styles.userIcon}>
+                        <Image
+                            fill={true}
+                            src={user.avatar}
+                            alt={`Photo de ${user.first_name} ${user.last_name}`}
+                        />
+                      </div>
+                    </Tooltip>
+                  </li>
+              ))}
+              {maxIcon < users.length ? (
+                  <li className={styles.user}>
+                    <Tooltip title="Voir toute l'équipe">
+                      <Link href={allUsersPageHref}>
+                        <div className={`text-tiny ${styles.linkIcon}`}>+{users.length - maxIcon}</div>
+                      </Link>
+                    </Tooltip>
+                  </li>
+              ) : null}
+            </ul>
+          </div>
+
+          {displayKebabMenu && (
+              <KebabMenuForCards onClick={() => onKebabMenuClick} dropDownItems={dropDownItems}></KebabMenuForCards>
+          )}
+        </div>
+      </ShadowCard>
   );
 };
 export default TeamCard;

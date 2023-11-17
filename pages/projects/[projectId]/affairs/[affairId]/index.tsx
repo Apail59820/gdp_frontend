@@ -54,6 +54,7 @@ const Affair = () => {
   const affairs = useSelector(selectAffairs);
 
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
+  const [updatedAffair, setUpdatedAffair] = useState<Partial<GdpAffairModel>>({})
   const [affairPhases, setAffairPhases] = useState<Partial<GdpAffairModel>[]>([]);
   const [affairManagers, setAffairManagers] = useState<Partial<UsUserModel>[]>([]);
   const [affairClients, setAffairClients] = useState<Partial<UsUserModel>[]>([]);
@@ -92,6 +93,7 @@ const Affair = () => {
     setIsEditing(false);
     setIsUploadModalOpen(false);
     setIsUploadFilesFormVisible(false);
+    retrieveFiles();
   }
 
   const progressPercentage = useMemo(() => {
@@ -375,7 +377,7 @@ const Affair = () => {
     }
   }, [affair.pythagore_ids]);
 
-  useEffect(() => {
+  const retrieveFiles = () => {
     getGdpFiles({
       filter: {
         affair_id: { _eq: affair.id },
@@ -385,6 +387,10 @@ const Affair = () => {
         setFiles(res.data);
       } else setFiles([]);
     });
+  }
+
+  useEffect(() => {
+    retrieveFiles();
   }, [affair.id]);
 
   useEffect(() => {
@@ -457,7 +463,7 @@ const Affair = () => {
 
   return (
     <div className="page">
-      <PageHeaderBanner data={affairProject ? affairProject : { name: 'Projet' }} />
+      <PageHeaderBanner data={affairProject ? affairProject : { name: 'Projet' }} affair={affair} />
       <div className={styles.affairPage}>
         <Breadcrumb
           dynamicRoutesLabel={[
@@ -470,6 +476,7 @@ const Affair = () => {
           <CreateAffairForm
             project={affairProject}
             affair={affair}
+            setUpdatedAffair={setUpdatedAffair}
             isOpen={isCreateAffairFormVisible}
             setIsOpen={setIsCreateAffairFormVisible}
           />
