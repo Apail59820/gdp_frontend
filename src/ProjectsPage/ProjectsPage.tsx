@@ -10,12 +10,18 @@ import Link from 'next/link';
 import { QueryParameters } from '../../models/DirectusModel';
 import { DeleteOutlined } from '@ant-design/icons';
 import { CompanyEnum } from '../../models/UserService/UsCompanyEntityModel';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { selectCompanyEntities } from '../../store/reducers/companyEntitiesReducer';
 import GlobalFilters from '../components/GlobalFiltersComponents/GlobalFilters';
-import { selectGlobalFilters } from '../../store/reducers/globalFilterReducer';
+import {selectGlobalFilters, setGlobalFilters} from '../../store/reducers/globalFilterReducer';
 import { LazyLoadingStateType } from '../../models/LazyLoadingStateType';
 import getConfig from 'next/config';
+import {router} from "next/client";
+import {useRouter} from "next/router";
+import {message} from "antd";
+import {getMyUsProfile} from "../../services/userService/UsUsers";
+import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
+
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -59,6 +65,8 @@ const ProjectsPage = ({
   const [displayOption, setDisplayOption] = useState<string>('grid');
   const [projectsFilters, setProjectsFilters] = useState<ProjectsFiltersType>(projectsFiltersInitialState);
 
+  const dispatch = useDispatch();
+  const router = useRouter();
   function updateSpecificFilters() {
     const filterRules: any[] = [];
     if (projectsFilters.name.length > 0) filterRules.push({ name: { _contains: projectsFilters.name } });
@@ -120,6 +128,24 @@ const ProjectsPage = ({
       if (pageRef && pageRef.current) pageRef.current.removeEventListener('scroll', onScrollEvent);
     };
   }, [projectsCount, projects, lazyLoadingState]);
+
+  useEffect(() => {
+
+    let {manualGlobalFilters} = router.query;
+
+    if(manualGlobalFilters ){
+      if(manualGlobalFilters == 'myProjects'){
+        let newGlobalFilters = JSON.parse(JSON.stringify(globalFilters));
+
+        getMyUsProfile('id').then((res)=> {
+          if(isRequestSuccessful(res.status) && res?.data){
+            newGlobalFilters.collaborators.list = [...newGlobalFilters.collaborators.list, res.data.id];
+            dispatch(setGlobalFilters(newGlobalFilters));
+          }
+        })
+      }
+    }
+  }, []);
 
   return (
     <div className="page" ref={pageRef}>
