@@ -23,7 +23,6 @@ import ManageAffairUsersForm from '../../../../../src/components/ManageAffairUse
 import ManageAffairManagerForm from '../../../../../src/components/ManageAffairManagerForm/ManageAffairManagerForm';
 import { getUsCompanyEntity } from '../../../../../services/userService/UsCompanyEntities';
 import {getGdpProjectsUsersClients} from "../../../../../services/gestionDeProjets/GdpProjectsUsersClients";
-import {is} from "immutable";
 
 const Team = () => {
   const router = useRouter();
@@ -189,7 +188,7 @@ const Team = () => {
   };
 
   const retrieveAffairClients = async () => {
-    const retrieveIds = await getGdpProjectsUsersClients({filter: {affairs_id: affair.id}});
+    const retrieveIds = await getGdpProjectsUsersClients({filter: {affairs_id: {_eq: affair.id}}});
     if(!isRequestSuccessful(retrieveIds.status) || !retrieveIds?.data.length) return;
 
     getUsUsers({filter: {id: {_in : retrieveIds.data.map((client) => client.directus_users_id)}}}).then((res) => {

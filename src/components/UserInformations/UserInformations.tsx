@@ -8,8 +8,6 @@ import userPlaceholderPicto from '../../../public/user-solid.svg';
 import {getAsset} from "../../../services/userService/UsAssets";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 
-const { publicRuntimeConfig } = getConfig();
-
 export type UserInformationsProps = {
   user: Partial<UsUserModel>;
 };
