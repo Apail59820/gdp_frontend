@@ -19,6 +19,8 @@ import getConfig from 'next/config';
 import {router} from "next/client";
 import {useRouter} from "next/router";
 import {message} from "antd";
+import {getMyUsProfile} from "../../services/userService/UsUsers";
+import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -131,14 +133,20 @@ const ProjectsPage = ({
 
     let {manualGlobalFilters} = router.query;
 
-    if(manualGlobalFilters && manualGlobalFilters == 'myProjects'){
-      let newGlobalFilters = JSON.parse(JSON.stringify(globalFilters));
+    if(manualGlobalFilters ){
+      if(manualGlobalFilters == 'myProjects'){
+        let newGlobalFilters = JSON.parse(JSON.stringify(globalFilters));
 
-      newGlobalFilters.collaborators.list = [...newGlobalFilters.collaborators.list, '8846cff2-ea44-45c7-a928-a91a59f953e3'];
-
-      dispatch(setGlobalFilters(newGlobalFilters));
+        getMyUsProfile('id').then((res)=> {
+          if(isRequestSuccessful(res.status) && res?.data){
+            newGlobalFilters.collaborators.list = [...newGlobalFilters.collaborators.list, res.data.id];
+            dispatch(setGlobalFilters(newGlobalFilters));
+          }
+        })
+      }
     }
   }, []);
+
 
   return (
     <div className="page" ref={pageRef}>
