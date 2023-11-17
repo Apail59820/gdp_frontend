@@ -16,8 +16,8 @@ import { UsCompanyEntityModel } from '../../../../models/UserService/UsCompanyEn
 import { isRequestSuccessful } from '../../../../utils/isRequestSuccessful';
 import { formatUserName } from '../../../../utils/formatUserName';
 import { getUsClientsCompanyEntities } from '../../../../services/userService/UsClientsCompanyEntities';
-import {message} from "antd";
 import {getFullName} from "../../../../utils/fullName";
+import {getUsCompanyEntities} from "../../../../services/userService/UsCompanyEntities";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -207,6 +207,88 @@ const GlobalFiltersDataSelector = () => {
   ]);
   const [currentCategoryTab, setCurrentCategoryTab] = useState<number>(0);
   const [searchInput, setSearchInput] = useState<string[]>(data.map((c) => ''));
+
+  useEffect(() => {
+    //From user service to add company entities to selected values
+
+    let selectionEnabled = false;
+
+    if(globalFilters.company_entities.list.length == 1){
+      for(const selectedValue of selectedValues){
+        if(selectedValue.name.singular == CategoryEnum.COMPANY_ENTITIES ){
+          if(selectedValue.values.length == 1 && selectedValue.values[0].key == globalFilters.company_entities.list[0]){
+            selectionEnabled = true;
+          }
+        }
+      }
+    }
+
+    if(!selectionEnabled){
+      let newSelectedValues = [...selectedValues];
+
+      getUsCompanyEntities({filter:{id:globalFilters.company_entities.list[0]}}).then((res) => {
+        if(isRequestSuccessful(res.status) && res?.data.length == 1){
+          newSelectedValues.push(
+              {
+                name: {
+                  singular: CategoryEnum.COMPANY_ENTITIES,
+                  plural: CategoryEnumPlural.COMPANY_ENTITIES
+                },
+                values: [
+                  {
+                    name:res.data[0].name,
+                    key: globalFilters.company_entities.list[0]
+                  }
+                ]
+              }
+          )
+
+          setSelectedValues(newSelectedValues);
+        }
+      })
+    }
+  }, [globalFilters]);
+
+  useEffect(() => {
+    //From user service to add client company entities to selected values
+
+    let selectionEnabled = false;
+
+    if(globalFilters.clients_company_entities.list.length == 1){
+      for(const selectedValue of selectedValues){
+        if(selectedValue.name.singular == CategoryEnum.CLIENT_COMPANY_ENTITIES ){
+          if(selectedValue.values.length == 1 && selectedValue.values[0].key == globalFilters.clients_company_entities.list[0]){
+            selectionEnabled = true;
+          }
+        }
+      }
+    }
+
+    if(!selectionEnabled){
+      let newSelectedValues = [...selectedValues];
+
+      getUsClientsCompanyEntities({filter:{id:globalFilters.clients_company_entities.list[0]}}).then((res) => {
+        if(isRequestSuccessful(res.status) && res?.data.length == 1){
+          newSelectedValues.push(
+              {
+                name: {
+                  singular: CategoryEnum.CLIENT_COMPANY_ENTITIES,
+                  plural: CategoryEnumPlural.CLIENT_COMPANY_ENTITIES
+                },
+                values: [
+                  {
+                    name:res.data[0].name,
+                    key: globalFilters.clients_company_entities.list[0]
+                  }
+                ]
+              }
+          )
+
+          setSelectedValues(newSelectedValues);
+        }
+      })
+    }
+  }, [globalFilters]);
 
   useEffect(() => {
     setData([

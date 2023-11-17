@@ -22,6 +22,7 @@ import {message} from "antd";
 import {getMyUsProfile} from "../../services/userService/UsUsers";
 import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
 
+
 const { publicRuntimeConfig } = getConfig();
 
 type ProjectsFiltersType = {
@@ -65,7 +66,6 @@ const ProjectsPage = ({
   const [projectsFilters, setProjectsFilters] = useState<ProjectsFiltersType>(projectsFiltersInitialState);
 
   const dispatch = useDispatch();
-
   const router = useRouter();
   function updateSpecificFilters() {
     const filterRules: any[] = [];
@@ -147,6 +147,40 @@ const ProjectsPage = ({
     }
   }, []);
 
+  useEffect(() => {
+
+    if(JSON.stringify(router.query).length <= 2) return;
+
+    let manualGlobalFilters= router.query.manualGlobalFilters;
+    let entity = router.query.entity;
+    let isInternal = router.query.isInternal;
+
+
+    if(manualGlobalFilters ){
+      let newGlobalFilters = JSON.parse(JSON.stringify(globalFilters));
+      switch (manualGlobalFilters){
+        case 'myProjects':
+          getMyUsProfile('id').then((res)=> {
+            if(isRequestSuccessful(res.status) && res?.data){
+              newGlobalFilters.collaborators.list = [...newGlobalFilters.collaborators.list, res.data.id];
+              dispatch(setGlobalFilters(newGlobalFilters));
+            }
+          })
+          break;
+        case 'projects':
+          if(typeof entity !== 'undefined'){
+            if(isInternal === 'true'){
+              newGlobalFilters.company_entities.list = [...newGlobalFilters.clients_company_entities.list, entity];
+              dispatch(setGlobalFilters(newGlobalFilters));
+            }else if(isInternal === 'false') {
+              newGlobalFilters.clients_company_entities.list = [...newGlobalFilters.company_entities.list, entity];
+              dispatch(setGlobalFilters(newGlobalFilters));
+            }
+          }
+          break;
+      }
+    }
+  }, [router]);
 
   return (
     <div className="page" ref={pageRef}>
