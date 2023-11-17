@@ -1,7 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { GdpProjectsClientsModel, GdpProjectsCollaboratorsModel, GdpProjectsModel } from '../../../models/GdPModels';
+import {
+  GdpAffairModel,
+  GdpProjectsClientsModel,
+  GdpProjectsCollaboratorsModel,
+  GdpProjectsModel
+} from '../../../models/GdPModels';
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
 import styles from '../../../styles/Team.module.scss';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
@@ -15,6 +20,10 @@ import { getUsUsers } from '../../../services/userService/UsUsers';
 import ManageProjectsCollaboratorForm from '../../../src/components/ManageProjectsCollaboratorForm/ManageProjectsCollaboratorForm';
 import ManageProjectManagers from '../../../src/components/ManageProjectManagers/ManageProjectManagers';
 import { getUsCompanyEntity } from '../../../services/userService/UsCompanyEntities';
+import ManageAffairUsersForm from "../../../src/components/ManageAffairUsersForm/ManageAffairUsersForm";
+import SelectAffair from "../../../src/components/SelectAffair/SelectAffair";
+import {message} from "antd";
+import affairId from "./affairs/[affairId]";
 
 const Team = () => {
   const router = useRouter();
@@ -29,13 +38,23 @@ const Team = () => {
   const [companyEntity, setCompanyEntity] = useState<Partial<UsCompanyEntityModel>>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAddManagerModalOpen, setIsAddManagerModalOpen] = useState(false);
+  const [isSelectAffairForClientModalOpen,setIsSelectAffairForClientModalOpen] = useState(false);
 
+  const [isAddManagerModalOpen, setIsAddManagerModalOpen] = useState(false);
+  const [isAddClientOpen, setIsAddClientOpen] = useState<boolean>(false);
+
+  const [selectedAffairForClient, setSelectedAffairForClient] = useState<Partial<GdpAffairModel>>();
+  const [refreshProject, setRefreshProject] = useState(true);
   const { projectId } = router.query;
 
   useEffect(() => {
+    if(refreshProject){
+      setRefreshProject(false);
+    }
+    else{
+      return;
+    }
     if (!projectId || typeof projectId !== 'string') return;
-
     setIsLoading(true);
 
     getGdpProjectById(
@@ -66,7 +85,7 @@ const Team = () => {
         router.push('/404');
       })
       .finally(() => setIsLoading(false));
-  }, [router, projectId]);
+  }, [router, projectId, refreshProject]);
 
   const retrieveProjectClients = async () => {
     const projectClientsIds: string[] = (project.projects_directus_users_clients_ids as GdpProjectsClientsModel[])?.map(
@@ -122,6 +141,17 @@ const Team = () => {
     if (isRequestSuccessful(response.status) && response.data) return setProjectCollaborators(response.data);
     setProjectCollaborators([]);
   };
+
+  const onAffairForClientSelected = (affair : Partial<GdpAffairModel>) => {
+    if(affair){
+      setSelectedAffairForClient(affair);
+      setIsAddClientOpen(true)
+    }
+  }
+
+  useEffect(() => {
+    setRefreshProject(true)
+  }, [isAddClientOpen]);
 
   useEffect(() => {
     retrieveProjectClients();
@@ -183,6 +213,12 @@ const Team = () => {
                   <UserCard user={client} />
                 </React.Fragment>
               ))}
+              <ManageItemCard
+                  label="Ajouter un client à une affaire"
+                  onClick={() => {
+                    setIsSelectAffairForClientModalOpen(true);
+                  }}
+              />
             </Grid>
           ) : (
             <p>Aucun client n&apos;est lié à ce projet. Veuillez ajouter vos clients aux affaires liées à ce projet.</p>
@@ -211,6 +247,19 @@ const Team = () => {
           onClose={() => setIsAddManagerModalOpen(false)}
           project={project}
         />
+        <SelectAffair isOpen={isSelectAffairForClientModalOpen}
+                      handleClose={() => {setIsSelectAffairForClientModalOpen(false);}}
+                      onSelect={(affair) => {onAffairForClientSelected(affair)}}
+                      project={project} />
+
+        {selectedAffairForClient && (
+            <ManageAffairUsersForm
+                isOpen={isAddClientOpen}
+                setIsOpen={setIsAddClientOpen}
+                affair={selectedAffairForClient}
+                userType={'client'}
+            />
+        )}
       </div>
     </div>
   );
