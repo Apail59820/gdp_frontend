@@ -131,11 +131,30 @@ const ProjectsPage = ({
 
   useEffect(() => {
 
+    let {manualGlobalFilters} = router.query;
+
+    if(manualGlobalFilters ){
+      if(manualGlobalFilters == 'myProjects'){
+        let newGlobalFilters = JSON.parse(JSON.stringify(globalFilters));
+
+        getMyUsProfile('id').then((res)=> {
+          if(isRequestSuccessful(res.status) && res?.data){
+            newGlobalFilters.collaborators.list = [...newGlobalFilters.collaborators.list, res.data.id];
+            dispatch(setGlobalFilters(newGlobalFilters));
+          }
+        })
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+
     if(JSON.stringify(router.query).length <= 2) return;
 
     let manualGlobalFilters= router.query.manualGlobalFilters;
     let entity = router.query.entity;
     let isInternal = router.query.isInternal;
+
 
     if(manualGlobalFilters ){
       let newGlobalFilters = JSON.parse(JSON.stringify(globalFilters));
@@ -144,6 +163,7 @@ const ProjectsPage = ({
           getMyUsProfile('id').then((res)=> {
             if(isRequestSuccessful(res.status) && res?.data){
               newGlobalFilters.collaborators.list = [...newGlobalFilters.collaborators.list, res.data.id];
+              dispatch(setGlobalFilters(newGlobalFilters));
             }
           })
           break;
@@ -151,13 +171,14 @@ const ProjectsPage = ({
           if(typeof entity !== 'undefined'){
             if(isInternal === 'true'){
               newGlobalFilters.company_entities.list = [...newGlobalFilters.clients_company_entities.list, entity];
+              dispatch(setGlobalFilters(newGlobalFilters));
             }else if(isInternal === 'false') {
               newGlobalFilters.clients_company_entities.list = [...newGlobalFilters.company_entities.list, entity];
+              dispatch(setGlobalFilters(newGlobalFilters));
             }
           }
           break;
       }
-      dispatch(setGlobalFilters(newGlobalFilters));
     }
   }, [router]);
 
