@@ -7,6 +7,7 @@ import Grid from '../Grid/Grid';
 import ProjectCard from '../ProjectCard/ProjectCard';
 import { Section } from 'projex-ui';
 import { LoadingOutlined } from '@ant-design/icons';
+import {useRouter} from "next/router";
 
 type Props = {
   projects: Partial<GdpProjectsModel>[];
@@ -15,8 +16,13 @@ type Props = {
 };
 
 const ProjectsWidget = ({ projects, isLoading = false, handleNewProjectClick }: Props) => {
+
+  const router = useRouter();
+  const onShowMyProjectsClick = () => {
+    router.push('/projects?manualGlobalFilters=myProjects')
+  }
   return (
-    <Section title="Mes projets" link={{ label: 'Voir tous les projets', href: '/projects' }}>
+    <Section title="Mes projets" button={{label: 'Voir tous les projets', onClick:onShowMyProjectsClick}}>
       <Grid>
         {isLoading ? (
           <LoadingOutlined rev={undefined} />
