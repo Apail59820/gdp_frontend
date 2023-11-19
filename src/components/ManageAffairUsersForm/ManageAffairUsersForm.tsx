@@ -11,7 +11,6 @@ import styles from './ManageAffairUsersForm.module.scss';
 import {UsUserModel} from '../../../models/UserService/UsUserModel';
 import {getUsUsers} from '../../../services/userService/UsUsers';
 import {getGdpProjectById} from '../../../services/gestionDeProjets/GdpProjects';
-import {QueryParameters} from '../../../models/DirectusModel';
 import {
   createGdpAffairUsers,
   deleteGdpAffairUsers,
@@ -284,27 +283,6 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
       setAffairDirectusUsersId([]);
     }
   }, [affairDirectusUsersId, users]);
-
-  const fetchData = async (
-    getter: (queryParameters: QueryParameters) => any,
-    queryParams: QueryParameters,
-    setter: React.Dispatch<React.SetStateAction<any>>
-  ) => {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
-    const getData = () => {
-      getter(queryParams).then((res: { status: number; data: any }) => {
-        if (res.status === 200 && res.data) {
-          setter(res.data);
-        }
-      });
-    };
-
-    timeout = setTimeout(getData, 300);
-  };
-
   const onFinish = async(values: any) => {
     const valuesToDelete = affairUsers.filter((user) => {
       return !values.users.find((value: any) => value.user === user.id);
@@ -464,18 +442,20 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                               onSearch={(value) => {
                                 if (value.length > 2) {
                                   let roleToSeek = (userType == 'collaborator') ? publicRuntimeConfig.ROLE_COLLABORATOR_ID : publicRuntimeConfig.ROLE_CLIENT_ID;
-                                  fetchData(
-                                      getUsUsers,
-                                      {
-                                        filter: {
-                                          _and:[
-                                              {_or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}, {email: {_starts_with: value}}]},
-                                              {role: roleToSeek}
-                                          ],
-                                        },
-                                      },
-                                      setUsers
-                                  ).catch((err) => console.error(err));
+                                  getUsUsers({
+                                    filter: {
+                                      _and:[
+                                        {_or: [{first_name: {_starts_with: value}}, {last_name: {_starts_with: value}}, {email: {_starts_with: value}}]},
+                                        {role: roleToSeek}
+                                      ],
+                                    },
+                                  }).then((res) => {
+                                    if (isRequestSuccessful(res.status) && res.data.length) {
+                                      const existingUserIds = new Set(users.map(user => user.id));
+                                      const newSearchResults = res.data.filter(searchResult => !existingUserIds.has(searchResult.id));
+                                      setUsers([...users, ...newSearchResults]);
+                                    }
+                                  }).catch((err) => console.error(err))
                                 }
                               }}
                               onChange={async (value) => {
