@@ -76,7 +76,7 @@ const CreateProjectForm = ({ project, setProject, isOpen, setIsOpen }: CreatePro
     }).then((res) => {
       if (isRequestSuccessful(res.status) && res.data) {
         message.success(messages.general.success('La création du projet', true, false));
-        dispatch(setProjects(sliceModelItem<GdpProjectsModel>(projects, project.id, {...project, ...res.data})));
+        dispatch(setProjects([...projects, res.data]));
         setIsOpen(false);
       } else {
         message.error(messages.general.error());
