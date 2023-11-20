@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.5rem 1rem;
+  align-items: center;
+  gap: 3rem;
+  &.reverse {
+    flex-direction: row-reverse;
+  }
+  .infos {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+}

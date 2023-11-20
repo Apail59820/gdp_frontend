@@ -1,0 +1,17 @@
+#fourOhFour {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .textContainer {
+    text-align: center;
+    line-height: 2rem;
+
+    .title {
+      margin: 0;
+    }
+  }
+}

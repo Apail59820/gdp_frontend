@@ -1,0 +1,20 @@
+.footer {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.inputNewClient{
+  animation-name: inputNewClientEnterAnimation;
+  animation-duration: 1s;
+}
+
+
+@keyframes inputNewClientEnterAnimation {
+  0% {
+    background: #a9c2d3;
+  }
+  100% {
+    background: inherit;
+  }
+}

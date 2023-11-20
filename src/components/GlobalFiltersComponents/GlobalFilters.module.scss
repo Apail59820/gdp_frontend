@@ -1,0 +1,10 @@
+@import 'projex-styles';
+
+.filterBar {
+  display: flex;
+  width: 100%;
+  padding: 1rem 2rem;
+  gap: 1rem;
+  background-color: $neutral-bg;
+  overflow: visible;
+}

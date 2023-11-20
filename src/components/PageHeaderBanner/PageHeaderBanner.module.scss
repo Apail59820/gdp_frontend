@@ -1,0 +1,57 @@
+@import 'projex-styles';
+
+.pageHeaderBanner {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  background-color: $bg-primary;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+
+  position: relative;
+
+  .logo {
+    position: relative;
+    transition: all .3s ease-in-out;
+    height: 3rem;
+    @include media-breakpoint-up(lg) {
+      margin-right: 4rem;
+    }
+    @include media-breakpoint-down(lg) {
+      margin-right: 2rem;
+    }
+    margin: 2rem;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0.25rem;
+  }
+
+  &.groupeProjex::after {
+    background-color: $groupe-projex;
+  }
+  &.amexia::after {
+    background-color: $amexia;
+  }
+  &.diagobat::after {
+    background-color: $diagobat;
+  }
+  &.imperium::after {
+    background-color: $imperium;
+  }
+  &.probim::after {
+    background-color: $probim;
+  }
+  &.projex::after {
+    background-color: $projex;
+  }
+}

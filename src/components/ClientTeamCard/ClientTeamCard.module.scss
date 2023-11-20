@@ -1,0 +1,29 @@
+@import 'projex-styles';
+
+.clientCompanyDetails {
+    background: $bg-secondary;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .title {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: $primary;
+
+      word-wrap: break-word;
+    }
+
+    .coordinates {
+      font-style: normal;
+      color: $primary;
+
+      a {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+}

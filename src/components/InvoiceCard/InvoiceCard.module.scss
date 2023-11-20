@@ -1,0 +1,89 @@
+@import 'projex-styles';
+
+.invoiceCard {
+  background-color: $bg-primary;
+  border-radius: 0.25rem;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  .banner {
+    background-color: $primary;
+    padding: 0.3rem 0.5rem .25rem;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    text-align: center;
+    line-height: 1.125em;
+    color: $bg-primary;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .body {
+    padding: 0.75rem 1rem;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .title {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .informations {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      > .information {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+
+        span {
+          flex-grow: 1;
+          min-width: 5rem;
+
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+
+          &.value {
+            text-align: right;
+            font-weight: 700;
+          }
+        }
+      }
+    }
+  }
+
+  &.ok {
+    .body .informations .information span.value {
+      color: $green;
+      font-weight: 400;
+    }
+  }
+  &.warning {
+    .banner {
+      background-color: $orange;
+    }
+    .body .informations .information span.value {
+      color: $orange;
+      font-weight: 700;
+    }
+  }
+  &.alert {
+    .banner {
+      background-color: $red;
+    }
+    .body .informations .information span.value {
+      color: $red;
+      font-weight: 700;
+    }
+  }
+}

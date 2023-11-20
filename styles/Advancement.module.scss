@@ -1,0 +1,39 @@
+@import 'projex-styles';
+
+.advancementPage {
+  padding: 0 2rem 2rem;
+
+  > .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2rem;
+  }
+
+  > .body {
+    margin-top: 4rem;
+    display: flex;
+    gap: 2rem;
+
+    .phases {
+      flex-grow: 1;
+      overflow: auto;
+
+      display: flex;
+      flex-direction: column;
+      gap: 4rem;
+
+      > .phaseContainer {
+        padding-bottom: 4rem;
+
+        &:not(:last-of-type) {
+          border-bottom: 1px solid $neutral-light;
+        }
+      }
+    }
+
+    .activitiesWidgetContainer {
+      min-width: 33rem;
+    }
+  }
+}

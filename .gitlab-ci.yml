@@ -1,0 +1,117 @@
+variables:
+  DNS: maia.groupe-projex.net
+  SERVICE_NAME: projects-management-ui
+  GCP_SERVICE: $SERVICE_NAME-${CI_ENVIRONMENT_SLUG}
+  REGISTRY_IMAGE: $DOCKER_REGISTRY/$SERVICE_NAME-$CI_ENVIRONMENT_SLUG/$SERVICE_NAME-$CI_ENVIRONMENT_SLUG:latest
+
+stages:
+  - test
+  - build
+  - deploy
+  - cleanup
+
+build-image-develop:
+  stage: build
+  image: $DOCKER_REGISTRY/gitlab-ci-docker/google-cloud-sdk-for-gitlab:main
+  before_script:
+    - gcloud config set project $GCP_PROJECT_ID
+    - gcloud config set run/region  $GCP_REGION
+    - echo "$GCP_SERVICE_CREDS" > key.json
+    - gcloud auth activate-service-account --key-file key.json
+    - apk add --update nodejs npm
+    - npm install -g pnpm
+    - npm install -g google-artifactregistry-auth pnpm
+    - npm install -g yarn
+    - |
+      gcloud artifacts print-settings npm \
+        --repository=npm-registry \
+        --location=europe-west1 \
+        --scope=@projex >> .npmrc
+
+    - echo "Created the following .npmrc:"; cat .npmrc
+    - npm cache clear --force
+    - npx google-artifactregistry-auth .npmrc
+    - mv .env.$CI_ENVIRONMENT_SLUG .env
+    - rm .env.*
+  script:
+    - gcloud builds submit . --timeout 1h --tag $REGISTRY_IMAGE
+  variables:
+    CI_DEBUG_TRACE: "true"
+  only:
+    - dev
+  environment:
+    name: develop
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
+    paths:
+      - .pnpm-store
+      - node_modules/
+
+build-image-staging:
+  extends: build-image-develop
+  only:
+    - /^release_[0-9]+(?:.[0-9]+)+$/
+  environment:
+    name: staging
+
+build-image-production:
+  extends: build-image-develop
+  only:
+    - main
+  environment:
+    name: production
+
+deploy:
+  stage: deploy
+  image: $DOCKER_REGISTRY/gitlab-ci-docker/google-cloud-sdk-for-gitlab:main
+  script:
+    - mv .env.$CI_ENVIRONMENT_SLUG .env
+    - rm .env.*
+    - cp /cloud-run.sh .
+    - ./cloud-run.sh
+  variables:
+    ENV_FILE: ".env"
+    DOMAIN: dev-$DNS
+    PORT: 3001
+  environment:
+    name: develop
+    url: $ENVIRONMENT_URL
+  artifacts:
+    reports:
+      dotenv: deploy.env
+  dependencies:
+    - build-image-develop
+  needs: [build-image-develop]
+  only:
+    - dev
+
+deploy-staging:
+  extends: deploy
+  variables:
+    ENV_FILE: ".env"
+    DOMAIN: staging-$DNS
+    PORT: 3001
+  environment:
+    name: staging
+  when: manual
+  dependencies:
+    - build-image-staging
+  needs: [build-image-staging]
+  only:
+    - /^release_[0-9]+(?:.[0-9]+)+$/
+
+deploy-production:
+  extends: deploy-staging
+  variables:
+    ENV_FILE: ".env"
+    DOMAIN: $DNS
+    PORT: 3001
+  environment:
+    name: production
+  dependencies:
+    - build-image-production
+  needs: [build-image-production]
+  only:
+    - main

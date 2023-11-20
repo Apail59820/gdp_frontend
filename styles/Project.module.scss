@@ -1,0 +1,24 @@
+.projectPage {
+  padding: 0 2rem 2rem;
+
+  > .title {
+    margin-top: 2rem;
+  }
+
+  > section {
+    margin-top: 4rem;
+  }
+
+  .titleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .phasesWidget {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+}

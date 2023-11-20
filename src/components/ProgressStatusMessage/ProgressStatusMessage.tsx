@@ -1,0 +1,44 @@
+import React from 'react';
+import { GdpPhaseStatusEnum } from '../../../models/GestionDeProjets/GdpPhaseModel';
+import styles from './ProgressStatusMessage.module.scss';
+import completedIcon from '../../../public/completed.svg';
+import ongoingIcon from '../../../public/ongoing.svg';
+import pendingIcon from '../../../public/pending.svg';
+
+type Props = {
+  status: GdpPhaseStatusEnum;
+};
+
+const ProgressStatusMessage = ({ status }: Props) => {
+  const getInformationsByStatus = (): { text: string; icon: string } => {
+    switch (status) {
+      case GdpPhaseStatusEnum.COMPLETED:
+        return {
+          text: 'Terminée',
+          icon: completedIcon.src,
+        };
+      case GdpPhaseStatusEnum.ONGOING:
+        return {
+          text: 'En cours',
+          icon: ongoingIcon.src,
+        };
+      case GdpPhaseStatusEnum.PENDING:
+        return {
+          text: 'En attente',
+          icon: pendingIcon.src,
+        };
+    }
+  };
+
+  return (
+    <span className={`text-small ${styles.progressStatusMessage}`}>
+      État d&apos;avancement :{' '}
+      <span className={styles.status}>
+        {getInformationsByStatus().text}
+        <img src={getInformationsByStatus().icon} alt="Icon" />
+      </span>
+    </span>
+  );
+};
+
+export default ProgressStatusMessage;

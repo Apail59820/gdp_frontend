@@ -1,0 +1,263 @@
+import React, { useEffect, useState, useRef } from 'react';
+import styles from './Factures.module.scss';
+import { Button, Input, Select } from 'projex-ui';
+import { QueryParameters } from '../../models/DirectusModel';
+import { DeleteOutlined } from '@ant-design/icons';
+import {useDispatch, useSelector} from 'react-redux';
+import { selectCompanyEntities } from '../../store/reducers/companyEntitiesReducer';
+import GlobalFilters from '../components/GlobalFiltersComponents/GlobalFilters';
+import {selectGlobalFilters, setGlobalFilters} from '../../store/reducers/globalFilterReducer';
+import { LazyLoadingStateType } from '../../models/LazyLoadingStateType';
+import getConfig from 'next/config';
+import {
+  GdpPythagoreFactureModel,
+  GdPPythagoreFactureReglement,
+  GdPPythagoreFactureStatut,
+} from '../../models/GestionDeProjets/GdpPythagoreFactureModel';
+import BillingTable from '../components/BillingTable/BillingTable';
+import { CompanyEnum } from '../../models/UserService/UsCompanyEntityModel';
+import {useRouter} from "next/router";
+import {GlobalFiltersModel} from "../../models/GlobalFiltersModel";
+import {getGdpProjectById} from "../../services/gestionDeProjets/GdpProjects";
+import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
+import {displayBillingStateText} from "../../utils/displayBillingState";
+
+
+
+const { publicRuntimeConfig } = getConfig();
+
+type FacturesFiltersType = {
+  search: string;
+  etat: GdPPythagoreFactureReglement | '';
+  statut: GdPPythagoreFactureStatut | '';
+  company_entity: CompanyEnum | '';
+};
+
+type Props = {
+  files: Partial<GdpPythagoreFactureModel>[];
+  filesCount: number | null;
+  setSpecificFilters: (newFilters: QueryParameters) => void;
+  lazyLoadingState: LazyLoadingStateType;
+  setLazyLoadingState: (newState: LazyLoadingStateType) => void;
+  disableGlobalFilters?: boolean;
+};
+
+const FacturesFiltersInitialState: FacturesFiltersType = {
+  search: '',
+  statut: '',
+  etat: '',
+  company_entity: '',
+};
+
+//prevent search input to trigger multiple requests by cancelling requests while user is typing
+let timerSearch: NodeJS.Timeout;
+
+let isNewDataLoading = false;
+
+const FacturesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState, setLazyLoadingState, disableGlobalFilters }: Props) => {
+  const pageRef = useRef<HTMLDivElement>(null);
+
+  const globalFilters = useSelector(selectGlobalFilters);
+  const companyEntities = useSelector(selectCompanyEntities);
+  const [facturesFilters, setFacturesFilters] = useState<FacturesFiltersType>(FacturesFiltersInitialState);
+
+  typeof disableGlobalFilters === 'undefined' ? disableGlobalFilters = false : disableGlobalFilters = disableGlobalFilters;
+
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  function updateSpecificFilters() {
+    const filterRules: any[] = [];
+    let search: string | undefined = undefined;
+    //Pour search : Il faudrait remplacer certains textes comme "Non réglée" par "nonreglee" pour faciliter la recherche.
+    if (facturesFilters.search.length > 0) search = facturesFilters.search;
+    if (facturesFilters.statut !== '') filterRules.push({ statut_facture: { _eq: facturesFilters.statut } });
+    if (facturesFilters.etat !== '') filterRules.push({ etatreglt_facture: { _eq: facturesFilters.etat } });
+    if (facturesFilters.company_entity !== '')
+      filterRules.push({
+        _or: [
+          {
+            num_affaire: {
+              affairs_id: {
+                affairs_id: { projects_id: { company_entity: { _eq: facturesFilters.company_entity } } },
+              },
+            },
+          },
+          {
+            num_affaire: {
+              affairs_id: { affairs_id: { company_entity: { _eq: facturesFilters.company_entity } } },
+            },
+          },
+        ],
+      });
+    const newFilters: QueryParameters = {
+      search: search,
+      filter: filterRules.length > 0 ? { _and: filterRules } : undefined,
+    };
+    setSpecificFilters(newFilters);
+    setLazyLoadingState({ limit: publicRuntimeConfig.PROJECTS_CHUNK_SIZE, offset: 0, action: 'REPLACE' });
+  }
+
+  useEffect(() => {
+    setFacturesFilters(FacturesFiltersInitialState);
+    updateSpecificFilters();
+  }, [globalFilters]);
+
+  //Timeout to avoid too many requests
+  useEffect(() => {
+    clearTimeout(timerSearch);
+    timerSearch = setTimeout(() => {
+      updateSpecificFilters();
+    }, 500);
+  }, [facturesFilters]);
+
+  function onScrollEvent(event: Event) {
+    if (pageRef && pageRef.current) {
+      const page = pageRef.current;
+      if (page.scrollTop + page.clientHeight >= page.scrollHeight - 400) {
+        if (filesCount && files.length < filesCount && !isNewDataLoading) {
+          //lazy Loading Specific
+          isNewDataLoading = true;
+          setLazyLoadingState({
+            limit: lazyLoadingState.limit,
+            offset: files.length,
+            action: 'APPEND',
+          });
+          setTimeout(() => {
+            isNewDataLoading = false;
+          }, 1000);
+        }
+      }
+    }
+  }
+
+  function extractIdsFromUrl(path) {
+
+    const splitPath = path.split('/');
+    const projectIndex = splitPath.indexOf('projects');
+
+    if (projectIndex === -1) {
+      return null;
+    }
+
+    const project_id = parseInt(splitPath[projectIndex + 1], 10);
+    const affairIndex = splitPath.indexOf('affairs');
+    const affair_id = affairIndex !== -1 ? parseInt(splitPath[affairIndex + 1], 10) : null;
+
+    return { project_id, affair_id };
+  }
+
+  useEffect(() => {
+    if(disableGlobalFilters){
+      const ids = extractIdsFromUrl(router.asPath);
+
+      if(!globalFilters?.projects?.list.includes(ids?.project_id) && ids.project_id !== null){
+        getGdpProjectById(ids.project_id).then((res) => {
+          if(isRequestSuccessful(res.status)){
+            let newFilter: GlobalFiltersModel = { ...globalFilters };
+            newFilter.projects = { ...newFilter.projects };
+            newFilter.projects.list = [...newFilter.projects.list, res.data?.id];
+
+            if (ids.affair_id) {
+              newFilter.affairs = { ...newFilter.affairs};
+              newFilter.affairs.list = [...newFilter.affairs.list, ids.affair_id];
+            }
+
+            dispatch(setGlobalFilters(newFilter));
+            localStorage.setItem("autoGlobalFilters", JSON.stringify({ project_id: ids.project_id, affair_id: ids.affair_id }));
+          }
+        })
+      }
+    }
+  }, []);
+
+
+  //lazy loading
+  useEffect(() => {
+    if (pageRef && pageRef.current) pageRef.current.addEventListener('scroll', onScrollEvent);
+    return () => {
+      if (pageRef && pageRef.current) pageRef.current.removeEventListener('scroll', onScrollEvent);
+    };
+  }, [filesCount, files, lazyLoadingState]);
+
+  return (
+    <div className="page" ref={pageRef}>
+      {!disableGlobalFilters && (
+          <GlobalFilters />)}
+      <div className={styles.projectsPage}>
+        <h1 className={styles.title}>Toutes les factures</h1>
+
+        {!disableGlobalFilters && (
+            <>
+              <div className={styles.headAndFilters}>
+                <div className={styles.InputContainer}>
+                  <Input
+                      label={'Rechercher une facture'}
+                      value={facturesFilters.search}
+                      setValue={(value) => setFacturesFilters({ ...facturesFilters, search: `${value}` })}
+                      large={false}
+                  />
+                </div>
+                <div className={styles.InputContainer}>
+                  <Select
+                      label={'Filtrer par statut'}
+                      nullOptionText={'Tous les statuts'}
+                      options={[
+                        { value: GdPPythagoreFactureStatut.NON_ECHUE, text: GdPPythagoreFactureStatut.NON_ECHUE },
+                        { value: GdPPythagoreFactureStatut.ECHUE, text: GdPPythagoreFactureStatut.ECHUE },
+                      ]}
+                      value={facturesFilters.statut}
+                      setValue={(value) =>
+                          setFacturesFilters({ ...facturesFilters, statut: value as GdPPythagoreFactureStatut })
+                      }
+                  />
+                </div>
+                <div className={styles.InputContainer}>
+                  <Select
+                      label={'Filtrer par états'}
+                      nullOptionText={'Tous les états'}
+                      options={[
+                        { value: GdPPythagoreFactureReglement.REGLEE, text: displayBillingStateText(GdPPythagoreFactureReglement.REGLEE) },
+                        { value: GdPPythagoreFactureReglement.NON_REGLEE, text: displayBillingStateText(GdPPythagoreFactureReglement.NON_REGLEE) },
+                        {
+                          value: GdPPythagoreFactureReglement.REGLEMENT_PARTIEL,
+                          text: displayBillingStateText(GdPPythagoreFactureReglement.REGLEMENT_PARTIEL),
+                        },
+                      ]}
+                      value={facturesFilters.etat}
+                      setValue={(value) =>
+                          setFacturesFilters({ ...facturesFilters, etat: value as GdPPythagoreFactureReglement })
+                      }
+                  />
+                </div>
+                <div className={styles.InputContainer}>
+                  <Select
+                      label={'Filtrer par Entité'}
+                      nullOptionText={'Toutes les entités'}
+                      options={companyEntities.map((entity) => ({ value: `${entity.id}`, text: entity.name || '' }))}
+                      value={facturesFilters.company_entity}
+                      setValue={(value) => setFacturesFilters({ ...facturesFilters, company_entity: value as CompanyEnum })}
+                  />
+                </div>
+                <div className={styles.headItemContainer}>
+                  <Button
+                      style={'text_gray'}
+                      icon={<DeleteOutlined rev={undefined} />}
+                      onClick={() => setFacturesFilters(FacturesFiltersInitialState)}
+                  >
+                    Réinitialiser les filtres
+                  </Button>
+                </div>
+              </div>
+            </>
+        )}
+
+        <div className={styles.content}>
+          <BillingTable factures={files} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default FacturesPage;

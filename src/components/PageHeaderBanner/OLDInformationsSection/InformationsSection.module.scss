@@ -1,0 +1,61 @@
+@import 'projex-styles';
+
+.informationsSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  padding-right: 4rem;
+
+  > .image {
+    display: block;
+    width: 6.875rem;
+    height: 6.875rem;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  > .text {
+    max-width: 20rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    .title {
+      margin-bottom: 0.625rem;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .info {
+      line-height: 1.2em;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      .data {
+        font-weight: 700;
+        max-width: 12rem;
+      }
+    }
+  }
+
+  position: relative;
+
+  .editButton {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    top: 2px;
+    right: 0;
+  }
+}
