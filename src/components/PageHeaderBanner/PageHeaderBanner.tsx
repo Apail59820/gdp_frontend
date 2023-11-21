@@ -47,13 +47,13 @@ const PageHeaderBanner = ({ data, affair }: Props) => {
         const companyEntity = companyEntities
             .find((companyEntity) => companyEntity.id === ((affair) ? affair.company_entity : data.company_entity));
 
-        getGdpAffairs({filter: {id: {_in: data.affairs_ids}}}).then((res) => {
-          if(isRequestSuccessful(res.status) && res.data){
-            let affairs_company_entities : number[] = res.data.map(affair => affair.company_entity as number);
+        getGdpAffairs({ filter: { id: { _in: data.affairs_ids } } }).then((res) => {
+          if (isRequestSuccessful(res.status) && res.data) {
+            let affairs_company_entities: number[] = res.data.map(affair => affair.company_entity as number);
 
-            if(affairs_company_entities.filter(companyEntity => companyEntity !== data.company_entity).length >= 1){
+            if (new Set(affairs_company_entities).size >= 2) {
               setProjectCompanyEntity(CompanyEnum.GROUPE_PROJEX);
-              return
+              return;
             }
           }
 
