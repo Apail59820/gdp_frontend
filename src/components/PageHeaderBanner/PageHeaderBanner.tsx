@@ -8,6 +8,9 @@ import { selectCompanyEntities } from '../../../store/reducers/companyEntitiesRe
 import { CompanyEnum } from '../../../models/UserService/UsCompanyEntityModel';
 import {GdpAffairModel} from "../../../models/GestionDeProjets/GdpAffairModel";
 import affairId from "../../../pages/projects/[projectId]/affairs/[affairId]";
+import {message} from "antd";
+import {getGdpAffairs} from "../../../services/gestionDeProjets/GdpAffairs";
+import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 
 type Props = {
   data: Partial<GdpProjectsModel> | string;
@@ -44,10 +47,21 @@ const PageHeaderBanner = ({ data, affair }: Props) => {
         const companyEntity = companyEntities
             .find((companyEntity) => companyEntity.id === ((affair) ? affair.company_entity : data.company_entity));
 
-        if (companyEntity && companyEntity.name) {
-          setProjectCompanyEntity(companyEntity.name);
-        }
-        else setProjectCompanyEntity('Entité inconnue');
+        getGdpAffairs({filter: {id: {_in: data.affairs_ids}}}).then((res) => {
+          if(isRequestSuccessful(res.status) && res.data){
+            let affairs_company_entities : number[] = res.data.map(affair => affair.company_entity as number);
+
+            if(affairs_company_entities.filter(companyEntity => companyEntity !== data.company_entity).length >= 1){
+              setProjectCompanyEntity(CompanyEnum.GROUPE_PROJEX);
+              return
+            }
+          }
+
+          if (companyEntity && companyEntity.name) {
+            setProjectCompanyEntity(companyEntity.name);
+          }
+          else setProjectCompanyEntity('Entité inconnue');
+        })
       } else {
         if (data.company_entity.name || affair.company_entity.name) setProjectCompanyEntity(affair ? affair.company_entity.name : data.company_entity.name);
         else setProjectCompanyEntity('Entité inconnue');
