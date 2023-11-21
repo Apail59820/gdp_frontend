@@ -3,7 +3,7 @@ import affairReducer, { AffairsState } from './reducers/affairsReducer';
 import projectsReducer, { ProjectsState } from './reducers/projectsReducer';
 import globalFilterReducer from './reducers/globalFilterReducer';
 import authReducer, { AuthState } from './reducers/authReducer';
-import pythagoreFacturesReducer, { PythagoreFacturesState } from './reducers/pythagoreFacturesReducer';
+import pythagoreFacturesReducer, {PythagoreFacturesState} from './reducers/pythagoreFacturesReducer';
 import notificationsReducer, { notificationsState } from './reducers/notificationReducer';
 import filesReducer, { FilesState } from './reducers/filesReducer';
 import usersReducer from './reducers/usersReducer';
@@ -15,6 +15,9 @@ import { UsCompanyEntityModel } from '../models/UserService/UsCompanyEntityModel
 import companyEntitiesReducer from './reducers/companyEntitiesReducer';
 import { UsClientsCompanyEntitiesModel } from '../models/UserService/UsClientsCompanyEntitiesModel';
 import clientsCompanyEntitiesReducer from './reducers/clientsCompanyEntitiesReducer';
+import affairsPythagoreAffairesReducer, {
+  AffairsPythagoreAffairesState
+} from "./reducers/affairsPythagoreAffairesReducer";
 
 export type AppState = {
   auth: AuthState;
@@ -22,6 +25,7 @@ export type AppState = {
   projects: ProjectsState;
   affairs: AffairsState;
   pythagoreFactures: PythagoreFacturesState;
+  affairsPythagoreAffaires: AffairsPythagoreAffairesState;
   files: FilesState;
   users: Partial<UsUserModel>[];
   satisfactions: Partial<GdpSatisfactionModel>[];
@@ -38,7 +42,8 @@ export default configureStore({
     globalFilters: globalFilterReducer,
     projects: projectsReducer,
     affairs: affairReducer,
-    pythagoreFactures: pythagoreFacturesReducer, //Info: we store Factures but with PythagoreAffaires in globalFilters
+    pythagoreFactures: pythagoreFacturesReducer, //Info: we store Factures but with PythagoreAffaires in globalFilters,
+    affairsPythagoreAffaires: affairsPythagoreAffairesReducer,
     files: filesReducer,
     users: usersReducer,
     satisfactions: satisfactionReducer,
