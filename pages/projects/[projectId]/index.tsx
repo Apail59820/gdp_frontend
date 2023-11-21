@@ -51,6 +51,8 @@ import ManageProjectManagers from '../../../src/components/ManageProjectManagers
 import {selectGlobalFilters} from "../../../store/reducers/globalFilterReducer";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 import {selectAffairsPythagoreAffaires} from "../../../store/reducers/affairsPythagoreAffairesReducer";
+import {message} from "antd";
+import {getGdpPythagoreAffaires} from "../../../services/gestionDeProjets/GdpPythagoreAffairs";
 
 const Project = () => {
   const router = useRouter();
@@ -132,6 +134,22 @@ const Project = () => {
 
   useEffect(() => {
 
+    let affairsToAdd = [];
+    for(const affairPythagoreAffaire of affairsPythagoreAffaires as any){
+      for(const pythagoreAffaire of affairPythagoreAffaire){
+        affairsToAdd.push(pythagoreAffaire.pythagore_affaires_id);
+      }
+    }
+
+
+    getGdpPythagoreFactures({filter:
+          { num_affaire: {
+            _in: affairsToAdd}
+          }}).then((res) => {
+            if(isRequestSuccessful(res.status) && res?.data){
+              setProjectInvoices(res.data);
+            }
+    })
   }, [affairsPythagoreAffaires]);
 
   useEffect(() => {
