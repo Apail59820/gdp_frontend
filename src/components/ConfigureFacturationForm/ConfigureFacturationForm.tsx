@@ -24,6 +24,8 @@ import {
   selectAffairsPythagoreAffaires,
   setAffairsPythagoreAffaires
 } from "../../../store/reducers/affairsPythagoreAffairesReducer";
+import {getGdpPythagoreFactures} from "../../../services/gestionDeProjets/GdpPythagoreFactures";
+import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 
 type ConfigureFacturationFormProps = {
   isOpen: boolean;
@@ -224,9 +226,22 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
       deleteGdpAffairPythagoreAffair(relationsIdsToDelete).then((res) => {
         if (res.status === 200 || res.status === 202 || res.status === 204) {
           message.success(messages.general.success('La suppression des relations', true, false));
+
+          getGdpAffairsPythagoreAffairs({filter: {id: {_in: relationsIdsToDelete}}}).then((res) => {
+            if(isRequestSuccessful(res.status) && res.data){
+              const filteredAffairsPythagoreAffaires = affairsPythagoreAffaires.filter(existingAffairs => {
+                return !res.data.some(affairsToSeek =>
+                    affairsToSeek.pythagore_affaires_id === existingAffairs.pythagore_affaires_id
+                );
+              });
+
+              dispatch(setAffairsPythagoreAffaires(filteredAffairsPythagoreAffaires));
+            }
+          })
         } else {
           message.error(messages.general.error());
         }
+        setIsOpen(false);
       });
     }
 
@@ -243,6 +258,7 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
         } else {
           message.error(messages.general.error());
         }
+        setIsOpen(false);
       });
     }
   };

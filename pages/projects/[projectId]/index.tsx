@@ -141,15 +141,18 @@ const Project = () => {
       }
     }
 
-
-    getGdpPythagoreFactures({filter:
-          { num_affaire: {
-            _in: affairsToAdd}
-          }}).then((res) => {
-            if(isRequestSuccessful(res.status) && res?.data){
-              setProjectInvoices(res.data);
-            }
-    })
+    if(!affairsToAdd.length){
+      setProjectInvoices([]);
+    } else {
+      getGdpPythagoreFactures({filter:
+            { num_affaire: {
+                _in: affairsToAdd}
+            }}).then((res) => {
+        if(isRequestSuccessful(res.status) && res?.data){
+          setProjectInvoices(res.data);
+        }
+      })
+    }
   }, [affairsPythagoreAffaires]);
 
   useEffect(() => {
