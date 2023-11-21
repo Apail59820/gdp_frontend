@@ -50,7 +50,7 @@ import {selectUserProfile} from '../../../store/reducers/authReducer';
 import ManageProjectManagers from '../../../src/components/ManageProjectManagers/ManageProjectManagers';
 import {selectGlobalFilters} from "../../../store/reducers/globalFilterReducer";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
-import {message} from "antd";
+import {selectAffairsPythagoreAffaires} from "../../../store/reducers/affairsPythagoreAffairesReducer";
 
 const Project = () => {
   const router = useRouter();
@@ -62,6 +62,7 @@ const Project = () => {
   const affairs = useSelector(selectAffairs);
   const clientCompanies = useSelector(selectClientsCompanyEntities);
   const globalFilters = useSelector(selectGlobalFilters);
+  const affairsPythagoreAffaires = useSelector(selectAffairsPythagoreAffaires);
 
   const [isUserProjectManager, setIsUserProjectManager] = useState<boolean>(false);
   const [isUserClassicCollaborator, setIsUserClassicCollaborator] = useState<boolean>(false);
@@ -128,6 +129,10 @@ const Project = () => {
       } else setProjectCompanyEntityName('Inconnue');
     } else setProject({});
   }, [dispatch, project.company_entity, projectId, projects]);
+
+  useEffect(() => {
+
+  }, [affairsPythagoreAffaires]);
 
   useEffect(() => {
     const affairsIds = project?.affairs_ids;

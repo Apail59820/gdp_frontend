@@ -19,7 +19,7 @@ const affairsPythagoreAffairesSlice = createSlice({
         },
     }
 });
-
+export const { setAffairsPythagoreAffaires } = affairsPythagoreAffairesSlice.actions;
 export const selectAffairsPythagoreAffaires = (state: AppState) => state.affairsPythagoreAffaires.items;
 
 export default affairsPythagoreAffairesSlice.reducer;
