@@ -24,7 +24,6 @@ import {
   selectAffairsPythagoreAffaires,
   setAffairsPythagoreAffaires
 } from "../../../store/reducers/affairsPythagoreAffairesReducer";
-import {getGdpPythagoreFactures} from "../../../services/gestionDeProjets/GdpPythagoreFactures";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 
 type ConfigureFacturationFormProps = {

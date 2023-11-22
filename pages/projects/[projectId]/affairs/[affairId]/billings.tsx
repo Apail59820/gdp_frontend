@@ -13,11 +13,22 @@ import { compileGlobalFiltersToPythagoreFacturesFilter } from '../../../../../sr
 import { selectPythagoreFactures, selectPythagoreFacturesCount } from '../../../../../store/reducers/pythagoreFacturesReducer';
 import BillingWidget from '../../../../../src/components/BillingWidget/BillingWidget';
 import ConfigureFacturationForm from '../../../../../src/components/ConfigureFacturationForm/ConfigureFacturationForm';
-import { GdpProjectsModel } from '../../../../../models/GdPModels';
+import {GdpAffairModel, GdpProjectsModel} from '../../../../../models/GdPModels';
+import {useRouter} from "next/router";
+import {getGdpProjects} from "../../../../../services/gestionDeProjets/GdpProjects";
+import {setProjects} from "../../../../../store/reducers/projectsReducer";
+import {getGdpAffairs} from "../../../../../services/gestionDeProjets/GdpAffairs";
+import {getGdpAffairsPythagoreAffairs} from "../../../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs";
 
 const { publicRuntimeConfig } = getConfig();
 
 const BillingsFromProject = () => {
+
+    const router = useRouter();
+
+    const projectId = parseInt(router.query.projectId as string);
+    const affairId = parseInt(router.query.affairId as string);
+
     const globalFilters = useSelector(selectGlobalFilters);
     const globalFactures = useSelector(selectPythagoreFactures);
     const globalFacturesCount = useSelector(selectPythagoreFacturesCount);
@@ -33,6 +44,7 @@ const BillingsFromProject = () => {
 
     const [isConfigureFacturationFormOpen, setIsConfigureFacturationFormOpen] = useState<boolean>(false);
     const [project, setProject] = useState<Partial<GdpProjectsModel>>({});
+    const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
 
     const [affairInvoices, setAffairInvoices] = useState<Partial<GdpPythagoreFactureModel>[]>([]);
 
@@ -76,6 +88,34 @@ const BillingsFromProject = () => {
     }
 
     useEffect(() => {
+        getGdpProjects({filter: {id: projectId}}).then((res) => {
+            if(isRequestSuccessful(res.status) && res.data.length == 1) setProject(res.data[0]);
+        });
+
+        getGdpAffairs({filter: {id: affairId}}).then((res) => {
+            if(isRequestSuccessful(res.status) && res.data.length == 1) setAffair(res.data[0]);
+        })
+
+    }, [projectId, affairId]);
+
+    useEffect(() => {
+        if(affair){
+            getGdpAffairsPythagoreAffairs({filter:{affairs_id: affair.id}}).then((affairsPythagoreRes) => {
+                if(isRequestSuccessful(affairsPythagoreRes.status) && affairsPythagoreRes.data){
+                    getGdpPythagoreFactures({filter: {num_affaire: {_in : affairsPythagoreRes.data.map(aff => aff.pythagore_affaires_id)}}})
+                        .then(
+                            (res) => {
+                                if(isRequestSuccessful(res.status) && res.data){
+                                    setAffairInvoices(res.data);
+                                }
+                            }
+                        )
+                }
+            })
+        }
+    }, [affair]);
+
+    useEffect(() => {
         if (Object.keys(facturesQueryParameters).length > 0 || lazyLoadingState.action !== 'REPLACE') retrieveData();
         else setFactures(globalFactures);
     }, [facturesQueryParameters, lazyLoadingState]);
@@ -91,7 +131,7 @@ const BillingsFromProject = () => {
 
     return (
         <>
-            <ConfigureFacturationForm isOpen={isConfigureFacturationFormOpen} setIsOpen={setIsConfigureFacturationFormOpen} />
+            <ConfigureFacturationForm isOpen={isConfigureFacturationFormOpen} setIsOpen={setIsConfigureFacturationFormOpen} initProject={project} initAffair={affair}/>
             {factures.length > 0 ? (
                 <FacturesPage
                     files={factures}
