@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Empty, Form, message, Modal, Select } from 'antd';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { selectProjects } from '../../../store/reducers/projectsReducer';
 import { Button } from 'projex-ui';
 import styles from './ConfigureFacturationForm.module.scss';
@@ -20,6 +20,12 @@ import { getGdpAffairs } from '../../../services/gestionDeProjets/GdpAffairs';
 import { selectAffairs } from '../../../store/reducers/affairsReducer';
 import { GdpPythagoreAffaireModel } from '../../../models/GestionDeProjets/GdpPythagoreAffaireModel';
 import { getGdpPythagoreAffaires } from '../../../services/gestionDeProjets/GdpPythagoreAffairs';
+import {
+  selectAffairsPythagoreAffaires,
+  setAffairsPythagoreAffaires
+} from "../../../store/reducers/affairsPythagoreAffairesReducer";
+import {getGdpPythagoreFactures} from "../../../services/gestionDeProjets/GdpPythagoreFactures";
+import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 
 type ConfigureFacturationFormProps = {
   isOpen: boolean;
@@ -31,6 +37,8 @@ type ConfigureFacturationFormProps = {
 const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }: ConfigureFacturationFormProps) => {
   const [form] = Form.useForm();
 
+  const affairsPythagoreAffaires = useSelector(selectAffairsPythagoreAffaires);
+
   const [projects, setProjects] = useState<Partial<GdpProjectsModel>[]>(useSelector(selectProjects));
   const [projectId, setProjectId] = useState<number | undefined>(initProject?.id);
   const [affairs, setAffairs] = useState<Partial<GdpAffairModel>[]>(useSelector(selectAffairs));
@@ -41,6 +49,8 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
 
   const [initPythagoreAffairs, setInitPythagoreAffairs] = useState<string[]>([]);
   const [selectedPythagoreAffairs, setSelectedPythagoreAffairs] = useState<string[]>([]);
+
+  const dispatch = useDispatch();
 
   let timeout: ReturnType<typeof setTimeout> | null;
 
@@ -216,9 +226,22 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
       deleteGdpAffairPythagoreAffair(relationsIdsToDelete).then((res) => {
         if (res.status === 200 || res.status === 202 || res.status === 204) {
           message.success(messages.general.success('La suppression des relations', true, false));
+
+          getGdpAffairsPythagoreAffairs({filter: {id: {_in: relationsIdsToDelete}}}).then((res) => {
+            if(isRequestSuccessful(res.status) && res.data){
+              const filteredAffairsPythagoreAffaires = affairsPythagoreAffaires.filter(existingAffairs => {
+                return !res.data.some(affairsToSeek =>
+                    affairsToSeek.pythagore_affaires_id === existingAffairs.pythagore_affaires_id
+                );
+              });
+
+              dispatch(setAffairsPythagoreAffaires(filteredAffairsPythagoreAffaires));
+            }
+          })
         } else {
           message.error(messages.general.error());
         }
+        setIsOpen(false);
       });
     }
 
@@ -231,9 +254,11 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
       createGdpAffairPythagoreAffair(relationsToAdd).then((res) => {
         if (res.status === 200) {
           message.success(messages.general.success('La création des relations', true, false));
+          dispatch(setAffairsPythagoreAffaires([...affairsPythagoreAffaires, res.data]));
         } else {
           message.error(messages.general.error());
         }
+        setIsOpen(false);
       });
     }
   };
