@@ -79,7 +79,7 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
   // Ce useEffect nous permet de ne récupérer que les affaires pythagores qui n'ont pas d'affaire associée
   useEffect(() => {
     const tmp = [...tmpPythagoreAffairs].filter((pythagoreAffaire) => pythagoreAffaire.affairs_id?.length === 0);
-    setPythagoreAffairs([...pythagoreAffairs, ...tmp]);
+    setPythagoreAffairs(tmp);
   }, [tmpPythagoreAffairs]);
 
   useEffect(() => {
@@ -368,7 +368,7 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
                         if (value.length > 2) {
                           fetchData(
                             getGdpPythagoreAffaires,
-                            { filter: { numero_affaire: { _starts_with: value } } },
+                            { filter: { numero_affaire: { _starts_with: value } }, limit: 10 },
                             setTmpPythagoreAffairs
                           ).catch((err) => {
                             console.error(err);
