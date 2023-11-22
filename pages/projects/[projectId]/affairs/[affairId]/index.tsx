@@ -41,17 +41,20 @@ import CreatePhaseForm from '../../../../../src/components/CreatePhaseForm/Creat
 import ConfigureFacturationForm from '../../../../../src/components/ConfigureFacturationForm/ConfigureFacturationForm';
 import ManageAffairUsersForm from '../../../../../src/components/ManageAffairUsersForm/ManageAffairUsersForm';
 import { getGdpProjectsUsersClients } from '../../../../../services/gestionDeProjets/GdpProjectsUsersClients';
-import UploadFilesFormUploadFilesForm, {
+import {
   fileItemType
 } from '../../../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
 import { selectAffairs } from '../../../../../store/reducers/affairsReducer';
 import UploadFilesForm from "../../../../../src/components/filesForms/UploadFilesForm/UploadFilesForm";
+import {selectAffairsPythagoreAffaires} from "../../../../../store/reducers/affairsPythagoreAffairesReducer";
 
 const Affair = () => {
+
   const { query } = useRouter();
   const me = useSelector(selectUserProfile);
   const projects = useSelector(selectProjects);
   const affairs = useSelector(selectAffairs);
+  const affairsPythagoreAffaires = useSelector(selectAffairsPythagoreAffaires);
 
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
   const [updatedAffair, setUpdatedAffair] = useState<Partial<GdpAffairModel>>({})
@@ -150,6 +153,29 @@ const Affair = () => {
       // eslint-disable-next-line no-console
       .catch((error) => console.error(error));
   }, [affairs, query.affairId]);
+
+  useEffect(() => {
+
+    let affairsToAdd = [];
+    for(const affairPythagoreAffaire of affairsPythagoreAffaires as any){
+      for(const pythagoreAffaire of affairPythagoreAffaire){
+        affairsToAdd.push(pythagoreAffaire.pythagore_affaires_id);
+      }
+    }
+
+    if(!affairsToAdd.length){
+      setAffairInvoices([]);
+    } else {
+      getGdpPythagoreFactures({filter:
+            { num_affaire: {
+                _in: affairsToAdd}
+            }}).then((res) => {
+        if(isRequestSuccessful(res.status) && res?.data){
+          setAffairInvoices(res.data);
+        }
+      })
+    }
+  }, [affairsPythagoreAffaires]);
 
   // Retrieve phases
   useEffect(() => {

@@ -19,6 +19,7 @@ import {getGdpProjects} from "../../../../../services/gestionDeProjets/GdpProjec
 import {setProjects} from "../../../../../store/reducers/projectsReducer";
 import {getGdpAffairs} from "../../../../../services/gestionDeProjets/GdpAffairs";
 import {getGdpAffairsPythagoreAffairs} from "../../../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs";
+import {selectAffairsPythagoreAffaires} from "../../../../../store/reducers/affairsPythagoreAffairesReducer";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -32,6 +33,7 @@ const BillingsFromProject = () => {
     const globalFilters = useSelector(selectGlobalFilters);
     const globalFactures = useSelector(selectPythagoreFactures);
     const globalFacturesCount = useSelector(selectPythagoreFacturesCount);
+    const affairsPythagoreAffaires = useSelector(selectAffairsPythagoreAffaires);
 
     const [facturesQueryParameters, setFacturesQueryParameters] = useState<Omit<QueryParameters, 'limit' | 'offset'>>({});
     const [factures, setFactures] = useState<Partial<GdpPythagoreFactureModel>[]>(globalFactures);
@@ -97,6 +99,29 @@ const BillingsFromProject = () => {
         })
 
     }, [projectId, affairId]);
+
+    useEffect(() => {
+
+        let affairsToAdd = [];
+        for(const affairPythagoreAffaire of affairsPythagoreAffaires as any){
+            for(const pythagoreAffaire of affairPythagoreAffaire){
+                affairsToAdd.push(pythagoreAffaire.pythagore_affaires_id);
+            }
+        }
+
+        if(!affairsToAdd.length){
+            setAffairInvoices([]);
+        } else {
+            getGdpPythagoreFactures({filter:
+                    { num_affaire: {
+                            _in: affairsToAdd}
+                    }}).then((res) => {
+                if(isRequestSuccessful(res.status) && res?.data){
+                    setAffairInvoices(res.data);
+                }
+            })
+        }
+    }, [affairsPythagoreAffaires]);
 
     useEffect(() => {
         if(affair){
