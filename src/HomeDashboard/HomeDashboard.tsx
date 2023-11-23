@@ -91,37 +91,37 @@ const HomeDashboard = () => {
 
   return (
     <div className={styles.homeDashboard}>
-      <QuickAccessWidget>
-        <Grid>
-          <QuickActionCard
-            title="Créez un nouveau projet"
-            button={{
-              label: 'Ajouter un projet',
-              onClick: () => setIsCreateNewProjectModalOpen(true),
-              icon: <PlusOutlined rev={undefined} />,
-            }}
-          >
-            Créer un nouveau projet dés maintenant
-          </QuickActionCard>
-          <CreateProjectForm isOpen={isCreateNewProjectModalOpen} setIsOpen={setIsCreateNewProjectModalOpen} />
-          {userProfile && userProfile.id && <QuickActionCard
-            title="Complétez votre profil"
-            progress={getProfileCompletionPercentage()}
-            button={{
-              label: 'Ajouter des informations',
-              href: publicRuntimeConfig.USER_SERVICE_URL + `/user/${userProfile.id}`,
-              icon: <PlusOutlined rev={undefined}/>,
-            }}
-          >
-            Remplissez votre profil pour profiter pleinement de toutes les fonctionnalités
-          </QuickActionCard>}
-        </Grid>
-      </QuickAccessWidget>
-      <ProjectsWidget
-        projects={currentUsersProjects}
-        isLoading={areCurrentUsersProjectsLoading}
-        handleNewProjectClick={() => setIsCreateNewProjectModalOpen(true)}
-      />
+        <CreateProjectForm isOpen={isCreateNewProjectModalOpen} setIsOpen={setIsCreateNewProjectModalOpen} />
+        <QuickAccessWidget>
+            <Grid>
+              <QuickActionCard
+                title="Créez un nouveau projet"
+                button={{
+                  label: 'Ajouter un projet',
+                  onClick: () => setIsCreateNewProjectModalOpen(true),
+                  icon: <PlusOutlined rev={undefined} />,
+                }}
+              >
+                Créer un nouveau projet dés maintenant
+              </QuickActionCard>
+              {userProfile && userProfile.id && <QuickActionCard
+                title="Complétez votre profil"
+                progress={getProfileCompletionPercentage()}
+                button={{
+                  label: 'Ajouter des informations',
+                  href: publicRuntimeConfig.USER_SERVICE_URL + `/user/${userProfile.id}`,
+                  icon: <PlusOutlined rev={undefined}/>,
+                }}
+              >
+                Remplissez votre profil pour profiter pleinement de toutes les fonctionnalités
+              </QuickActionCard>}
+            </Grid>
+        </QuickAccessWidget>
+        <ProjectsWidget
+            projects={currentUsersProjects}
+            isLoading={areCurrentUsersProjectsLoading}
+            handleNewProjectClick={() => setIsCreateNewProjectModalOpen(true)}
+          />
     </div>
   );
 };
