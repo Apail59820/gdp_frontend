@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { Empty, Form, message, Modal, Select } from 'antd';
-import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
-import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
+import React, {useEffect, useState} from 'react';
+import {Empty, Form, message, Modal, Select} from 'antd';
+import {GdpProjectsModel} from '../../../models/GestionDeProjets/GdpProjectsModel';
+import {GdpAffairModel} from '../../../models/GestionDeProjets/GdpAffairModel';
 import {useDispatch, useSelector} from 'react-redux';
-import { selectProjects } from '../../../store/reducers/projectsReducer';
-import { Button } from 'projex-ui';
+import {selectProjects} from '../../../store/reducers/projectsReducer';
+import {Button} from 'projex-ui';
 import styles from './ConfigureFacturationForm.module.scss';
-import { MinusCircleOutlined } from '@ant-design/icons';
-import { GdpAffairsPythagoreAffairesModel } from '../../../models/GestionDeProjets/GdpAffairsPythagoreAffairesModel';
+import {MinusCircleOutlined} from '@ant-design/icons';
+import {GdpAffairsPythagoreAffairesModel} from '../../../models/GestionDeProjets/GdpAffairsPythagoreAffairesModel';
 import {
   createGdpAffairPythagoreAffair,
   deleteGdpAffairPythagoreAffair,
   getGdpAffairsPythagoreAffairs,
 } from '../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
-import { messages } from '../../../constants/messages';
-import { QueryParameters } from '../../../models/DirectusModel';
-import { getGdpProjects } from '../../../services/gestionDeProjets/GdpProjects';
-import { getGdpAffairs } from '../../../services/gestionDeProjets/GdpAffairs';
-import { selectAffairs } from '../../../store/reducers/affairsReducer';
-import { GdpPythagoreAffaireModel } from '../../../models/GestionDeProjets/GdpPythagoreAffaireModel';
-import { getGdpPythagoreAffaires } from '../../../services/gestionDeProjets/GdpPythagoreAffairs';
+import {messages} from '../../../constants/messages';
+import {QueryParameters} from '../../../models/DirectusModel';
+import {getGdpProjects} from '../../../services/gestionDeProjets/GdpProjects';
+import {getGdpAffairs} from '../../../services/gestionDeProjets/GdpAffairs';
+import {selectAffairs} from '../../../store/reducers/affairsReducer';
+import {GdpPythagoreAffaireModel} from '../../../models/GestionDeProjets/GdpPythagoreAffaireModel';
+import {getGdpPythagoreAffaires} from '../../../services/gestionDeProjets/GdpPythagoreAffairs';
 import {
   selectAffairsPythagoreAffaires,
   setAffairsPythagoreAffaires
@@ -193,11 +193,11 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
 
     timeout = setTimeout(getData, 300);
   };
-
   const onFinish = (values: any) => {
     const initAffairsPythagoreAffairs: GdpAffairsPythagoreAffairesModel[] = [];
     if (affairs.filter((affair) => affair.id === affairId).length > 0) {
       const currentAffair = affairs.filter((affair) => affair.id === affairId)[0];
+
       currentAffair.pythagore_ids?.map((relation) => {
         if (typeof relation !== 'number') {
           initAffairsPythagoreAffairs.push(relation);
@@ -243,11 +243,18 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
               affair => !relationsNumbersToDelete.includes(affair)
           );
 
+
           setInitPythagoreAffairs(remainingFactures);
 
           getGdpAffairsPythagoreAffairs({filter: {pythagore_affaires_id: {_in: remainingFactures}}}).then((res) => {
             if(isRequestSuccessful(res.status) && res.data){
               dispatch(setAffairsPythagoreAffaires(res.data));
+
+              const currentAffairIndex = affairs.findIndex(affair => affair.id === affairId);
+              if (currentAffairIndex !== -1) {
+                affairs[currentAffairIndex] = {...affairs[currentAffairIndex], pythagore_ids: res.data as any};
+                setAffairs([...affairs]);
+              }
             }else {
               dispatch(setAffairsPythagoreAffaires([]));
             }
@@ -269,6 +276,12 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
         if (res.status === 200 && res.data) {
           message.success(messages.general.success('La création des relations', true, false));
           dispatch(setAffairsPythagoreAffaires([...affairsPythagoreAffaires, res.data]));
+
+          const currentAffairIndex = affairs.findIndex(affair => affair.id === affairId);
+          if (currentAffairIndex !== -1) {
+            affairs[currentAffairIndex] = {...affairs[currentAffairIndex], pythagore_ids: res.data as any};
+            setAffairs([...affairs]);
+          }
 
           setInitPythagoreAffairs([...initPythagoreAffairs, res.data[0].pythagore_affaires_id as string]);
         } else {
