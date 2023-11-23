@@ -432,7 +432,6 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
 
                         if(existingRelations.includes(numAffaireToDrop.affaire) && !relationsToRemove.includes(numAffaireToDrop.affaire)) {
                           setRelationsToRemove([...relationsToRemove, numAffaireToDrop.affaire]);
-                          console.log("to remove set");
                         }
 
                         if(relationsToAdd.includes(numAffaireToDrop.affaire)) {
