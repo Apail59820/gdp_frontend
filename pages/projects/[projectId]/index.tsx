@@ -136,9 +136,15 @@ const Project = () => {
 
     let affairsToAdd = [];
     for(const affairPythagoreAffaire of affairsPythagoreAffaires as any){
-      for(const pythagoreAffaire of affairPythagoreAffaire){
-        affairsToAdd.push(pythagoreAffaire.pythagore_affaires_id);
+      if(affairPythagoreAffaire?.length){
+        for(const pythagoreAffaire of affairPythagoreAffaire){
+          affairsToAdd.push(pythagoreAffaire.pythagore_affaires_id);
+        }
       }
+      else{
+        affairsToAdd.push(affairPythagoreAffaire.pythagore_affaires_id.numero_affaire);
+      }
+
     }
 
     if(!affairsToAdd.length){
