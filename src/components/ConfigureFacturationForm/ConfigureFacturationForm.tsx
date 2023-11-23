@@ -204,19 +204,22 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
   };
 
   async function refreshExistingRelations() {
-    getGdpAffairsPythagoreAffairs({filter: {
-        affairs_id: affairId
-      }}).then(
-        (res) => {
-          if(isRequestSuccessful(res.status) && res?.data){
-            setExistingRelations(res.data.map(
-                // @ts-ignore
-                affairPythagoreAffaire => affairPythagoreAffaire.pythagore_affaires_id?.numero_affaire
-            ));
-          }
-        }
-    )
-  }
+    if(affairId){
+        getGdpAffairsPythagoreAffairs({filter: {
+            affairs_id: affairId
+          }}).then(
+            (res) => {
+              if(isRequestSuccessful(res.status) && res?.data){
+                setExistingRelations(res.data.map(
+                    // @ts-ignore
+                    affairPythagoreAffaire => affairPythagoreAffaire.pythagore_affaires_id?.numero_affaire
+                ));
+                dispatch(setAffairsPythagoreAffaires(res.data));
+              }
+            }
+        )
+    }
+    }
 
   useEffect(() => {
     refreshExistingRelations();
@@ -236,7 +239,6 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
       }
 
       message.success(messages.general.success('La création des relations', true, false));
-      dispatch(setAffairsPythagoreAffaires([...affairsPythagoreAffaires, createAffairPythagoreAffairRes.data]));
       setRelationsToAdd([]);
     }
   }
