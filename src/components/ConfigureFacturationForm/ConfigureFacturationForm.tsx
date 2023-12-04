@@ -1,25 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { Empty, Form, message, Modal, Select } from 'antd';
-import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
-import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
-import { useSelector } from 'react-redux';
-import { selectProjects } from '../../../store/reducers/projectsReducer';
-import { Button } from 'projex-ui';
+import React, {useEffect, useState} from 'react';
+import {Empty, Form, message, Modal, Select} from 'antd';
+import {GdpProjectsModel} from '../../../models/GestionDeProjets/GdpProjectsModel';
+import {GdpAffairModel} from '../../../models/GestionDeProjets/GdpAffairModel';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectProjects} from '../../../store/reducers/projectsReducer';
+import {Button} from 'projex-ui';
 import styles from './ConfigureFacturationForm.module.scss';
-import { MinusCircleOutlined } from '@ant-design/icons';
-import { GdpAffairsPythagoreAffairesModel } from '../../../models/GestionDeProjets/GdpAffairsPythagoreAffairesModel';
+import {MinusCircleOutlined} from '@ant-design/icons';
+import {GdpAffairsPythagoreAffairesModel} from '../../../models/GestionDeProjets/GdpAffairsPythagoreAffairesModel';
 import {
   createGdpAffairPythagoreAffair,
   deleteGdpAffairPythagoreAffair,
   getGdpAffairsPythagoreAffairs,
 } from '../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
-import { messages } from '../../../constants/messages';
-import { QueryParameters } from '../../../models/DirectusModel';
-import { getGdpProjects } from '../../../services/gestionDeProjets/GdpProjects';
-import { getGdpAffairs } from '../../../services/gestionDeProjets/GdpAffairs';
-import { selectAffairs } from '../../../store/reducers/affairsReducer';
-import { GdpPythagoreAffaireModel } from '../../../models/GestionDeProjets/GdpPythagoreAffaireModel';
-import { getGdpPythagoreAffaires } from '../../../services/gestionDeProjets/GdpPythagoreAffairs';
+import {messages} from '../../../constants/messages';
+import {QueryParameters} from '../../../models/DirectusModel';
+import {getGdpProjects} from '../../../services/gestionDeProjets/GdpProjects';
+import {getGdpAffairs} from '../../../services/gestionDeProjets/GdpAffairs';
+import {selectAffairs} from '../../../store/reducers/affairsReducer';
+import {GdpPythagoreAffaireModel} from '../../../models/GestionDeProjets/GdpPythagoreAffaireModel';
+import {getGdpPythagoreAffaires} from '../../../services/gestionDeProjets/GdpPythagoreAffairs';
+import {
+  selectAffairsPythagoreAffaires,
+  setAffairsPythagoreAffaires
+} from "../../../store/reducers/affairsPythagoreAffairesReducer";
+import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
 
 type ConfigureFacturationFormProps = {
   isOpen: boolean;
@@ -31,6 +36,8 @@ type ConfigureFacturationFormProps = {
 const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }: ConfigureFacturationFormProps) => {
   const [form] = Form.useForm();
 
+  const affairsPythagoreAffaires = useSelector(selectAffairsPythagoreAffaires);
+
   const [projects, setProjects] = useState<Partial<GdpProjectsModel>[]>(useSelector(selectProjects));
   const [projectId, setProjectId] = useState<number | undefined>(initProject?.id);
   const [affairs, setAffairs] = useState<Partial<GdpAffairModel>[]>(useSelector(selectAffairs));
@@ -41,6 +48,17 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
 
   const [initPythagoreAffairs, setInitPythagoreAffairs] = useState<string[]>([]);
   const [selectedPythagoreAffairs, setSelectedPythagoreAffairs] = useState<string[]>([]);
+
+  const [relationsToAdd, setRelationsToAdd] = useState<string[]>([]);
+  const [relationsToRemove, setRelationsToRemove] = useState<string[]>([]);
+
+  // Relations to remove are relations that ALREADY exists in DB so we need this to check before querying API
+  const [existingRelations, setExistingRelations] = useState<string[]>([]);
+  const [formRelations, setFormRelations] = useState<Map<number, string>>(new Map());
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const dispatch = useDispatch();
 
   let timeout: ReturnType<typeof setTimeout> | null;
 
@@ -70,7 +88,7 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
   // Ce useEffect nous permet de ne récupérer que les affaires pythagores qui n'ont pas d'affaire associée
   useEffect(() => {
     const tmp = [...tmpPythagoreAffairs].filter((pythagoreAffaire) => pythagoreAffaire.affairs_id?.length === 0);
-    setPythagoreAffairs([...pythagoreAffairs, ...tmp]);
+    setPythagoreAffairs(tmp);
   }, [tmpPythagoreAffairs]);
 
   useEffect(() => {
@@ -185,57 +203,82 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
     timeout = setTimeout(getData, 300);
   };
 
-  const onFinish = (values: any) => {
-    const initAffairsPythagoreAffairs: GdpAffairsPythagoreAffairesModel[] = [];
-    if (affairs.filter((affair) => affair.id === affairId).length > 0) {
-      const currentAffair = affairs.filter((affair) => affair.id === affairId)[0];
-      currentAffair.pythagore_ids?.map((relation) => {
-        if (typeof relation !== 'number') {
-          initAffairsPythagoreAffairs.push(relation);
-        }
-      });
+  async function refreshExistingRelations() {
+    if(affairId){
+        getGdpAffairsPythagoreAffairs({filter: {
+            affairs_id: affairId
+          }}).then(
+            (res) => {
+              if(isRequestSuccessful(res.status) && res?.data){
+                setExistingRelations(res.data.map(
+                    // @ts-ignore
+                    affairPythagoreAffaire => affairPythagoreAffaire.pythagore_affaires_id?.numero_affaire
+                ));
+                dispatch(setAffairsPythagoreAffaires(res.data));
+              }
+            }
+        )
     }
-    const pythagoreFacturesValues: string[] = [];
-    values.pythagoreAffaire.forEach((affaire: { affaire: string }) => {
-      affaire.affaire && pythagoreFacturesValues.push(affaire.affaire);
-    });
-    const pythagoreFacturesToDelete = initPythagoreAffairs.filter((init) => !pythagoreFacturesValues.includes(init));
-    const relationsIdsToDelete = initAffairsPythagoreAffairs
-      .filter((relation) => {
-        if (typeof relation.pythagore_affaires_id === 'string') {
-          return pythagoreFacturesToDelete.includes(relation.pythagore_affaires_id);
-        } else {
-          return pythagoreFacturesToDelete.includes(relation.pythagore_affaires_id.numero_affaire);
-        }
-      })
-      .map((relation) => {
-        return relation.id;
-      });
-    const pythagoreFacturesToAdd = pythagoreFacturesValues.filter((value) => !initPythagoreAffairs.includes(value));
-    if (relationsIdsToDelete.length > 0) {
-      deleteGdpAffairPythagoreAffair(relationsIdsToDelete).then((res) => {
-        if (res.status === 200 || res.status === 202 || res.status === 204) {
-          message.success(messages.general.success('La suppression des relations', true, false));
-        } else {
-          message.error(messages.general.error());
-        }
-      });
     }
 
-    if (pythagoreFacturesToAdd.length > 0 && affairId) {
-      const relationsToAdd: Omit<GdpAffairsPythagoreAffairesModel, 'id' | 'activities_id'>[] =
-        pythagoreFacturesToAdd.map((pythagoreFacture) => ({
-          affairs_id: affairId,
-          pythagore_affaires_id: pythagoreFacture,
-        }));
-      createGdpAffairPythagoreAffair(relationsToAdd).then((res) => {
-        if (res.status === 200) {
-          message.success(messages.general.success('La création des relations', true, false));
-        } else {
-          message.error(messages.general.error());
-        }
-      });
+  useEffect(() => {
+    refreshExistingRelations();
+  }, [affairId]);
+  async function addRelations() {
+    if(relationsToAdd.length > 0) {
+      const affairsToAdd: Omit<GdpAffairsPythagoreAffairesModel, 'id' | 'activities_id'>[] =
+          relationsToAdd.map((relation) => ({
+            affairs_id: affairId,
+            pythagore_affaires_id: relation,
+          }));
+
+      const createAffairPythagoreAffairRes = await createGdpAffairPythagoreAffair(affairsToAdd);
+
+      if(!isRequestSuccessful(createAffairPythagoreAffairRes.status) || !createAffairPythagoreAffairRes.data){
+        return message.error(messages.general.error());
+      }
+
+      message.success(messages.general.success('La création des relations', true, false));
+      setRelationsToAdd([]);
     }
+  }
+
+  async function removeRelations() {
+    if(relationsToRemove.length > 0){
+      const getRelationsIdsPromise = await getGdpAffairsPythagoreAffairs(
+          {filter : { pythagore_affaires_id: { _in: relationsToRemove }}, fields: 'id,pythagore_affaires_id'});
+
+      if(!isRequestSuccessful(getRelationsIdsPromise.status) || !getRelationsIdsPromise.data){
+        return message.error(messages.general.error());
+      }
+
+      const relationsIdsToDelete = getRelationsIdsPromise.data.map(relation => relation.id);
+
+      const deleteRelationsPromise = await deleteGdpAffairPythagoreAffair(relationsIdsToDelete);
+
+      if(!isRequestSuccessful(deleteRelationsPromise.status)){
+        return message.error(messages.general.error());
+      } else {
+        message.success(messages.general.success('La suppression des relations', true, false));
+        setRelationsToRemove([]);
+      }
+    }
+  }
+  const onFinish = async (values: any) => {
+    setIsLoading(true);
+    await removeRelations().then(
+        async () => await addRelations().catch(
+            (e) => {
+              console.error(e);
+            }
+        )
+    ).catch(
+        (e) => console.error(e)
+    );
+
+    await refreshExistingRelations();
+    setIsLoading(false);
+    setIsOpen(false);
   };
 
   return (
@@ -344,7 +387,7 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
                         if (value.length > 2) {
                           fetchData(
                             getGdpPythagoreAffaires,
-                            { filter: { numero_affaire: { _starts_with: value } } },
+                            { filter: { numero_affaire: { _starts_with: value } }, limit: 10 },
                             setTmpPythagoreAffairs
                           ).catch((err) => {
                             console.error(err);
@@ -354,8 +397,27 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
                       onChange={(value: any) => {
                         if (value) {
                           const tmp = form.getFieldValue('pythagoreAffaire');
-                          setSelectedPythagoreAffairs(tmp.map((pythagoreAffair: any) => pythagoreAffair.affaire));
+                          const selectedPythagoreAffairs = tmp.map((pythagoreAffair: any) => pythagoreAffair.affaire);
+
+                          setSelectedPythagoreAffairs(selectedPythagoreAffairs);
+
+                          const newRelationsToAdd = relationsToAdd.filter(rel => rel !== formRelations.get(name));
+
+                          if (!existingRelations.includes(value)) {
+                            if (!relationsToAdd.includes(value)) {
+                              setFormRelations(formRelations.set(name, value));
+                              setRelationsToAdd([...newRelationsToAdd, value]);
+                              if (relationsToRemove.includes(value)) {
+                                setRelationsToRemove(relationsToRemove.filter(rel => rel !== value));
+                              }
+                            }
+                          } else {
+                            if (relationsToRemove.includes(value)) {
+                              setRelationsToRemove(relationsToRemove.filter(rel => rel !== value));
+                            }
+                          }
                         }
+
                       }}
                       notFoundContent={
                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={'Aucune affaire pythagore trouvée'} />
@@ -367,7 +429,16 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
                     onClick={() => {
                       const tmp = [...selectedPythagoreAffairs];
                       if (form.getFieldValue('pythagoreAffaire')[name]) {
-                        const index = tmp.indexOf(form.getFieldValue('pythagoreAffaire')[name].affaire);
+                        let numAffaireToDrop = form.getFieldValue('pythagoreAffaire')[name];
+                        const index = tmp.indexOf(numAffaireToDrop);
+
+                        if(existingRelations.includes(numAffaireToDrop.affaire) && !relationsToRemove.includes(numAffaireToDrop.affaire)) {
+                          setRelationsToRemove([...relationsToRemove, numAffaireToDrop.affaire]);
+                        }
+
+                        if(relationsToAdd.includes(numAffaireToDrop.affaire)) {
+                          setRelationsToAdd(relationsToAdd.filter(rel => rel !== numAffaireToDrop.affaire));
+                        }
                         tmp.splice(index, 1);
                         setSelectedPythagoreAffairs(tmp);
                       }
@@ -385,10 +456,10 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
           )}
         </Form.List>
         <footer className={styles.footer}>
-          <Button small htmlType={'submit'}>
+          <Button small htmlType={'submit'} loading={isLoading}>
             Enregistrer
           </Button>
-          <Button small style={'text'} onClick={() => setIsOpen(false)}>
+          <Button small style={'text'} onClick={() => setIsOpen(false)} loading={isLoading}>
             Annuler
           </Button>
         </footer>

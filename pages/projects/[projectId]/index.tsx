@@ -50,7 +50,9 @@ import {selectUserProfile} from '../../../store/reducers/authReducer';
 import ManageProjectManagers from '../../../src/components/ManageProjectManagers/ManageProjectManagers';
 import {selectGlobalFilters} from "../../../store/reducers/globalFilterReducer";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
+import {selectAffairsPythagoreAffaires} from "../../../store/reducers/affairsPythagoreAffairesReducer";
 import {message} from "antd";
+import {getGdpPythagoreAffaires} from "../../../services/gestionDeProjets/GdpPythagoreAffairs";
 
 const Project = () => {
   const router = useRouter();
@@ -62,6 +64,7 @@ const Project = () => {
   const affairs = useSelector(selectAffairs);
   const clientCompanies = useSelector(selectClientsCompanyEntities);
   const globalFilters = useSelector(selectGlobalFilters);
+  const affairsPythagoreAffaires = useSelector(selectAffairsPythagoreAffaires);
 
   const [isUserProjectManager, setIsUserProjectManager] = useState<boolean>(false);
   const [isUserClassicCollaborator, setIsUserClassicCollaborator] = useState<boolean>(false);
@@ -128,6 +131,35 @@ const Project = () => {
       } else setProjectCompanyEntityName('Inconnue');
     } else setProject({});
   }, [dispatch, project.company_entity, projectId, projects]);
+
+  useEffect(() => {
+
+    let affairsToAdd = [];
+    for(const affairPythagoreAffaire of affairsPythagoreAffaires as any){
+      if(affairPythagoreAffaire?.length){
+        for(const pythagoreAffaire of affairPythagoreAffaire){
+          affairsToAdd.push(pythagoreAffaire.pythagore_affaires_id);
+        }
+      }
+      else{
+        affairsToAdd.push(affairPythagoreAffaire.pythagore_affaires_id.numero_affaire);
+      }
+
+    }
+
+    if(!affairsToAdd.length){
+      setProjectInvoices([]);
+    } else {
+      getGdpPythagoreFactures({filter:
+            { num_affaire: {
+                _in: affairsToAdd}
+            }}).then((res) => {
+        if(isRequestSuccessful(res.status) && res?.data){
+          setProjectInvoices(res.data);
+        }
+      })
+    }
+  }, [affairsPythagoreAffaires]);
 
   useEffect(() => {
     const affairsIds = project?.affairs_ids;

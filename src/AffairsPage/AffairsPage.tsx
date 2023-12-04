@@ -1,24 +1,24 @@
-import React, {useRef, useEffect, useState} from "react";
-import {LazyLoadingStateType} from "../../models/LazyLoadingStateType";
-import {useRouter} from "next/router";
-import {GdpAffairModel} from "../../models/GestionDeProjets/GdpAffairModel";
+import React, { useRef, useEffect, useState } from "react";
+import { LazyLoadingStateType } from "../../models/LazyLoadingStateType";
+import { useRouter } from "next/router";
+import { GdpAffairModel } from "../../models/GestionDeProjets/GdpAffairModel";
 import Grid from "../components/Grid/Grid";
 import Link from "next/link";
 import AffairCard from "../components/AffairCard/AffairCard";
-import {QueryParameters} from "../../models/DirectusModel";
+import { QueryParameters } from "../../models/DirectusModel";
 import styles from "./AffairsPage.module.scss";
-import {CompanyEnum} from "../../models/UserService/UsCompanyEntityModel";
+import { CompanyEnum } from "../../models/UserService/UsCompanyEntityModel";
 import getConfig from "next/config";
-import {useSelector} from "react-redux";
-import {selectGlobalFilters} from "../../store/reducers/globalFilterReducer";
+import { useSelector } from "react-redux";
+import { selectGlobalFilters } from "../../store/reducers/globalFilterReducer";
 import GlobalFilters from "../components/GlobalFiltersComponents/GlobalFilters";
-import {Button, Input, Select} from "projex-ui";
+import { Button, Input, Select } from "projex-ui";
 import {
     GdPPythagoreFactureReglement,
     GdPPythagoreFactureStatut
 } from "../../models/GestionDeProjets/GdpPythagoreFactureModel";
-import {DeleteOutlined} from "@ant-design/icons";
-import {selectCompanyEntities} from "../../store/reducers/companyEntitiesReducer";
+import { DeleteOutlined } from "@ant-design/icons";
+import { selectCompanyEntities } from "../../store/reducers/companyEntitiesReducer";
 
 
 const { publicRuntimeConfig } = getConfig();
@@ -43,6 +43,7 @@ const AffairsFiltersInitialState: AffairsFiltersType = {
 };
 
 //prevent search input to trigger multiple requests by cancelling requests while user is typing
+//
 let timerSearch: NodeJS.Timeout;
 let isNewDataLoading = false;
 
@@ -60,7 +61,7 @@ const AffairsPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState, 
         if (affairsFilters.search.length > 0) search = affairsFilters.search;
         if (affairsFilters.company_entity !== '')
             filterRules.push({
-                _or: [{company_entity: { _eq: affairsFilters.company_entity }}]
+                _or: [{ company_entity: { _eq: affairsFilters.company_entity } }]
             });
 
         const newFilters: QueryParameters = {
@@ -118,34 +119,34 @@ const AffairsPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState, 
                 <GlobalFilters />)}
             <div className={styles.affairsPage}>
                 <h1 className={styles.title}>Toutes les affaires</h1>
-                    <div className={styles.headAndFilters}>
-                        <div className={styles.InputContainer}>
-                            <Input
-                                label={'Rechercher une affaire'}
-                                value={affairsFilters.search}
-                                setValue={(value) => setAffairsFilters({ ...affairsFilters, search: `${value}` })}
-                                large={false}
-                            />
-                        </div>
-                        <div className={styles.InputContainer}>
-                            <Select
-                                label={'Filtrer par Entité'}
-                                nullOptionText={'Toutes les entités'}
-                                options={companyEntities.map((entity) => ({ value: `${entity.id}`, text: entity.name || '' }))}
-                                value={affairsFilters.company_entity}
-                                setValue={(value) => setAffairsFilters({ ...affairsFilters, company_entity: value as CompanyEnum })}
-                            />
-                        </div>
-                        <div className={styles.headItemContainer}>
-                            <Button
-                                style={'text_gray'}
-                                icon={<DeleteOutlined rev={undefined} />}
-                                onClick={() => setAffairsFilters(AffairsFiltersInitialState)}
-                            >
-                                Réinitialiser les filtres
-                            </Button>
-                        </div>
+                <div className={styles.headAndFilters}>
+                    <div className={styles.InputContainer}>
+                        <Input
+                            label={'Rechercher une affaire'}
+                            value={affairsFilters.search}
+                            setValue={(value) => setAffairsFilters({ ...affairsFilters, search: `${value}` })}
+                            large={false}
+                        />
                     </div>
+                    <div className={styles.InputContainer}>
+                        <Select
+                            label={'Filtrer par Entité'}
+                            nullOptionText={'Toutes les entités'}
+                            options={companyEntities.map((entity) => ({ value: `${entity.id}`, text: entity.name || '' }))}
+                            value={affairsFilters.company_entity}
+                            setValue={(value) => setAffairsFilters({ ...affairsFilters, company_entity: value as CompanyEnum })}
+                        />
+                    </div>
+                    <div className={styles.headItemContainer}>
+                        <Button
+                            style={'text_gray'}
+                            icon={<DeleteOutlined rev={undefined} />}
+                            onClick={() => setAffairsFilters(AffairsFiltersInitialState)}
+                        >
+                            Réinitialiser les filtres
+                        </Button>
+                    </div>
+                </div>
                 <div className={styles.content}>
                     {(files?.length > 0) ? (
                         <Grid>
