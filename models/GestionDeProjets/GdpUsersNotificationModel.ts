@@ -12,5 +12,11 @@ export type GdpUsersNotificationModel = {
   date_updated: Date | null;
 
   directus_users_id: string | UsUserModel;
-  activities_id: number | GdpActivitiesModel;
+  activity_id: number | GdpActivitiesModel;
 };
+
+export type TopBarNotificationProp = {
+  messages: string[];
+  amount: number;
+  page?: string;
+}
