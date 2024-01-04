@@ -32,7 +32,7 @@ export async function getGdpUsersNotifications(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/notifications?${concatenateQueryParameters(props)}`,
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/users_notifications?${concatenateQueryParameters(props)}`,
     myInit
   )
     .then((res) => {
@@ -72,7 +72,7 @@ export async function getGdpUsersNotification(
   };
 
   return fetch(
-    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/notifications/${id}?fields=${fields}`,
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/users_notifications/${id}?fields=${fields}`,
     myInit
   ).then((res) => {
     if (res.status === 200) {
@@ -119,7 +119,7 @@ export async function updateGdpUsersNotifications(payload: {
     body: JSON.stringify(payload),
   };
 
-  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/notifications`, myInit)
+  return fetch(`${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/users_notifications`, myInit)
     .then((response) => {
       if (response.status === 200) {
         return response
