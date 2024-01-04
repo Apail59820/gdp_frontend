@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './UserCard.module.scss';
-import { ShadowCard } from 'projex-ui';
+import { ShadowCard } from 'projex-ui-dev';
 import UserInformations, { UserInformationsProps } from '../UserInformations/UserInformations';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 

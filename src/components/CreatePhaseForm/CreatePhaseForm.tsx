@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel, GdpPhaseStatusEnum } from '../../../models/GestionDeProjets/GdpPhaseModel';
-import { Button } from 'projex-ui';
+import { Button } from 'projex-ui-dev';
 import styles from './CreatePhaseForm.module.scss';
 import {
   createGdpAffairPhase,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ShadowCard } from 'projex-ui';
+import { ShadowCard } from 'projex-ui-dev';
 import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
 import { getGdpAffair } from '../../../services/gestionDeProjets/GdpAffairs';
 import { DateTime } from 'luxon';

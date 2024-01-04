@@ -1,5 +1,5 @@
 import React from 'react';
-import { ManageItemCard } from 'projex-ui';
+import { ManageItemCard } from 'projex-ui-dev';
 import styles from './ConfigureWidget.module.scss';
 import {ManageItemButtonProps} from "projex-ui/dist/types/components/atoms/ManageItemButton/ManageItemButton";
 

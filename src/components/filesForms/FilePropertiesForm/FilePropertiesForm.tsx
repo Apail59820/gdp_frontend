@@ -1,7 +1,7 @@
 import { fileItemType, UploadStatusEnum } from '../UploadFilesForm/UploadFilesForm';
 import { useEffect, useState } from 'react';
 import styles from './FilePropertiesForm.module.scss';
-import { Button, Input, Select } from 'projex-ui';
+import { Button, Input, Select } from 'projex-ui-dev';
 import { GdpAffairModel } from '../../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpPhaseModel } from '../../../../models/GestionDeProjets/GdpPhaseModel';
 import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Section } from 'projex-ui';
+import { Section } from 'projex-ui-dev';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 import CollaboratorTeamCard, { CollaboratorTeamCardProps } from '../CollaboratorTeamCard/CollaboratorTeamCard';
 

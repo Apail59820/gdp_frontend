@@ -9,7 +9,7 @@ import PageHeaderBanner from '../../../../../src/components/PageHeaderBanner/Pag
 import { GdpProjectsModel } from '../../../../../models/GestionDeProjets/GdpProjectsModel';
 import { selectProjects } from '../../../../../store/reducers/projectsReducer';
 import { getGdpProjectById } from '../../../../../services/gestionDeProjets/GdpProjects';
-import { Breadcrumb, Grid, Section } from 'projex-ui';
+import { Breadcrumb, Grid, Section } from 'projex-ui-dev';
 import SatisfactionCard from '../../../../../src/components/SatisfactionCard/SatisfactionCard';
 import { GdpSatisfactionModel } from '../../../../../models/GestionDeProjets/GdpSatisfactionModel';
 import { getGdpSatisfactions } from '../../../../../services/gestionDeProjets/GdpAffairsSatisfaction';

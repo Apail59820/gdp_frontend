@@ -9,7 +9,7 @@ import {
   GdpSatisfactionModel,
 } from '../../../../../models/GdPModels';
 import { GdpAffairModel } from '../../../../../models/GdPModels';
-import { Breadcrumb, Button, QuickActionCard } from 'projex-ui';
+import { Breadcrumb, Button, QuickActionCard } from 'projex-ui-dev';
 import Grid from '../../../../../src/components/Grid/Grid';
 import PageHeaderBanner from '../../../../../src/components/PageHeaderBanner/PageHeaderBanner';
 import QuickAccessWidget from '../../../../../src/components/QuickAccessWidget/QuickAccessWidget';

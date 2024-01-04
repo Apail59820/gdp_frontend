@@ -1,7 +1,7 @@
 import React from 'react';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { Form, Input, message, Modal, Select } from 'antd';
-import { Button } from 'projex-ui';
+import { Button } from 'projex-ui-dev';
 import styles from './CreateAffairForm.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectCompanyEntities } from '../../../store/reducers/companyEntitiesReducer';

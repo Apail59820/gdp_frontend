@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Form, message, Modal, Select} from 'antd';
 import {useForm} from 'antd/lib/form/Form';
-import {Button} from 'projex-ui';
+import {Button} from 'projex-ui-dev';
 import {MinusCircleOutlined} from '@ant-design/icons';
 import {useSelector} from 'react-redux';
 import {selectProjects} from '../../../store/reducers/projectsReducer';

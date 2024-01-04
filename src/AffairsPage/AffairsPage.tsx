@@ -12,7 +12,7 @@ import getConfig from "next/config";
 import { useSelector } from "react-redux";
 import { selectGlobalFilters } from "../../store/reducers/globalFilterReducer";
 import GlobalFilters from "../components/GlobalFiltersComponents/GlobalFilters";
-import { Button, Input, Select } from "projex-ui";
+import { Button, Input, Select } from 'projex-ui-dev';
 import {
     GdPPythagoreFactureReglement,
     GdPPythagoreFactureStatut

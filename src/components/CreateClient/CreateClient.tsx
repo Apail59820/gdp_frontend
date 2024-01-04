@@ -3,7 +3,7 @@ import {Form, Input, message, Modal, Select} from "antd";
 import {UsClientsCompanyEntitiesModel} from "../../../models/UserService/UsClientsCompanyEntitiesModel";
 import {getUsClientsCompanyEntities} from "../../../services/userService/UsClientsCompanyEntities";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
-import {Button} from "projex-ui";
+import {Button} from 'projex-ui-dev';
 import styles from './CreateClient.module.scss'
 import {MinusCircleOutlined} from "@ant-design/icons";
 import {inviteNewUsers} from "../../../services/auth";

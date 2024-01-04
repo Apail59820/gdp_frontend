@@ -1,5 +1,5 @@
 import styles from './FileInput.module.scss';
-import { Button } from 'projex-ui';
+import { Button } from 'projex-ui-dev';
 import React, { InputHTMLAttributes, useRef, useState } from 'react';
 
 export interface PropsTypes extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'crossOrigin'> {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './GlobalFiltersDataSelector.module.scss';
-import { Button, ShadowCard, Input } from 'projex-ui';
+import { Button, ShadowCard, Input } from 'projex-ui-dev';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectGlobalFilters, setGlobalFilters } from '../../../../store/reducers/globalFilterReducer';
 import { AppState } from '../../../../store/store';

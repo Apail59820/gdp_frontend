@@ -1,9 +1,9 @@
 import React from 'react';
 import styles from './PhasesWidget.module.scss';
 import { useRouter } from 'next/router';
-import { ManageItemCard } from 'projex-ui';
+import { ManageItemCard } from 'projex-ui-dev';
 import Grid from '../Grid/Grid';
-import { Section } from 'projex-ui';
+import { Section } from 'projex-ui-dev';
 import PhaseCard from '../PhaseCard/PhaseCard';
 import type { GdpPhaseModel } from '../../../models/GestionDeProjets/GdpPhaseModel';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';

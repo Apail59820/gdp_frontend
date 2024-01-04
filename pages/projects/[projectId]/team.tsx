@@ -11,7 +11,7 @@ import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProject
 import styles from '../../../styles/Team.module.scss';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
 import PageHeaderBanner from '../../../src/components/PageHeaderBanner/PageHeaderBanner';
-import { Breadcrumb, Grid, ManageItemCard, Section } from 'projex-ui';
+import { Breadcrumb, Grid, ManageItemCard, Section } from 'projex-ui-dev';
 import ClientTeamWidget from '../../../src/components/ClientTeamWidget/ClientTeamWidget';
 import CollaboratorTeamWidget from '../../../src/components/CollaboratorTeamWidget/CollaboratorTeamWidget';
 import UserCard from '../../../src/components/UserCard/UserCard';

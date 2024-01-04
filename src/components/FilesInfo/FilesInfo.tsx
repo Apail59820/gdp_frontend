@@ -8,7 +8,7 @@ import {UsUserModel} from '../../../models/UsModels';
 import {getGdpProjectById} from "../../../services/gestionDeProjets/GdpProjects";
 import styles from "./FilesInfo.module.scss"
 
-import {Button} from "projex-ui";
+import {Button} from 'projex-ui-dev';
 import Link from "next/link";
 import {getMyUsProfile} from "../../../services/userService/UsUsers";
 import {deleteGdpFile, downloadGdPFile} from "../../../services/gestionDeProjets/GdpFiles";

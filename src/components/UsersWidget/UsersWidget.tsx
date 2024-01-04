@@ -1,8 +1,8 @@
 import React from 'react';
 import styles from './UsersWidget.module.scss';
 import { UsUserModel } from '../../../models/UsModels';
-import { ManageItemCard } from 'projex-ui';
-import { Section } from 'projex-ui';
+import { ManageItemCard } from 'projex-ui-dev';
+import { Section } from 'projex-ui-dev';
 import Grid from '../Grid/Grid';
 import UserCard from '../UserCard/UserCard';
 

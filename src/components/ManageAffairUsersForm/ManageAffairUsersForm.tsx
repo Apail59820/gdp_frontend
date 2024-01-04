@@ -3,7 +3,7 @@ import {Empty, Form, message, Modal, Popconfirm, Select} from 'antd';
 import {GdpAffairModel} from '../../../models/GestionDeProjets/GdpAffairModel';
 import {useSelector} from 'react-redux';
 import {GdpProjectsModel} from '../../../models/GestionDeProjets/GdpProjectsModel';
-import {Button} from 'projex-ui';
+import {Button} from 'projex-ui-dev';
 import {selectUsers} from '../../../store/reducers/usersReducer';
 import getConfig from 'next/config';
 import {CheckCircleTwoTone, MinusCircleOutlined} from '@ant-design/icons';

@@ -4,7 +4,7 @@ import {GdpProjectsModel} from '../../../models/GestionDeProjets/GdpProjectsMode
 import {GdpAffairModel} from '../../../models/GestionDeProjets/GdpAffairModel';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectProjects} from '../../../store/reducers/projectsReducer';
-import {Button} from 'projex-ui';
+import {Button} from 'projex-ui-dev';
 import styles from './ConfigureFacturationForm.module.scss';
 import {MinusCircleOutlined} from '@ant-design/icons';
 import {GdpAffairsPythagoreAffairesModel} from '../../../models/GestionDeProjets/GdpAffairsPythagoreAffairesModel';

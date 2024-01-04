@@ -7,7 +7,7 @@ import { UsUserModel } from '../../../models/UserService/UsUserModel';
 import { getUsUsers } from '../../../services/userService/UsUsers';
 import { messages } from '../../../constants/messages';
 import { MinusCircleOutlined } from '@ant-design/icons';
-import { Button } from 'projex-ui';
+import { Button } from 'projex-ui-dev';
 import styles from './ManageAffairManagerForm.module.scss';
 import { updateAffairUsers } from '../../../services/gestionDeProjets/GdpAffairsUsers';
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';

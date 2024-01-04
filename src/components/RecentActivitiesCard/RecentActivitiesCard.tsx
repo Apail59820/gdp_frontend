@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './RecentActivitiesCard.module.scss';
 import RecentActivities, { RecentActivitiesProps } from '../RecentActivities/RecentActivities';
-import { ShadowCard } from 'projex-ui';
+import { ShadowCard } from 'projex-ui-dev';
 
 const RecentActivitiesCard = (props: RecentActivitiesProps) => {
   return (
