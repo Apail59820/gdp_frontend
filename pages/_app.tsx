@@ -47,7 +47,7 @@ export default function App({Component, pageProps}: AppProps) {
 
   async function updateNotifications() {
     getGdpUsersNotifications({
-      filter: { seen: { _eq: false } }
+      filter: { _and : { seen: {_eq: false}, directus_users_id: user?.id}  }
     }).then((res) => {
       if(isRequestSuccessful(res.status) && res?.data){
         setNotifications(res.data);
