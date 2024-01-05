@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './HomeDashboard.module.scss';
 import { PlusOutlined } from '@ant-design/icons';
 import { GdpProjectsModel } from '../../models/GdPModels';
-import { QuickActionCard } from 'projex-ui-dev';
+import { QuickActionCard } from 'projex-ui';
 import Grid from '../components/Grid/Grid';
 import QuickAccessWidget from '../components/QuickAccessWidget/QuickAccessWidget';
 import ProjectsWidget from '../components/ProjectsWidget/ProjectsWidget';

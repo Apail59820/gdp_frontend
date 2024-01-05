@@ -9,7 +9,7 @@ import downloadIcon from '../../../public/download.svg';
 import deleteIcon from '../../../public/trash-can.svg';
 import { DateTime, Interval } from 'luxon';
 import styles from './FilesTable.module.scss';
-import { Button } from 'projex-ui-dev';
+import { Button } from 'projex-ui';
 import { GdpAffairModel } from '../../../models/GestionDeProjets/GdpAffairModel';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import { useRouter } from 'next/router';

@@ -1,5 +1,5 @@
 import {PlusOutlined} from '@ant-design/icons';
-import {Breadcrumb, Button} from 'projex-ui-dev';
+import {Breadcrumb, Button} from 'projex-ui';
 import React, {createContext, useEffect, useState} from 'react';
 import ActivitiesWidget from '../../../../../src/components/ActivitiesWidget/ActivitiesWidget';
 import PageHeaderBanner from '../../../../../src/components/PageHeaderBanner/PageHeaderBanner';

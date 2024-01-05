@@ -1,11 +1,11 @@
 import React from 'react';
 import styles from './ProjectsWidget.module.scss';
 import Link from 'next/link';
-import { ManageItemCard } from 'projex-ui-dev';
+import { ManageItemCard } from 'projex-ui';
 import { GdpProjectsModel } from '../../../models/GestionDeProjets/GdpProjectsModel';
 import Grid from '../Grid/Grid';
 import ProjectCard from '../ProjectCard/ProjectCard';
-import { Section } from 'projex-ui-dev';
+import { Section } from 'projex-ui';
 import { LoadingOutlined } from '@ant-design/icons';
 import {useRouter} from "next/router";
 

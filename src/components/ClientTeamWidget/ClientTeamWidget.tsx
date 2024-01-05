@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import ClientTeamCard, { ClientTeamCardProps } from '../ClientTeamCard/ClientTeamCard';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
-import {Section} from 'projex-ui-dev';
+import {Section} from 'projex-ui';
 import {MenuProps} from "antd";
 
 type Props = Omit<ClientTeamCardProps, 'allUsersPageHref' | 'onKebabMenuClick'> & {

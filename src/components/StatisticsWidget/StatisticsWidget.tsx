@@ -1,8 +1,8 @@
-import { ManageItemCard } from 'projex-ui-dev';
+import { ManageItemCard } from 'projex-ui';
 import styles from './StatisticsWidget.module.scss';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Section } from 'projex-ui-dev';
+import { Section } from 'projex-ui';
 import StatisticsCard, { StatisticsCardProps } from '../StatisticsCard/StatisticsCard';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 

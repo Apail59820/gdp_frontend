@@ -1,6 +1,6 @@
 import {Form, Input, Modal, Progress, Switch, message, Dropdown, Menu, MenuItemProps, MenuProps} from 'antd';
 import React, {useEffect, useState} from 'react';
-import { Button } from 'projex-ui-dev';
+import { Button } from 'projex-ui';
 import styles from './CreateClientEntity.module.scss';
 import { messages } from '../../../constants/messages';
 import Upload, { RcFile, UploadFile } from 'antd/lib/upload';

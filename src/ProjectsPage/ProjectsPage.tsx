@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styles from './Projects.module.scss';
-import { Button, Input, Select } from 'projex-ui-dev';
+import { Button, Input, Select } from 'projex-ui';
 import { GdpProjectsModel, GdpProjectStatusEnum } from '../../models/GestionDeProjets/GdpProjectsModel';
 import DisplayOptionsController from '../components/DisplayOptionsController/DisplayOptionsController';
 import ProjectCard from '../components/ProjectCard/ProjectCard';

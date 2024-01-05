@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectProjects } from '../../../store/reducers/projectsReducer';
 import { getGdpProjectById } from '../../../services/gestionDeProjets/GdpProjects';
-import { Breadcrumb, Grid, Section } from 'projex-ui-dev';
+import { Breadcrumb, Grid, Section } from 'projex-ui';
 import styles from '../../../styles/Project.module.scss';
 import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
 import { getGdpSatisfactions } from '../../../services/gestionDeProjets/GdpAffairsSatisfaction';

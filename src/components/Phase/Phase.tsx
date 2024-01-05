@@ -1,4 +1,4 @@
-import { ProgressBar, Section } from 'projex-ui-dev';
+import { ProgressBar, Section } from 'projex-ui';
 import React, { Dispatch, createContext, useContext, useEffect, useState } from 'react';
 import FilesWidget from '../FilesWidget/FilesWidget';
 import PreviewFilesList from '../PreviewFilesList/PreviewFilesList';
@@ -14,7 +14,7 @@ import {
 import { getGdpFiles } from '../../../services/gestionDeProjets/GdpFiles';
 import { isRequestSuccessful } from '../../../utils/isRequestSuccessful';
 import CreatePhaseForm from '../CreatePhaseForm/CreatePhaseForm';
-import { Button } from 'projex-ui-dev';
+import { Button } from 'projex-ui';
 import { PlusOutlined, SmileOutlined } from '@ant-design/icons';
 import SatisfactionForm from '../SatisfactionForm/SatisfactionForm';
 import UploadFilesForm from '../filesForms/UploadFilesForm/UploadFilesForm';

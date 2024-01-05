@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './PhaseCard.module.scss';
-import { ShadowCard } from 'projex-ui-dev';
+import { ShadowCard } from 'projex-ui';
 import { GdpPhaseModel } from '../../../models/GestionDeProjets/GdpPhaseModel';
 import { capitalize } from '../../../utils/capitalize';
 import ProgressStatusMessage from '../ProgressStatusMessage/ProgressStatusMessage';

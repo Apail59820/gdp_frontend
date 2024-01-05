@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from './AffairCard.module.scss';
 import { GdpAffairModel, GdpAffairsUsersModel, GdpPhaseModel } from '../../../models/GdPModels';
-import { ProgressBar, ShadowCard } from 'projex-ui-dev';
+import { ProgressBar, ShadowCard } from 'projex-ui';
 import KebabMenuForCards from '../KebabMenuForCards/KebabMenuForCards';
 import { getImagesByCompany } from '../../../utils/getImagesByCompany';
 import { capitalize } from '../../../utils/capitalize';

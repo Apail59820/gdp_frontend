@@ -3,7 +3,7 @@ import fileIcon from '../../../public/file.svg';
 import styles from './PreviewFilesList.module.scss';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
-import { ShadowCard } from 'projex-ui-dev';
+import { ShadowCard } from 'projex-ui';
 import { GdpFilesModel } from '../../../models/GestionDeProjets/GdpFilesModel';
 import Image from 'next/image';
 import FilesInfo from "../FilesInfo/FilesInfo";

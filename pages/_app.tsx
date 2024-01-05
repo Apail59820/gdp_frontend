@@ -8,7 +8,7 @@ import Authenticated from '../src/components/Authenticated/Authenticated';
 import {RetrieveGlobalData} from '../src/RetrieveGlobalData/RetrieveGlobalData';
 import React, {useEffect, useState} from 'react';
 import {getUserAvatarByUserId} from '../utils/assets';
-import {SideBar, TopBar} from 'projex-ui-dev';
+import {SideBar, TopBar} from 'projex-ui';
 import {getMyUsProfile} from "../services/userService/UsUsers";
 import {isRequestSuccessful} from "../utils/isRequestSuccessful";
 import {UsUserModel} from "../models/UserService/UsUserModel";

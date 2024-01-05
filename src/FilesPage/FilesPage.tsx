@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, ReactNode } from 'react';
 import styles from './FilesPage.module.scss';
-import { Button, Input, Select } from 'projex-ui-dev';
+import { Button, Input, Select } from 'projex-ui';
 import { QueryParameters } from '../../models/DirectusModel';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';

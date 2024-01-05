@@ -1,4 +1,4 @@
-import { RecentActivitiesCard, Section } from 'projex-ui-dev';
+import { RecentActivitiesCard, Section } from 'projex-ui';
 import React, { useMemo } from 'react';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 import {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { message, Modal } from 'antd';
 import styles from './UploadFilesForm.module.scss';
 import Image from 'next/image';
-import { Button, ShadowCard } from 'projex-ui-dev';
+import { Button, ShadowCard } from 'projex-ui';
 import FilePropertiesForm from '../FilePropertiesForm/FilePropertiesForm';
 import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';
 import { GdpAffairModel } from '../../../../models/GestionDeProjets/GdpAffairModel';

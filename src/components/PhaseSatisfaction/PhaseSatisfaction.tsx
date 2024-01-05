@@ -2,7 +2,7 @@ import { GdpPhaseModel } from '../../../models/GestionDeProjets/GdpPhaseModel';
 import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
 
 import styles from './PhaseSatisfaction.module.scss';
-import { ProgressBar } from 'projex-ui-dev';
+import { ProgressBar } from 'projex-ui';
 import DisplaySatisfaction from '../DisplaySatisfaction/DisplaySatisfaction';
 import React from 'react';
 

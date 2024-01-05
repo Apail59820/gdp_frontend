@@ -3,7 +3,7 @@ import { Form, Input, message, Modal, Radio, RadioChangeEvent } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import styles from './SatisfactionForm.module.scss';
 import { CreateGdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
-import { Button } from 'projex-ui-dev';
+import { Button } from 'projex-ui';
 import { createGdpSatisfaction } from '../../../services/gestionDeProjets/GdpAffairsSatisfaction';
 import { satisfactionContext } from '../../../pages/projects/[projectId]/affairs/[affairId]/advancement';
 

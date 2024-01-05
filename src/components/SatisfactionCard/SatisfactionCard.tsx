@@ -1,7 +1,7 @@
 import React from 'react';
 import { GdpSatisfactionModel } from '../../../models/GestionDeProjets/GdpSatisfactionModel';
 import styles from './SatisfactionCard.module.scss';
-import { ProgressBarRounded, ShadowCard } from 'projex-ui-dev';
+import { ProgressBarRounded, ShadowCard } from 'projex-ui';
 import { DateTime } from 'luxon';
 
 interface SatisfactionCardProps {

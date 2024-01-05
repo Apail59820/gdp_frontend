@@ -13,7 +13,7 @@ import { isRequestSuccessful } from '../../../../../utils/isRequestSuccessful';
 import { getGdpAffair } from '../../../../../services/gestionDeProjets/GdpAffairs';
 import PageHeaderBanner from '../../../../../src/components/PageHeaderBanner/PageHeaderBanner';
 import styles from '../../../../../styles/Team.module.scss';
-import { Breadcrumb, Grid, ManageItemCard, Section } from 'projex-ui-dev';
+import { Breadcrumb, Grid, ManageItemCard, Section } from 'projex-ui';
 import ClientTeamWidget from '../../../../../src/components/ClientTeamWidget/ClientTeamWidget';
 import CollaboratorTeamWidget from '../../../../../src/components/CollaboratorTeamWidget/CollaboratorTeamWidget';
 import { UsClientsCompanyEntitiesModel, UsCompanyEntityModel, UsUserModel } from '../../../../../models/UsModels';

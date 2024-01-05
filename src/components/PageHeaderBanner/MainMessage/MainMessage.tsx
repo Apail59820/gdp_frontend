@@ -3,7 +3,7 @@ import styles from './MainMessage.module.scss';
 import { capitalize } from '../../../../utils/capitalize';
 import { GdpProjectsModel } from '../../../../models/GestionDeProjets/GdpProjectsModel';
 import defaultImage from '../../../../public/default-affair-image.png';
-import { ManageItemButton } from 'projex-ui-dev';
+import { ManageItemButton } from 'projex-ui';
 import { message, Tooltip } from 'antd';
 import {
   GdpAssetDocumentEnum,

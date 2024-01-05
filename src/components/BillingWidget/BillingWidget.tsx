@@ -1,10 +1,10 @@
-import { ManageItemCard } from 'projex-ui-dev';
+import { ManageItemCard } from 'projex-ui';
 import React from 'react';
 import Grid from '../Grid/Grid';
 import InvoiceCard from '../InvoiceCard/InvoiceCard';
 import ConfigureWidget from '../ConfigureWidget/ConfigureWidget';
 import type { GdpPythagoreFactureModel } from '../../../models/GestionDeProjets/GdpPythagoreFactureModel';
-import { Section } from 'projex-ui-dev';
+import { Section } from 'projex-ui';
 import { useRouter } from 'next/router';
 
 type Props = {

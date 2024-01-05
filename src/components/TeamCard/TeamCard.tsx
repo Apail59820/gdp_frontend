@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './TeamCard.module.scss';
-import { ShadowCard } from 'projex-ui-dev';
+import { ShadowCard } from 'projex-ui';
 import Link from 'next/link';
 import { UsUserModel } from '../../../models/UsModels';
 import {MenuProps, Tooltip} from 'antd';
