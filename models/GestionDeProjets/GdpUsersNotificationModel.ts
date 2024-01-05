@@ -17,6 +17,8 @@ export type GdpUsersNotificationModel = {
 
 export type TopBarNotificationProp = {
   messages: string[];
+  ids: number[];
   amount: number;
   page?: string;
+  onMarkAsRead: (id: number) => void;
 }

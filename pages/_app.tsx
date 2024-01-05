@@ -14,7 +14,11 @@ import {isRequestSuccessful} from "../utils/isRequestSuccessful";
 import {UsUserModel} from "../models/UserService/UsUserModel";
 import getConfig from "next/config";
 import {GdpUsersNotificationModel, TopBarNotificationProp} from "../models/GestionDeProjets/GdpUsersNotificationModel";
-import {getGdpUsersNotifications} from "../services/gestionDeProjets/GdpUsersNotifications";
+import {
+  getGdpUsersNotification,
+  getGdpUsersNotifications,
+  updateGdpUsersNotifications
+} from "../services/gestionDeProjets/GdpUsersNotifications";
 import {getGdpActivities} from "../services/gestionDeProjets/GdpActivities";
 import {message} from "antd";
 const { publicRuntimeConfig } = getConfig();
@@ -23,7 +27,7 @@ export default function App({Component, pageProps}: AppProps) {
   const [user, setUser] = useState<Partial<UsUserModel>>({});
   const [userProfilePicture, setUserProfilePicture] = useState<string | undefined>(undefined);
 
-  const [notificationsProps, setNotificationsProps] = useState<TopBarNotificationProp>({ messages: [], amount: 0});
+  const [notificationsProps, setNotificationsProps] = useState<TopBarNotificationProp>({ messages: [], amount: 0, ids: [], onMarkAsRead: null});
   const [notifications, setNotifications] = useState<Partial<GdpUsersNotificationModel>[]>([]);
 
   useEffect(() => {
@@ -41,48 +45,86 @@ export default function App({Component, pageProps}: AppProps) {
     })
   }, []);
 
+  async function updateNotifications() {
+    getGdpUsersNotifications({
+      filter: { seen: { _eq: false } }
+    }).then((res) => {
+      if(isRequestSuccessful(res.status) && res?.data){
+        setNotifications(res.data);
+      }
+    })
+  }
+
 
   useEffect(() => {
     if(user?.id){
-      getGdpUsersNotifications({
-        filter: { seen: { _eq: false } }
-      }).then((res) => {
-            if(isRequestSuccessful(res.status) && res?.data){
-              setNotifications(res.data);
-            }
-          })
-
+      updateNotifications().catch((e) => {
+        console.error(e);
+      })
       notificationsProps.page = `${publicRuntimeConfig.USER_SERVICE_URL}/user/${user.id}?currentTab=Notifications`
       setNotificationsProps(notificationsProps);
     }
   }, [user]);
 
+  async function updateActivities() {
+    getGdpActivities({
+      filter: {
+        id: {
+          _in: notifications.map((notification) => notification.activity_id),
+        },
+      },
+    })
+        .then((res) => {
+          if (isRequestSuccessful(res.status) && res?.data) {
+            const newProps = { ...notificationsProps };
+            for (const activity of res.data) {
+              if (typeof activity.content?.message !== 'undefined') {
+                newProps.messages.push(activity.content.message);
+                newProps.ids.push(activity.id);
+                newProps.amount++;
+              }
+            }
+            setNotificationsProps(newProps);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+  }
+
   useEffect(() => {
     if (notifications.length) {
-      getGdpActivities({
-        filter: {
-          id: {
-            _in: notifications.map((notification) => notification.activity_id),
-          },
-        },
+      updateActivities().catch((e) => {
+        console.error(e);
       })
-          .then((res) => {
-            if (isRequestSuccessful(res.status) && res?.data) {
-              const newProps = { ...notificationsProps }; // Create a copy of notificationsProps
-              for (const activity of res.data) {
-                if (typeof activity.content?.message !== 'undefined') {
-                  newProps.messages.push(activity.content.message);
-                  newProps.amount++;
-                }
-              }
-              setNotificationsProps(newProps);
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-          });
     }
   }, [notifications]);
+
+
+  const markAsRead = (id: number) => {
+    setNotificationsProps({ messages: [], amount: 0, ids: [], onMarkAsRead: markAsRead});
+    getGdpUsersNotifications({filter: {activity_id: id}}).then((res) => {
+      if(isRequestSuccessful(res.status) && res?.data){
+        updateGdpUsersNotifications({keys: [res.data[0].id], data: {seen: true}}).then((res) => {
+          if(isRequestSuccessful(res.status)){
+            updateNotifications().then(() => {
+              updateActivities().catch((e) => {
+                console.error(e);
+              })
+            })
+          }
+        })
+      }
+    })
+
+  }
+
+  useEffect(() => {
+    const newProps = { ...notificationsProps };
+    newProps.onMarkAsRead = markAsRead;
+    setNotificationsProps(newProps);
+  }, []);
+
 
   return (
     <Provider store={configureStore}>
