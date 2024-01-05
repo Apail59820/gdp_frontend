@@ -60,7 +60,6 @@ export default function App({Component, pageProps}: AppProps) {
       updateNotifications().catch((e) => {
         console.error(e);
       })
-      notificationsProps.page = `${publicRuntimeConfig.USER_SERVICE_URL}/user/${user.id}?currentTab=Notifications`
       setNotificationsProps(notificationsProps);
     }
   }, [user]);
@@ -91,6 +90,7 @@ export default function App({Component, pageProps}: AppProps) {
                 newProps.ids.push(activity.id);
               }
             }
+            newProps.page = `${publicRuntimeConfig.USER_SERVICE_URL}/user/${user.id}?currentTab=Notifications`
             setNotificationsProps(newProps);
           }
         })
@@ -130,6 +130,7 @@ export default function App({Component, pageProps}: AppProps) {
   useEffect(() => {
     const newProps = { ...notificationsProps };
     newProps.onMarkAsRead = markAsRead;
+    newProps.page = `${publicRuntimeConfig.USER_SERVICE_URL}/user/${user.id}?currentTab=Notifications`
     setNotificationsProps(newProps);
   }, []);
 
