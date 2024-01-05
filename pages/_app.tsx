@@ -15,12 +15,10 @@ import {UsUserModel} from "../models/UserService/UsUserModel";
 import getConfig from "next/config";
 import {GdpUsersNotificationModel, TopBarNotificationProp} from "../models/GestionDeProjets/GdpUsersNotificationModel";
 import {
-  getGdpUsersNotification,
   getGdpUsersNotifications,
   updateGdpUsersNotifications
 } from "../services/gestionDeProjets/GdpUsersNotifications";
 import {getGdpActivities} from "../services/gestionDeProjets/GdpActivities";
-import {message} from "antd";
 const { publicRuntimeConfig } = getConfig();
 
 export default function App({Component, pageProps}: AppProps) {
@@ -46,8 +44,9 @@ export default function App({Component, pageProps}: AppProps) {
   }, []);
 
   async function updateNotifications() {
+    const myUsProfile = await getMyUsProfile();
     getGdpUsersNotifications({
-      filter: { _and : [{ seen: {_eq: false}, directus_users_id: user?.id}]  }
+      filter: { _and : [{ seen: {_eq: false}, directus_users_id: myUsProfile?.data.id}]  }
     }).then((res) => {
       if(isRequestSuccessful(res.status) && res?.data){
         setNotifications(res.data);
@@ -67,21 +66,29 @@ export default function App({Component, pageProps}: AppProps) {
   }, [user]);
 
   async function updateActivities() {
+    const allNotifications = await getGdpActivities({
+      filter: {id: {
+          _in: notifications.map((notification) => notification.activity_id),
+        },
+      },
+    });
     getGdpActivities({
       filter: {
         id: {
           _in: notifications.map((notification) => notification.activity_id),
         },
       },
+      sort: '-date_created',
+      limit: 5,
     })
         .then((res) => {
           if (isRequestSuccessful(res.status) && res?.data) {
             const newProps = { ...notificationsProps };
+            newProps.amount = allNotifications?.data.length;
             for (const activity of res.data) {
               if (typeof activity.content?.message !== 'undefined') {
                 newProps.messages.push(activity.content.message);
                 newProps.ids.push(activity.id);
-                newProps.amount++;
               }
             }
             setNotificationsProps(newProps);
@@ -100,7 +107,6 @@ export default function App({Component, pageProps}: AppProps) {
     }
   }, [notifications]);
 
-
   const markAsRead = (id: number) => {
     setNotificationsProps({ messages: [], amount: 0, ids: [], onMarkAsRead: markAsRead});
     getGdpUsersNotifications({filter: {activity_id: id}}).then((res) => {
@@ -108,9 +114,11 @@ export default function App({Component, pageProps}: AppProps) {
         updateGdpUsersNotifications({keys: [res.data[0].id], data: {seen: true}}).then((res) => {
           if(isRequestSuccessful(res.status)){
             updateNotifications().then(() => {
-              updateActivities().catch((e) => {
-                console.error(e);
-              })
+              if(notifications.length){
+                updateActivities().catch((e) => {
+                  console.error(e);
+                })
+              }
             })
           }
         })
