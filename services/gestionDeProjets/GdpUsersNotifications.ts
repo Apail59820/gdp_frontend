@@ -3,6 +3,8 @@ import concatenateQueryParameters from '../../utils/queryParamsFormatter';
 import { retrieveToken } from '../auth';
 import getConfig from 'next/config';
 import { GdpUsersNotificationModel } from '../../models/GdPModels';
+import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
+import {UsUserModel} from "../../models/UserService/UsUserModel";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -45,6 +47,30 @@ export async function getGdpUsersNotifications(
     .catch(() => {
       return { status: 500 };
     });
+}
+
+/**
+ * Retrieve all unread notifications amount
+ * @param user User model or its id.
+ * @returns number Notifications count.
+ */
+export async function getGdpUsersNotificationsCount(
+    user: Partial<UsUserModel> | string
+): Promise<{status: number; count?: number}> {
+
+  const props: QueryParameters =
+  {
+    filter: { _and : [{ seen: {_eq: false}, directus_users_id: typeof user === 'string' ? user : user?.id}]  },
+    aggregate: {count: '*'}};
+
+  const res = await getGdpUsersNotifications(props);
+
+  if(isRequestSuccessful(res.status) && res?.data.length){
+    // @ts-ignore
+    return {status : res.status, count: res.data[0]?.count as number}
+  }
+
+  return {status : res.status};
 }
 
 /**

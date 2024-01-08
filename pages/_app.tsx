@@ -8,17 +8,18 @@ import Authenticated from '../src/components/Authenticated/Authenticated';
 import {RetrieveGlobalData} from '../src/RetrieveGlobalData/RetrieveGlobalData';
 import React, {useEffect, useState} from 'react';
 import {getUserAvatarByUserId} from '../utils/assets';
-import {SideBar, TopBar} from 'projex-ui';
+import {SideBar, TopBar} from 'projex-ui-dev';
 import {getMyUsProfile} from "../services/userService/UsUsers";
 import {isRequestSuccessful} from "../utils/isRequestSuccessful";
 import {UsUserModel} from "../models/UserService/UsUserModel";
 import getConfig from "next/config";
-import {GdpUsersNotificationModel, TopBarNotificationProp} from "../models/GestionDeProjets/GdpUsersNotificationModel";
+import {TopBarNotificationProp} from "../models/GestionDeProjets/GdpUsersNotificationModel";
 import {
-  getGdpUsersNotifications,
+  getGdpUsersNotifications, getGdpUsersNotificationsCount,
   updateGdpUsersNotifications
 } from "../services/gestionDeProjets/GdpUsersNotifications";
-import {getGdpActivities} from "../services/gestionDeProjets/GdpActivities";
+import {message} from "antd";
+import {messages} from "../constants/messages";
 const { publicRuntimeConfig } = getConfig();
 
 export default function App({Component, pageProps}: AppProps) {
@@ -26,7 +27,7 @@ export default function App({Component, pageProps}: AppProps) {
   const [userProfilePicture, setUserProfilePicture] = useState<string | undefined>(undefined);
 
   const [notificationsProps, setNotificationsProps] = useState<TopBarNotificationProp>({ messages: [], amount: 0, ids: [], onMarkAsRead: null});
-  const [notifications, setNotifications] = useState<Partial<GdpUsersNotificationModel>[]>([]);
+  const [notifications, setNotifications] = useState<{ message: string, id: number }[]>([]);
 
   useEffect(() => {
     getMyUsProfile().then((res) => {
@@ -42,17 +43,39 @@ export default function App({Component, pageProps}: AppProps) {
       }
     })
   }, []);
-
   async function updateNotifications() {
     const myUsProfile = await getMyUsProfile();
     getGdpUsersNotifications({
-      filter: { _and : [{ seen: {_eq: false}, directus_users_id: myUsProfile?.data.id}]  }
-    }).then((res) => {
+      filter: { _and : [{ seen: {_eq: false}, directus_users_id: myUsProfile?.data.id}]  },
+      fields: 'id,activity_id.content',
+      sort: '-date_created',
+      limit: 5,
+    }).then(async (res) => {
       if(isRequestSuccessful(res.status) && res?.data){
-        setNotifications(res.data);
+        setNotifications(res.data.map((notification) => {
+          return /* @ts-ignore */ {
+            message: notification.activity_id?.content?.message,
+            id: notification.id
+          }
+        }));
       }
     })
   }
+
+  useEffect(() => {
+    if(user?.id)
+    getGdpUsersNotificationsCount(user).then((res) => {
+      if(isRequestSuccessful(res.status) && res?.count){
+        setNotificationsProps({
+          messages: notifications.map((notification) => notification.message),
+          amount: res.count,
+          ids: notifications.map((notification) => notification.id),
+          page: `${publicRuntimeConfig.USER_SERVICE_URL}/user/${user.id}?currentTab=Notifications`,
+          onMarkAsRead: markAsRead
+        })
+      }
+    })
+  }, [notifications]);
 
 
   useEffect(() => {
@@ -60,80 +83,20 @@ export default function App({Component, pageProps}: AppProps) {
       updateNotifications().catch((e) => {
         console.error(e);
       })
-      setNotificationsProps(notificationsProps);
     }
   }, [user]);
 
-  async function updateActivities() {
-    const allNotifications = await getGdpActivities({
-      filter: {id: {
-          _in: notifications.map((notification) => notification.activity_id),
-        },
-      },
-    });
-    getGdpActivities({
-      filter: {
-        id: {
-          _in: notifications.map((notification) => notification.activity_id),
-        },
-      },
-      sort: '-date_created',
-      limit: 5,
-    })
-        .then((res) => {
-          if (isRequestSuccessful(res.status) && res?.data) {
-            const newProps = { ...notificationsProps };
-            newProps.amount = allNotifications?.data.length;
-            for (const activity of res.data) {
-              if (typeof activity.content?.message !== 'undefined') {
-                newProps.messages.push(activity.content.message);
-                newProps.ids.push(activity.id);
-              }
-            }
-            newProps.page = `${publicRuntimeConfig.USER_SERVICE_URL}/user/${user.id}?currentTab=Notifications`
-            setNotificationsProps(newProps);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-  }
+  const markAsRead = async (id: number) => {
 
-  useEffect(() => {
-    if (notifications.length) {
-      updateActivities().catch((e) => {
-        console.error(e);
-      })
+    const UserNotifications = await getGdpUsersNotifications({filter: {activity_id: id}});
+    if(!isRequestSuccessful(UserNotifications.status)) return;
+
+    const UpdateNotifications = await updateGdpUsersNotifications(
+        {keys: [UserNotifications.data[0].id], data: {seen: true}});
+    if(!isRequestSuccessful(UpdateNotifications.status)){
+      message.error(messages.general.error());
     }
-  }, [notifications]);
-
-  const markAsRead = (id: number) => {
-    setNotificationsProps({ messages: [], amount: 0, ids: [], onMarkAsRead: markAsRead});
-    getGdpUsersNotifications({filter: {activity_id: id}}).then((res) => {
-      if(isRequestSuccessful(res.status) && res?.data){
-        updateGdpUsersNotifications({keys: [res.data[0].id], data: {seen: true}}).then((res) => {
-          if(isRequestSuccessful(res.status)){
-            updateNotifications().then(() => {
-              if(notifications.length){
-                updateActivities().catch((e) => {
-                  console.error(e);
-                })
-              }
-            })
-          }
-        })
-      }
-    })
-
   }
-
-  useEffect(() => {
-    const newProps = { ...notificationsProps };
-    newProps.onMarkAsRead = markAsRead;
-    newProps.page = `${publicRuntimeConfig.USER_SERVICE_URL}/user/${user.id}?currentTab=Notifications`
-    setNotificationsProps(newProps);
-  }, []);
-
 
   return (
     <Provider store={configureStore}>
