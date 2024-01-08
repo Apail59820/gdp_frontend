@@ -8,7 +8,7 @@ import Authenticated from '../src/components/Authenticated/Authenticated';
 import {RetrieveGlobalData} from '../src/RetrieveGlobalData/RetrieveGlobalData';
 import React, {useEffect, useState} from 'react';
 import {getUserAvatarByUserId} from '../utils/assets';
-import {SideBar, TopBar} from 'projex-ui-dev';
+import {SideBar, TopBar} from 'projex-ui';
 import {getMyUsProfile} from "../services/userService/UsUsers";
 import {isRequestSuccessful} from "../utils/isRequestSuccessful";
 import {UsUserModel} from "../models/UserService/UsUserModel";
@@ -87,15 +87,12 @@ export default function App({Component, pageProps}: AppProps) {
   }, [user]);
 
   const markAsRead = async (id: number) => {
-
-    const UserNotifications = await getGdpUsersNotifications({filter: {activity_id: id}});
-    if(!isRequestSuccessful(UserNotifications.status)) return;
-
-    const UpdateNotifications = await updateGdpUsersNotifications(
-        {keys: [UserNotifications.data[0].id], data: {seen: true}});
-    if(!isRequestSuccessful(UpdateNotifications.status)){
+    updateGdpUsersNotifications({keys: [id], data: {seen: true}}).then(async () => {
+      await updateNotifications();
+    }).catch((e) => {
       message.error(messages.general.error());
-    }
+      console.log(e);
+    })
   }
 
   return (
