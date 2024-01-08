@@ -65,7 +65,7 @@ export default function App({Component, pageProps}: AppProps) {
   useEffect(() => {
     if(user?.id)
     getGdpUsersNotificationsCount(user).then((res) => {
-      if(isRequestSuccessful(res.status) && res?.count){
+      if(isRequestSuccessful(res.status)){
         setNotificationsProps({
           messages: notifications.map((notification) => notification.message),
           amount: res.count,
