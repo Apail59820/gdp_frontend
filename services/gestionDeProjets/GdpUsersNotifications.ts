@@ -67,7 +67,7 @@ export async function getGdpUsersNotificationsCount(
 
   if(isRequestSuccessful(res.status) && res?.data.length){
     // @ts-ignore
-    return {status : res.status, count: res.data[0]?.count as number}
+    return {status : res.status, count: parseInt(res.data[0]?.count, 10)}
   }
 
   return {status : res.status};
