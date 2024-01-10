@@ -431,7 +431,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                               allowClear
                               menuItemSelectedIcon={<CheckCircleTwoTone rev={undefined} twoToneColor={'#3FB1C9'}/>}
                               filterOption={false}
-                              placeholder={'Sélectionnez un ' + (userType == 'collaborator') ? 'collaborateur' : 'client'}
+                              placeholder={'Sélectionnez un ' + ((userType == 'collaborator') ? 'collaborateur' : 'client')}
                               options={users.map((user) => ({
                                 label: getFullName(user),
                                 value: user.id,
