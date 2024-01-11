@@ -52,7 +52,7 @@ export default function App({Component, pageProps}: AppProps) {
       limit: 5,
     }).then(async (res) => {
       if(isRequestSuccessful(res.status) && res?.data){
-        setNotifications(res.data.map((notification) => {
+        setNotifications(res.data?.map((notification) => {
           return /* @ts-ignore */ {
             message: notification.activity_id?.content?.message,
             id: notification.id
@@ -65,7 +65,7 @@ export default function App({Component, pageProps}: AppProps) {
   useEffect(() => {
     if(user?.id)
     getGdpUsersNotificationsCount(user).then((res) => {
-      if(isRequestSuccessful(res.status)){
+      if(isRequestSuccessful(res.status) && notifications?.length){
         setNotificationsProps({
           messages: notifications.map((notification) => notification.message),
           amount: res.count,
