@@ -8,16 +8,27 @@ import Authenticated from '../src/components/Authenticated/Authenticated';
 import {RetrieveGlobalData} from '../src/RetrieveGlobalData/RetrieveGlobalData';
 import React, {useEffect, useState} from 'react';
 import {getUserAvatarByUserId} from '../utils/assets';
-import {SideBar, TopBar} from "projex-ui";
+import {SideBar, TopBar} from 'projex-ui';
 import {getMyUsProfile} from "../services/userService/UsUsers";
 import {isRequestSuccessful} from "../utils/isRequestSuccessful";
 import {UsUserModel} from "../models/UserService/UsUserModel";
 import getConfig from "next/config";
+import {TopBarNotificationProp} from "../models/GestionDeProjets/GdpUsersNotificationModel";
+import {
+  getGdpUsersNotifications, getGdpUsersNotificationsCount,
+  updateGdpUsersNotifications
+} from "../services/gestionDeProjets/GdpUsersNotifications";
+import {message} from "antd";
+import {messages} from "../constants/messages";
 const { publicRuntimeConfig } = getConfig();
 
 export default function App({Component, pageProps}: AppProps) {
   const [user, setUser] = useState<Partial<UsUserModel>>({});
   const [userProfilePicture, setUserProfilePicture] = useState<string | undefined>(undefined);
+
+  const [notificationsProps, setNotificationsProps] = useState<TopBarNotificationProp>({ messages: [], amount: 0, ids: [], onMarkAsRead: null});
+  const [notifications, setNotifications] = useState<{ message: string, id: number }[]>([]);
+
   useEffect(() => {
     getMyUsProfile().then((res) => {
       if (isRequestSuccessful(res.status) && res.data) {
@@ -32,7 +43,57 @@ export default function App({Component, pageProps}: AppProps) {
       }
     })
   }, []);
+  async function updateNotifications() {
+    const myUsProfile = await getMyUsProfile();
+    getGdpUsersNotifications({
+      filter: { _and : [{ seen: {_eq: false}, directus_users_id: myUsProfile?.data.id}]  },
+      fields: 'id,activity_id.content',
+      sort: '-date_created',
+      limit: 5,
+    }).then(async (res) => {
+      if(isRequestSuccessful(res.status) && res?.data){
+        setNotifications(res.data?.map((notification) => {
+          return /* @ts-ignore */ {
+            message: notification.activity_id?.content?.message,
+            id: notification.id
+          }
+        }));
+      }
+    })
+  }
 
+  useEffect(() => {
+    if(user?.id)
+    getGdpUsersNotificationsCount(user).then((res) => {
+      if(isRequestSuccessful(res.status) && notifications?.length){
+        setNotificationsProps({
+          messages: notifications.map((notification) => notification.message),
+          amount: res.count,
+          ids: notifications.map((notification) => notification.id),
+          page: `${publicRuntimeConfig.USER_SERVICE_URL}/user/${user.id}?currentTab=Notifications`,
+          onMarkAsRead: markAsRead
+        })
+      }
+    })
+  }, [notifications]);
+
+
+  useEffect(() => {
+    if(user?.id){
+      updateNotifications().catch((e) => {
+        console.error(e);
+      })
+    }
+  }, [user]);
+
+  const markAsRead = async (id: number) => {
+    updateGdpUsersNotifications({keys: [id], data: {seen: true}}).then(async () => {
+      await updateNotifications();
+    }).catch((e) => {
+      message.error(messages.general.error());
+      console.log(e);
+    })
+  }
 
   return (
     <Provider store={configureStore}>
@@ -52,6 +113,7 @@ export default function App({Component, pageProps}: AppProps) {
               ]}
               user={user}
               avatar={userProfilePicture}
+              notifications={notificationsProps}
             />
           </header>
           <main id="main">

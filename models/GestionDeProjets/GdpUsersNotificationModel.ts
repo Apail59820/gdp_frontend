@@ -12,5 +12,14 @@ export type GdpUsersNotificationModel = {
   date_updated: Date | null;
 
   directus_users_id: string | UsUserModel;
-  activities_id: number | GdpActivitiesModel;
+  activity_id: number | GdpActivitiesModel;
 };
+
+// TODO: notifications: { messages : [], ids: []} // notifications: { ids: [{elemnts : [id, message_id]}]}
+export type TopBarNotificationProp = {
+  messages: string[];
+  ids: number[];
+  amount: number;
+  page?: string;
+  onMarkAsRead: (id: number) => void;
+}

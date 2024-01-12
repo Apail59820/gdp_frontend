@@ -1,5 +1,5 @@
 import {Form, message, Modal, Select} from "antd";
-import {Button} from "projex-ui";
+import {Button} from 'projex-ui';
 import React, {useEffect, useState} from "react";
 import {GdpProjectsModel} from "../../../models/GestionDeProjets/GdpProjectsModel";
 import {GdpAffairModel} from "../../../models/GestionDeProjets/GdpAffairModel";

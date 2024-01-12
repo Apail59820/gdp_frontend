@@ -1,6 +1,6 @@
 import {Form, message, Modal, Select} from "antd";
 import React, {useEffect, useState} from "react";
-import {Button} from "projex-ui";
+import {Button} from 'projex-ui';
 import {UsClientsCompanyEntitiesModel} from "../../../models/UserService/UsClientsCompanyEntitiesModel";
 import {getUsClientsCompanyEntities} from "../../../services/userService/UsClientsCompanyEntities";
 import {isRequestSuccessful} from "../../../utils/isRequestSuccessful";
