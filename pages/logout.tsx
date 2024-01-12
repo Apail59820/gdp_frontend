@@ -17,7 +17,7 @@ const Logout = () => {
 
     return <div className={styles.waiting}>
         <img src={'/logo-groupe-projex.svg'}/>
-        Vous serez déconnectés d'ici un instant
+        Vous serez déconnecté d'ici un instant
     </div>;
 };
 
