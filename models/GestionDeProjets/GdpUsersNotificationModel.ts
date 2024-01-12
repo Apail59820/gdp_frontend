@@ -15,6 +15,7 @@ export type GdpUsersNotificationModel = {
   activity_id: number | GdpActivitiesModel;
 };
 
+// TODO: notifications: { messages : [], ids: []} // notifications: { ids: [{elemnts : [id, message_id]}]}
 export type TopBarNotificationProp = {
   messages: string[];
   ids: number[];
