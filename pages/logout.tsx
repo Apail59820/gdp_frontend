@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { logout } from '../services/auth';
-import getConfig from "next/config";
+import getConfig from 'next/config';
 import styles from './logout.module.css'
 
 const { publicRuntimeConfig } = getConfig();
