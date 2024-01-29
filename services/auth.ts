@@ -112,3 +112,18 @@ export async function inviteNewUsers(
       return { status: 500 };
     });
 }
+
+export const logout = (): Promise<{ status: number }> => {
+  return fetch(`${publicRuntimeConfig.USER_SERVICE_API_URL}/auth/logout`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: new Headers({
+      'Content-Type': 'application/json',
+    }),
+  }).then((res) => {
+    cookie.remove('ds_access_token');
+    cookie.remove('ds_access_token_catalog');
+    cookie.remove('ds_access_token_gdp');
+    return { status: res.status };
+  });
+};
