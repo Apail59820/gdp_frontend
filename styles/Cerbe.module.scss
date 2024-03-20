@@ -1,0 +1,70 @@
+.cerbePage {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin-top: 0;
+    background-color: #bff2cd;
+
+    .resourcesIconElements, .carbonIconElements, .biodiversityIconElements, .powerIconElements {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 5px;
+        .img {
+            width: 50px;
+            height: 50px;
+            margin: 0 10px;
+        }
+
+        &:hover {
+            background-color: #84f3a2;
+            cursor: pointer;
+        }
+    }
+
+    .powerIconElements {
+        .title {
+            color: #be520a;
+        }
+    }
+
+
+    .biodiversityIconElements {
+        .title {
+            color: #4b8623;
+        }
+    }
+
+
+    .carbonIconElements {
+        .title {
+            color: #0d0d0d;
+        }
+    }
+
+
+    .resourcesIconElements {
+        .title {
+            color: #2e6ca4;
+        }
+    }
+
+
+    .headerIcon {
+        top: 0;
+        left: 0;
+    }
+    .bodyIcon {
+        bottom: 0;
+        right: 0;
+    }
+
+    .headerIcon, .bodyIcon {
+        margin: 0;
+        position: absolute;
+        cursor: pointer;
+    }
+}
