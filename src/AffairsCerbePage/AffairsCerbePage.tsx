@@ -79,7 +79,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             className={styles.generalities_collapse}
             header={"Généralités"}
           >
-            {generalities_query.isLoading ? (
+            {!generalities_query.isLoading ? (
               <GeneralitiesForm
                 generalities={
                   generalities_query.cerb_generalities?.length
