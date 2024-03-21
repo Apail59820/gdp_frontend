@@ -13,15 +13,21 @@ import DiagonalPict from "../../public/logo-diagobat.svg"
 const Cerbe = () => {
     const loading = false;
     const formatter = (value: number) => value.toFixed(2);
+    const [opacity, setOpacity] = React.useState(0);
+    const opacityTimeOut = setTimeout(() => {
+        setOpacity(1);
+        clearTimeout(opacityTimeOut);
+    }, 300);
+
     return (
         <>
-            <div className={styles.cerbePage}>
+            <div className={styles.cerbePage} style={{opacity: opacity ? 1 : 0}}>
                 <section>
-                    <div className={`${styles.headerIconContainer} multi`}>
+                    <div className={`${styles.headerIconContainer} multi`} style={{opacity: opacity ? 1 : 0}}>
                         <img src={DiagonalPict.src} className={styles.headerIcon} alt="Iconn"/>
                         <img src={HeaderIcon.src} className={styles.headerIcon} alt="Iconn"/>
                     </div>
-                    <img src={BodyIcon.src} className={styles.bodyIcon} alt="Iconn"/>
+                    <img src={BodyIcon.src} className={styles.bodyIcon} style={{opacity: opacity ? 1 : 0}} alt="Icon"/>
                 </section>
                 <section className={styles.iconsContainer}>
                     <div className={styles.iconsContainerContents}>

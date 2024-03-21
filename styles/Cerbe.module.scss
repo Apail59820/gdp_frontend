@@ -1,6 +1,14 @@
+@use "sass:selector";
+
 $styleList: "generalIconElements", "powerIconElements", "biodiversityIconElements", "resourcesIconElements", "carbonIconElements";
 $styleListWithColors: ("powerIconElements": #be520a, "biodiversityIconElements": #4b8623, "resourcesIconElements": #2e6ca4, "carbonIconElements": #0d0d0d);
 
+
+@mixin unify-parent($child) {
+    @at-root #{selector.unify(&, $child)} {
+        @content;
+    }
+}
 
 .cerbePage {
     position: relative;
@@ -37,12 +45,21 @@ $styleListWithColors: ("powerIconElements": #be520a, "biodiversityIconElements":
         overflow: hidden;
         flex: 1;
         cursor: pointer;
+        $iconsContainerTarget: &;
 
         .iconsContainerContents {
             overflow-y: auto;
             overflow-x: hidden;
             padding-top: 60px;
             padding-bottom: 20px;
+
+            //&:hover {
+            //    #{$iconsContainerTarget} {
+            //        &::before, &::after {
+            //            opacity: 1;
+            //        }
+            //    }
+            //}
         }
 
         &:hover {
@@ -156,6 +173,14 @@ $styleListWithColors: ("powerIconElements": #be520a, "biodiversityIconElements":
                 top: 10px;
                 left: 5%;
             }
+        }
+    }
+
+    .headerIconContainer, .bodyIcon {
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        &.opacity-1 {
+            opacity: 1;
         }
     }
 
