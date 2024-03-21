@@ -24,10 +24,12 @@ const Cerbe = () => {
     }, 300);
 
     const handleSegmentedOnChange = (value: string) => {
-        if (value === 'maxScreen')
+        if (value === 'maxScreen') {
             setIsFullScreen(true);
-        else
+            setOpacity(1);
+        } else
             setIsFullScreen(false);
+            setOpacity(0);
     }
 
     return (
@@ -73,9 +75,11 @@ const Cerbe = () => {
                                 </div>
                             ) : (
                                 <div className={styles.generalIconElements}>
-                                    <h2 className={styles.title}>GENERALITES</h2>
+                                    <div className={styles.header}>
+                                        <h2 className={styles.title}>GENERALITES</h2>
+                                    </div>
                                     <div className={styles.content}>
-                                        <Row gutter={16}>
+                                    <Row gutter={16}>
                                             <Col span={12}>
                                                 <Statistic title="Nombre de projets" value={112893}
                                                            formatter={formatter}/>
@@ -105,11 +109,13 @@ const Cerbe = () => {
                                 </div>
                             ) : (
                                 <div className={styles.powerIconElements}>
-                                    <img src={PowerIcon.src} className={styles.img} alt="Iconn"/>
-                                    <h2 className={styles.title}>REDUIRE LE BESOIN EN ENERGIE</h2>
+                                    <div className={styles.header}>
+                                        <img src={PowerIcon.src} className={styles.img} alt="Iconn"/>
+                                        <h2 className={styles.title}>REDUIRE LE BESOIN EN ENERGIE</h2>
+                                    </div>
                                     <div className={styles.content}>
                                         <Row gutter={16}>
-                                            <Col span={12}>
+                                        <Col span={12}>
                                                 <Statistic
                                                     title="Gain sur les consommations réglementaire (1-(Cep/Cepref))"
                                                     value={112893}
@@ -144,8 +150,10 @@ const Cerbe = () => {
                                 </div>
                             ) : (
                                 <div className={styles.biodiversityIconElements}>
-                                    <img src={BiodiversityIcon.src} className={styles.img} alt="Iconn"/>
-                                    <h2 className={styles.title}>AMELIORER LA BIODIVERSITE</h2>
+                                    <div className={styles.header}>
+                                        <img src={BiodiversityIcon.src} className={styles.img} alt="Iconn"/>
+                                        <h2 className={styles.title}>AMELIORER LA BIODIVERSITE</h2>
+                                    </div>
                                     <div className={styles.content}>
                                         <Row gutter={16}>
                                             <Col span={12}>
@@ -188,8 +196,10 @@ const Cerbe = () => {
                                 </div>
                             ) : (
                                 <div className={styles.resourcesIconElements}>
-                                    <img src={ResourcesIcon.src} className={styles.img} alt="Iconn"/>
-                                    <h2 className={styles.title}>PRESERVER LES RESSOURCES</h2>
+                                    <div className={styles.header}>
+                                        <img src={ResourcesIcon.src} className={styles.img} alt="Iconn"/>
+                                        <h2 className={styles.title}>PRESERVER LES RESSOURCES</h2>
+                                    </div>
                                     <div className={styles.content}>
                                         <Row gutter={16}>
                                             <Col span={12}>
@@ -222,11 +232,13 @@ const Cerbe = () => {
                                 </div>
                             ) : (
                                 <div className={styles.carbonIconElements}>
-                                    <img src={CarbonIcon.src} className={styles.img} alt="Iconn"/>
-                                    <h2 className={styles.title}>REDUIRE L'EMPREINTE CARBONE</h2>
+                                    <div className={styles.header}>
+                                        <img src={CarbonIcon.src} className={styles.img} alt="Iconn"/>
+                                        <h2 className={styles.title}>REDUIRE L'EMPREINTE CARBONE</h2>
+                                    </div>
                                     <div className={styles.content}>
                                         <Row gutter={16}>
-                                            <Col span={12}>
+                                        <Col span={12}>
                                                 <Statistic
                                                     title="Empreinte carbone totale PROJET"
                                                     value={112893}
