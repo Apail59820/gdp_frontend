@@ -1,71 +1,136 @@
+$styleList: "generalIconElements", "powerIconElements", "biodiversityIconElements", "resourcesIconElements", "carbonIconElements";
+$styleListWithColors: ("powerIconElements": #be520a, "biodiversityIconElements": #4b8623, "resourcesIconElements": #2e6ca4, "carbonIconElements": #0d0d0d);
+
+
 .cerbePage {
     position: relative;
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    align-items: stretch;
+    justify-content: flex-start;
     height: 100%;
     margin-top: 0;
     background-color: #e1efda;
-    overflow-y: auto;
+    overflow: hidden;
+
 
     &::before{
         content: "";
         top: 0;
         left: 0;
-        width: 100px;
+        width: 60px;
         height: 100%;
         background-color: #58b164;
+        position: relative;
+        display: inline-block;
     }
-
 
     section {
         + section {
-            margin-top: 300px;
+            padding-top: 200px;
         }
     }
 
     .iconsContainer {
         display: flex;
         flex-direction: column;
-        height: inherit;
-    }
+        overflow: hidden;
+        flex: 1;
+        cursor: pointer;
 
-    .generalIconElements, .resourcesIconElements, .carbonIconElements, .biodiversityIconElements, .powerIconElements {
-        display: flex;
-        padding: 5px;
-        flex-direction: row;
-        align-items: center;
-
-        .img {
-            width: 50px;
-            height: 50px;
-            margin: 0 10px;
+        .iconsContainerContents {
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-top: 60px;
+            padding-bottom: 20px;
         }
 
         &:hover {
-            cursor: pointer;
-        }
-        .content {
-            display: flex;
-            span {
-                display: inline-flex;
-                flex: 1;
+            &::before, &::after {
+                opacity: 1;
             }
         }
 
-        & + .generalIconElements, & + .resourcesIconElements, & + .carbonIconElements, & + .biodiversityIconElements, & + .powerIconElements {
-            padding-top: 40px;
+        &::before, &::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            z-index: 1;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
         }
 
-        section {
-            height: 100vh;
-            &:nth-last-child {
-                padding-bottom: 100px;
+        &::before {
+            height: 60px;
+            top: 1;
+            background: linear-gradient(rgb(#c9dcd1, 0.8), rgba(255, 255, 255, 0.001));
+        }
+        &::after {
+            height: 95px;
+            bottom: 0;
+            background: linear-gradient(rgba(255, 255, 255, 0.001), rgb(#c9dcd1, 0.8));
+        }
+    }
+
+    @each $style in $styleList {
+        .#{$style} {
+            display: flex;
+            padding: 5px;
+            flex-direction: row;
+            align-items: center;
+
+            .img {
+                width: 50px;
+                height: 50px;
+                margin: 0 10px;
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
+            .content {
+                display: flex;
+                span {
+                    display: inline-flex;
+                    flex: 1;
+                }
+            }
+
+            & + .generalIconElements {
+                padding-top: 40px;
+            }
+
+            @each $style, $_ in $styleListWithColors {
+                & + .#{$style}{
+                    padding-top: 40px;
+                }
+            }
+
+            section {
+                height: 0;
+                &:nth-last-child {
+                    padding-bottom: 100px;
+                }
             }
         }
     }
 
+    @each $style, $color in $styleListWithColors {
+        .#{$style} {
+            position: relative;
+            &::before {
+                content: "";
+                left: 0;
+                bottom: -15px;
+                border: 2px solid $color;
+                width: 100%;
+                position: absolute;
+            }
+            .title {
+                color: $color;
+            }
+        }
+    }
 
     .generalIconElements {
         display: flex;
@@ -85,79 +150,27 @@
         }
     }
 
-    .powerIconElements {
-        position: relative;
-        &::before {
-            content: "";
-            left: 0;
-            bottom: -15px;
-            border: 2px solid  #be520a;
-            width: 100%;
-            position: absolute;
-        }
-        .title {
-            color: #be520a;
-        }
-    }
-
-    .biodiversityIconElements {
-        position: relative;
-        &::before {
-            content: "";
-            left: 0;
-            bottom: -15px;
-            border: 2px solid  #4b8623;
-            width: 100%;
-            position: absolute;
-        }
-        .title {
-            color: #4b8623;
-        }
-    }
-
-    .carbonIconElements {
-        position: relative;
-        &::before {
-            content: "";
-            left: 0;
-            bottom: -15px;
-            border: 2px solid  #0d0d0d;
-            width: 100%;
-            position: absolute;
-        }
-        .title {
-            color: #0d0d0d;
-        }
-    }
-
-    .resourcesIconElements {
-        position: relative;
-        &::before {
-            content: "";
-            left: 0;
-            bottom: -15px;
-            border: 2px solid  #2e6ca4;
-            width: 100%;
-            position: absolute;
-        }
-        hr, .title {
-            color: #2e6ca4;
-        }
-    }
-
     .headerIconContainer {
         .headerIcon {
             &:nth-child(1) {
                 top: 10px;
-                left: 6%;
+                left: 5%;
             }
         }
     }
 
     .headerIcon {
         top: 0;
-        left: 30%;
-        transform: translateX(-30%);
+        left: 25%;
+        &::after {
+            content: "";
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #58b164;
+            position: absolute;
+        }
     }
     .bodyIcon {
         bottom: 0;
@@ -165,7 +178,6 @@
     }
 
     .headerIcon, .bodyIcon {
-        z-index: 1;
         margin: 0;
         position: absolute;
         cursor: pointer;
