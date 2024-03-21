@@ -15,6 +15,8 @@ import { isRequestSuccessful } from '../../utils/isRequestSuccessful';
 import CreateProjectForm from '../components/CreateProjectForm/CreateProjectForm';
 import {selectUserProfile} from "../../store/reducers/authReducer";
 import { selectProjects } from '../../store/reducers/projectsReducer';
+import CERBEWidget from '../components/CERBEWidget/CERBEWidget';
+import CreateCERBEForm from '../components/CreateCERBEForm/CreateCERBEForm';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -27,6 +29,7 @@ const HomeDashboard = () => {
   const [areCurrentUsersProjectsLoading, setAreCurrentUsersProjectsLoading] = useState(true);
 
   const [isCreateNewProjectModalOpen, setIsCreateNewProjectModalOpen] = useState(false);
+  const [isCreateNewCERBEModalOpen,setIsCreateNewCERBEModalOpen ] = useState(false);
 
   useEffect(() => {
       if (!userProfile || !userProfile.role || !userProfile.id) return;
@@ -92,6 +95,7 @@ const HomeDashboard = () => {
   return (
     <div className={styles.homeDashboard}>
         <CreateProjectForm isOpen={isCreateNewProjectModalOpen} setIsOpen={setIsCreateNewProjectModalOpen} />
+        <CreateCERBEForm isOpen={isCreateNewCERBEModalOpen} setIsOpen={setIsCreateNewCERBEModalOpen} />
         <QuickAccessWidget>
             <Grid>
               <QuickActionCard
@@ -122,6 +126,7 @@ const HomeDashboard = () => {
             isLoading={areCurrentUsersProjectsLoading}
             handleNewProjectClick={() => setIsCreateNewProjectModalOpen(true)}
           />
+        <CERBEWidget handleNewCERBERClick={()=>setIsCreateNewCERBEModalOpen(true)} />
     </div>
   );
 };
