@@ -1,13 +1,19 @@
 import { Form, Input } from "antd";
 import React from "react";
+import { GdpCerbTechnicalModel } from "../../../models/GestionDeProjets/CERBE/GdpCerbTechnicalModel";
 
-const TechnicalForm = () => {
+type Props = {
+  technical: Partial<GdpCerbTechnicalModel>;
+};
+const TechnicalForm = ({ technical }: Props) => {
   return (
     <Form style={{ width: "75%" }}>
       <Form.Item
         label={"CVC"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
+        initialValue={technical?.hvac}
+        name={"hvac"}
       >
         <Input />
       </Form.Item>
@@ -15,6 +21,8 @@ const TechnicalForm = () => {
         label={"Electricité"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
+        initialValue={technical?.electricity}
+        name={"electricity"}
       >
         <Input />
       </Form.Item>
@@ -22,6 +30,8 @@ const TechnicalForm = () => {
         label={"Structure"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
+        initialValue={technical?.structure}
+        name={"structure"}
       >
         <Input />
       </Form.Item>
@@ -29,6 +39,8 @@ const TechnicalForm = () => {
         label={"Enveloppe"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
+        initialValue={technical?.envelope}
+        name={"envelope"}
       >
         <Input />
       </Form.Item>
@@ -36,6 +48,8 @@ const TechnicalForm = () => {
         label={"Finitions interieures"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
+        initialValue={technical?.interior_finishes}
+        name={"interior_finishes"}
       >
         <Input />
       </Form.Item>
@@ -43,6 +57,8 @@ const TechnicalForm = () => {
         label={"Autres"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
+        initialValue={technical?.other}
+        name={"other"}
       >
         <Input />
       </Form.Item>
