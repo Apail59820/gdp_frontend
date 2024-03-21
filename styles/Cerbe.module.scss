@@ -1,0 +1,173 @@
+.cerbePage {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin-top: 0;
+    background-color: #e1efda;
+    overflow-y: auto;
+
+    &::before{
+        content: "";
+        top: 0;
+        left: 0;
+        width: 100px;
+        height: 100%;
+        background-color: #58b164;
+    }
+
+
+    section {
+        + section {
+            margin-top: 300px;
+        }
+    }
+
+    .iconsContainer {
+        display: flex;
+        flex-direction: column;
+        height: inherit;
+    }
+
+    .generalIconElements, .resourcesIconElements, .carbonIconElements, .biodiversityIconElements, .powerIconElements {
+        display: flex;
+        padding: 5px;
+        flex-direction: row;
+        align-items: center;
+
+        .img {
+            width: 50px;
+            height: 50px;
+            margin: 0 10px;
+        }
+
+        &:hover {
+            cursor: pointer;
+        }
+        .content {
+            display: flex;
+            span {
+                display: inline-flex;
+                flex: 1;
+            }
+        }
+
+        & + .generalIconElements, & + .resourcesIconElements, & + .carbonIconElements, & + .biodiversityIconElements, & + .powerIconElements {
+            padding-top: 40px;
+        }
+
+        section {
+            height: 100vh;
+            &:nth-last-child {
+                padding-bottom: 100px;
+            }
+        }
+    }
+
+
+    .generalIconElements {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        position: relative;
+        &::before {
+            content: "";
+            left: 0;
+            bottom: -25px;
+            border: 2px solid #696767;
+            width: 100%;
+            position: absolute;
+        }
+        .title {
+            color: #696767;
+        }
+    }
+
+    .powerIconElements {
+        position: relative;
+        &::before {
+            content: "";
+            left: 0;
+            bottom: -15px;
+            border: 2px solid  #be520a;
+            width: 100%;
+            position: absolute;
+        }
+        .title {
+            color: #be520a;
+        }
+    }
+
+    .biodiversityIconElements {
+        position: relative;
+        &::before {
+            content: "";
+            left: 0;
+            bottom: -15px;
+            border: 2px solid  #4b8623;
+            width: 100%;
+            position: absolute;
+        }
+        .title {
+            color: #4b8623;
+        }
+    }
+
+    .carbonIconElements {
+        position: relative;
+        &::before {
+            content: "";
+            left: 0;
+            bottom: -15px;
+            border: 2px solid  #0d0d0d;
+            width: 100%;
+            position: absolute;
+        }
+        .title {
+            color: #0d0d0d;
+        }
+    }
+
+    .resourcesIconElements {
+        position: relative;
+        &::before {
+            content: "";
+            left: 0;
+            bottom: -15px;
+            border: 2px solid  #2e6ca4;
+            width: 100%;
+            position: absolute;
+        }
+        hr, .title {
+            color: #2e6ca4;
+        }
+    }
+
+    .headerIconContainer {
+        .headerIcon {
+            &:nth-child(1) {
+                top: 10px;
+                left: 6%;
+            }
+        }
+    }
+
+    .headerIcon {
+        top: 0;
+        left: 30%;
+        transform: translateX(-30%);
+    }
+    .bodyIcon {
+        bottom: 0;
+        right: 0;
+    }
+
+    .headerIcon, .bodyIcon {
+        z-index: 1;
+        margin: 0;
+        position: absolute;
+        cursor: pointer;
+    }
+}
