@@ -1,6 +1,6 @@
 import styles from "./AffairsCerbe.module.scss";
 import React from "react";
-import { Collapse, Divider, Flex, Spin } from "antd";
+import { Collapse, Divider, Spin } from "antd";
 import { GdpAffairModel } from "../../models/GestionDeProjets/GdpAffairModel";
 import GeneralitiesForm from "./Forms/GeneralitiesForm";
 import BiodiversityForm from "./Forms/BiodiversityForm";
@@ -56,6 +56,14 @@ const AffairsCerbePage = ({ affair }: Props) => {
     },
   });
 
+  const isLoading =
+    generalities_query.isLoading ||
+    biodiversity_query.isLoading ||
+    energy_query.isLoading ||
+    carbon_query.isLoading ||
+    resources_query.isLoading ||
+    technical_query.isLoading;
+
   return (
     <div className="page">
       <div className={styles.affairsCerbePage}>
@@ -71,7 +79,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             className={styles.generalities_collapse}
             header={"Généralités"}
           >
-            {!generalities_query.isLoading ? (
+            {generalities_query.isLoading ? (
               <GeneralitiesForm
                 generalities={
                   generalities_query.cerb_generalities?.length
@@ -80,9 +88,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
                 }
               />
             ) : (
-              <Flex align="center" gap="middle">
-                <Spin size="large" />
-              </Flex>
+              <Spin size="large" style={{ marginLeft: "50%" }} />
             )}
           </Collapse.Panel>
           <Collapse.Panel
@@ -99,9 +105,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
                 }
               />
             ) : (
-              <Flex align="center" gap="middle">
-                <Spin size="large" />
-              </Flex>
+              <Spin size="large" style={{ marginLeft: "50%" }} />
             )}
           </Collapse.Panel>
           <Collapse.Panel
@@ -118,9 +122,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
                 }
               />
             ) : (
-              <Flex align="center" gap="middle">
-                <Spin size="large" />
-              </Flex>
+              <Spin size="large" style={{ marginLeft: "50%" }} />
             )}
           </Collapse.Panel>
           <Collapse.Panel
@@ -137,9 +139,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
                 }
               />
             ) : (
-              <Flex align="center" gap="middle">
-                <Spin size="large" />
-              </Flex>
+              <Spin size="large" style={{ marginLeft: "50%" }} />
             )}
           </Collapse.Panel>
           <Collapse.Panel
@@ -156,9 +156,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
                 }
               />
             ) : (
-              <Flex align="center" gap="middle">
-                <Spin size="large" />
-              </Flex>
+              <Spin size="large" style={{ marginLeft: "50%" }} />
             )}
           </Collapse.Panel>
           <Collapse.Panel
@@ -175,9 +173,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
                 }
               />
             ) : (
-              <Flex align="center" gap="middle">
-                <Spin size="large" />
-              </Flex>
+              <Spin size="large" style={{ marginLeft: "50%" }} />
             )}
           </Collapse.Panel>
         </Collapse>
