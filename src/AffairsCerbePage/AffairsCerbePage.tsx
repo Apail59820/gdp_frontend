@@ -1,6 +1,6 @@
 import styles from "./AffairsCerbe.module.scss";
 import React from "react";
-import { Collapse, Divider } from "antd";
+import { Collapse, Divider, Flex, Spin } from "antd";
 import { GdpAffairModel } from "../../models/GestionDeProjets/GdpAffairModel";
 import GeneralitiesForm from "./Forms/GeneralitiesForm";
 import BiodiversityForm from "./Forms/BiodiversityForm";
@@ -71,7 +71,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             className={styles.generalities_collapse}
             header={"Généralités"}
           >
-            {!generalities_query.isLoading && (
+            {!generalities_query.isLoading ? (
               <GeneralitiesForm
                 generalities={
                   generalities_query.cerb_generalities?.length
@@ -79,6 +79,10 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     : {}
                 }
               />
+            ) : (
+              <Flex align="center" gap="middle">
+                <Spin size="large" />
+              </Flex>
             )}
           </Collapse.Panel>
           <Collapse.Panel
@@ -86,7 +90,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             className={styles.biodiversity_collapse}
             header={"Biodiversité"}
           >
-            {!biodiversity_query.isLoading && (
+            {!biodiversity_query.isLoading ? (
               <BiodiversityForm
                 biodiversity={
                   biodiversity_query.cerb_biodiversity?.length
@@ -94,6 +98,10 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     : {}
                 }
               />
+            ) : (
+              <Flex align="center" gap="middle">
+                <Spin size="large" />
+              </Flex>
             )}
           </Collapse.Panel>
           <Collapse.Panel
@@ -101,7 +109,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             className={styles.energy_collapse}
             header={"Énergie"}
           >
-            {!energy_query.isLoading && (
+            {!energy_query.isLoading ? (
               <EnergyForm
                 energy={
                   energy_query.cerb_energy?.length
@@ -109,6 +117,10 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     : {}
                 }
               />
+            ) : (
+              <Flex align="center" gap="middle">
+                <Spin size="large" />
+              </Flex>
             )}
           </Collapse.Panel>
           <Collapse.Panel
@@ -116,7 +128,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             className={styles.carbon_collapse}
             header={"Carbone"}
           >
-            {!carbon_query.isLoading && (
+            {!carbon_query.isLoading ? (
               <CarbonForm
                 carbon={
                   carbon_query.cerb_carbon?.length
@@ -124,6 +136,10 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     : {}
                 }
               />
+            ) : (
+              <Flex align="center" gap="middle">
+                <Spin size="large" />
+              </Flex>
             )}
           </Collapse.Panel>
           <Collapse.Panel
@@ -131,7 +147,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             className={styles.resources_collapse}
             header={"Ressources"}
           >
-            {!resources_query.isLoading && (
+            {!resources_query.isLoading ? (
               <ResourcesForm
                 resources={
                   resources_query.cerb_ressources?.length
@@ -139,6 +155,10 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     : {}
                 }
               />
+            ) : (
+              <Flex align="center" gap="middle">
+                <Spin size="large" />
+              </Flex>
             )}
           </Collapse.Panel>
           <Collapse.Panel
@@ -146,7 +166,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             className={styles.technical_collapse}
             header={"Technique"}
           >
-            {!technical_query.isLoading && (
+            {!technical_query.isLoading ? (
               <TechnicalForm
                 technical={
                   technical_query.cerb_technical?.length
@@ -154,6 +174,10 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     : {}
                 }
               />
+            ) : (
+              <Flex align="center" gap="middle">
+                <Spin size="large" />
+              </Flex>
             )}
           </Collapse.Panel>
         </Collapse>
