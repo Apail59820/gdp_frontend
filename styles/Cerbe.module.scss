@@ -52,14 +52,6 @@ $styleListWithColors: ("powerIconElements": #be520a, "biodiversityIconElements":
             overflow-x: hidden;
             padding-top: 60px;
             padding-bottom: 20px;
-
-            //&:hover {
-            //    #{$iconsContainerTarget} {
-            //        &::before, &::after {
-            //            opacity: 1;
-            //        }
-            //    }
-            //}
         }
 
         &:hover {
@@ -147,6 +139,10 @@ $styleListWithColors: ("powerIconElements": #be520a, "biodiversityIconElements":
                 color: $color;
             }
         }
+    }
+
+    .titleElements {
+        padding: 5px;
     }
 
     .generalIconElements {

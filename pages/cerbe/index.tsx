@@ -1,7 +1,9 @@
 import styles from "../../styles/Cerbe.module.scss";
 import Grid from "../../src/components/Grid/Grid";
 import React from "react";
-import {  Skeleton, Row, Col, Statistic  } from 'antd'
+import {  Skeleton, Row, Col, Statistic, Segmented  } from 'antd'
+import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
+
 import HeaderIcon from "../../public/Icon-cerbe-head.svg"
 import BodyIcon from "../../public/Icon-cerbe-body.svg"
 import PowerIcon from "../../public/Icon-power.svg"
@@ -14,23 +16,56 @@ const Cerbe = () => {
     const loading = false;
     const formatter = (value: number) => value.toFixed(2);
     const [opacity, setOpacity] = React.useState(0);
+    const [isFullScreen, setIsFullScreen] = React.useState(false);
+    const currentYear = new Date().getFullYear()
     const opacityTimeOut = setTimeout(() => {
         setOpacity(1);
         clearTimeout(opacityTimeOut);
     }, 300);
 
+    const handleSegmentedOnChange = (value: string) => {
+        if (value === 'maxScreen')
+            setIsFullScreen(true);
+        else
+            setIsFullScreen(false);
+    }
+
     return (
         <>
+            <Segmented onChange={handleSegmentedOnChange} style={{maxWidth: '100px'}}
+                options={[
+                    {
+                        value: 'minScreen',
+                        icon: <FullscreenExitOutlined rev={undefined} />,
+                    },
+                    {
+                        value: 'maxScreen',
+                        icon: <FullscreenOutlined rev={undefined} />,
+                    },
+                ]}
+            />
             <div className={styles.cerbePage} style={{opacity: opacity ? 1 : 0}}>
-                <section>
-                    <div className={`${styles.headerIconContainer} multi`} style={{opacity: opacity ? 1 : 0}}>
-                        <img src={DiagonalPict.src} className={styles.headerIcon} alt="Iconn"/>
-                        <img src={HeaderIcon.src} className={styles.headerIcon} alt="Iconn"/>
-                    </div>
-                    <img src={BodyIcon.src} className={styles.bodyIcon} style={{opacity: opacity ? 1 : 0}} alt="Icon"/>
-                </section>
+                {
+                    !isFullScreen ? (
+                        <section>
+                            <div className={`${styles.headerIconContainer} multi`} style={{opacity: opacity ? 1 : 0}}>
+                                <img src={DiagonalPict.src} className={styles.headerIcon} alt="Iconn"/>
+                                <img src={HeaderIcon.src} className={styles.headerIcon} alt="Iconn"/>
+                            </div>
+                            <img src={BodyIcon.src} className={styles.bodyIcon} style={{opacity: opacity ? 1 : 0}}
+                                 alt="Icon"/>
+                        </section>
+                    ) : null
+                }
                 <section className={styles.iconsContainer}>
                     <div className={styles.iconsContainerContents}>
+                        <div className={styles.titleElements}>
+                            <h1>
+                                IMPACTS {currentYear} <br/>
+                                <span>INDICATEURS PLANET</span><br/>
+                                <br/>
+                            </h1>
+                        </div>
                         {
                             loading ? (
                                 <div>
