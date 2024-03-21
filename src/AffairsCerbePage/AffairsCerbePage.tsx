@@ -14,6 +14,7 @@ import { useGdpCerbEnergy } from "../../services/gestionDeProjets/CERBE/GdpCerbE
 import { useGdpCerbCarbon } from "../../services/gestionDeProjets/CERBE/GdpCerbCarbon";
 import { useGdpCerbRessources } from "../../services/gestionDeProjets/CERBE/GdpCerbRessources";
 import { useGdpCerbTechnical } from "../../services/gestionDeProjets/CERBE/GdpCerbTechnical";
+import { Button } from "projex-ui";
 
 type Props = {
   affair: Partial<GdpAffairModel>;
@@ -156,6 +157,9 @@ const AffairsCerbePage = ({ affair }: Props) => {
             )}
           </Collapse.Panel>
         </Collapse>
+        <div style={{ display: "flex", justifyContent: "end" }}>
+          <Button style={"primary"}>Envoyer</Button>
+        </div>
       </div>
     </div>
   );

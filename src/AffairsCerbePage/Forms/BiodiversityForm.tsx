@@ -1,11 +1,39 @@
 import { Form, Input } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { GdpCerbBiodiversityModel } from "../../../models/GestionDeProjets/CERBE/GdpCerbBiodiversityModel";
 
 type Props = {
   biodiversity: Partial<GdpCerbBiodiversityModel>;
 };
 const BiodiversityForm = ({ biodiversity }: Props) => {
+  const [totalPlotArea, setTotalPlotArea] = useState<number>(
+    biodiversity?.total_plot_area | 0,
+  );
+
+  const [
+    initialBiotopeSurfaceCoefficient,
+    setInitialBiotopeSurfaceCoefficient,
+  ] = useState<number>(biodiversity?.initial_biotope_surface_coefficient | 0);
+
+  const [
+    projectBiotopeSurfaceCoefficient,
+    setProjectBiotopeSurfaceCoefficient,
+  ] = useState<number>(biodiversity?.project_biotope_surface_coefficient | 0);
+
+  const [
+    initialSurfaceThermalRefreshmentCoefficient,
+    setInitialSurfaceThermalRefreshmentCoefficient,
+  ] = useState<number>(
+    biodiversity?.initial_surface_thermal_refreshment_coefficient | 0,
+  );
+
+  const [
+    projectSurfaceThermalRefreshmentCoefficient,
+    setProjectSurfaceThermalRefreshmentCoefficient,
+  ] = useState<number>(
+    biodiversity?.project_surface_thermal_refreshment_coefficient | 0,
+  );
+
   return (
     <Form style={{ width: "75%" }}>
       <Form.Item
@@ -15,7 +43,10 @@ const BiodiversityForm = ({ biodiversity }: Props) => {
         initialValue={biodiversity?.total_plot_area}
         name={"total_plot_area"}
       >
-        <Input />
+        <Input
+          value={totalPlotArea}
+          onChange={(e) => setTotalPlotArea(parseInt(e.target.value, 10))}
+        />
       </Form.Item>
       <Form.Item
         label={"CBS Initial"}
@@ -24,7 +55,12 @@ const BiodiversityForm = ({ biodiversity }: Props) => {
         initialValue={biodiversity?.initial_biotope_surface_coefficient}
         name={"initial_biotope_surface_coefficient"}
       >
-        <Input />
+        <Input
+          value={initialBiotopeSurfaceCoefficient}
+          onChange={(e) =>
+            setInitialBiotopeSurfaceCoefficient(parseInt(e.target.value, 10))
+          }
+        />
       </Form.Item>
       <Form.Item
         label={"CBS Projet"}
@@ -33,7 +69,12 @@ const BiodiversityForm = ({ biodiversity }: Props) => {
         initialValue={biodiversity?.project_biotope_surface_coefficient}
         name={"project_biotope_surface_coefficient"}
       >
-        <Input />
+        <Input
+          value={projectBiotopeSurfaceCoefficient}
+          onChange={(e) =>
+            setProjectBiotopeSurfaceCoefficient(parseInt(e.target.value, 10))
+          }
+        />
       </Form.Item>
       <Form.Item
         label={"CRTS Initial"}
@@ -44,7 +85,14 @@ const BiodiversityForm = ({ biodiversity }: Props) => {
         }
         name={"initial_surface_thermal_refreshment_coefficient"}
       >
-        <Input />
+        <Input
+          value={initialSurfaceThermalRefreshmentCoefficient}
+          onChange={(e) =>
+            setInitialSurfaceThermalRefreshmentCoefficient(
+              parseInt(e.target.value, 10),
+            )
+          }
+        />
       </Form.Item>
       <Form.Item
         label={"CRTS Projet"}
@@ -55,7 +103,14 @@ const BiodiversityForm = ({ biodiversity }: Props) => {
         }
         name={"project_surface_thermal_refreshment_coefficient"}
       >
-        <Input />
+        <Input
+          value={projectSurfaceThermalRefreshmentCoefficient}
+          onChange={(e) =>
+            setProjectSurfaceThermalRefreshmentCoefficient(
+              parseInt(e.target.value, 10),
+            )
+          }
+        />
       </Form.Item>
     </Form>
   );
