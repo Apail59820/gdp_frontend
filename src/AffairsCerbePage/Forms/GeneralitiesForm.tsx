@@ -1,11 +1,12 @@
 import { Form, Input } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GdpCerbGeneralitiesModel } from "../../../models/GestionDeProjets/CERBE/GdpCerbGeneralitiesModel";
 
 type Props = {
   generalities: Partial<GdpCerbGeneralitiesModel>;
+  onFormChange: (updatedData) => void;
 };
-const GeneralitiesForm = ({ generalities }: Props) => {
+const GeneralitiesForm = ({ generalities, onFormChange }: Props) => {
   const [interlocutor, setInterlocutor] = useState<string>(
     generalities?.interlocutor || "",
   );
@@ -34,6 +35,26 @@ const GeneralitiesForm = ({ generalities }: Props) => {
   const [certificationsLabel, setCertificationsLabel] = useState<string>(
     generalities?.certifications_labels || "",
   );
+
+  useEffect(() => {
+    onFormChange({
+      interlocutor: interlocutor,
+      affairName: affairName,
+      affairContractingAuthority: affairContractingAuthority,
+      plotArea: plotArea,
+      floorArea: floorArea,
+      status: status,
+      typology: typology,
+    });
+  }, [
+    interlocutor,
+    affairName,
+    affairContractingAuthority,
+    plotArea,
+    floorArea,
+    status,
+    typology,
+  ]);
 
   return (
     <Form style={{ width: "75%" }}>

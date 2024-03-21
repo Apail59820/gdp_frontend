@@ -1,5 +1,5 @@
 import styles from "./AffairsCerbe.module.scss";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Collapse, Divider, Spin } from "antd";
 import { GdpAffairModel } from "../../models/GestionDeProjets/GdpAffairModel";
 import GeneralitiesForm from "./Forms/GeneralitiesForm";
@@ -56,13 +56,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
     },
   });
 
-  const isLoading =
-    generalities_query.isLoading ||
-    biodiversity_query.isLoading ||
-    energy_query.isLoading ||
-    carbon_query.isLoading ||
-    resources_query.isLoading ||
-    technical_query.isLoading;
+  const [generalitiesFormData, setGeneralitiesFormData] = useState({});
 
   return (
     <div className="page">
@@ -86,6 +80,12 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     ? generalities_query.cerb_generalities[0]
                     : {}
                 }
+                onFormChange={(updatedData) => {
+                  setGeneralitiesFormData({
+                    ...generalitiesFormData,
+                    ...updatedData,
+                  });
+                }}
               />
             ) : (
               <Spin size="large" style={{ marginLeft: "50%" }} />
