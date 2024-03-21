@@ -24,6 +24,7 @@
     "js-cookie": "^3.0.1",
     "luxon": "^3.2.1",
     "next": "13.4.19",
+    "prettier": "^3.2.5",
     "projex-styles": "^1.0.1",
     "projex-ui": "^1.4.0",
     "react": "18.2.0",
