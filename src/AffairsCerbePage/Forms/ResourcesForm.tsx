@@ -14,22 +14,22 @@ const ResourcesForm = ({ resources, onFormChange }: Props) => {
     initialParcelPermeabilityCoefficient,
     setInitialParcelPermeabilityCoefficient,
   ] = useState<number>(
-    resources?.initial_parcel_permeability_coefficient || null,
+    resources?.initial_plot_permeability_coefficient || null,
   );
 
   const [
     projectParcelPermeabilityCoefficient,
     setProjectParcelPermeabilityCoefficient,
   ] = useState<number>(
-    resources?.project_parcel_permeability_coefficient || null,
+    resources?.project_plot_permeability_coefficient || null,
   );
 
   useEffect(() => {
     onFormChange({
       rainwater_harvesting_tank_capacity: rainwaterHarvestingTankCapacity,
-      initial_parcel_permeability_coefficient:
+      initial_plot_permeability_coefficient:
         initialParcelPermeabilityCoefficient,
-      project_parcel_permeability_coefficient:
+      project_plot_permeability_coefficient:
         projectParcelPermeabilityCoefficient,
     });
   }, [
@@ -58,7 +58,7 @@ const ResourcesForm = ({ resources, onFormChange }: Props) => {
         label={"Coefficient perméabilité parcelle initial"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
-        initialValue={resources?.initial_parcel_permeability_coefficient}
+        initialValue={resources?.initial_plot_permeability_coefficient}
         name={"initial_parcel_permeability_coefficient"}
       >
         <Input
@@ -74,7 +74,7 @@ const ResourcesForm = ({ resources, onFormChange }: Props) => {
         label={"Coefficient perméabilité parcelle projet"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
-        initialValue={resources.project_parcel_permeability_coefficient}
+        initialValue={resources.project_plot_permeability_coefficient}
         name={"project_parcel_permeability_coefficient"}
       >
         <Input
