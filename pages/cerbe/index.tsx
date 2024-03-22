@@ -51,17 +51,17 @@ const Cerbe = () => {
                     !isFullScreen ? (
                         <section>
                             <div className={`${styles.headerIconContainer} multi`} style={{opacity: opacity ? 1 : 0}}>
-                                <img src={DiagonalPict.src} className={styles.headerIcon} alt="Iconn"/>
-                                <img src={HeaderIcon.src} className={styles.headerIcon} alt="Iconn"/>
+                                <img src={DiagonalPict.src} className={styles.headerIcon} alt="Diagobat Logo"/>
+                                <img src={HeaderIcon.src} className={styles.headerIcon} alt="Diagobat vectorial"/>
                             </div>
                             <img src={BodyIcon.src} className={styles.bodyIcon} style={{opacity: opacity ? 1 : 0}}
-                                 alt="Icon"/>
+                                 alt="Diagobat vectorial body"/>
                         </section>
                     ) : null
                 }
                 <section className={styles.iconsContainer}>
                     <div className={styles.iconsContainerContents}>
-                        <div className={styles.titleElements}>
+                    <div className={styles.titleElements}>
                             <h1>
                                 IMPACTS {currentYear} <br/>
                                 <span>INDICATEURS PLANET</span><br/>
