@@ -1,7 +1,9 @@
 import styles from "../../styles/Cerbe.module.scss";
 import Grid from "../../src/components/Grid/Grid";
 import React from "react";
-import {  Skeleton, Row, Col, Statistic  } from 'antd'
+import {  Skeleton, Row, Col, Statistic, Segmented  } from 'antd'
+import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
+
 import HeaderIcon from "../../public/Icon-cerbe-head.svg"
 import BodyIcon from "../../public/Icon-cerbe-body.svg"
 import PowerIcon from "../../public/Icon-power.svg"
@@ -14,23 +16,58 @@ const Cerbe = () => {
     const loading = false;
     const formatter = (value: number) => value.toFixed(2);
     const [opacity, setOpacity] = React.useState(0);
+    const [isFullScreen, setIsFullScreen] = React.useState(false);
+    const currentYear = new Date().getFullYear()
     const opacityTimeOut = setTimeout(() => {
         setOpacity(1);
         clearTimeout(opacityTimeOut);
     }, 300);
 
+    const handleSegmentedOnChange = (value: string) => {
+        if (value === 'maxScreen') {
+            setIsFullScreen(true);
+            setOpacity(1);
+        } else
+            setIsFullScreen(false);
+            setOpacity(0);
+    }
+
     return (
         <>
+            <Segmented onChange={handleSegmentedOnChange} style={{maxWidth: '100px'}}
+                options={[
+                    {
+                        value: 'minScreen',
+                        icon: <FullscreenExitOutlined rev={undefined} />,
+                    },
+                    {
+                        value: 'maxScreen',
+                        icon: <FullscreenOutlined rev={undefined} />,
+                    },
+                ]}
+            />
             <div className={styles.cerbePage} style={{opacity: opacity ? 1 : 0}}>
-                <section>
-                    <div className={`${styles.headerIconContainer} multi`} style={{opacity: opacity ? 1 : 0}}>
-                        <img src={DiagonalPict.src} className={styles.headerIcon} alt="Iconn"/>
-                        <img src={HeaderIcon.src} className={styles.headerIcon} alt="Iconn"/>
-                    </div>
-                    <img src={BodyIcon.src} className={styles.bodyIcon} style={{opacity: opacity ? 1 : 0}} alt="Icon"/>
-                </section>
+                {
+                    !isFullScreen ? (
+                        <section>
+                            <div className={`${styles.headerIconContainer} multi`} style={{opacity: opacity ? 1 : 0}}>
+                                <img src={DiagonalPict.src} className={styles.headerIcon} alt="Diagobat Logo"/>
+                                <img src={HeaderIcon.src} className={styles.headerIcon} alt="Diagobat vectorial"/>
+                            </div>
+                            <img src={BodyIcon.src} className={styles.bodyIcon} style={{opacity: opacity ? 1 : 0}}
+                                 alt="Diagobat vectorial body"/>
+                        </section>
+                    ) : null
+                }
                 <section className={styles.iconsContainer}>
                     <div className={styles.iconsContainerContents}>
+                    <div className={styles.titleElements}>
+                            <h1>
+                                IMPACTS {currentYear} <br/>
+                                <span>INDICATEURS PLANET</span><br/>
+                                <br/>
+                            </h1>
+                        </div>
                         {
                             loading ? (
                                 <div>
@@ -38,9 +75,11 @@ const Cerbe = () => {
                                 </div>
                             ) : (
                                 <div className={styles.generalIconElements}>
-                                    <h2 className={styles.title}>GENERALITES</h2>
+                                    <div className={styles.header}>
+                                        <h2 className={styles.title}>GENERALITES</h2>
+                                    </div>
                                     <div className={styles.content}>
-                                        <Row gutter={16}>
+                                    <Row gutter={16}>
                                             <Col span={12}>
                                                 <Statistic title="Nombre de projets" value={112893}
                                                            formatter={formatter}/>
@@ -70,11 +109,13 @@ const Cerbe = () => {
                                 </div>
                             ) : (
                                 <div className={styles.powerIconElements}>
-                                    <img src={PowerIcon.src} className={styles.img} alt="Iconn"/>
-                                    <h2 className={styles.title}>REDUIRE LE BESOIN EN ENERGIE</h2>
+                                    <div className={styles.header}>
+                                        <img src={PowerIcon.src} className={styles.img} alt="Iconn"/>
+                                        <h2 className={styles.title}>REDUIRE LE BESOIN EN ENERGIE</h2>
+                                    </div>
                                     <div className={styles.content}>
                                         <Row gutter={16}>
-                                            <Col span={12}>
+                                        <Col span={12}>
                                                 <Statistic
                                                     title="Gain sur les consommations réglementaire (1-(Cep/Cepref))"
                                                     value={112893}
@@ -109,8 +150,10 @@ const Cerbe = () => {
                                 </div>
                             ) : (
                                 <div className={styles.biodiversityIconElements}>
-                                    <img src={BiodiversityIcon.src} className={styles.img} alt="Iconn"/>
-                                    <h2 className={styles.title}>AMELIORER LA BIODIVERSITE</h2>
+                                    <div className={styles.header}>
+                                        <img src={BiodiversityIcon.src} className={styles.img} alt="Iconn"/>
+                                        <h2 className={styles.title}>AMELIORER LA BIODIVERSITE</h2>
+                                    </div>
                                     <div className={styles.content}>
                                         <Row gutter={16}>
                                             <Col span={12}>
@@ -153,8 +196,10 @@ const Cerbe = () => {
                                 </div>
                             ) : (
                                 <div className={styles.resourcesIconElements}>
-                                    <img src={ResourcesIcon.src} className={styles.img} alt="Iconn"/>
-                                    <h2 className={styles.title}>PRESERVER LES RESSOURCES</h2>
+                                    <div className={styles.header}>
+                                        <img src={ResourcesIcon.src} className={styles.img} alt="Iconn"/>
+                                        <h2 className={styles.title}>PRESERVER LES RESSOURCES</h2>
+                                    </div>
                                     <div className={styles.content}>
                                         <Row gutter={16}>
                                             <Col span={12}>
@@ -187,11 +232,13 @@ const Cerbe = () => {
                                 </div>
                             ) : (
                                 <div className={styles.carbonIconElements}>
-                                    <img src={CarbonIcon.src} className={styles.img} alt="Iconn"/>
-                                    <h2 className={styles.title}>REDUIRE L'EMPREINTE CARBONE</h2>
+                                    <div className={styles.header}>
+                                        <img src={CarbonIcon.src} className={styles.img} alt="Iconn"/>
+                                        <h2 className={styles.title}>REDUIRE L'EMPREINTE CARBONE</h2>
+                                    </div>
                                     <div className={styles.content}>
                                         <Row gutter={16}>
-                                            <Col span={12}>
+                                        <Col span={12}>
                                                 <Statistic
                                                     title="Empreinte carbone totale PROJET"
                                                     value={112893}
