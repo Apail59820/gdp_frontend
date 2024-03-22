@@ -4,45 +4,45 @@ import { GdpCerbGeneralitiesModel } from "../../../models/GestionDeProjets/CERBE
 
 type Props = {
   generalities: Partial<GdpCerbGeneralitiesModel>;
-  onFormChange: (updatedData) => void;
+  onFormChange: (updatedData: Partial<GdpCerbGeneralitiesModel>) => void;
 };
 const GeneralitiesForm = ({ generalities, onFormChange }: Props) => {
   const [interlocutor, setInterlocutor] = useState<string>(
-    generalities?.interlocutor || "",
+    generalities?.interlocutor || null,
   );
 
   const [affairName, setAffairName] = useState<string>(
-    generalities?.project_name || "",
+    generalities?.project_name || null,
   );
 
   const [affairContractingAuthority, setAffairContractingAuthority] =
-    useState<string>(generalities?.contracting_authority || "");
+    useState<string>(generalities?.contracting_authority || null);
 
   const [plotArea, setPlotArea] = useState<number>(
-    generalities?.plot_area || 0,
+    generalities?.plot_area || null,
   );
 
   const [floorArea, setFloorArea] = useState<number>(
-    generalities?.floor_area || 0,
+    generalities?.floor_area || null,
   );
 
   const [status, setStatus] = useState<string>(generalities?.status || "");
 
   const [typology, setTypology] = useState<string>(
-    generalities?.typology || "",
+    generalities?.typology || null,
   );
 
   const [certificationsLabel, setCertificationsLabel] = useState<string>(
-    generalities?.certifications_labels || "",
+    generalities?.certifications_labels || null,
   );
 
   useEffect(() => {
     onFormChange({
       interlocutor: interlocutor,
-      affairName: affairName,
-      affairContractingAuthority: affairContractingAuthority,
-      plotArea: plotArea,
-      floorArea: floorArea,
+      //affairName: affairName,
+      //affairContractingAuthority: affairContractingAuthority,
+      plot_area: plotArea,
+      floor_area: floorArea,
       status: status,
       typology: typology,
     });

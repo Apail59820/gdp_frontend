@@ -5,7 +5,6 @@ import getConfig from "next/config";
 import { GdpCerbBiodiversityModel } from "../../../models/GestionDeProjets/CERBE/GdpCerbBiodiversityModel";
 import { isRequestSuccessful } from "../../../utils/isRequestSuccessful";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -96,6 +95,70 @@ export async function createGdpCerbBiodiversity(
     });
 }
 
+type updateFieldsToOmit =
+  | "id"
+  | "status"
+  | "user_created"
+  | "user_updated"
+  | "date_created"
+  | "date_updated"
+  | "affairs_id";
+export async function updateGdpCerbBiodiversity(
+  id: number,
+  data: Partial<Omit<GdpCerbBiodiversityModel, updateFieldsToOmit>>,
+): Promise<{
+  status: number;
+  data?: Partial<GdpCerbBiodiversityModel>;
+  error?: string;
+}> {
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+  const myHeaders = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  });
+
+  const myInit: RequestInit = {
+    method: "PATCH",
+    headers: myHeaders,
+    mode: "cors",
+    body: JSON.stringify(data),
+  };
+
+  return fetch(
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/cerb_biodiversity/${id}`,
+    myInit,
+  )
+    .then(async (response) => {
+      if (isRequestSuccessful(response.status)) {
+        try {
+          const responseData: any = await response.json();
+          return { status: response.status, data: responseData.data };
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error(error);
+          return { status: response.status };
+        }
+      } else {
+        try {
+          const responseData_1: any = await response.json();
+          return {
+            status: response.status,
+            error: responseData_1.errors[0].message,
+          };
+        } catch (error_1) {
+          // eslint-disable-next-line no-console
+          console.error(error_1);
+          return { status: response.status };
+        }
+      }
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      return { status: 500 };
+    });
+}
 const fetchGdpCerbBiodiversity = async (params: QueryParameters) => {
   const res = await getGdpCerbBiodiversity(params);
   if (!isRequestSuccessful(res.status)) {
@@ -123,9 +186,7 @@ export function useCreateGdpCerbBiodiversity() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (
-      newBiodiversity: Omit<GdpCerbBiodiversityModel, createFieldsToOmit>,
-    ) => {
+    mutationFn: (newBiodiversity: any) => {
       return createGdpCerbBiodiversity(newBiodiversity);
     },
     onSuccess: async (data: any) => {
@@ -133,13 +194,25 @@ export function useCreateGdpCerbBiodiversity() {
         await queryClient.invalidateQueries({
           queryKey: ["cerb_biodiversity"],
         });
-        message.success('Element "Biodiversité" ajouté avec succès.');
-      } else {
-        message.error("Une erreur est survenue.");
       }
     },
-    onError: (error: Error) => {
-      message.error("Une erreur est survenue.");
+  });
+}
+
+export function useUpdateGdpCerbBiodiversity() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (updatedBiodiversity: Partial<GdpCerbBiodiversityModel>) => {
+      return updateGdpCerbBiodiversity(
+        updatedBiodiversity?.id as number,
+        updatedBiodiversity,
+      );
+    },
+    onSuccess: (data) => {
+      if (isRequestSuccessful(data.status)) {
+        queryClient.invalidateQueries({ queryKey: ["cerb_biodiversity"] });
+      }
     },
   });
 }

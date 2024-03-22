@@ -1,5 +1,5 @@
 import styles from "./AffairsCerbe.module.scss";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Collapse, Divider, Spin } from "antd";
 import { GdpAffairModel } from "../../models/GestionDeProjets/GdpAffairModel";
 import GeneralitiesForm from "./Forms/GeneralitiesForm";
@@ -8,13 +8,43 @@ import EnergyForm from "./Forms/EnergyForm";
 import CarbonForm from "./Forms/CarbonForm";
 import ResourcesForm from "./Forms/ResourcesForm";
 import TechnicalForm from "./Forms/TechnicalForm";
-import { useGdpCerbGeneralities } from "../../services/gestionDeProjets/CERBE/GdpCerbGeneralities";
-import { useGdpCerbBiodiversity } from "../../services/gestionDeProjets/CERBE/GdbCerbBiodiversity";
-import { useGdpCerbEnergy } from "../../services/gestionDeProjets/CERBE/GdpCerbEnergy";
-import { useGdpCerbCarbon } from "../../services/gestionDeProjets/CERBE/GdpCerbCarbon";
-import { useGdpCerbRessources } from "../../services/gestionDeProjets/CERBE/GdpCerbRessources";
-import { useGdpCerbTechnical } from "../../services/gestionDeProjets/CERBE/GdpCerbTechnical";
+import {
+  useCreateGdpCerbGeneralities,
+  useGdpCerbGeneralities,
+  useUpdateGdpCerbGeneralities,
+} from "../../services/gestionDeProjets/CERBE/GdpCerbGeneralities";
+import {
+  useCreateGdpCerbBiodiversity,
+  useGdpCerbBiodiversity,
+  useUpdateGdpCerbBiodiversity,
+} from "../../services/gestionDeProjets/CERBE/GdbCerbBiodiversity";
+import {
+  useCreateGdpCerbEnergy,
+  useGdpCerbEnergy,
+  useUpdateGdpCerbEnergy,
+} from "../../services/gestionDeProjets/CERBE/GdpCerbEnergy";
+import {
+  useCreateGdpCerbCarbon,
+  useGdpCerbCarbon,
+  useUpdateGdpCerbCarbon,
+} from "../../services/gestionDeProjets/CERBE/GdpCerbCarbon";
+import {
+  useCreateGdpCerbRessources,
+  useGdpCerbRessources,
+  useUpdateGdpCerbRessources,
+} from "../../services/gestionDeProjets/CERBE/GdpCerbRessources";
+import {
+  useCreateGdpCerbTechnical,
+  useGdpCerbTechnical,
+  useUpdateGdpCerbTechnical,
+} from "../../services/gestionDeProjets/CERBE/GdpCerbTechnical";
 import { Button } from "projex-ui";
+import { GdpCerbGeneralitiesModel } from "../../models/GestionDeProjets/CERBE/GdpCerbGeneralitiesModel";
+import { GdpCerbBiodiversityModel } from "../../models/GestionDeProjets/CERBE/GdpCerbBiodiversityModel";
+import { GdpCerbEnergyModel } from "../../models/GestionDeProjets/CERBE/GdpCerbEnergyModel";
+import { GdpCerbCarbonModel } from "../../models/GestionDeProjets/CERBE/GdpCerbCarbonModel";
+import { GdpCerbRessourcesModel } from "../../models/GestionDeProjets/CERBE/GdpCerbRessourcesModel";
+import { GdpCerbTechnicalModel } from "../../models/GestionDeProjets/CERBE/GdpCerbTechnicalModel";
 
 type Props = {
   affair: Partial<GdpAffairModel>;
@@ -56,7 +86,106 @@ const AffairsCerbePage = ({ affair }: Props) => {
     },
   });
 
-  const [generalitiesFormData, setGeneralitiesFormData] = useState({});
+  const [generalitiesFormData, setGeneralitiesFormData] = useState<
+    Partial<GdpCerbGeneralitiesModel>
+  >({});
+  const [biodiversityFormData, setBiodiversityFormData] = useState<
+    Partial<GdpCerbBiodiversityModel>
+  >({});
+  const [energyFormData, setEnergyFormData] = useState<
+    Partial<GdpCerbEnergyModel>
+  >({});
+  const [carbonFormData, setCarbonFormData] = useState<
+    Partial<GdpCerbCarbonModel>
+  >({});
+  const [resourcesFormData, setResourcesFormData] = useState<
+    Partial<GdpCerbRessourcesModel>
+  >({});
+  const [technicalFormData, setTechnicalFormData] = useState<
+    Partial<GdpCerbTechnicalModel>
+  >({});
+
+  const createGeneralitiesMutation = useCreateGdpCerbGeneralities();
+  const createBiodiversityMutation = useCreateGdpCerbBiodiversity();
+  const createEnergyMutation = useCreateGdpCerbEnergy();
+  const createCarbonMutation = useCreateGdpCerbCarbon();
+  const createResourcesMutation = useCreateGdpCerbRessources();
+  const createTechnicalMutation = useCreateGdpCerbTechnical();
+
+  const updateGeneralitiesMutation = useUpdateGdpCerbGeneralities();
+  const updateBiodiversityMutation = useUpdateGdpCerbBiodiversity();
+  const updateEnergyMutation = useUpdateGdpCerbEnergy();
+  const updateCarbonMutation = useUpdateGdpCerbCarbon();
+  const updateResourcesMutation = useUpdateGdpCerbRessources();
+  const updateTechnicalMutation = useUpdateGdpCerbTechnical();
+
+  const submitForms = async () => {
+    !generalities_query.cerb_generalities?.length
+      ? await createGeneralitiesMutation.mutateAsync({
+          ...generalitiesFormData,
+          affairs_id: affair?.id,
+        })
+      : await updateGeneralitiesMutation.mutateAsync({
+          ...generalitiesFormData,
+          affairs_id: affair?.id,
+          id: generalities_query.cerb_generalities[0]?.id,
+        });
+
+    !biodiversity_query.cerb_biodiversity?.length
+      ? await createBiodiversityMutation.mutateAsync({
+          ...biodiversityFormData,
+          affairs_id: affair?.id,
+        })
+      : await updateBiodiversityMutation.mutateAsync({
+          ...biodiversityFormData,
+          affairs_id: affair?.id,
+          id: biodiversity_query.cerb_biodiversity[0]?.id,
+        });
+
+    !energy_query.cerb_energy?.length
+      ? await createEnergyMutation.mutateAsync({
+          ...energyFormData,
+          affairs_id: affair?.id,
+        })
+      : await updateEnergyMutation.mutateAsync({
+          ...energyFormData,
+          affairs_id: affair?.id,
+          id: energy_query.cerb_energy[0]?.id,
+        });
+
+    !carbon_query.cerb_carbon?.length
+      ? await createCarbonMutation.mutateAsync({
+          ...carbonFormData,
+          affairs_id: affair?.id,
+        })
+      : await updateCarbonMutation.mutateAsync({
+          ...carbonFormData,
+          affairs_id: affair?.id,
+          id: carbon_query.cerb_carbon[0]?.id,
+        });
+
+    !resources_query.cerb_ressources?.length
+      ? await createResourcesMutation.mutateAsync({
+          ...resourcesFormData,
+          affairs_id: affair?.id,
+        })
+      : await updateResourcesMutation.mutateAsync({
+          ...resourcesFormData,
+          affairs_id: affair?.id,
+          id: resources_query.cerb_ressources[0]?.id,
+        });
+
+    !technical_query.cerb_technical?.length
+      ? await createTechnicalMutation.mutateAsync({
+          ...technicalFormData,
+          affairs_id: affair?.id,
+        })
+      : await updateTechnicalMutation.mutateAsync({
+          ...technicalFormData,
+          affairs_id: affair?.id,
+          id: technical_query.cerb_technical[0]?.id,
+        });
+  };
 
   return (
     <div className="page">
@@ -178,7 +307,9 @@ const AffairsCerbePage = ({ affair }: Props) => {
           </Collapse.Panel>
         </Collapse>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button style={"primary"}>Envoyer</Button>
+          <Button style={"primary"} onClick={submitForms}>
+            Envoyer
+          </Button>
         </div>
       </div>
     </div>

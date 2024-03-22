@@ -4,7 +4,6 @@ import concatenateQueryParameters from "../../../utils/queryParamsFormatter";
 import getConfig from "next/config";
 import { isRequestSuccessful } from "../../../utils/isRequestSuccessful";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
 import { GdpCerbGeneralitiesModel } from "../../../models/GestionDeProjets/CERBE/GdpCerbGeneralitiesModel";
 
 const { publicRuntimeConfig } = getConfig();
@@ -96,6 +95,71 @@ export async function createGdpCerbGeneralities(
     });
 }
 
+type updateFieldsToOmit =
+  | "id"
+  | "status"
+  | "user_created"
+  | "user_updated"
+  | "date_created"
+  | "date_updated"
+  | "affairs_id";
+export async function updateGdpCerbGenerality(
+  id: number,
+  data: Partial<Omit<GdpCerbGeneralitiesModel, updateFieldsToOmit>>,
+): Promise<{
+  status: number;
+  data?: Partial<GdpCerbGeneralitiesModel>;
+  error?: string;
+}> {
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+  const myHeaders = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  });
+
+  const myInit: RequestInit = {
+    method: "PATCH",
+    headers: myHeaders,
+    mode: "cors",
+    body: JSON.stringify(data),
+  };
+
+  return fetch(
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/cerb_generalities/${id}`,
+    myInit,
+  )
+    .then(async (response) => {
+      if (isRequestSuccessful(response.status)) {
+        try {
+          const responseData: any = await response.json();
+          return { status: response.status, data: responseData.data };
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error(error);
+          return { status: response.status };
+        }
+      } else {
+        try {
+          const responseData_1: any = await response.json();
+          return {
+            status: response.status,
+            error: responseData_1.errors[0].message,
+          };
+        } catch (error_1) {
+          // eslint-disable-next-line no-console
+          console.error(error_1);
+          return { status: response.status };
+        }
+      }
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      return { status: 500 };
+    });
+}
+
 const fetchGdpCerbGeneralities = async (params: QueryParameters) => {
   const res = await getGdpCerbGeneralities(params);
   if (!isRequestSuccessful(res.status)) {
@@ -123,9 +187,7 @@ export function useCreateGdpCerbGeneralities() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (
-      newGeneralities: Omit<GdpCerbGeneralitiesModel, createFieldsToOmit>,
-    ) => {
+    mutationFn: (newGeneralities: any) => {
       return createGdpCerbGeneralities(newGeneralities);
     },
     onSuccess: async (data: any) => {
@@ -133,13 +195,26 @@ export function useCreateGdpCerbGeneralities() {
         await queryClient.invalidateQueries({
           queryKey: ["cerb_generalities"],
         });
-        message.success('Element "Généralités" ajouté avec succès.');
-      } else {
-        message.error("Une erreur est survenue.");
       }
     },
-    onError: (error: Error) => {
-      message.error("Une erreur est survenue.");
+  });
+}
+
+export function useUpdateGdpCerbGeneralities() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (updatedGenerality: Partial<GdpCerbGeneralitiesModel>) => {
+      console.log("Updated: ", updatedGenerality);
+      return updateGdpCerbGenerality(
+        updatedGenerality?.id as number,
+        updatedGenerality,
+      );
+    },
+    onSuccess: (data) => {
+      if (isRequestSuccessful(data.status)) {
+        queryClient.invalidateQueries({ queryKey: ["cerb_generalities"] });
+      }
     },
   });
 }
