@@ -1,6 +1,6 @@
 import styles from "./AffairsCerbe.module.scss";
 import React, { useState } from "react";
-import { Collapse, Divider, Spin } from "antd";
+import { Collapse, Divider, message, Spin } from "antd";
 import { GdpAffairModel } from "../../models/GestionDeProjets/GdpAffairModel";
 import GeneralitiesForm from "./Forms/GeneralitiesForm";
 import BiodiversityForm from "./Forms/BiodiversityForm";
@@ -45,6 +45,8 @@ import { GdpCerbEnergyModel } from "../../models/GestionDeProjets/CERBE/GdpCerbE
 import { GdpCerbCarbonModel } from "../../models/GestionDeProjets/CERBE/GdpCerbCarbonModel";
 import { GdpCerbRessourcesModel } from "../../models/GestionDeProjets/CERBE/GdpCerbRessourcesModel";
 import { GdpCerbTechnicalModel } from "../../models/GestionDeProjets/CERBE/GdpCerbTechnicalModel";
+import { messages } from "../../constants/messages";
+import { isRequestSuccessful } from "../../utils/isRequestSuccessful";
 
 type Props = {
   affair: Partial<GdpAffairModel>;
@@ -119,72 +121,107 @@ const AffairsCerbePage = ({ affair }: Props) => {
   const updateResourcesMutation = useUpdateGdpCerbRessources();
   const updateTechnicalMutation = useUpdateGdpCerbTechnical();
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const submitForms = async () => {
-    !generalities_query.cerb_generalities?.length
-      ? await createGeneralitiesMutation.mutateAsync({
-          ...generalitiesFormData,
-          affairs_id: affair?.id,
-        })
-      : await updateGeneralitiesMutation.mutateAsync({
+    setIsLoading(true);
+    const generalitiesMutation = generalities_query.cerb_generalities?.length
+      ? await updateGeneralitiesMutation.mutateAsync({
           ...generalitiesFormData,
           affairs_id: affair?.id,
           id: generalities_query.cerb_generalities[0]?.id,
+        })
+      : await createGeneralitiesMutation.mutateAsync({
+          ...generalitiesFormData,
+          affairs_id: affair?.id,
         });
 
-    !biodiversity_query.cerb_biodiversity?.length
-      ? await createBiodiversityMutation.mutateAsync({
-          ...biodiversityFormData,
-          affairs_id: affair?.id,
-        })
-      : await updateBiodiversityMutation.mutateAsync({
+    if (!isRequestSuccessful(generalitiesMutation.status)) {
+      setIsLoading(false);
+      return message.error(messages.general.error());
+    }
+
+    const biodiversityMutation = biodiversity_query.cerb_biodiversity?.length
+      ? await updateBiodiversityMutation.mutateAsync({
           ...biodiversityFormData,
           affairs_id: affair?.id,
           id: biodiversity_query.cerb_biodiversity[0]?.id,
+        })
+      : await createBiodiversityMutation.mutateAsync({
+          ...biodiversityFormData,
+          affairs_id: affair?.id,
         });
 
-    !energy_query.cerb_energy?.length
-      ? await createEnergyMutation.mutateAsync({
-          ...energyFormData,
-          affairs_id: affair?.id,
-        })
-      : await updateEnergyMutation.mutateAsync({
+    if (!isRequestSuccessful(biodiversityMutation.status)) {
+      setIsLoading(false);
+      return message.error(messages.general.error());
+    }
+
+    const energyMutation = energy_query.cerb_energy?.length
+      ? await updateEnergyMutation.mutateAsync({
           ...energyFormData,
           affairs_id: affair?.id,
           id: energy_query.cerb_energy[0]?.id,
+        })
+      : await createEnergyMutation.mutateAsync({
+          ...energyFormData,
+          affairs_id: affair?.id,
         });
 
-    !carbon_query.cerb_carbon?.length
-      ? await createCarbonMutation.mutateAsync({
-          ...carbonFormData,
-          affairs_id: affair?.id,
-        })
-      : await updateCarbonMutation.mutateAsync({
+    if (!isRequestSuccessful(energyMutation.status)) {
+      setIsLoading(false);
+      return message.error(messages.general.error());
+    }
+
+    const carbonMutation = carbon_query.cerb_carbon?.length
+      ? await updateCarbonMutation.mutateAsync({
           ...carbonFormData,
           affairs_id: affair?.id,
           id: carbon_query.cerb_carbon[0]?.id,
+        })
+      : await createCarbonMutation.mutateAsync({
+          ...carbonFormData,
+          affairs_id: affair?.id,
         });
 
-    !resources_query.cerb_ressources?.length
-      ? await createResourcesMutation.mutateAsync({
-          ...resourcesFormData,
-          affairs_id: affair?.id,
-        })
-      : await updateResourcesMutation.mutateAsync({
+    if (!isRequestSuccessful(carbonMutation.status)) {
+      setIsLoading(false);
+      return message.error(messages.general.error());
+    }
+
+    const resourcesMutation = resources_query.cerb_ressources?.length
+      ? await updateResourcesMutation.mutateAsync({
           ...resourcesFormData,
           affairs_id: affair?.id,
           id: resources_query.cerb_ressources[0]?.id,
+        })
+      : await createResourcesMutation.mutateAsync({
+          ...resourcesFormData,
+          affairs_id: affair?.id,
         });
 
-    !technical_query.cerb_technical?.length
-      ? await createTechnicalMutation.mutateAsync({
-          ...technicalFormData,
-          affairs_id: affair?.id,
-        })
-      : await updateTechnicalMutation.mutateAsync({
+    if (!isRequestSuccessful(resourcesMutation.status)) {
+      setIsLoading(false);
+      return message.error(messages.general.error());
+    }
+
+    const technicalMutation = technical_query.cerb_technical?.length
+      ? await updateTechnicalMutation.mutateAsync({
           ...technicalFormData,
           affairs_id: affair?.id,
           id: technical_query.cerb_technical[0]?.id,
+        })
+      : await createTechnicalMutation.mutateAsync({
+          ...technicalFormData,
+          affairs_id: affair?.id,
         });
+
+    if (!isRequestSuccessful(technicalMutation.status)) {
+      setIsLoading(false);
+      return message.error(messages.general.error());
+    }
+
+    setIsLoading(false);
+    message.success("Données CERBE ajoutées avec succès.");
   };
 
   return (
@@ -340,7 +377,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
           </Collapse.Panel>
         </Collapse>
         <div style={{ display: "flex", justifyContent: "end" }}>
-          <Button style={"primary"} onClick={submitForms}>
+          <Button style={"primary"} onClick={submitForms} loading={isLoading}>
             Envoyer
           </Button>
         </div>
