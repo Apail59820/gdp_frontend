@@ -38,7 +38,12 @@ const CarbonForm = ({ carbon, onFormChange }: Props) => {
         initialValue={carbon?.baseline_carbon_footprint}
         name={"baseline_carbon_footprint"}
       >
-        <Input />
+        <Input
+          value={baselineCarbonFootprint}
+          onChange={(e) =>
+            setBaselineCarbonFootprint(parseInt(e.target.value, 10))
+          }
+        />
       </Form.Item>
       <Form.Item
         label={"Empreinte carbone projet kgeqCO²/m²"}
@@ -47,7 +52,12 @@ const CarbonForm = ({ carbon, onFormChange }: Props) => {
         initialValue={carbon?.project_carbon_footprint}
         name={"project_carbon_footprint"}
       >
-        <Input />
+        <Input
+          value={projectCarbonFootprint}
+          onChange={(e) =>
+            setProjectCarbonFootprint(parseInt(e.target.value, 10))
+          }
+        />
       </Form.Item>
       <Form.Item
         label={"Quantité matériaux biosourcés [en Kg]"}
@@ -56,7 +66,12 @@ const CarbonForm = ({ carbon, onFormChange }: Props) => {
         initialValue={carbon?.biobased_materials_amount}
         name={"biobased_materials_amount"}
       >
-        <Input />
+        <Input
+          value={biobasedMaterialsAmount}
+          onChange={(e) =>
+            setBiobasedMaterialsAmount(parseInt(e.target.value, 10))
+          }
+        />
       </Form.Item>
     </Form>
   );

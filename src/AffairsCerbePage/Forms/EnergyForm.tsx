@@ -59,7 +59,12 @@ const EnergyForm = ({ energy, onFormChange }: Props) => {
         initialValue={energy?.applicable_thermal_regulation}
         name={"applicable_thermal_regulation"}
       >
-        <Input />
+        <Input
+          value={applicableThermalRegulation}
+          onChange={(e) =>
+            setApplicableThermalRegulation(parseInt(e.target.value, 10))
+          }
+        />
       </Form.Item>
       <Form.Item
         label={"Cep ref kWhep/m².an"}
@@ -68,7 +73,12 @@ const EnergyForm = ({ energy, onFormChange }: Props) => {
         initialValue={energy?.conventional_energy_consumption_ref}
         name={"conventional_energy_consumption_ref"}
       >
-        <Input />
+        <Input
+          value={conventionalEnergyConsumptionRef}
+          onChange={(e) =>
+            setConventionalEnergyConsumptionRef(parseInt(e.target.value, 10))
+          }
+        />
       </Form.Item>
       <Form.Item
         label={"Cep projet kWhep/m².an"}
@@ -77,7 +87,14 @@ const EnergyForm = ({ energy, onFormChange }: Props) => {
         initialValue={energy?.project_conventional_energy_consumption}
         name={"project_conventional_energy_consumption"}
       >
-        <Input />
+        <Input
+          value={projectConventionalEnergyConsumption}
+          onChange={(e) =>
+            setProjectConventionalEnergyConsumption(
+              parseInt(e.target.value, 10),
+            )
+          }
+        />
       </Form.Item>
       <Form.Item
         label={"Economie d'énergie"}
@@ -86,7 +103,10 @@ const EnergyForm = ({ energy, onFormChange }: Props) => {
         initialValue={energy?.energy_savings}
         name={"energy_savings"}
       >
-        <Input />
+        <Input
+          value={energySavings}
+          onChange={(e) => setEnergySavings(parseInt(e.target.value, 10))}
+        />
       </Form.Item>
       <Form.Item
         label={"Qualité énergie renouvelable cep-cepnr en kWh/m².an"}
@@ -95,7 +115,12 @@ const EnergyForm = ({ energy, onFormChange }: Props) => {
         initialValue={energy?.renewable_cec_energy_amount}
         name={"renewable_cec_energy_amount"}
       >
-        <Input />
+        <Input
+          value={renewableCecEnergyAmount}
+          onChange={(e) =>
+            setRenewableCecEnergyAmount(parseInt(e.target.value, 10))
+          }
+        />
       </Form.Item>
       <Form.Item
         label={"Qualité énergie renouvelable en kWh/m².an"}
@@ -104,7 +129,12 @@ const EnergyForm = ({ energy, onFormChange }: Props) => {
         initialValue={energy?.renewable_energy_amount}
         name={"renewable_energy_amount"}
       >
-        <Input />
+        <Input
+          value={renewableEnergyAmount}
+          onChange={(e) =>
+            setRenewableEnergyAmount(parseInt(e.target.value, 10))
+          }
+        />
       </Form.Item>
     </Form>
   );

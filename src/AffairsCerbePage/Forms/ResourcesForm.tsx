@@ -47,7 +47,12 @@ const ResourcesForm = ({ resources, onFormChange }: Props) => {
         initialValue={resources?.rainwater_harvesting_tank_capacity}
         name={"rainwater_harvesting_tank_capacity"}
       >
-        <Input />
+        <Input
+          value={rainwaterHarvestingTankCapacity}
+          onChange={(e) =>
+            setRainwaterHarvestingTankCapacity(parseInt(e.target.value, 10))
+          }
+        />
       </Form.Item>
       <Form.Item
         label={"Coefficient perméabilité parcelle initial"}
@@ -56,7 +61,14 @@ const ResourcesForm = ({ resources, onFormChange }: Props) => {
         initialValue={resources?.initial_parcel_permeability_coefficient}
         name={"initial_parcel_permeability_coefficient"}
       >
-        <Input />
+        <Input
+          value={initialParcelPermeabilityCoefficient}
+          onChange={(e) =>
+            setInitialParcelPermeabilityCoefficient(
+              parseInt(e.target.value, 10),
+            )
+          }
+        />
       </Form.Item>
       <Form.Item
         label={"Coefficient perméabilité parcelle projet"}
@@ -65,7 +77,14 @@ const ResourcesForm = ({ resources, onFormChange }: Props) => {
         initialValue={resources.project_parcel_permeability_coefficient}
         name={"project_parcel_permeability_coefficient"}
       >
-        <Input />
+        <Input
+          value={projectParcelPermeabilityCoefficient}
+          onChange={(e) =>
+            setProjectParcelPermeabilityCoefficient(
+              parseInt(e.target.value, 10),
+            )
+          }
+        />
       </Form.Item>
     </Form>
   );

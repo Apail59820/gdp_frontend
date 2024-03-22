@@ -23,6 +23,8 @@ const TechnicalForm = ({ technical, onFormChange }: Props) => {
     technical?.interior_finishes || null,
   );
 
+  const [other, setOther] = useState<string>(technical?.other || null);
+
   useEffect(() => {
     onFormChange({
       hvac: hvac,
@@ -30,8 +32,9 @@ const TechnicalForm = ({ technical, onFormChange }: Props) => {
       structure: structure,
       envelope: envelope,
       interior_finishes: interiorFinishes,
+      other: other,
     });
-  }, [hvac, electricity, structure, envelope, interiorFinishes]);
+  }, [hvac, electricity, structure, envelope, interiorFinishes, other]);
 
   return (
     <Form style={{ width: "75%" }}>
@@ -42,7 +45,7 @@ const TechnicalForm = ({ technical, onFormChange }: Props) => {
         initialValue={technical?.hvac}
         name={"hvac"}
       >
-        <Input />
+        <Input value={hvac} onChange={(e) => setHvac(e.target.value)} />
       </Form.Item>
       <Form.Item
         label={"Electricité"}
@@ -51,7 +54,10 @@ const TechnicalForm = ({ technical, onFormChange }: Props) => {
         initialValue={technical?.electricity}
         name={"electricity"}
       >
-        <Input />
+        <Input
+          value={electricity}
+          onChange={(e) => setElectricity(e.target.value)}
+        />
       </Form.Item>
       <Form.Item
         label={"Structure"}
@@ -60,7 +66,10 @@ const TechnicalForm = ({ technical, onFormChange }: Props) => {
         initialValue={technical?.structure}
         name={"structure"}
       >
-        <Input />
+        <Input
+          value={structure}
+          onChange={(e) => setStructure(e.target.value)}
+        />
       </Form.Item>
       <Form.Item
         label={"Enveloppe"}
@@ -69,7 +78,7 @@ const TechnicalForm = ({ technical, onFormChange }: Props) => {
         initialValue={technical?.envelope}
         name={"envelope"}
       >
-        <Input />
+        <Input value={envelope} onChange={(e) => setEnvelope(e.target.value)} />
       </Form.Item>
       <Form.Item
         label={"Finitions interieures"}
@@ -78,7 +87,10 @@ const TechnicalForm = ({ technical, onFormChange }: Props) => {
         initialValue={technical?.interior_finishes}
         name={"interior_finishes"}
       >
-        <Input />
+        <Input
+          value={interiorFinishes}
+          onChange={(e) => setInteriorFinishes(e.target.value)}
+        />
       </Form.Item>
       <Form.Item
         label={"Autres"}
@@ -87,7 +99,7 @@ const TechnicalForm = ({ technical, onFormChange }: Props) => {
         initialValue={technical?.other}
         name={"other"}
       >
-        <Input />
+        <Input value={other} onChange={(e) => setOther(e.target.value)} />
       </Form.Item>
     </Form>
   );
