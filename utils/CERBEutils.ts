@@ -7,6 +7,13 @@ export const sum = (arrayOfNumbers: number[]): number => {
 export const average = (arrayOfNumbers: number[]): number => {
     return arrayOfNumbers.length ? sum(arrayOfNumbers)/arrayOfNumbers.length : 0
 }
-export const ratio = (measureOfPart, measureOfAll): number => {
+
+/**
+ * @param measureOfPart
+ * @param measureOfAll
+ *
+ * @returns ratio: measureOfPart is ratio % of measureOfAll
+ */
+export const ratio = (measureOfPart: number, measureOfAll: number): number => {
     return measureOfAll==0 ? NaN : (1 - measureOfPart/measureOfAll) * 100;
 }
