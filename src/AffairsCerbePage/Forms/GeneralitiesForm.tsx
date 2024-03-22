@@ -12,11 +12,11 @@ const GeneralitiesForm = ({ generalities, onFormChange }: Props) => {
   );
 
   const [affairName, setAffairName] = useState<string>(
-    generalities?.project_name || null,
+    generalities?.affair_name || null,
   );
 
   const [affairContractingAuthority, setAffairContractingAuthority] =
-    useState<string>(generalities?.contracting_authority || null);
+    useState<string>(generalities?.affair_contracting_authority || null);
 
   const [plotArea, setPlotArea] = useState<number>(
     generalities?.plot_area || null,
@@ -39,8 +39,8 @@ const GeneralitiesForm = ({ generalities, onFormChange }: Props) => {
   useEffect(() => {
     onFormChange({
       interlocutor: interlocutor,
-      //affairName: affairName,
-      //affairContractingAuthority: affairContractingAuthority,
+      affair_name: affairName,
+      affair_contracting_authority: affairContractingAuthority,
       plot_area: plotArea,
       floor_area: floorArea,
       status: status,
@@ -75,7 +75,7 @@ const GeneralitiesForm = ({ generalities, onFormChange }: Props) => {
         name={"affair_name"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
-        initialValue={generalities?.project_name}
+        initialValue={generalities?.affair_name}
       >
         <Input
           value={affairName}
@@ -87,7 +87,7 @@ const GeneralitiesForm = ({ generalities, onFormChange }: Props) => {
         name={"affair_contracting_authority"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
-        initialValue={generalities?.contracting_authority}
+        initialValue={generalities?.affair_contracting_authority}
       >
         <Input
           value={affairContractingAuthority}

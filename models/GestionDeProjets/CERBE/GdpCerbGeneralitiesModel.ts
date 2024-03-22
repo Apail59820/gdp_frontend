@@ -8,8 +8,8 @@ export type GdpCerbGeneralitiesModel = {
   date_created: string;
   date_updated: string;
   affairs_id: number | Partial<GdpAffairModel>;
-  contracting_authority: string;
-  project_name: string;
+  affair_name: string;
+  affair_contracting_authority: string;
   interlocutor: string;
   status: string;
   plot_area: number;
