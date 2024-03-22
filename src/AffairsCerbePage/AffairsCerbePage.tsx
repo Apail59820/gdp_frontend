@@ -115,6 +115,8 @@ const AffairsCerbePage = ({ affair }: Props) => {
   const createResourcesMutation = useCreateGdpCerbRessources();
   const createTechnicalMutation = useCreateGdpCerbTechnical();
 
+  const [activeKey, setActiveKey] = useState([1, 2, 3, 4, 5, 6]);
+
   const updateGeneralitiesMutation = useUpdateGdpCerbGeneralities();
   const updateBiodiversityMutation = useUpdateGdpCerbBiodiversity();
   const updateEnergyMutation = useUpdateGdpCerbEnergy();
@@ -125,6 +127,10 @@ const AffairsCerbePage = ({ affair }: Props) => {
   const queryClient = useQueryClient();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const dispatchKeys = (key: any) => {
+    setActiveKey(key);
+  };
   const submitForms = async () => {
     setIsLoading(true);
     const generalitiesMutation = generalities_query.cerb_generalities?.length
@@ -143,6 +149,8 @@ const AffairsCerbePage = ({ affair }: Props) => {
       return message.error(messages.general.error());
     }
 
+    dispatchKeys(activeKey.splice(1));
+
     const biodiversityMutation = biodiversity_query.cerb_biodiversity?.length
       ? await updateBiodiversityMutation.mutateAsync({
           ...biodiversityFormData,
@@ -153,6 +161,8 @@ const AffairsCerbePage = ({ affair }: Props) => {
           ...biodiversityFormData,
           affairs_id: affair?.id,
         });
+
+    dispatchKeys(activeKey.splice(2));
 
     if (!isRequestSuccessful(biodiversityMutation.status)) {
       setIsLoading(false);
@@ -170,6 +180,8 @@ const AffairsCerbePage = ({ affair }: Props) => {
           affairs_id: affair?.id,
         });
 
+    dispatchKeys(activeKey.splice(3));
+
     if (!isRequestSuccessful(energyMutation.status)) {
       setIsLoading(false);
       return message.error(messages.general.error());
@@ -185,6 +197,8 @@ const AffairsCerbePage = ({ affair }: Props) => {
           ...carbonFormData,
           affairs_id: affair?.id,
         });
+
+    dispatchKeys(activeKey.splice(4));
 
     if (!isRequestSuccessful(carbonMutation.status)) {
       setIsLoading(false);
@@ -202,6 +216,8 @@ const AffairsCerbePage = ({ affair }: Props) => {
           affairs_id: affair?.id,
         });
 
+    dispatchKeys(activeKey.splice(5));
+
     if (!isRequestSuccessful(resourcesMutation.status)) {
       setIsLoading(false);
       return message.error(messages.general.error());
@@ -217,6 +233,8 @@ const AffairsCerbePage = ({ affair }: Props) => {
           ...technicalFormData,
           affairs_id: affair?.id,
         });
+
+    dispatchKeys(activeKey.splice(6));
 
     if (!isRequestSuccessful(technicalMutation.status)) {
       setIsLoading(false);
@@ -249,11 +267,16 @@ const AffairsCerbePage = ({ affair }: Props) => {
         <Collapse
           style={{ marginBottom: "20px" }}
           defaultActiveKey={[1, 2, 3, 4, 5, 6]}
+          activeKey={activeKey}
+          onChange={(e) => {
+            setActiveKey(e);
+          }}
         >
           <Collapse.Panel
             key={1}
             className={styles.generalities_collapse}
             header={"Généralités"}
+            collapsible={generalities_query.isLoading ? "disabled" : "header"}
           >
             {!generalities_query.isLoading ? (
               <GeneralitiesForm
@@ -277,6 +300,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             key={2}
             className={styles.biodiversity_collapse}
             header={"Biodiversité"}
+            collapsible={biodiversity_query.isLoading ? "disabled" : "header"}
           >
             {!biodiversity_query.isLoading ? (
               <BiodiversityForm
@@ -300,6 +324,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             key={3}
             className={styles.energy_collapse}
             header={"Énergie"}
+            collapsible={energy_query.isLoading ? "disabled" : "header"}
           >
             {!energy_query.isLoading ? (
               <EnergyForm
@@ -323,6 +348,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             key={4}
             className={styles.carbon_collapse}
             header={"Carbone"}
+            collapsible={carbon_query.isLoading ? "disabled" : "header"}
           >
             {!carbon_query.isLoading ? (
               <CarbonForm
@@ -346,6 +372,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             key={5}
             className={styles.resources_collapse}
             header={"Ressources"}
+            collapsible={resources_query.isLoading ? "disabled" : "header"}
           >
             {!resources_query.isLoading ? (
               <ResourcesForm
@@ -369,6 +396,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
             key={6}
             className={styles.technical_collapse}
             header={"Technique"}
+            collapsible={technical_query.isLoading ? "disabled" : "header"}
           >
             {!technical_query.isLoading ? (
               <TechnicalForm
