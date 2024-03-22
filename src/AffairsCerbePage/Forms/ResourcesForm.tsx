@@ -1,11 +1,43 @@
 import { Form, Input } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GdpCerbRessourcesModel } from "../../../models/GestionDeProjets/CERBE/GdpCerbRessourcesModel";
 
 type Props = {
   resources: Partial<GdpCerbRessourcesModel>;
+  onFormChange: (updatedData: Partial<GdpCerbRessourcesModel>) => void;
 };
-const ResourcesForm = ({ resources }: Props) => {
+const ResourcesForm = ({ resources, onFormChange }: Props) => {
+  const [rainwaterHarvestingTankCapacity, setRainwaterHarvestingTankCapacity] =
+    useState<number>(resources?.rainwater_harvesting_tank_capacity || null);
+
+  const [
+    initialParcelPermeabilityCoefficient,
+    setInitialParcelPermeabilityCoefficient,
+  ] = useState<number>(
+    resources?.initial_parcel_permeability_coefficient || null,
+  );
+
+  const [
+    projectParcelPermeabilityCoefficient,
+    setProjectParcelPermeabilityCoefficient,
+  ] = useState<number>(
+    resources?.project_parcel_permeability_coefficient || null,
+  );
+
+  useEffect(() => {
+    onFormChange({
+      rainwater_harvesting_tank_capacity: rainwaterHarvestingTankCapacity,
+      initial_parcel_permeability_coefficient:
+        initialParcelPermeabilityCoefficient,
+      project_parcel_permeability_coefficient:
+        projectParcelPermeabilityCoefficient,
+    });
+  }, [
+    rainwaterHarvestingTankCapacity,
+    initialParcelPermeabilityCoefficient,
+    projectParcelPermeabilityCoefficient,
+  ]);
+
   return (
     <Form style={{ width: "75%" }}>
       <Form.Item

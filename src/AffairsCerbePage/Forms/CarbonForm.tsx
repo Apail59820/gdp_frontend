@@ -1,11 +1,34 @@
 import { Form, Input } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GdpCerbCarbonModel } from "../../../models/GestionDeProjets/CERBE/GdpCerbCarbonModel";
 
 type Props = {
   carbon: Partial<GdpCerbCarbonModel>;
+  onFormChange: (updatedData: Partial<GdpCerbCarbonModel>) => void;
 };
-const CarbonForm = ({ carbon }: Props) => {
+const CarbonForm = ({ carbon, onFormChange }: Props) => {
+  const [baselineCarbonFootprint, setBaselineCarbonFootprint] =
+    useState<number>(carbon?.baseline_carbon_footprint || null);
+
+  const [projectCarbonFootprint, setProjectCarbonFootprint] = useState<number>(
+    carbon?.project_carbon_footprint || null,
+  );
+
+  const [biobasedMaterialsAmount, setBiobasedMaterialsAmount] =
+    useState<number>(carbon?.biobased_materials_amount || null);
+
+  useEffect(() => {
+    onFormChange({
+      baseline_carbon_footprint: baselineCarbonFootprint,
+      project_carbon_footprint: projectCarbonFootprint,
+      biobased_materials_amount: biobasedMaterialsAmount,
+    });
+  }, [
+    baselineCarbonFootprint,
+    projectCarbonFootprint,
+    biobasedMaterialsAmount,
+  ]);
+
   return (
     <Form style={{ width: "75%" }}>
       <Form.Item

@@ -1,11 +1,55 @@
 import { Form, Input } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GdpCerbEnergyModel } from "../../../models/GestionDeProjets/CERBE/GdpCerbEnergyModel";
 
 type Props = {
   energy: Partial<GdpCerbEnergyModel>;
+  onFormChange: (updatedData: Partial<GdpCerbEnergyModel>) => void;
 };
-const EnergyForm = ({ energy }: Props) => {
+const EnergyForm = ({ energy, onFormChange }: Props) => {
+  const [applicableThermalRegulation, setApplicableThermalRegulation] =
+    useState<number>(energy?.applicable_thermal_regulation || null);
+
+  const [
+    conventionalEnergyConsumptionRef,
+    setConventionalEnergyConsumptionRef,
+  ] = useState<number>(energy?.conventional_energy_consumption_ref || null);
+
+  const [
+    projectConventionalEnergyConsumption,
+    setProjectConventionalEnergyConsumption,
+  ] = useState<number>(energy?.project_conventional_energy_consumption || null);
+
+  const [energySavings, setEnergySavings] = useState<number>(
+    energy?.energy_savings || null,
+  );
+
+  const [renewableCecEnergyAmount, setRenewableCecEnergyAmount] =
+    useState<number>(energy?.renewable_cec_energy_amount || null);
+
+  const [renewableEnergyAmount, setRenewableEnergyAmount] = useState<number>(
+    energy?.renewable_energy_amount || null,
+  );
+
+  useEffect(() => {
+    onFormChange({
+      applicable_thermal_regulation: applicableThermalRegulation,
+      conventional_energy_consumption_ref: conventionalEnergyConsumptionRef,
+      project_conventional_energy_consumption:
+        projectConventionalEnergyConsumption,
+      energy_savings: energySavings,
+      renewable_cec_energy_amount: renewableCecEnergyAmount,
+      renewable_energy_amount: renewableEnergyAmount,
+    });
+  }, [
+    applicableThermalRegulation,
+    conventionalEnergyConsumptionRef,
+    projectConventionalEnergyConsumption,
+    energy,
+    renewableCecEnergyAmount,
+    renewableEnergyAmount,
+  ]);
+
   return (
     <Form style={{ width: "75%" }}>
       <Form.Item
@@ -40,7 +84,7 @@ const EnergyForm = ({ energy }: Props) => {
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
         initialValue={energy?.energy_savings}
-        name={"project_conventional_energy_consumption"}
+        name={"energy_savings"}
       >
         <Input />
       </Form.Item>

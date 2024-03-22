@@ -232,6 +232,12 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     ? biodiversity_query.cerb_biodiversity[0]
                     : {}
                 }
+                onFormChange={(updatedData) => {
+                  setBiodiversityFormData({
+                    ...biodiversityFormData,
+                    ...updatedData,
+                  });
+                }}
               />
             ) : (
               <Spin size="large" style={{ marginLeft: "50%" }} />
@@ -249,6 +255,12 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     ? energy_query.cerb_energy[0]
                     : {}
                 }
+                onFormChange={(updatedData) => {
+                  setEnergyFormData({
+                    ...energyFormData,
+                    ...updatedData,
+                  });
+                }}
               />
             ) : (
               <Spin size="large" style={{ marginLeft: "50%" }} />
@@ -266,6 +278,12 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     ? carbon_query.cerb_carbon[0]
                     : {}
                 }
+                onFormChange={(updatedData) => {
+                  setCarbonFormData({
+                    ...carbonFormData,
+                    ...updatedData,
+                  });
+                }}
               />
             ) : (
               <Spin size="large" style={{ marginLeft: "50%" }} />
@@ -283,6 +301,12 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     ? resources_query.cerb_ressources[0]
                     : {}
                 }
+                onFormChange={(updatedData) => {
+                  setResourcesFormData({
+                    ...resourcesFormData,
+                    ...updatedData,
+                  });
+                }}
               />
             ) : (
               <Spin size="large" style={{ marginLeft: "50%" }} />
@@ -300,6 +324,12 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     ? technical_query.cerb_technical[0]
                     : {}
                 }
+                onFormChange={(updatedData) => {
+                  setTechnicalFormData({
+                    ...technicalFormData,
+                    ...updatedData,
+                  });
+                }}
               />
             ) : (
               <Spin size="large" style={{ marginLeft: "50%" }} />

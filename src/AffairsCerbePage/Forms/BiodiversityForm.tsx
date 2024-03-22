@@ -1,38 +1,61 @@
 import { Form, Input } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GdpCerbBiodiversityModel } from "../../../models/GestionDeProjets/CERBE/GdpCerbBiodiversityModel";
 
 type Props = {
   biodiversity: Partial<GdpCerbBiodiversityModel>;
+  onFormChange: (updatedData: Partial<GdpCerbBiodiversityModel>) => void;
 };
-const BiodiversityForm = ({ biodiversity }: Props) => {
+const BiodiversityForm = ({ biodiversity, onFormChange }: Props) => {
   const [totalPlotArea, setTotalPlotArea] = useState<number>(
-    biodiversity?.total_plot_area | 0,
+    biodiversity?.total_plot_area || null,
   );
 
   const [
     initialBiotopeSurfaceCoefficient,
     setInitialBiotopeSurfaceCoefficient,
-  ] = useState<number>(biodiversity?.initial_biotope_surface_coefficient | 0);
+  ] = useState<number>(
+    biodiversity?.initial_biotope_surface_coefficient || null,
+  );
 
   const [
     projectBiotopeSurfaceCoefficient,
     setProjectBiotopeSurfaceCoefficient,
-  ] = useState<number>(biodiversity?.project_biotope_surface_coefficient | 0);
+  ] = useState<number>(
+    biodiversity?.project_biotope_surface_coefficient || null,
+  );
 
   const [
     initialSurfaceThermalRefreshmentCoefficient,
     setInitialSurfaceThermalRefreshmentCoefficient,
   ] = useState<number>(
-    biodiversity?.initial_surface_thermal_refreshment_coefficient | 0,
+    biodiversity?.initial_surface_thermal_refreshment_coefficient || null,
   );
 
   const [
     projectSurfaceThermalRefreshmentCoefficient,
     setProjectSurfaceThermalRefreshmentCoefficient,
   ] = useState<number>(
-    biodiversity?.project_surface_thermal_refreshment_coefficient | 0,
+    biodiversity?.project_surface_thermal_refreshment_coefficient || null,
   );
+
+  useEffect(() => {
+    onFormChange({
+      total_plot_area: totalPlotArea,
+      initial_biotope_surface_coefficient: initialBiotopeSurfaceCoefficient,
+      project_biotope_surface_coefficient: projectBiotopeSurfaceCoefficient,
+      initial_surface_thermal_refreshment_coefficient:
+        initialSurfaceThermalRefreshmentCoefficient,
+      project_surface_thermal_refreshment_coefficient:
+        projectSurfaceThermalRefreshmentCoefficient,
+    });
+  }, [
+    totalPlotArea,
+    initialBiotopeSurfaceCoefficient,
+    initialSurfaceThermalRefreshmentCoefficient,
+    projectBiotopeSurfaceCoefficient,
+    projectSurfaceThermalRefreshmentCoefficient,
+  ]);
 
   return (
     <Form style={{ width: "75%" }}>

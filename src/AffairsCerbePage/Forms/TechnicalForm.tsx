@@ -1,11 +1,38 @@
 import { Form, Input } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GdpCerbTechnicalModel } from "../../../models/GestionDeProjets/CERBE/GdpCerbTechnicalModel";
 
 type Props = {
   technical: Partial<GdpCerbTechnicalModel>;
+  onFormChange: (updatedData: Partial<GdpCerbTechnicalModel>) => void;
 };
-const TechnicalForm = ({ technical }: Props) => {
+const TechnicalForm = ({ technical, onFormChange }: Props) => {
+  const [hvac, setHvac] = useState<string>(technical?.hvac || null);
+
+  const [electricity, setElectricity] = useState<string>(
+    technical?.electricity || null,
+  );
+
+  const [structure, setStructure] = useState<string>(
+    technical?.structure || null,
+  );
+
+  const [envelope, setEnvelope] = useState<string>(technical?.envelope || null);
+
+  const [interiorFinishes, setInteriorFinishes] = useState<string>(
+    technical?.interior_finishes || null,
+  );
+
+  useEffect(() => {
+    onFormChange({
+      hvac: hvac,
+      electricity: electricity,
+      structure: structure,
+      envelope: envelope,
+      interior_finishes: interiorFinishes,
+    });
+  }, [hvac, electricity, structure, envelope, interiorFinishes]);
+
   return (
     <Form style={{ width: "75%" }}>
       <Form.Item
