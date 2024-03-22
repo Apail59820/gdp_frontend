@@ -4,7 +4,6 @@ import concatenateQueryParameters from "../../../utils/queryParamsFormatter";
 import getConfig from "next/config";
 import { isRequestSuccessful } from "../../../utils/isRequestSuccessful";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
 import { GdpCerbRessourcesModel } from "../../../models/GestionDeProjets/CERBE/GdpCerbRessourcesModel";
 
 const { publicRuntimeConfig } = getConfig();
@@ -96,6 +95,71 @@ export async function createGdpCerbRessources(
     });
 }
 
+type updateFieldsToOmit =
+  | "id"
+  | "status"
+  | "user_created"
+  | "user_updated"
+  | "date_created"
+  | "date_updated"
+  | "affairs_id";
+export async function updateGdpCerbRessources(
+  id: number,
+  data: Partial<Omit<GdpCerbRessourcesModel, updateFieldsToOmit>>,
+): Promise<{
+  status: number;
+  data?: Partial<GdpCerbRessourcesModel>;
+  error?: string;
+}> {
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+  const myHeaders = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  });
+
+  const myInit: RequestInit = {
+    method: "PATCH",
+    headers: myHeaders,
+    mode: "cors",
+    body: JSON.stringify(data),
+  };
+
+  return fetch(
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/cerb_ressources/${id}`,
+    myInit,
+  )
+    .then(async (response) => {
+      if (isRequestSuccessful(response.status)) {
+        try {
+          const responseData: any = await response.json();
+          return { status: response.status, data: responseData.data };
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error(error);
+          return { status: response.status };
+        }
+      } else {
+        try {
+          const responseData_1: any = await response.json();
+          return {
+            status: response.status,
+            error: responseData_1.errors[0].message,
+          };
+        } catch (error_1) {
+          // eslint-disable-next-line no-console
+          console.error(error_1);
+          return { status: response.status };
+        }
+      }
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      return { status: 500 };
+    });
+}
+
 const fetchGdpCerbRessources = async (params: QueryParameters) => {
   const res = await getGdpCerbRessources(params);
   if (!isRequestSuccessful(res.status)) {
@@ -123,9 +187,7 @@ export function useCreateGdpCerbRessources() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (
-      newRessources: Omit<GdpCerbRessourcesModel, createFieldsToOmit>,
-    ) => {
+    mutationFn: (newRessources: any) => {
       return createGdpCerbRessources(newRessources);
     },
     onSuccess: async (data: any) => {
@@ -133,13 +195,25 @@ export function useCreateGdpCerbRessources() {
         await queryClient.invalidateQueries({
           queryKey: ["cerb_ressources"],
         });
-        message.success('Element "Ressources" ajouté avec succès.');
-      } else {
-        message.error("Une erreur est survenue.");
       }
     },
-    onError: (error: Error) => {
-      message.error("Une erreur est survenue.");
+  });
+}
+
+export function useUpdateGdpCerbRessources() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (updatedRessource: Partial<GdpCerbRessourcesModel>) => {
+      return updateGdpCerbRessources(
+        updatedRessource?.id as number,
+        updatedRessource,
+      );
+    },
+    onSuccess: (data) => {
+      if (isRequestSuccessful(data.status)) {
+        queryClient.invalidateQueries({ queryKey: ["cerb_ressources"] });
+      }
     },
   });
 }

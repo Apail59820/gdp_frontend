@@ -4,7 +4,6 @@ import concatenateQueryParameters from "../../../utils/queryParamsFormatter";
 import getConfig from "next/config";
 import { isRequestSuccessful } from "../../../utils/isRequestSuccessful";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { message } from "antd";
 import { GdpCerbTechnicalModel } from "../../../models/GestionDeProjets/CERBE/GdpCerbTechnicalModel";
 
 const { publicRuntimeConfig } = getConfig();
@@ -96,6 +95,71 @@ export async function createGdpCerbTechnical(
     });
 }
 
+type updateFieldsToOmit =
+  | "id"
+  | "status"
+  | "user_created"
+  | "user_updated"
+  | "date_created"
+  | "date_updated"
+  | "affairs_id";
+export async function updateGdpCerbTechnical(
+  id: number,
+  data: Partial<Omit<GdpCerbTechnicalModel, updateFieldsToOmit>>,
+): Promise<{
+  status: number;
+  data?: Partial<GdpCerbTechnicalModel>;
+  error?: string;
+}> {
+  const token = await retrieveToken();
+  if (!token) return Promise.resolve({ status: 401 });
+  const myHeaders = new Headers({
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  });
+
+  const myInit: RequestInit = {
+    method: "PATCH",
+    headers: myHeaders,
+    mode: "cors",
+    body: JSON.stringify(data),
+  };
+
+  return fetch(
+    `${publicRuntimeConfig.GESTION_DE_PROJET_API_URL}/items/cerb_technical/${id}`,
+    myInit,
+  )
+    .then(async (response) => {
+      if (isRequestSuccessful(response.status)) {
+        try {
+          const responseData: any = await response.json();
+          return { status: response.status, data: responseData.data };
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error(error);
+          return { status: response.status };
+        }
+      } else {
+        try {
+          const responseData_1: any = await response.json();
+          return {
+            status: response.status,
+            error: responseData_1.errors[0].message,
+          };
+        } catch (error_1) {
+          // eslint-disable-next-line no-console
+          console.error(error_1);
+          return { status: response.status };
+        }
+      }
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      return { status: 500 };
+    });
+}
+
 const fetchGdpCerbTechnical = async (params: QueryParameters) => {
   const res = await getGdpCerbTechnical(params);
   if (!isRequestSuccessful(res.status)) {
@@ -123,9 +187,7 @@ export function useCreateGdpCerbTechnical() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (
-      newTechnical: Omit<GdpCerbTechnicalModel, createFieldsToOmit>,
-    ) => {
+    mutationFn: (newTechnical: any) => {
       return createGdpCerbTechnical(newTechnical);
     },
     onSuccess: async (data: any) => {
@@ -133,13 +195,25 @@ export function useCreateGdpCerbTechnical() {
         await queryClient.invalidateQueries({
           queryKey: ["cerb_technical"],
         });
-        message.success('Element "Technique" ajouté avec succès.');
-      } else {
-        message.error("Une erreur est survenue.");
       }
     },
-    onError: (error: Error) => {
-      message.error("Une erreur est survenue.");
+  });
+}
+
+export function useUpdateGdpCerbTechnical() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (updatedTechnical: Partial<GdpCerbTechnicalModel>) => {
+      return updateGdpCerbTechnical(
+        updatedTechnical?.id as number,
+        updatedTechnical,
+      );
+    },
+    onSuccess: (data) => {
+      if (isRequestSuccessful(data.status)) {
+        queryClient.invalidateQueries({ queryKey: ["cerb_technical"] });
+      }
     },
   });
 }
