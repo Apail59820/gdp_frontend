@@ -9,6 +9,8 @@ export type GdpCerbBiodiversityModel = {
   date_updated: string;
   affairs_id: number | Partial<GdpAffairModel>;
 
+  total_plot_area: number;
+
   initial_biotope_surface_coefficient: number;
   project_biotope_surface_coefficient: number;
 

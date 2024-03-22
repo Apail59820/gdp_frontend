@@ -1,55 +1,60 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import styles from '../../../../../styles/Affair.module.scss';
-import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import styles from "../../../../../styles/Affair.module.scss";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   GdpActivitiesModel,
   GdpFilesModel,
   GdpProjectsModel,
   GdpPythagoreFactureModel,
   GdpSatisfactionModel,
-} from '../../../../../models/GdPModels';
-import { GdpAffairModel } from '../../../../../models/GdPModels';
-import { Breadcrumb, Button, QuickActionCard } from 'projex-ui';
-import Grid from '../../../../../src/components/Grid/Grid';
-import PageHeaderBanner from '../../../../../src/components/PageHeaderBanner/PageHeaderBanner';
-import QuickAccessWidget from '../../../../../src/components/QuickAccessWidget/QuickAccessWidget';
-import ClientTeamWidget from '../../../../../src/components/ClientTeamWidget/ClientTeamWidget';
-import CollaboratorTeamWidget from '../../../../../src/components/CollaboratorTeamWidget/CollaboratorTeamWidget';
-import BillingWidget from '../../../../../src/components/BillingWidget/BillingWidget';
-import FilesWidget from '../../../../../src/components/FilesWidget/FilesWidget';
-import { capitalize } from '../../../../../utils/capitalize';
-import PhasesWidget from '../../../../../src/components/PhasesWidget/PhasesWidget';
-import { getGdpAffair } from '../../../../../services/gestionDeProjets/GdpAffairs';
-import { useRouter } from 'next/router';
-import { isRequestSuccessful } from '../../../../../utils/isRequestSuccessful';
-import ActivitiesWidget from '../../../../../src/components/ActivitiesWidget/ActivitiesWidget';
-import { getGdpAffairsPhases } from '../../../../../services/gestionDeProjets/GdpPhases';
-import { UsUserModel } from '../../../../../models/UserService/UsUserModel';
-import { getGdpAffairsUsers } from '../../../../../services/gestionDeProjets/GdpAffairsUsers';
-import { getUsUsers } from '../../../../../services/userService/UsUsers';
-import { getGdpActivities } from '../../../../../services/gestionDeProjets/GdpActivities';
-import { getGdpAffairsPythagoreAffairs } from '../../../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs';
-import { getGdpPythagoreFactures } from '../../../../../services/gestionDeProjets/GdpPythagoreFactures';
-import { getGdpFiles } from '../../../../../services/gestionDeProjets/GdpFiles';
-import SatisfactionWidget from '../../../../../src/components/SatisfactionWidget/SatisfactionWidget';
-import { getGdpSatisfactions } from '../../../../../services/gestionDeProjets/GdpAffairsSatisfaction';
-import { useSelector } from 'react-redux';
-import { selectUserProfile } from '../../../../../store/reducers/authReducer';
-import CreateAffairForm from '../../../../../src/components/CreateAffairForm/CreateAffairForm';
-import { selectProjects } from '../../../../../store/reducers/projectsReducer';
-import CreatePhaseForm from '../../../../../src/components/CreatePhaseForm/CreatePhaseForm';
-import ConfigureFacturationForm from '../../../../../src/components/ConfigureFacturationForm/ConfigureFacturationForm';
-import ManageAffairUsersForm from '../../../../../src/components/ManageAffairUsersForm/ManageAffairUsersForm';
-import { getGdpProjectsUsersClients } from '../../../../../services/gestionDeProjets/GdpProjectsUsersClients';
-import {
-  fileItemType
-} from '../../../../../src/components/filesForms/UploadFilesForm/UploadFilesForm';
-import { selectAffairs } from '../../../../../store/reducers/affairsReducer';
+} from "../../../../../models/GdPModels";
+import { GdpAffairModel } from "../../../../../models/GdPModels";
+import { Breadcrumb, Button, QuickActionCard } from "projex-ui";
+import Grid from "../../../../../src/components/Grid/Grid";
+import PageHeaderBanner from "../../../../../src/components/PageHeaderBanner/PageHeaderBanner";
+import QuickAccessWidget from "../../../../../src/components/QuickAccessWidget/QuickAccessWidget";
+import ClientTeamWidget from "../../../../../src/components/ClientTeamWidget/ClientTeamWidget";
+import CollaboratorTeamWidget from "../../../../../src/components/CollaboratorTeamWidget/CollaboratorTeamWidget";
+import BillingWidget from "../../../../../src/components/BillingWidget/BillingWidget";
+import FilesWidget from "../../../../../src/components/FilesWidget/FilesWidget";
+import { capitalize } from "../../../../../utils/capitalize";
+import PhasesWidget from "../../../../../src/components/PhasesWidget/PhasesWidget";
+import { getGdpAffair } from "../../../../../services/gestionDeProjets/GdpAffairs";
+import { useRouter } from "next/router";
+import { isRequestSuccessful } from "../../../../../utils/isRequestSuccessful";
+import ActivitiesWidget from "../../../../../src/components/ActivitiesWidget/ActivitiesWidget";
+import { getGdpAffairsPhases } from "../../../../../services/gestionDeProjets/GdpPhases";
+import { UsUserModel } from "../../../../../models/UserService/UsUserModel";
+import { getGdpAffairsUsers } from "../../../../../services/gestionDeProjets/GdpAffairsUsers";
+import { getUsUsers } from "../../../../../services/userService/UsUsers";
+import { getGdpActivities } from "../../../../../services/gestionDeProjets/GdpActivities";
+import { getGdpAffairsPythagoreAffairs } from "../../../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs";
+import { getGdpPythagoreFactures } from "../../../../../services/gestionDeProjets/GdpPythagoreFactures";
+import { getGdpFiles } from "../../../../../services/gestionDeProjets/GdpFiles";
+import SatisfactionWidget from "../../../../../src/components/SatisfactionWidget/SatisfactionWidget";
+import { getGdpSatisfactions } from "../../../../../services/gestionDeProjets/GdpAffairsSatisfaction";
+import { useSelector } from "react-redux";
+import { selectUserProfile } from "../../../../../store/reducers/authReducer";
+import CreateAffairForm from "../../../../../src/components/CreateAffairForm/CreateAffairForm";
+import { selectProjects } from "../../../../../store/reducers/projectsReducer";
+import CreatePhaseForm from "../../../../../src/components/CreatePhaseForm/CreatePhaseForm";
+import ConfigureFacturationForm from "../../../../../src/components/ConfigureFacturationForm/ConfigureFacturationForm";
+import ManageAffairUsersForm from "../../../../../src/components/ManageAffairUsersForm/ManageAffairUsersForm";
+import { getGdpProjectsUsersClients } from "../../../../../services/gestionDeProjets/GdpProjectsUsersClients";
+import { fileItemType } from "../../../../../src/components/filesForms/UploadFilesForm/UploadFilesForm";
+import { selectAffairs } from "../../../../../store/reducers/affairsReducer";
 import UploadFilesForm from "../../../../../src/components/filesForms/UploadFilesForm/UploadFilesForm";
-import {selectAffairsPythagoreAffaires} from "../../../../../store/reducers/affairsPythagoreAffairesReducer";
+import { selectAffairsPythagoreAffaires } from "../../../../../store/reducers/affairsPythagoreAffairesReducer";
+import { Alert } from "antd";
+import Link from "next/link";
+import { useGdpCerbEnergy } from "../../../../../services/gestionDeProjets/CERBE/GdpCerbEnergy";
+import { useGdpCerbGeneralities } from "../../../../../services/gestionDeProjets/CERBE/GdpCerbGeneralities";
+import { useGdpCerbBiodiversity } from "../../../../../services/gestionDeProjets/CERBE/GdbCerbBiodiversity";
+import { useGdpCerbCarbon } from "../../../../../services/gestionDeProjets/CERBE/GdpCerbCarbon";
+import { useGdpCerbRessources } from "../../../../../services/gestionDeProjets/CERBE/GdpCerbRessources";
+import { useGdpCerbTechnical } from "../../../../../services/gestionDeProjets/CERBE/GdpCerbTechnical";
 
 const Affair = () => {
-
   const { query } = useRouter();
   const me = useSelector(selectUserProfile);
   const projects = useSelector(selectProjects);
@@ -57,27 +62,94 @@ const Affair = () => {
   const affairsPythagoreAffaires = useSelector(selectAffairsPythagoreAffaires);
 
   const [affair, setAffair] = useState<Partial<GdpAffairModel>>({});
-  const [updatedAffair, setUpdatedAffair] = useState<Partial<GdpAffairModel>>({})
-  const [affairPhases, setAffairPhases] = useState<Partial<GdpAffairModel>[]>([]);
-  const [affairManagers, setAffairManagers] = useState<Partial<UsUserModel>[]>([]);
-  const [affairClients, setAffairClients] = useState<Partial<UsUserModel>[]>([]);
-  const [affairActivities, setAffairActivities] = useState<Partial<GdpActivitiesModel>[]>([]);
-  const [affairInvoices, setAffairInvoices] = useState<Partial<GdpPythagoreFactureModel>[]>([]);
+  const [updatedAffair, setUpdatedAffair] = useState<Partial<GdpAffairModel>>(
+    {},
+  );
+  const [affairPhases, setAffairPhases] = useState<Partial<GdpAffairModel>[]>(
+    [],
+  );
+  const [affairManagers, setAffairManagers] = useState<Partial<UsUserModel>[]>(
+    [],
+  );
+  const [affairClients, setAffairClients] = useState<Partial<UsUserModel>[]>(
+    [],
+  );
+  const [affairActivities, setAffairActivities] = useState<
+    Partial<GdpActivitiesModel>[]
+  >([]);
+  const [affairInvoices, setAffairInvoices] = useState<
+    Partial<GdpPythagoreFactureModel>[]
+  >([]);
   const [files, setFiles] = useState<Partial<GdpFilesModel>[]>([]);
-  const [affairSatisfactions, setAffairSatisfactions] = useState<Partial<GdpSatisfactionModel>[]>([]);
-  const [affairProject, setAffairProject] = useState<Partial<GdpProjectsModel>>({});
+  const [affairSatisfactions, setAffairSatisfactions] = useState<
+    Partial<GdpSatisfactionModel>[]
+  >([]);
+  const [affairProject, setAffairProject] = useState<Partial<GdpProjectsModel>>(
+    {},
+  );
 
-  const [isUserAffairManager, setIsUserAffairManager] = useState<boolean>(false);
-  const [isUserClassicCollaborator, setIsUserClassicCollaborator] = useState<boolean>(false);
+  const generalities_query = useGdpCerbGeneralities({
+    filter: { affairs_id: { _eq: affair?.id } },
+  });
+
+  const biodiversity_query = useGdpCerbBiodiversity({
+    filter: { affairs_id: { _eq: affair?.id } },
+  });
+
+  const energy_query = useGdpCerbEnergy({
+    filter: { affairs_id: { _eq: affair?.id } },
+  });
+
+  const carbon_query = useGdpCerbCarbon({
+    filter: { affairs_id: { _eq: affair?.id } },
+  });
+
+  const resources_query = useGdpCerbRessources({
+    filter: { affairs_id: { _eq: affair?.id } },
+  });
+
+  const technical_query = useGdpCerbTechnical({
+    filter: { affairs_id: { _eq: affair?.id } },
+  });
+
+  const cerb_data_loading =
+    generalities_query.isLoading ||
+    biodiversity_query.isLoading ||
+    energy_query.isLoading ||
+    carbon_query.isLoading ||
+    resources_query.isLoading ||
+    technical_query.isLoading;
+
+  const has_cerb_data =
+    generalities_query.cerb_generalities?.length ||
+    biodiversity_query.cerb_biodiversity?.length ||
+    energy_query.cerb_energy?.length ||
+    carbon_query.cerb_carbon?.length ||
+    resources_query.cerb_ressources?.length ||
+    technical_query.cerb_technical?.length;
+
+  const [isUserAffairManager, setIsUserAffairManager] =
+    useState<boolean>(false);
+  const [isUserClassicCollaborator, setIsUserClassicCollaborator] =
+    useState<boolean>(false);
   const [isUserClient, setIsUserClient] = useState<boolean>(false);
 
-  const [isCreateAffairFormVisible, setIsCreateAffairFormVisible] = useState<boolean>(false);
-  const [isCreatePhaseFormVisible, setIsCreatePhaseFormVisible] = useState<boolean>(false);
-  const [isConfigureFacturationFormVisible, setIsConfigureFacturationFormVisible] = useState<boolean>(false);
-  const [isManageAffairUsersFormVisible, setIsManageAffairUsersFormVisible] = useState<boolean>(false);
-  const [isUploadFilesFormVisible, setIsUploadFilesFormVisible] = useState<boolean>(false);
+  const [isCreateAffairFormVisible, setIsCreateAffairFormVisible] =
+    useState<boolean>(false);
+  const [isCreatePhaseFormVisible, setIsCreatePhaseFormVisible] =
+    useState<boolean>(false);
+  const [
+    isConfigureFacturationFormVisible,
+    setIsConfigureFacturationFormVisible,
+  ] = useState<boolean>(false);
+  const [isManageAffairUsersFormVisible, setIsManageAffairUsersFormVisible] =
+    useState<boolean>(false);
+  const [isUploadFilesFormVisible, setIsUploadFilesFormVisible] =
+    useState<boolean>(false);
 
-  const [affairUsersFormType, setAffairUsersFormType] = useState<'collaborator' | 'client'>('client');
+  const [affairUsersFormType, setAffairUsersFormType] = useState<
+    "collaborator" | "client"
+  >("client");
 
   const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -100,24 +172,30 @@ const Affair = () => {
   }
 
   const progressPercentage = useMemo(() => {
-    const requiredProps = ['name', 'company_entity', 'projects_id'];
+    const requiredProps = ["name", "company_entity", "projects_id"];
     let propsDefined = requiredProps.reduce(
-      (count, prop) => count + (affair && affair[prop as keyof Partial<GdpAffairModel>] ? 1 : 0),
-      0
+      (count, prop) =>
+        count +
+        (affair && affair[prop as keyof Partial<GdpAffairModel>] ? 1 : 0),
+      0,
     );
 
-    if (affair.affairs_phases_ids && affair.affairs_phases_ids.length > 0) propsDefined++;
+    if (affair.affairs_phases_ids && affair.affairs_phases_ids.length > 0)
+      propsDefined++;
     // On divise par requiredProps.length + 1 car on ajoute 1 pour les phases
     return Math.round((propsDefined / (requiredProps.length + 1)) * 100);
   }, [affair]);
 
-  const handleManageUsersFormType = useCallback((type: 'collaborator' | 'client') => {
-    setAffairUsersFormType(type);
-    setIsManageAffairUsersFormVisible(true);
-  }, []);
+  const handleManageUsersFormType = useCallback(
+    (type: "collaborator" | "client") => {
+      setAffairUsersFormType(type);
+      setIsManageAffairUsersFormVisible(true);
+    },
+    [],
+  );
 
   useEffect(() => {
-    if (!query.affairId || typeof query.affairId !== 'string') return;
+    if (!query.affairId || typeof query.affairId !== "string") return;
 
     const affairId = parseInt(query.affairId);
 
@@ -131,19 +209,19 @@ const Affair = () => {
     getGdpAffair(
       +query.affairId,
       [
-        '*',
-        'phases.*',
-        'company_entity.*',
-        'pythagore_ids.*',
-        'affairs_directus_users_ids.*',
-        'projects_id.name',
-        'projects_id.id',
-        'projects_id.company_entity',
-        'projects_id.projects_directus_users_clients_ids.*',
-        'projects_id.projects_directus_users_collaborators_ids.*',
-        'affairs_phases.*',
-        'activities_id.*',
-      ].join(',')
+        "*",
+        "phases.*",
+        "company_entity.*",
+        "pythagore_ids.*",
+        "affairs_directus_users_ids.*",
+        "projects_id.name",
+        "projects_id.id",
+        "projects_id.company_entity",
+        "projects_id.projects_directus_users_clients_ids.*",
+        "projects_id.projects_directus_users_collaborators_ids.*",
+        "affairs_phases.*",
+        "activities_id.*",
+      ].join(","),
     )
       .then((response) => {
         if (isRequestSuccessful(response.status) && response.data) {
@@ -155,30 +233,33 @@ const Affair = () => {
   }, [affairs, query.affairId]);
 
   useEffect(() => {
-
     let affairsToAdd = [];
-    for(const affairPythagoreAffaire of affairsPythagoreAffaires as any){
-      if(affairPythagoreAffaire?.length){
-        for(const pythagoreAffaire of affairPythagoreAffaire){
+    for (const affairPythagoreAffaire of affairsPythagoreAffaires as any) {
+      if (affairPythagoreAffaire?.length) {
+        for (const pythagoreAffaire of affairPythagoreAffaire) {
           affairsToAdd.push(pythagoreAffaire.pythagore_affaires_id);
         }
-      }
-      else{
-        affairsToAdd.push(affairPythagoreAffaire.pythagore_affaires_id.numero_affaire);
+      } else {
+        affairsToAdd.push(
+          affairPythagoreAffaire.pythagore_affaires_id.numero_affaire,
+        );
       }
     }
 
-    if(!affairsToAdd.length){
+    if (!affairsToAdd.length) {
       setAffairInvoices([]);
     } else {
-      getGdpPythagoreFactures({filter:
-            { num_affaire: {
-                _in: affairsToAdd}
-            }}).then((res) => {
-        if(isRequestSuccessful(res.status) && res?.data){
+      getGdpPythagoreFactures({
+        filter: {
+          num_affaire: {
+            _in: affairsToAdd,
+          },
+        },
+      }).then((res) => {
+        if (isRequestSuccessful(res.status) && res?.data) {
           setAffairInvoices(res.data);
         }
-      })
+      });
     }
   }, [affairsPythagoreAffaires]);
 
@@ -188,19 +269,21 @@ const Affair = () => {
       const phasesToRetrieve: number[] = [];
       const phases: Partial<GdpAffairModel>[] = [];
       affair.affairs_phases_ids.forEach((phase) => {
-        if (typeof phase === 'number') phasesToRetrieve.push(phase);
+        if (typeof phase === "number") phasesToRetrieve.push(phase);
         else phases.push(phase);
       });
 
       if (phasesToRetrieve.length > 0) {
-        getGdpAffairsPhases({ filter: { id: { _in: phasesToRetrieve } }, limit: 3, sort: '-date_created' }).then(
-          (response) => {
-            if (response.status === 200 && response.data) {
-              phases.push(...response.data);
-            }
-            setAffairPhases(phases);
+        getGdpAffairsPhases({
+          filter: { id: { _in: phasesToRetrieve } },
+          limit: 3,
+          sort: "-date_created",
+        }).then((response) => {
+          if (response.status === 200 && response.data) {
+            phases.push(...response.data);
           }
-        );
+          setAffairPhases(phases);
+        });
       } else {
         setAffairPhases(phases);
       }
@@ -216,75 +299,96 @@ const Affair = () => {
       const collaborators: Partial<UsUserModel>[] = [];
       const collaboratorsToRetrieve: string[] = [];
       affair.affairs_directus_users_ids.forEach((relation) => {
-        if (typeof relation === 'number') relationsToRetrieve.push(relation);
+        if (typeof relation === "number") relationsToRetrieve.push(relation);
         else {
           if (relation.project_manager) {
-            if (typeof relation.directus_users_id === 'string') managersToRetrieve.push(relation.directus_users_id);
+            if (typeof relation.directus_users_id === "string")
+              managersToRetrieve.push(relation.directus_users_id);
             else managers.push(relation.directus_users_id);
           } else {
-            if (typeof relation.directus_users_id === 'string')
+            if (typeof relation.directus_users_id === "string")
               collaboratorsToRetrieve.push(relation.directus_users_id);
             else collaborators.push(relation.directus_users_id);
           }
         }
       });
       if (relationsToRetrieve.length > 0) {
-        getGdpAffairsUsers({ filter: { id: { _in: relationsToRetrieve } } }).then((response) => {
+        getGdpAffairsUsers({
+          filter: { id: { _in: relationsToRetrieve } },
+        }).then((response) => {
           if (response.status === 200 && response.data) {
             response.data.forEach((relation) => {
               if (relation.directus_users_id) {
-                if (typeof relation.directus_users_id === 'string') {
-                  if (relation.project_manager) managersToRetrieve.push(relation.directus_users_id);
+                if (typeof relation.directus_users_id === "string") {
+                  if (relation.project_manager)
+                    managersToRetrieve.push(relation.directus_users_id);
                   else collaboratorsToRetrieve.push(relation.directus_users_id);
                 } else {
-                  if (relation.project_manager) managers.push(relation.directus_users_id);
+                  if (relation.project_manager)
+                    managers.push(relation.directus_users_id);
                   else collaborators.push(relation.directus_users_id);
                 }
               }
             });
           }
           if (managersToRetrieve.length > 0) {
-            getUsUsers({ filter: { id: { _in: [...managersToRetrieve, ...collaboratorsToRetrieve] } } }).then(
-              (response) => {
-                if (response.status === 200 && response.data) {
-                  const managersFromRes = response.data.filter((user) =>
-                    managersToRetrieve.includes(user.id as string)
-                  );
-                  const collaboratorsFromRes = response.data.filter((user) =>
-                    collaboratorsToRetrieve.includes(user.id as string)
-                  );
-                  collaborators.push(...collaboratorsFromRes);
-                  const iAmCollaborator = collaborators.find((collaborator) => collaborator.id === me.id);
-                  setIsUserClassicCollaborator(!!iAmCollaborator);
-                  setAffairManagers([...managers, ...managersFromRes]);
-                }
+            getUsUsers({
+              filter: {
+                id: {
+                  _in: [...managersToRetrieve, ...collaboratorsToRetrieve],
+                },
+              },
+            }).then((response) => {
+              if (response.status === 200 && response.data) {
+                const managersFromRes = response.data.filter((user) =>
+                  managersToRetrieve.includes(user.id as string),
+                );
+                const collaboratorsFromRes = response.data.filter((user) =>
+                  collaboratorsToRetrieve.includes(user.id as string),
+                );
+                collaborators.push(...collaboratorsFromRes);
+                const iAmCollaborator = collaborators.find(
+                  (collaborator) => collaborator.id === me.id,
+                );
+                setIsUserClassicCollaborator(!!iAmCollaborator);
+                setAffairManagers([...managers, ...managersFromRes]);
               }
-            );
+            });
           } else {
             setAffairManagers(managers);
-            const iAmCollaborator = collaborators.find((collaborator) => collaborator.id === me.id);
+            const iAmCollaborator = collaborators.find(
+              (collaborator) => collaborator.id === me.id,
+            );
             setIsUserClassicCollaborator(!!iAmCollaborator);
           }
         });
       } else {
         if (managersToRetrieve.length > 0) {
-          getUsUsers({ filter: { id: { _in: [...managersToRetrieve, ...collaboratorsToRetrieve] } } }).then(
-            (response) => {
-              if (response.status === 200 && response.data) {
-                const managersFromRes = response.data.filter((user) => managersToRetrieve.includes(user.id as string));
-                const collaboratorsFromRes = response.data.filter((user) =>
-                  collaboratorsToRetrieve.includes(user.id as string)
-                );
-                collaborators.push(...collaboratorsFromRes);
-                const iAmCollaborator = collaborators.find((collaborator) => collaborator.id === me.id);
-                setIsUserClassicCollaborator(!!iAmCollaborator);
-                setAffairManagers([...managers, ...managersFromRes]);
-              }
+          getUsUsers({
+            filter: {
+              id: { _in: [...managersToRetrieve, ...collaboratorsToRetrieve] },
+            },
+          }).then((response) => {
+            if (response.status === 200 && response.data) {
+              const managersFromRes = response.data.filter((user) =>
+                managersToRetrieve.includes(user.id as string),
+              );
+              const collaboratorsFromRes = response.data.filter((user) =>
+                collaboratorsToRetrieve.includes(user.id as string),
+              );
+              collaborators.push(...collaboratorsFromRes);
+              const iAmCollaborator = collaborators.find(
+                (collaborator) => collaborator.id === me.id,
+              );
+              setIsUserClassicCollaborator(!!iAmCollaborator);
+              setAffairManagers([...managers, ...managersFromRes]);
             }
-          );
+          });
         } else {
           setAffairManagers(managers);
-          const iAmCollaborator = collaborators.find((collaborator) => collaborator.id === me.id);
+          const iAmCollaborator = collaborators.find(
+            (collaborator) => collaborator.id === me.id,
+          );
           setIsUserClassicCollaborator(!!iAmCollaborator);
         }
       }
@@ -295,24 +399,31 @@ const Affair = () => {
   useEffect(() => {
     setIsUserClient(false);
     if (affair.id && me && me.id) {
-      getGdpProjectsUsersClients({ filter: { affairs_id: { _eq: affair.id } } }).then((response) => {
+      getGdpProjectsUsersClients({
+        filter: { affairs_id: { _eq: affair.id } },
+      }).then((response) => {
         if (response.status === 200 && response.data) {
           const clientsToRetrieve: string[] = [];
           const clients: Partial<UsUserModel>[] = [];
           response.data.forEach((relation) => {
             if (relation.directus_users_id) {
-              if (typeof relation.directus_users_id === 'string') clientsToRetrieve.push(relation.directus_users_id);
+              if (typeof relation.directus_users_id === "string")
+                clientsToRetrieve.push(relation.directus_users_id);
               else clients.push(relation.directus_users_id);
             }
           });
           if (clientsToRetrieve.length > 0) {
-            getUsUsers({ filter: { id: { _in: clientsToRetrieve } } }).then((response) => {
-              if (response.status === 200 && response.data) {
-                setAffairClients([...clients, ...response.data]);
-                const iAmClient = [...clients, ...response.data].find((client) => client.id === me.id);
-                setIsUserClient(!!iAmClient);
-              }
-            });
+            getUsUsers({ filter: { id: { _in: clientsToRetrieve } } }).then(
+              (response) => {
+                if (response.status === 200 && response.data) {
+                  setAffairClients([...clients, ...response.data]);
+                  const iAmClient = [...clients, ...response.data].find(
+                    (client) => client.id === me.id,
+                  );
+                  setIsUserClient(!!iAmClient);
+                }
+              },
+            );
           } else {
             setAffairClients(clients);
             const iAmClient = clients.find((client) => client.id === me.id);
@@ -331,7 +442,11 @@ const Affair = () => {
           { projects_id: { _eq: affair.id } },
           {
             collection: {
-              _in: ['projects', 'projects_directus_users_clients', 'projects_directus_users_collaborators'],
+              _in: [
+                "projects",
+                "projects_directus_users_clients",
+                "projects_directus_users_collaborators",
+              ],
             },
           },
         ],
@@ -350,16 +465,29 @@ const Affair = () => {
       const affairPythagoreAffairIds: number[] = [];
       const pythagoreAffairIds: string[] = [];
       affair.pythagore_ids.forEach((affairPythagoreAffairRelation) => {
-        if (typeof affairPythagoreAffairRelation === 'number')
+        if (typeof affairPythagoreAffairRelation === "number")
           affairPythagoreAffairIds.push(affairPythagoreAffairRelation);
         else if (affairPythagoreAffairRelation.pythagore_affaires_id)
-          if (typeof affairPythagoreAffairRelation.pythagore_affaires_id === 'string')
-            pythagoreAffairIds.push(affairPythagoreAffairRelation.pythagore_affaires_id);
-          else if (affairPythagoreAffairRelation.pythagore_affaires_id.numero_affaire) {
-            pythagoreAffairIds.push(affairPythagoreAffairRelation.pythagore_affaires_id.numero_affaire);
+          if (
+            typeof affairPythagoreAffairRelation.pythagore_affaires_id ===
+            "string"
+          )
+            pythagoreAffairIds.push(
+              affairPythagoreAffairRelation.pythagore_affaires_id,
+            );
+          else if (
+            affairPythagoreAffairRelation.pythagore_affaires_id.numero_affaire
+          ) {
+            pythagoreAffairIds.push(
+              affairPythagoreAffairRelation.pythagore_affaires_id
+                .numero_affaire,
+            );
           }
       });
-      if (affairPythagoreAffairIds.length > 0 && pythagoreAffairIds.length < 3) {
+      if (
+        affairPythagoreAffairIds.length > 0 &&
+        pythagoreAffairIds.length < 3
+      ) {
         getGdpAffairsPythagoreAffairs({
           filter: {
             id: { _in: affairPythagoreAffairIds },
@@ -369,10 +497,21 @@ const Affair = () => {
           if (res.status === 200 && res.data) {
             res.data.forEach((affairPythagoreAffairRelation) => {
               if (affairPythagoreAffairRelation.pythagore_affaires_id)
-                if (typeof affairPythagoreAffairRelation.pythagore_affaires_id === 'string')
-                  pythagoreAffairIds.push(affairPythagoreAffairRelation.pythagore_affaires_id);
-                else if (affairPythagoreAffairRelation.pythagore_affaires_id.numero_affaire) {
-                  pythagoreAffairIds.push(affairPythagoreAffairRelation.pythagore_affaires_id.numero_affaire);
+                if (
+                  typeof affairPythagoreAffairRelation.pythagore_affaires_id ===
+                  "string"
+                )
+                  pythagoreAffairIds.push(
+                    affairPythagoreAffairRelation.pythagore_affaires_id,
+                  );
+                else if (
+                  affairPythagoreAffairRelation.pythagore_affaires_id
+                    .numero_affaire
+                ) {
+                  pythagoreAffairIds.push(
+                    affairPythagoreAffairRelation.pythagore_affaires_id
+                      .numero_affaire,
+                  );
                 }
             });
           }
@@ -418,7 +557,7 @@ const Affair = () => {
         setFiles(res.data);
       } else setFiles([]);
     });
-  }
+  };
 
   useEffect(() => {
     retrieveFiles();
@@ -441,8 +580,10 @@ const Affair = () => {
 
   useEffect(() => {
     if (affair.projects_id) {
-      if (typeof affair.projects_id === 'number') {
-        const project = projects.find((project) => project.id === affair.projects_id);
+      if (typeof affair.projects_id === "number") {
+        const project = projects.find(
+          (project) => project.id === affair.projects_id,
+        );
         if (project) setAffairProject(project);
         else setAffairProject({});
       } else {
@@ -454,7 +595,10 @@ const Affair = () => {
   }, [affair, projects]);
 
   useEffect(() => {
-    if (me && affairManagers.filter((manager) => manager.id === me.id).length > 0) {
+    if (
+      me &&
+      affairManagers.filter((manager) => manager.id === me.id).length > 0
+    ) {
       setIsUserAffairManager(true);
     } else {
       setIsUserAffairManager(false);
@@ -462,26 +606,26 @@ const Affair = () => {
   }, [affairManagers, me]);
 
   const handleUpdateAffairPhase = () => {
-    if (!query.affairId || typeof query.affairId !== 'string') return;
+    if (!query.affairId || typeof query.affairId !== "string") return;
 
     const affairId = parseInt(query.affairId);
 
     getGdpAffair(
       affairId,
       [
-        '*',
-        'phases.*',
-        'company_entity.*',
-        'pythagore_ids.*',
-        'affairs_directus_users_ids.*',
-        'projects_id.name',
-        'projects_id.id',
-        'projects_id.company_entity',
-        'projects_id.projects_directus_users_clients_ids.*',
-        'projects_id.projects_directus_users_collaborators_ids.*',
-        'affairs_phases.*',
-        'activities_id.*',
-      ].join(',')
+        "*",
+        "phases.*",
+        "company_entity.*",
+        "pythagore_ids.*",
+        "affairs_directus_users_ids.*",
+        "projects_id.name",
+        "projects_id.id",
+        "projects_id.company_entity",
+        "projects_id.projects_directus_users_clients_ids.*",
+        "projects_id.projects_directus_users_collaborators_ids.*",
+        "affairs_phases.*",
+        "activities_id.*",
+      ].join(","),
     )
       .then((response) => {
         if (isRequestSuccessful(response.status) && response.data) {
@@ -494,12 +638,36 @@ const Affair = () => {
 
   return (
     <div className="page">
-      <PageHeaderBanner data={affairProject ? affairProject : { name: 'Projet' }} affair={affair} />
+      {!cerb_data_loading && (
+        <Alert
+          message={
+            has_cerb_data
+              ? "Continuez à renseigner vos données CERBE"
+              : 'Veuillez renseigner vos données CERBE"'
+          }
+          type="info"
+          showIcon
+          action={
+            <Link href={`/cerbe/${affair?.id}`} style={{ marginRight: "1em" }}>
+              {has_cerb_data
+                ? "Continuer à remplir mes données CERBE"
+                : "Remplir mes données CERBE"}
+            </Link>
+          }
+          closable
+        />
+      )}
+      <PageHeaderBanner
+        data={affairProject ? affairProject : { name: "Projet" }}
+        affair={affair}
+      />
       <div className={styles.affairPage}>
         <Breadcrumb
           dynamicRoutesLabel={[
-            affair.projects_id ? (affair.projects_id as GdpProjectsModel).name : 'Projet',
-            affair.name || 'Affaire',
+            affair.projects_id
+              ? (affair.projects_id as GdpProjectsModel).name
+              : "Projet",
+            affair.name || "Affaire",
           ]}
         />
         <div className={styles.titleContainer}>
@@ -531,18 +699,23 @@ const Affair = () => {
             userType={affairUsersFormType}
           />
           <UploadFilesForm
-              isOpen={isUploadFilesFormVisible}
-              onClose={onFileModalClose}
-              edit={isEditing}
-              mode={'files'}
-              fileItems={filesToUpdate}
-              project={affairProject}
-              affair={affair}
+            isOpen={isUploadFilesFormVisible}
+            onClose={onFileModalClose}
+            edit={isEditing}
+            mode={"files"}
+            fileItems={filesToUpdate}
+            project={affairProject}
+            affair={affair}
           />
           {/* end ---------------- EVERY FORM GOES HERE ---------------- end */}
-          <h1 className={styles.title}>{affair.name ? capitalize(affair.name) : `Affaire ${affair.id}`}</h1>
+          <h1 className={styles.title}>
+            {affair.name ? capitalize(affair.name) : `Affaire ${affair.id}`}
+          </h1>
           {isUserAffairManager && (
-            <Button icon={<EditOutlined rev={undefined} />} onClick={() => setIsCreateAffairFormVisible(true)}>
+            <Button
+              icon={<EditOutlined rev={undefined} />}
+              onClick={() => setIsCreateAffairFormVisible(true)}
+            >
               Modifier l&apos;affaire
             </Button>
           )}
@@ -553,25 +726,31 @@ const Affair = () => {
               <QuickActionCard
                 title="Facturation"
                 button={{
-                  label: 'Configurer la facturation',
+                  label: "Configurer la facturation",
                   icon: <EditOutlined rev={undefined} />,
                   onClick: () => setIsConfigureFacturationFormVisible(true),
                 }}
               >
-                Vous pouvez associer les numéros Pythagore aux affaires correspondantes
+                Vous pouvez associer les numéros Pythagore aux affaires
+                correspondantes
               </QuickActionCard>
               <QuickActionCard
                 title="Étapes du projet"
                 button={{
-                  label: 'Ajouter une étape',
+                  label: "Ajouter une étape",
                   icon: <PlusOutlined rev={undefined} />,
                   onClick: () => setIsCreatePhaseFormVisible(true),
                 }}
               >
-                Vous pouvez créer des étapes pour un suivi approfondi de l&apos;affaire
+                Vous pouvez créer des étapes pour un suivi approfondi de
+                l&apos;affaire
               </QuickActionCard>
-              <QuickActionCard title="Complétez l'affaire" progress={progressPercentage}>
-                Remplissez l&apos;affaire pour profiter pleinement de toutes les fonctionnalités
+              <QuickActionCard
+                title="Complétez l'affaire"
+                progress={progressPercentage}
+              >
+                Remplissez l&apos;affaire pour profiter pleinement de toutes les
+                fonctionnalités
               </QuickActionCard>
             </Grid>
           </QuickAccessWidget>
@@ -586,16 +765,18 @@ const Affair = () => {
           <Grid type="narrow">
             <ClientTeamWidget
               users={affairClients}
-              clientCompany={{ name: 'Client' }}
-              onAddClientClick={() => handleManageUsersFormType('client')}
+              clientCompany={{ name: "Client" }}
+              onAddClientClick={() => handleManageUsersFormType("client")}
               displayConfigureButton={isUserAffairManager}
-              projectType={'affair'}
+              projectType={"affair"}
             />
             <CollaboratorTeamWidget
               type="affair"
               users={affairManagers}
-              companyEntity={'company'}
-              onAddCollaboratorClick={() => handleManageUsersFormType('collaborator')}
+              companyEntity={"company"}
+              onAddCollaboratorClick={() =>
+                handleManageUsersFormType("collaborator")
+              }
               displayConfigureButton={isUserAffairManager}
             />
           </Grid>
@@ -605,7 +786,9 @@ const Affair = () => {
             <ActivitiesWidget activities={affairActivities} />
             <BillingWidget
               invoices={affairInvoices}
-              onConfigureBillingClick={() => setIsConfigureFacturationFormVisible(true)}
+              onConfigureBillingClick={() =>
+                setIsConfigureFacturationFormVisible(true)
+              }
               displayConfigureButton={isUserAffairManager}
             />
           </Grid>
@@ -615,7 +798,9 @@ const Affair = () => {
             <FilesWidget
               files={files}
               onNewFileClick={() => setIsUploadFilesFormVisible(true)}
-              displayConfigureButton={isUserAffairManager || isUserClassicCollaborator || isUserClient}
+              displayConfigureButton={
+                isUserAffairManager || isUserClassicCollaborator || isUserClient
+              }
               fromAffairPage={true}
             />
             <SatisfactionWidget satisfactions={affairSatisfactions} />
