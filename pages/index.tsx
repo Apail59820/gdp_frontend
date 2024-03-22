@@ -7,6 +7,7 @@ import HomeUpdates from '../src/HomeUpdates/HomeUpdates';
 import { getMyUsProfile } from '../services/userService/UsUsers';
 import { isRequestSuccessful } from '../utils/isRequestSuccessful';
 import { capitalize } from '../utils/capitalize';
+import CerbeBannerTimer from '../src/components/CerbeBannerTimer/CerbeBannerTimer';
 
 type Tab = {
   label: string;
@@ -46,6 +47,7 @@ const Home = () => {
   return (
     <div className="page">
       <PageHeaderBanner data={userFullName ? `Bonjour, ${userFullName}` : 'Bonjour'} />
+      <CerbeBannerTimer />
       <div className={styles.homePage}>
         <TabBar tabs={tabs.map((tab) => tab.label)} currentTab={currentTab} setCurrentTab={setCurrentTab} />
         {tabs.find((tab) => tab.label === currentTab)?.content}
