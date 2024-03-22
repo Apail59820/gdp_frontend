@@ -45,6 +45,7 @@ const GeneralitiesForm = ({ generalities, onFormChange }: Props) => {
       floor_area: floorArea,
       status: status,
       typology: typology,
+      certifications_labels: certificationsLabel,
     });
   }, [
     interlocutor,
