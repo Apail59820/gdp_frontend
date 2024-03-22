@@ -196,7 +196,10 @@ const AffairsCerbePage = ({ affair }: Props) => {
           Configurer les données CERBE pour l'affaire{" "}
           <strong>{affair?.name}</strong>
         </h4>
-        <Collapse style={{ marginBottom: "20px" }}>
+        <Collapse
+          style={{ marginBottom: "20px" }}
+          defaultActiveKey={[1, 2, 3, 4, 5, 6]}
+        >
           <Collapse.Panel
             key={1}
             className={styles.generalities_collapse}
