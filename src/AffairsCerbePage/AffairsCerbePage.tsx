@@ -47,6 +47,7 @@ import { GdpCerbRessourcesModel } from "../../models/GestionDeProjets/CERBE/GdpC
 import { GdpCerbTechnicalModel } from "../../models/GestionDeProjets/CERBE/GdpCerbTechnicalModel";
 import { messages } from "../../constants/messages";
 import { isRequestSuccessful } from "../../utils/isRequestSuccessful";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   affair: Partial<GdpAffairModel>;
@@ -120,6 +121,8 @@ const AffairsCerbePage = ({ affair }: Props) => {
   const updateCarbonMutation = useUpdateGdpCerbCarbon();
   const updateResourcesMutation = useUpdateGdpCerbRessources();
   const updateTechnicalMutation = useUpdateGdpCerbTechnical();
+
+  const queryClient = useQueryClient();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const submitForms = async () => {
@@ -221,6 +224,16 @@ const AffairsCerbePage = ({ affair }: Props) => {
     }
 
     setIsLoading(false);
+    [
+      "generalities",
+      "carbon",
+      "energy",
+      "technical",
+      "biodiversity",
+      "ressources",
+    ].map(async (t) => {
+      await queryClient.invalidateQueries({ queryKey: [`cerb_${t}`] });
+    });
     message.success("Données CERBE ajoutées avec succès.");
   };
 
