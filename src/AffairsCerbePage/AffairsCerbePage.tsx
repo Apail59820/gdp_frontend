@@ -269,7 +269,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
           defaultActiveKey={[1, 2, 3, 4, 5, 6]}
           activeKey={activeKey}
           onChange={(e) => {
-            setActiveKey(e);
+            setActiveKey(e as never);
           }}
         >
           <Collapse.Panel
