@@ -22,7 +22,7 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
         return message.error(
           "Veuillez selectionner une affaire ou entrer un numéro pythagore.",
         );
-      router.push(`/cerbe/${value?.affair}`);
+      return router.push(`/cerbe/${value?.affair}`);
     } else {
       getGdpAffairsPythagoreAffairs({
         filter: {
@@ -30,17 +30,13 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
         },
       }).then((res) => {
         if (isRequestSuccessful(res.status) && res?.data) {
-          console.log(res.data);
-          if (!res.data[0]?.affairs_id)
-            return message.error("Une erreur est survenue.");
-          router.push(
-            `/cerbe/${(res.data[0]?.affairs_id as Partial<GdpAffairModel>).id}`,
-          );
-        } else {
-          message.error(
-            `Aucune affaire n'a été trouvée avec le numéro pythagore '${value?.num_affaire}'`,
-          );
+          if (res.data[0]?.affairs_id) {
+            return router.push(
+              `/cerbe/${(res.data[0]?.affairs_id as Partial<GdpAffairModel>).id}`,
+            );
+          }
         }
+        return message.error("Une erreur est survenue.");
       });
     }
   };
