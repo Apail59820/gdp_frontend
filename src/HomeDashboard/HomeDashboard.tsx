@@ -27,19 +27,19 @@ const HomeDashboard = () => {
   const globalProjects = useSelector(selectProjects);
 
   const [currentUsersProjects, setCurrentUsersProjects] = useState<
-    Partial<GdpProjectsModel>[]
+      Partial<GdpProjectsModel>[]
   >([]);
   const [currentUsersAffairs, setCurrentUsersAffairs] = useState<
-    Partial<GdpAffairModel>[]
+      Partial<GdpAffairModel>[]
   >([]);
 
   const [areCurrentUsersProjectsLoading, setAreCurrentUsersProjectsLoading] =
-    useState(true);
+      useState(true);
 
   const [isCreateNewProjectModalOpen, setIsCreateNewProjectModalOpen] =
-    useState(false);
+      useState(false);
   const [isCreateNewCERBEModalOpen, setIsCreateNewCERBEModalOpen] =
-    useState(false);
+      useState(false);
 
   useEffect(() => {
     if (!userProfile || !userProfile.role || !userProfile.id) return;
@@ -55,15 +55,15 @@ const HomeDashboard = () => {
     };
 
     const isCurrentUsersRoleClient =
-      userProfile.role === publicRuntimeConfig.ROLE_CLIENT_ID;
+        userProfile.role === publicRuntimeConfig.ROLE_CLIENT_ID;
 
     setAreCurrentUsersProjectsLoading(true);
     if (isCurrentUsersRoleClient) {
       getGdpProjectsUsersClients(queryParameters).then((result) => {
         if (isRequestSuccessful(result.status) && result.data) {
           const myProjects = result.data.map(
-            (projectCollaborators) =>
-              projectCollaborators.projects_id as Partial<GdpProjectsModel>,
+              (projectCollaborators) =>
+                  projectCollaborators.projects_id as Partial<GdpProjectsModel>,
           );
           const projects = globalProjects.filter((project) => {
             return myProjects.some((myProject) => myProject.id === project.id);
@@ -75,8 +75,8 @@ const HomeDashboard = () => {
       getGdpProjectsUsersCollaborators(queryParameters).then((result) => {
         if (isRequestSuccessful(result.status) && result.data) {
           const myProjects = result.data.map(
-            (projectCollaborators) =>
-              projectCollaborators.projects_id as Partial<GdpProjectsModel>,
+              (projectCollaborators) =>
+                  projectCollaborators.projects_id as Partial<GdpProjectsModel>,
           );
           setCurrentUsersProjects(myProjects);
         }
@@ -106,74 +106,74 @@ const HomeDashboard = () => {
     const { id, role, status, ...ownDataThatTheUserCanEdit } = userProfile;
 
     const ownDataThatTheUserCanEditCount = Object.keys(
-      ownDataThatTheUserCanEdit,
+        ownDataThatTheUserCanEdit,
     ).length;
     const ownDataThatTheUserHasCompletedCount = Object.values(
-      ownDataThatTheUserCanEdit,
+        ownDataThatTheUserCanEdit,
     ).filter((data) => {
       if (typeof data === "object") return data?.length;
       return data !== null;
     }).length;
 
     const percentageOfCompletion = (
-      (ownDataThatTheUserHasCompletedCount / ownDataThatTheUserCanEditCount) *
-      100
+        (ownDataThatTheUserHasCompletedCount / ownDataThatTheUserCanEditCount) *
+        100
     ).toFixed(1);
 
     return +percentageOfCompletion;
   };
 
   return (
-    <div className={styles.homeDashboard}>
-      <CreateProjectForm
-        isOpen={isCreateNewProjectModalOpen}
-        setIsOpen={setIsCreateNewProjectModalOpen}
-      />
-      <QuickAccessWidget>
-        <Grid>
-          <QuickActionCard
-            title="Créez un nouveau projet"
-            button={{
-              label: "Ajouter un projet",
-              onClick: () => setIsCreateNewProjectModalOpen(true),
-              icon: <PlusOutlined rev={undefined} />,
-            }}
-          >
-            Créer un nouveau projet dés maintenant
-          </QuickActionCard>
-          {userProfile && userProfile.id && (
+      <div className={styles.homeDashboard}>
+        <CreateProjectForm
+            isOpen={isCreateNewProjectModalOpen}
+            setIsOpen={setIsCreateNewProjectModalOpen}
+        />
+        <QuickAccessWidget>
+          <Grid>
             <QuickActionCard
-              title="Complétez votre profil"
-              progress={getProfileCompletionPercentage()}
-              button={{
-                label: "Ajouter des informations",
-                href:
-                  publicRuntimeConfig.USER_SERVICE_URL +
-                  `/user/${userProfile.id}`,
-                icon: <PlusOutlined rev={undefined} />,
-              }}
+                title="Créez un nouveau projet"
+                button={{
+                  label: "Ajouter un projet",
+                  onClick: () => setIsCreateNewProjectModalOpen(true),
+                  icon: <PlusOutlined rev={undefined} />,
+                }}
             >
-              Remplissez votre profil pour profiter pleinement de toutes les
-              fonctionnalités
+              Créer un nouveau projet dés maintenant
             </QuickActionCard>
-          )}
-        </Grid>
-      </QuickAccessWidget>
-      <ProjectsWidget
-        projects={currentUsersProjects}
-        isLoading={areCurrentUsersProjectsLoading}
-        handleNewProjectClick={() => setIsCreateNewProjectModalOpen(true)}
-      />
-      <CERBEWidget
-        handleNewCERBERClick={() => setIsCreateNewCERBEModalOpen(true)}
-      />
+            {userProfile && userProfile.id && (
+                <QuickActionCard
+                    title="Complétez votre profil"
+                    progress={getProfileCompletionPercentage()}
+                    button={{
+                      label: "Ajouter des informations",
+                      href:
+                          publicRuntimeConfig.USER_SERVICE_URL +
+                          `/user/${userProfile.id}`,
+                      icon: <PlusOutlined rev={undefined} />,
+                    }}
+                >
+                  Remplissez votre profil pour profiter pleinement de toutes les
+                  fonctionnalités
+                </QuickActionCard>
+            )}
+          </Grid>
+        </QuickAccessWidget>
+        <ProjectsWidget
+            projects={currentUsersProjects}
+            isLoading={areCurrentUsersProjectsLoading}
+            handleNewProjectClick={() => setIsCreateNewProjectModalOpen(true)}
+        />
+        <CERBEWidget
+            handleNewCERBEClick={() => setIsCreateNewCERBEModalOpen(true)}
+        />
 
-      <CreateCerbeModal
-        isOpen={isCreateNewCERBEModalOpen}
-        setIsOpen={setIsCreateNewCERBEModalOpen}
-        affairs={currentUsersAffairs}
-      />
-    </div>
+        <CreateCerbeModal
+            isOpen={isCreateNewCERBEModalOpen}
+            setIsOpen={setIsCreateNewCERBEModalOpen}
+            affairs={currentUsersAffairs}
+        />
+      </div>
   );
 };
 
