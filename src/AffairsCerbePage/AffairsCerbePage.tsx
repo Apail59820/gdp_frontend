@@ -1,5 +1,5 @@
 import styles from "./AffairsCerbe.module.scss";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Collapse, Divider, message, Spin } from "antd";
 import { GdpAffairModel } from "../../models/GestionDeProjets/GdpAffairModel";
 import GeneralitiesForm from "./Forms/GeneralitiesForm";
@@ -48,6 +48,8 @@ import { GdpCerbTechnicalModel } from "../../models/GestionDeProjets/CERBE/GdpCe
 import { messages } from "../../constants/messages";
 import { isRequestSuccessful } from "../../utils/isRequestSuccessful";
 import { useQueryClient } from "@tanstack/react-query";
+import { GdpProjectsModel } from "../../models/GestionDeProjets/GdpProjectsModel";
+import { getGdpProjects } from "../../services/gestionDeProjets/GdpProjects";
 
 type Props = {
   affair: Partial<GdpAffairModel>;
@@ -128,9 +130,23 @@ const AffairsCerbePage = ({ affair }: Props) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const [projectAffair, setProjectAffair] = useState<Partial<GdpProjectsModel>>(
+    {},
+  );
+
   const dispatchKeys = (key: any) => {
     setActiveKey(key);
   };
+
+  useEffect(() => {
+    if (affair?.id) {
+      getGdpProjects({ filter: { id: { _eq: affair.id } } }).then((res) => {
+        if (isRequestSuccessful(res.status) && res.data?.length) {
+          setProjectAffair(res.data[0]);
+        }
+      });
+    }
+  }, [affair]);
   const submitForms = async () => {
     setIsLoading(true);
     const generalitiesMutation = generalities_query.cerb_generalities?.length
@@ -269,7 +285,7 @@ const AffairsCerbePage = ({ affair }: Props) => {
           defaultActiveKey={[1, 2, 3, 4, 5, 6]}
           activeKey={activeKey}
           onChange={(e) => {
-            setActiveKey(e);
+            setActiveKey(e as never);
           }}
         >
           <Collapse.Panel
@@ -291,6 +307,10 @@ const AffairsCerbePage = ({ affair }: Props) => {
                     ...updatedData,
                   });
                 }}
+                affairNameProps={affair?.name}
+                affairContractingAuthorityProps={
+                  projectAffair?.client_company_name
+                }
               />
             ) : (
               <Spin size="large" style={{ marginLeft: "50%" }} />
