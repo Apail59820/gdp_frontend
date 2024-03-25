@@ -4,7 +4,7 @@ import HeaderIcon from "../../../public/icon-cerbe-head.svg";
 import React, { useState } from "react";
 import Timer from "./Timer";
 import { Button } from "projex-ui";
-import Image from 'next/image';
+import Image from "next/image";
 
 export default function CerbeBannerTimer() {
   const timestamp = new Date("1 apr 2024 9:0:0");
@@ -12,10 +12,18 @@ export default function CerbeBannerTimer() {
     <>
       <div className={styles.container}>
         <div>
-          <Image src={DiagonalPict.src} alt="Diagobat Logo" width={258} height={48} />
+          <Image
+            src={DiagonalPict.src}
+            alt="Diagobat Logo"
+            width={258}
+            height={48}
+          />
           <h5>
-            CERBE 2024 dans <Timer expiryTimestamp={timestamp} />
+            CERBE 2024 dans <Timer deadline={"1 april 2024"} />
           </h5>
+          <h6>
+            Veuillez remplir vos données CERBE avant le 1er avril
+          </h6>
         </div>
         <img src={HeaderIcon.src} alt="Diagobat vectorial" />
         <div>
