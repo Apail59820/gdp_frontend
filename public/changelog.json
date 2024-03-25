@@ -2,25 +2,19 @@
   {
     "id": "1",
     "title": "Mise à jour de la plateforme",
-    "date": "12/12/2022",
-    "content": "<p>\n          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam lobortis feugiat odio, id placerat augue\n          luctus in. Donec aliquet rutrum velit, eu mattis sem tristique quis. Aenean at consequat metus.\n        </p>\n        <p>\n          Donec nec ullamcorper nisi, faucibus sollicitudin risus. Maecenas porttitor, dui sit amet semper sodales,\n          lectus odio cursus arcu, ut finibus turpis ipsum sit amet leo. Class aptent taciti sociosqu ad litora torquent\n          per conubia nostra, per inceptos himenaeos. Nunc vitae nisl non augue suscipit dignissim eget pretium orci.\n        </p>\n      </>"
+    "date": "dec 2023",
+    "content": "Déploiement MAIA 2.0"
   },
   {
     "id": "2",
     "title": "Mise à jour de la plateforme",
-    "date": "12/12/2022",
-    "content": "<p>\n          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam lobortis feugiat odio, id placerat augue\n          luctus in. Donec aliquet rutrum velit, eu mattis sem tristique quis. Aenean at consequat metus.\n        </p>\n        <p>\n          Donec nec ullamcorper nisi, faucibus sollicitudin risus. Maecenas porttitor, dui sit amet semper sodales,\n          lectus odio cursus arcu, ut finibus turpis ipsum sit amet leo. Class aptent taciti sociosqu ad litora torquent\n          per conubia nostra, per inceptos himenaeos. Nunc vitae nisl non augue suscipit dignissim eget pretium orci.\n        </p>"
+    "date": "fev 2024",
+    "content": "Notifications"
   },
   {
     "id": "3",
     "title": "Mise à jour de la plateforme",
-    "date": "12/12/2022",
-    "content": "<p>\n          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam lobortis feugiat odio, id placerat augue\n          luctus in. Donec aliquet rutrum velit, eu mattis sem tristique quis. Aenean at consequat metus.\n        </p>\n        <p>\n          Donec nec ullamcorper nisi, faucibus sollicitudin risus. Maecenas porttitor, dui sit amet semper sodales,\n          lectus odio cursus arcu, ut finibus turpis ipsum sit amet leo. Class aptent taciti sociosqu ad litora torquent\n          per conubia nostra, per inceptos himenaeos. Nunc vitae nisl non augue suscipit dignissim eget pretium orci.\n        </p>"
-  },
-  {
-    "id": "4",
-    "title": "Mise à jour de la plateforme",
-    "date": "12/12/2022",
-    "content": "<p>\n          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam lobortis feugiat odio, id placerat augue\n          luctus in. Donec aliquet rutrum velit, eu mattis sem tristique quis. Aenean at consequat metus.\n        </p>\n        <p>\n          Donec nec ullamcorper nisi, faucibus sollicitudin risus. Maecenas porttitor, dui sit amet semper sodales,\n          lectus odio cursus arcu, ut finibus turpis ipsum sit amet leo. Class aptent taciti sociosqu ad litora torquent\n          per conubia nostra, per inceptos himenaeos. Nunc vitae nisl non augue suscipit dignissim eget pretium orci.\n        </p>"
+    "date": "mar 2024",
+    "content": "Cerbe 2024"
   }
 ]
