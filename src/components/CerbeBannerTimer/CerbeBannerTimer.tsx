@@ -7,7 +7,7 @@ import { Button } from "projex-ui";
 import Image from "next/image";
 
 export default function CerbeBannerTimer() {
-  const timestamp = new Date("1 apr 2024 9:0:0");
+  const deadline = "1 apr 2024 9:0:0";
   return (
     <>
       <div className={styles.container}>
@@ -19,7 +19,7 @@ export default function CerbeBannerTimer() {
             height={48}
           />
           <h5>
-            CERBE 2024 dans <Timer deadline={"1 april 2024"} />
+            CERBE 2024 dans <Timer deadline={deadline} />
           </h5>
           <h6>
             Veuillez remplir vos données CERBE avant le 1er avril
