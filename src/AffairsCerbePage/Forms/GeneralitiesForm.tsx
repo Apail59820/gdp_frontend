@@ -5,8 +5,15 @@ import { GdpCerbGeneralitiesModel } from "../../../models/GestionDeProjets/CERBE
 type Props = {
   generalities: Partial<GdpCerbGeneralitiesModel>;
   onFormChange: (updatedData: Partial<GdpCerbGeneralitiesModel>) => void;
+  affairNameProps?: string;
+  affairContractingAuthorityProps?: string;
 };
-const GeneralitiesForm = ({ generalities, onFormChange }: Props) => {
+const GeneralitiesForm = ({
+  generalities,
+  onFormChange,
+  affairNameProps,
+  affairContractingAuthorityProps,
+}: Props) => {
   const [interlocutor, setInterlocutor] = useState<string>(
     generalities?.interlocutor || null,
   );
@@ -76,7 +83,7 @@ const GeneralitiesForm = ({ generalities, onFormChange }: Props) => {
         name={"affair_name"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
-        initialValue={generalities?.affair_name}
+        initialValue={generalities?.affair_name || affairNameProps}
       >
         <Input
           value={affairName}
@@ -88,7 +95,10 @@ const GeneralitiesForm = ({ generalities, onFormChange }: Props) => {
         name={"affair_contracting_authority"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
-        initialValue={generalities?.affair_contracting_authority}
+        initialValue={
+          generalities?.affair_contracting_authority ||
+          affairContractingAuthorityProps
+        }
       >
         <Input
           value={affairContractingAuthority}
