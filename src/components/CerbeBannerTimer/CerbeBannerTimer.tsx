@@ -39,7 +39,7 @@ export default function CerbeBannerTimer() {
               style={"text_gray"}
               icon={<RightOutlined rev={undefined} />}
               iconPosition={'right'}
-              onClick={() => {}} // Ouvre la même modal que le bouton + dans la section cerbe
+              onClick={() => router.push('#cerbe')}
           >
             Commencer
           </Button>
