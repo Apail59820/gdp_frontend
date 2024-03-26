@@ -1,11 +1,21 @@
-import { Form, Input, message, Modal, Select } from "antd";
+import { Divider, Form, Input, message, Modal, Select } from "antd";
 import { Button } from "projex-ui";
 import React, { useState } from "react";
 import { GdpAffairModel } from "../../../models/GestionDeProjets/GdpAffairModel";
 import { useRouter } from "next/router";
-import { getGdpAffairsPythagoreAffairs } from "../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs";
+import {
+  createGdpAffairPythagoreAffair,
+  getGdpAffairsPythagoreAffairs,
+} from "../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs";
 import { isRequestSuccessful } from "../../../utils/isRequestSuccessful";
 import { getGdpPythagoreAffaire } from "../../../services/gestionDeProjets/GdpPythagoreAffairs";
+import { GdpPythagoreAffaireModel } from "../../../models/GestionDeProjets/GdpPythagoreAffaireModel";
+import { createGdpProject } from "../../../services/gestionDeProjets/GdpProjects";
+import { UsCompanyEntityModel } from "../../../models/UserService/UsCompanyEntityModel";
+import { useSelector } from "react-redux";
+import { selectCompanyEntities } from "../../../store/reducers/companyEntitiesReducer";
+import { createGdpAffair } from "../../../services/gestionDeProjets/GdpAffairs";
+import { messages } from "../../../constants/messages";
 
 type Props = {
   isOpen: boolean;
@@ -13,15 +23,36 @@ type Props = {
   affairs: Partial<GdpAffairModel>[];
 };
 const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
+  const [
+    isCreateProjectForAffairModalOpen,
+    setIsCreateProjectForAffairModalOpen,
+  ] = useState<boolean>(false);
+
+  const companyEntities: Partial<UsCompanyEntityModel>[] = useSelector(
+    selectCompanyEntities,
+  );
+
   const [affairSearchDisabled, setAffairSearchDisabled] =
     useState<boolean>(false);
 
+  const [affairToCreate, setAffairToCreate] = useState<
+    Partial<GdpPythagoreAffaireModel>
+  >({});
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isCreateProjectForAffairLoading, setIsCreateProjectForAffairLoading] =
+    useState<boolean>(false);
+
   const router = useRouter();
-  const onSubmit = async (value) => {
+  const onSubmit = async (values: {
+    affair?: number;
+    num_affaire?: string;
+  }) => {
+    setIsLoading(true);
     async function affairsExistsInJunctionTable() {
       const res = await getGdpAffairsPythagoreAffairs({
         filter: {
-          pythagore_affaires_id: { _eq: value?.num_affaire },
+          pythagore_affaires_id: { _eq: values?.num_affaire },
         },
       });
 
@@ -33,69 +64,213 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
     }
 
     if (!affairSearchDisabled) {
-      if (typeof value?.affair === "undefined")
+      if (typeof values?.affair === "undefined") {
+        setIsLoading(false);
         return message.error(
           "Veuillez selectionner une affaire ou entrer un numéro pythagore.",
         );
-      return router.push(`/cerbe/${value?.affair}`);
+      }
+      setIsLoading(false);
+      return router.push(`/cerbe/${values?.affair}`);
     } else {
       const affairPythagoreAffair = await affairsExistsInJunctionTable();
-      if (affairPythagoreAffair)
-        return router.push(`/cerbe/${affairPythagoreAffair.affairs_id}`);
-
-      const pythagoreAffair = await getGdpPythagoreAffaire(value?.num_affaire);
+      if (affairPythagoreAffair) {
+        setIsLoading(false);
+        return router.push(
+          `/cerbe/${(affairPythagoreAffair.affairs_id as Partial<GdpAffairModel>)?.id}`,
+        );
+      }
+      const pythagoreAffair = await getGdpPythagoreAffaire(values?.num_affaire);
 
       if (isRequestSuccessful(pythagoreAffair.status) && pythagoreAffair.data) {
-        // if yes create a project for it
+        setAffairToCreate(pythagoreAffair.data);
+        setIsLoading(false);
+        return setIsCreateProjectForAffairModalOpen(true);
       } else {
+        setIsLoading(false);
         return message.error(
-          `Aucune affaire pythagore n'a été trouvée avec le numéro '${value?.num_affaire}'`,
+          `Aucune affaire pythagore n'a été trouvée avec le numéro '${values?.num_affaire}'`,
         );
       }
     }
   };
 
-  return (
-    <Modal
-      closable
-      destroyOnClose
-      footer={null}
-      open={isOpen}
-      onCancel={() => setIsOpen(false)}
-      title={`Ajouter des données CERBE`}
-    >
-      <Form onFinish={onSubmit} layout={"vertical"} style={{ marginTop: 20 }}>
-        <Form.Item label="Sélectionnez une affaire" name={"affair"}>
-          <Select
-            showSearch
-            filterOption={false}
-            placeholder={"Affaire"}
-            style={{ width: "100%" }}
-            options={affairs.map((affair) => ({
-              label: affair?.name,
-              value: affair?.id,
-            }))}
-            disabled={affairSearchDisabled}
-          />
-        </Form.Item>
-        <Form.Item label={"Ou entrez un n° pythagore"} name={"num_affaire"}>
-          <Input
-            onChange={(e) => {
-              setAffairSearchDisabled(e.target.value?.length > 0);
-            }}
-          />
-        </Form.Item>
+  const onCreateProjectForAffairSubmitted = async (values: {
+    project_name?: string;
+    project_company_entity: number;
+    affair_company_entity: number;
+  }) => {
+    const newProjectName =
+      values?.project_name || `Projet - ${affairToCreate.libelle_affaire}`;
 
-        <div style={{ display: "flex", marginTop: 10 }}>
-          <Button small htmlType={"submit"}>
-            Confirmer
-          </Button>
-          <Button small style={"text"} onClick={() => setIsOpen(false)}>
-            Annuler
-          </Button>
-        </div>
-      </Form>
-    </Modal>
+    const createProjectRes = await createGdpProject({
+      name: newProjectName,
+      client_company_name: affairToCreate?.nom_client,
+      company_entity: values.project_company_entity,
+    });
+
+    if (isRequestSuccessful(createProjectRes.status) && createProjectRes.data) {
+      const createAffairRes = await createGdpAffair({
+        name: affairToCreate.libelle_affaire,
+        company_entity: values.affair_company_entity,
+        projects_id: createProjectRes.data.id,
+      });
+
+      if (isRequestSuccessful(createAffairRes.status)) {
+        await createGdpAffairPythagoreAffair({
+          affairs_id: createAffairRes.data.id,
+          pythagore_affaires_id: affairToCreate.numero_affaire,
+        }).then((res) => {
+          if (isRequestSuccessful(res.status)) {
+            return router.push(`/cerbe/${createAffairRes.data.id}`);
+          } else return message.error(messages.general.error());
+        });
+      } else return message.error(messages.general.error());
+    } else return message.error(messages.general.error());
+  };
+
+  return (
+    <>
+      <Modal
+        closable
+        destroyOnClose
+        footer={null}
+        open={isOpen}
+        onCancel={() => setIsOpen(false)}
+        title={`Ajouter des données CERBE`}
+      >
+        <Form onFinish={onSubmit} layout={"vertical"} style={{ marginTop: 20 }}>
+          <Form.Item label="Sélectionnez une affaire" name={"affair"}>
+            <Select
+              showSearch
+              filterOption={false}
+              placeholder={"Affaire"}
+              style={{ width: "100%" }}
+              options={affairs.map((affair) => ({
+                label: affair?.name,
+                value: affair?.id,
+              }))}
+              disabled={affairSearchDisabled}
+            />
+          </Form.Item>
+          <Form.Item label={"Ou entrez un n° pythagore"} name={"num_affaire"}>
+            <Input
+              onChange={(e) => {
+                setAffairSearchDisabled(e.target.value?.length > 0);
+              }}
+            />
+          </Form.Item>
+
+          <div style={{ display: "flex", marginTop: 10 }}>
+            <Button small htmlType={"submit"} loading={isLoading}>
+              Confirmer
+            </Button>
+            <Button
+              small
+              style={"text"}
+              onClick={() => setIsOpen(false)}
+              loading={isLoading}
+            >
+              Annuler
+            </Button>
+          </div>
+        </Form>
+      </Modal>
+
+      <Modal
+        closable
+        destroyOnClose
+        open={isCreateProjectForAffairModalOpen}
+        onCancel={() => setIsCreateProjectForAffairModalOpen(false)}
+        title={`Souhaitez vous créer un projet ?`}
+        width={"40%"}
+        footer={null}
+      >
+        <p>
+          L'affaire <strong>{affairToCreate.libelle_affaire}</strong> n'est
+          associée à aucun projet, souhaitez-vous créer un projet immédiatement
+          ? <br /> L'affaire sera liée automatiquement au projet créé.
+        </p>
+        <Divider />
+        <Form
+          onFinish={onCreateProjectForAffairSubmitted}
+          layout={"vertical"}
+          style={{ marginTop: 20 }}
+        >
+          <Form.Item
+            label={"Selectionnez un nom pour le projet."}
+            name={"project_name"}
+          >
+            <Input
+              placeholder={`Projet - ${affairToCreate.libelle_affaire}`}
+            ></Input>
+          </Form.Item>
+          <Form.Item
+            label={"Entité"}
+            name={"project_company_entity"}
+            id={"entity"}
+            rules={[
+              {
+                required: true,
+                message: "Veuillez sélectionner une entité.",
+              },
+            ]}
+          >
+            <Select
+              placeholder={"Sélectionnez l'entité liée à votre projet"}
+              options={companyEntities.map(
+                (entity: Partial<UsCompanyEntityModel>) => {
+                  return {
+                    label: entity.name?.toUpperCase(),
+                    value: entity.id,
+                  };
+                },
+              )}
+            />
+          </Form.Item>
+          <Form.Item
+            label={"Entité"}
+            name={"affair_company_entity"}
+            id={"entity"}
+            rules={[
+              {
+                required: true,
+                message: "Veuillez sélectionner une entité.",
+              },
+            ]}
+          >
+            <Select
+              placeholder={`Sélectionnez l'entité liée à l'affaire ${affairToCreate.libelle_affaire}`}
+              options={companyEntities.map(
+                (entity: Partial<UsCompanyEntityModel>) => {
+                  return {
+                    label: entity.name?.toUpperCase(),
+                    value: entity.id,
+                  };
+                },
+              )}
+            />
+          </Form.Item>
+          <div style={{ display: "flex", marginTop: 10 }}>
+            <Button
+              small
+              htmlType={"submit"}
+              loading={isCreateProjectForAffairLoading}
+            >
+              Confirmer
+            </Button>
+            <Button
+              small
+              style={"text"}
+              onClick={() => setIsCreateProjectForAffairModalOpen(false)}
+              loading={isCreateProjectForAffairLoading}
+            >
+              Annuler
+            </Button>
+          </div>
+        </Form>
+      </Modal>
+    </>
   );
 };
 
