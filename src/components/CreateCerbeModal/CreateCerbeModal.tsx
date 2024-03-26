@@ -20,7 +20,6 @@ import { selectCompanyEntities } from "../../../store/reducers/companyEntitiesRe
 import { createGdpAffair } from "../../../services/gestionDeProjets/GdpAffairs";
 import { messages } from "../../../constants/messages";
 import { useForm } from "antd/lib/form/Form";
-import { QueryParameters } from "../../../models/DirectusModel";
 
 type Props = {
   isOpen: boolean;
@@ -28,8 +27,6 @@ type Props = {
   affairs: Partial<GdpAffairModel>[];
 };
 const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
-  let timeout: ReturnType<typeof setTimeout> | null;
-
   const [
     isCreateProjectForAffairModalOpen,
     setIsCreateProjectForAffairModalOpen,
@@ -47,6 +44,10 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
     Partial<GdpPythagoreAffaireModel>[]
   >([]);
 
+  const [pythagoreAffairsSearchList, setPythagoreAffairsSearchList] = useState<
+    Partial<GdpPythagoreAffaireModel>[]
+  >([]);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCreateProjectForAffairLoading, setIsCreateProjectForAffairLoading] =
     useState<boolean>(false);
@@ -61,32 +62,14 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
   }, [isOpen]);
 
   useEffect(() => {
-    getGdpPythagoreAffaires({ limit: 10 }).then((res) => {
+    getGdpPythagoreAffaires().then((res) => {
       if (isRequestSuccessful(res.status) && res?.data?.length) {
         setPythagoreAffairs(res.data);
+        setPythagoreAffairsSearchList(res.data.slice(10));
       }
     });
   }, []);
 
-  const fetchData = async (
-    getter: (queryParameters: QueryParameters) => any,
-    queryParams: QueryParameters,
-    setter: React.Dispatch<React.SetStateAction<any>>,
-  ) => {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
-    const getData = () => {
-      getter(queryParams).then((res: { status: number; data: any }) => {
-        if (res.status === 200 && res.data) {
-          setter(res.data);
-        }
-      });
-    };
-
-    timeout = setTimeout(getData, 300);
-  };
   const onSubmit = async (values: {
     affair?: number;
     num_affaire?: string;
@@ -203,28 +186,32 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
               }}
             />
           </Form.Item>
-          <Form.Item label={"Ou entrez un n° pythagore"} name={"num_affaire"}>
+          <Form.Item
+            label={"Ou sélectionnez un n° / nom d'affaire pythagore"}
+            name={"num_affaire"}
+          >
             <Select
               showSearch
               filterOption={false}
-              placeholder={"Selectionnez un n° pythagore"}
-              options={pythagoreAffairs.map((pythagoreAffair) => ({
-                label: pythagoreAffair.numero_affaire,
+              placeholder={
+                "Selectionnez un n° ou un nom d'affaire pythagore pythagore"
+              }
+              options={pythagoreAffairsSearchList.map((pythagoreAffair) => ({
+                label: `${pythagoreAffair.numero_affaire} | ${pythagoreAffair.libelle_affaire}`,
                 value: pythagoreAffair.numero_affaire,
               }))}
               onSearch={(value) => {
-                if (value.length > 2) {
-                  fetchData(
-                    getGdpPythagoreAffaires,
-                    {
-                      filter: { numero_affaire: { _starts_with: value } },
-                      limit: 10,
-                    },
-                    setPythagoreAffairs,
-                  ).catch((err) => {
-                    console.error(err);
-                  });
-                }
+                setPythagoreAffairsSearchList(
+                  pythagoreAffairs
+                    .filter(
+                      (aff) =>
+                        aff.numero_affaire.includes(value) ||
+                        aff.libelle_affaire
+                          .toLowerCase()
+                          .includes(value.toLowerCase()),
+                    )
+                    .slice(0, 10),
+                );
               }}
               onChange={(e) => {
                 form.setFieldValue("affair", null);
