@@ -5,6 +5,7 @@ import { GdpAffairModel } from "../../../models/GestionDeProjets/GdpAffairModel"
 import { useRouter } from "next/router";
 import { getGdpAffairsPythagoreAffairs } from "../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs";
 import { isRequestSuccessful } from "../../../utils/isRequestSuccessful";
+import { getGdpPythagoreAffaire } from "../../../services/gestionDeProjets/GdpPythagoreAffairs";
 
 type Props = {
   isOpen: boolean;
@@ -16,7 +17,21 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
     useState<boolean>(false);
 
   const router = useRouter();
-  const onSubmit = (value) => {
+  const onSubmit = async (value) => {
+    async function affairsExistsInJunctionTable() {
+      const res = await getGdpAffairsPythagoreAffairs({
+        filter: {
+          pythagore_affaires_id: { _eq: value?.num_affaire },
+        },
+      });
+
+      if (isRequestSuccessful(res.status) && res?.data?.length) {
+        return res.data[0];
+      }
+
+      return null;
+    }
+
     if (!affairSearchDisabled) {
       if (typeof value?.affair === "undefined")
         return message.error(
@@ -24,20 +39,19 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
         );
       return router.push(`/cerbe/${value?.affair}`);
     } else {
-      getGdpAffairsPythagoreAffairs({
-        filter: {
-          pythagore_affaires_id: { _eq: value?.num_affaire },
-        },
-      }).then((res) => {
-        if (isRequestSuccessful(res.status) && res?.data) {
-          if (res.data[0]?.affairs_id) {
-            return router.push(
-              `/cerbe/${(res.data[0]?.affairs_id as Partial<GdpAffairModel>).id}`,
-            );
-          }
-        }
-        return message.error("Aucune affaire n'a été trouvée avec ce numéro.");
-      });
+      const affairPythagoreAffair = await affairsExistsInJunctionTable();
+      if (affairPythagoreAffair)
+        return router.push(`/cerbe/${affairPythagoreAffair.affairs_id}`);
+
+      const pythagoreAffair = await getGdpPythagoreAffaire(value?.num_affaire);
+
+      if (isRequestSuccessful(pythagoreAffair.status) && pythagoreAffair.data) {
+        // if yes create a project for it
+      } else {
+        return message.error(
+          `Aucune affaire pythagore n'a été trouvée avec le numéro '${value?.num_affaire}'`,
+        );
+      }
     }
   };
 
