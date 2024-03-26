@@ -140,11 +140,13 @@ const AffairsCerbePage = ({ affair }: Props) => {
 
   useEffect(() => {
     if (affair?.id) {
-      getGdpProjects({ filter: { id: { _eq: affair.id } } }).then((res) => {
-        if (isRequestSuccessful(res.status) && res.data?.length) {
-          setProjectAffair(res.data[0]);
-        }
-      });
+      getGdpProjects({ filter: { id: { _eq: affair.projects_id } } }).then(
+        (res) => {
+          if (isRequestSuccessful(res.status) && res.data?.length) {
+            setProjectAffair(res.data[0]);
+          }
+        },
+      );
     }
   }, [affair]);
   const submitForms = async () => {
