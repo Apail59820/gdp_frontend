@@ -366,7 +366,6 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />{" "}
-                      %
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -375,7 +374,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />{" "}
-                      kWhep/m².an
+                      %{/*kWhep/m².an*/}
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -384,7 +383,6 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />{" "}
-                      habitants
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -393,7 +391,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />{" "}
-                      kWhep/an
+                      %
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -402,7 +400,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />{" "}
-                      kWhep/an
+                      m²
                     </Col>
                   </Row>
                 </div>
@@ -431,6 +429,7 @@ const Cerbe = () => {
                         value={averageRainwaterHarvestingTankCapacity}
                         formatter={formatter}
                       />
+                        m&sup3;
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -450,6 +449,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />
+                      %
                     </Col>
                   </Row>
                 </div>
@@ -478,6 +478,7 @@ const Cerbe = () => {
                         value={totalProjectCarbonFootPrint}
                         formatter={formatter}
                       />
+                      kgeqCO²/m²
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -489,6 +490,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />
+                      %
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -497,6 +499,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />
+                      kg
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -505,6 +508,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />
+                      kg CO²
                     </Col>
                     <Col span={12}>
                       <Statistic
