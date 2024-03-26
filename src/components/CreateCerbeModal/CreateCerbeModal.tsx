@@ -36,7 +36,7 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
             );
           }
         }
-        return message.error("Une erreur est survenue.");
+        return message.error("Aucune affaire n'a été trouvée avec ce numéro.");
       });
     }
   };
