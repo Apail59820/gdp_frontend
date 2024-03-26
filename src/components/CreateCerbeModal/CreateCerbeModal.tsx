@@ -1,4 +1,4 @@
-import { Divider, Form, Input, message, Modal, Select } from "antd";
+import { Divider, Empty, Form, Input, message, Modal, Select } from "antd";
 import { Button } from "projex-ui";
 import React, { useEffect, useState } from "react";
 import { GdpAffairModel } from "../../../models/GestionDeProjets/GdpAffairModel";
@@ -8,7 +8,10 @@ import {
   getGdpAffairsPythagoreAffairs,
 } from "../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs";
 import { isRequestSuccessful } from "../../../utils/isRequestSuccessful";
-import { getGdpPythagoreAffaire } from "../../../services/gestionDeProjets/GdpPythagoreAffairs";
+import {
+  getGdpPythagoreAffaire,
+  getGdpPythagoreAffaires,
+} from "../../../services/gestionDeProjets/GdpPythagoreAffairs";
 import { GdpPythagoreAffaireModel } from "../../../models/GestionDeProjets/GdpPythagoreAffaireModel";
 import { createGdpProject } from "../../../services/gestionDeProjets/GdpProjects";
 import { UsCompanyEntityModel } from "../../../models/UserService/UsCompanyEntityModel";
@@ -17,6 +20,7 @@ import { selectCompanyEntities } from "../../../store/reducers/companyEntitiesRe
 import { createGdpAffair } from "../../../services/gestionDeProjets/GdpAffairs";
 import { messages } from "../../../constants/messages";
 import { useForm } from "antd/lib/form/Form";
+import { QueryParameters } from "../../../models/DirectusModel";
 
 type Props = {
   isOpen: boolean;
@@ -24,6 +28,8 @@ type Props = {
   affairs: Partial<GdpAffairModel>[];
 };
 const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
+  let timeout: ReturnType<typeof setTimeout> | null;
+
   const [
     isCreateProjectForAffairModalOpen,
     setIsCreateProjectForAffairModalOpen,
@@ -33,12 +39,13 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
     selectCompanyEntities,
   );
 
-  const [affairSearchDisabled, setAffairSearchDisabled] =
-    useState<boolean>(false);
-
   const [affairToCreate, setAffairToCreate] = useState<
     Partial<GdpPythagoreAffaireModel>
   >({});
+
+  const [pythagoreAffairs, setPythagoreAffairs] = useState<
+    Partial<GdpPythagoreAffaireModel>[]
+  >([]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCreateProjectForAffairLoading, setIsCreateProjectForAffairLoading] =
@@ -49,10 +56,37 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
 
   useEffect(() => {
     if (isOpen) {
-      setAffairSearchDisabled(false);
       form.setFieldValue("num_affaire", "");
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    getGdpPythagoreAffaires({ limit: 10 }).then((res) => {
+      if (isRequestSuccessful(res.status) && res?.data?.length) {
+        setPythagoreAffairs(res.data);
+      }
+    });
+  }, []);
+
+  const fetchData = async (
+    getter: (queryParameters: QueryParameters) => any,
+    queryParams: QueryParameters,
+    setter: React.Dispatch<React.SetStateAction<any>>,
+  ) => {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+    const getData = () => {
+      getter(queryParams).then((res: { status: number; data: any }) => {
+        if (res.status === 200 && res.data) {
+          setter(res.data);
+        }
+      });
+    };
+
+    timeout = setTimeout(getData, 300);
+  };
   const onSubmit = async (values: {
     affair?: number;
     num_affaire?: string;
@@ -72,7 +106,7 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
       return null;
     }
 
-    if (!affairSearchDisabled) {
+    if (!values.num_affaire) {
       if (typeof values?.affair === "undefined") {
         setIsLoading(false);
         return message.error(
@@ -164,14 +198,43 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
                 label: affair?.name,
                 value: affair?.id,
               }))}
-              disabled={affairSearchDisabled}
+              onChange={() => {
+                form.setFieldValue("num_affaire", null);
+              }}
             />
           </Form.Item>
           <Form.Item label={"Ou entrez un n° pythagore"} name={"num_affaire"}>
-            <Input
-              onChange={(e) => {
-                setAffairSearchDisabled(e.target.value?.length > 0);
+            <Select
+              showSearch
+              filterOption={false}
+              placeholder={"Selectionnez un n° pythagore"}
+              options={pythagoreAffairs.map((pythagoreAffair) => ({
+                label: pythagoreAffair.numero_affaire,
+                value: pythagoreAffair.numero_affaire,
+              }))}
+              onSearch={(value) => {
+                if (value.length > 2) {
+                  fetchData(
+                    getGdpPythagoreAffaires,
+                    {
+                      filter: { numero_affaire: { _starts_with: value } },
+                      limit: 10,
+                    },
+                    setPythagoreAffairs,
+                  ).catch((err) => {
+                    console.error(err);
+                  });
+                }
               }}
+              onChange={(e) => {
+                form.setFieldValue("affair", null);
+              }}
+              notFoundContent={
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={"Aucune affaire pythagore trouvée"}
+                />
+              }
             />
           </Form.Item>
 
