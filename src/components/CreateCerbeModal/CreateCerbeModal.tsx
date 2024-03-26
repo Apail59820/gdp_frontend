@@ -126,6 +126,8 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
     project_company_entity: number;
     affair_company_entity: number;
   }) => {
+    setIsCreateProjectForAffairLoading(true);
+
     const newProjectName =
       values?.project_name || `Projet - ${affairToCreate.libelle_affaire}`;
 
@@ -148,11 +150,21 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
           pythagore_affaires_id: affairToCreate.numero_affaire,
         }).then((res) => {
           if (isRequestSuccessful(res.status)) {
+            setIsCreateProjectForAffairLoading(false);
             return router.push(`/cerbe/${createAffairRes.data.id}`);
-          } else return message.error(messages.general.error());
+          } else {
+            setIsCreateProjectForAffairLoading(false);
+            return message.error(messages.general.error());
+          }
         });
-      } else return message.error(messages.general.error());
-    } else return message.error(messages.general.error());
+      } else {
+        setIsCreateProjectForAffairLoading(false);
+        return message.error(messages.general.error());
+      }
+    } else {
+      setIsCreateProjectForAffairLoading(false);
+      return message.error(messages.general.error());
+    }
   };
 
   return (
