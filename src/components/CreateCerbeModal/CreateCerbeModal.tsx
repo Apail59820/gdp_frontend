@@ -65,7 +65,7 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
     getGdpPythagoreAffaires().then((res) => {
       if (isRequestSuccessful(res.status) && res?.data?.length) {
         setPythagoreAffairs(res.data);
-        setPythagoreAffairsSearchList(res.data.slice(10));
+        setPythagoreAffairsSearchList(res.data.slice(0, 10));
       }
     });
   }, []);
