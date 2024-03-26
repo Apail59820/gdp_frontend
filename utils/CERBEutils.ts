@@ -1,10 +1,16 @@
+export const getRideOfNullValues = (arrayOfNumbers: number[]) => {
+    return arrayOfNumbers.filter(value=> value!=null)
+}
+
 export const sum = (arrayOfNumbers: number[]): number => {
+    arrayOfNumbers = getRideOfNullValues(arrayOfNumbers);
     return arrayOfNumbers.reduce(
         (partialSum, a) => partialSum+a,
         0
     )
 }
 export const average = (arrayOfNumbers: number[]): number => {
+    arrayOfNumbers = getRideOfNullValues(arrayOfNumbers);
     return arrayOfNumbers.length ? sum(arrayOfNumbers)/arrayOfNumbers.length : 0
 }
 

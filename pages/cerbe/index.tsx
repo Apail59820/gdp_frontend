@@ -12,7 +12,12 @@ import BiodiversityIcon from "../../public/Icon-biodiversity.svg";
 import DiagonalPict from "../../public/logo-diagobat.svg";
 import { getGdpCerbGeneralities } from "../../services/gestionDeProjets/CERBE/GdpCerbGeneralities";
 import { isRequestSuccessful } from "../../utils/isRequestSuccessful";
-import { average, ratio, sum } from "../../utils/CERBEutils";
+import {
+  average,
+  getRideOfNullValues,
+  ratio,
+  sum,
+} from "../../utils/CERBEutils";
 import { getGdpCerbEnergy } from "../../services/gestionDeProjets/CERBE/GdpCerbEnergy";
 import { getGdpCerbBiodiversity } from "../../services/gestionDeProjets/CERBE/GdbCerbBiodiversity";
 import { getGdpCerbRessources } from "../../services/gestionDeProjets/CERBE/GdpCerbRessources";
@@ -61,6 +66,10 @@ const Cerbe = () => {
     useState<number>();
   const [regulatoryEnergySaving, setRegulatoryEnergySaving] =
     useState<number>();
+  const [
+    energySavingsEquivTownPopulation,
+    setEnergySavingsEquivTownPopulation,
+  ] = useState<number>();
   const [renewableEnergyAmount, setRenewableEnergyAmount] = useState<number>();
   getGdpCerbEnergy({
     fields: [
@@ -82,7 +91,8 @@ const Cerbe = () => {
       );
 
       setGainOnRegulatoryConsumption(ratio(totalProjectCep, totalCepRef));
-      setRegulatoryEnergySaving(
+      setRegulatoryEnergySaving(totalCepRef - totalProjectCep);
+      setEnergySavingsEquivTownPopulation(
         sum(allData.map((data) => data.energy_savings)),
       );
       setRenewableEnergyAmount(
@@ -131,38 +141,37 @@ const Cerbe = () => {
   });
 
   const [
-    averageRainwaterHarvestingTankCapacity,
-    setAverageRainwaterHarvestingTankCapacity,
+    totalRainwaterHarvestingTankCapacity,
+    setTotalRainwaterHarvestingTankCapacity,
   ] = useState<number>();
   const [
-    averageProjectParcelPermeabilityCoefficient,
-    setAverageProjectParcelPermeabilityCoefficient,
-  ] = useState<number>();
-  const [
-    averageInitialParcelPermeabilityCoefficient,
-    setAverageInitialParcelPermeabilityCoefficient,
+    plotPermeabilityCoefficient,
+    setPlotPermeabilityCoefficient,
   ] = useState<number>();
   getGdpCerbRessources({
     fields: [
-      "averageRainwaterHarvestingTankCapacity",
-      "averageProjectParcelPermeabilityCoefficient",
+      "rainwater_harvesting_tank_capacity",
+      "project_plot_permeability_coefficient",
+      "initial_plot_permeability_coefficient",
     ].join(","),
   }).then((res) => {
     if (isRequestSuccessful(res.status)) {
       const allData = res.data;
-      setAverageRainwaterHarvestingTankCapacity(
-        average(allData.map((data) => data.rainwater_harvesting_tank_capacity)),
+      setTotalRainwaterHarvestingTankCapacity(
+        sum(allData.map((data) => data.rainwater_harvesting_tank_capacity)),
       );
-      setAverageProjectParcelPermeabilityCoefficient(
-        average(
-          allData.map((data) => data.project_plot_permeability_coefficient),
-        ),
+      const averageProjectPlotPermeabilityCoefficient = average(
+        allData.map((data) => data.project_plot_permeability_coefficient),
       );
-      setAverageInitialParcelPermeabilityCoefficient(
-        average(
-          allData.map((data) => data.initial_plot_permeability_coefficient),
-        ),
+      const averageInitialPlotPermeabilityCoefficient = average(
+        allData.map((data) => data.initial_plot_permeability_coefficient),
       );
+      setPlotPermeabilityCoefficient(
+          ratio(
+              averageProjectPlotPermeabilityCoefficient,
+              averageInitialPlotPermeabilityCoefficient
+          )
+      )
     }
   });
 
@@ -187,6 +196,7 @@ const Cerbe = () => {
       setTotalProjectCarbonFootPrint(
         sum(allData.map((data) => data.project_carbon_footprint)),
       );
+      console.log(totalProjectCarbonFootPrint);
       setTotalBioBasedMaterialsAmount(
         sum(allData.map((data) => data.biobased_materials_amount)),
       );
@@ -323,7 +333,7 @@ const Cerbe = () => {
                     <Col span={12}>
                       <Statistic
                         title="Economies d'énergie équivalentes à la conso annuelle d'une ville de "
-                        value={regulatoryEnergySaving / 2223}
+                        value={energySavingsEquivTownPopulation / 2223}
                         precision={2}
                         formatter={formatter}
                       />{" "}
@@ -366,7 +376,6 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />{" "}
-                      %
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -374,8 +383,8 @@ const Cerbe = () => {
                         value={ratioCBS}
                         precision={2}
                         formatter={formatter}
-                      />{" "}
-                      kWhep/m².an
+                      />
+                      %
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -384,7 +393,6 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />{" "}
-                      habitants
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -393,7 +401,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />{" "}
-                      kWhep/an
+                      %
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -402,7 +410,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />{" "}
-                      kWhep/an
+                      m²
                     </Col>
                   </Row>
                 </div>
@@ -428,14 +436,15 @@ const Cerbe = () => {
                     <Col span={12}>
                       <Statistic
                         title="Volume cumulé de cuves de récupération des eaux de pluie"
-                        value={averageRainwaterHarvestingTankCapacity}
+                        value={totalRainwaterHarvestingTankCapacity}
                         formatter={formatter}
                       />
+                      m&sup3;
                     </Col>
                     <Col span={12}>
                       <Statistic
                         title="Coefficient moyen de perméabilité de la parcelle Projet"
-                        value={averageProjectParcelPermeabilityCoefficient}
+                        value={plotPermeabilityCoefficient}
                         precision={2}
                         formatter={formatter}
                       />
@@ -444,12 +453,13 @@ const Cerbe = () => {
                       <Statistic
                         title="Amélioration de la perméabilité du sol"
                         value={ratio(
-                          averageProjectParcelPermeabilityCoefficient,
-                          averageInitialParcelPermeabilityCoefficient,
+                          plotPermeabilityCoefficient,
+                          1,
                         )}
                         precision={2}
                         formatter={formatter}
                       />
+                      %
                     </Col>
                   </Row>
                 </div>
@@ -478,6 +488,7 @@ const Cerbe = () => {
                         value={totalProjectCarbonFootPrint}
                         formatter={formatter}
                       />
+                      kgeqCO²/m²
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -489,6 +500,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />
+                      %
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -497,6 +509,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />
+                      kg
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -505,6 +518,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatter}
                       />
+                      kg CO²
                     </Col>
                     <Col span={12}>
                       <Statistic
