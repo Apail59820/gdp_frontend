@@ -1,6 +1,6 @@
 import { Divider, Form, Input, message, Modal, Select } from "antd";
 import { Button } from "projex-ui";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GdpAffairModel } from "../../../models/GestionDeProjets/GdpAffairModel";
 import { useRouter } from "next/router";
 import {
@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { selectCompanyEntities } from "../../../store/reducers/companyEntitiesReducer";
 import { createGdpAffair } from "../../../services/gestionDeProjets/GdpAffairs";
 import { messages } from "../../../constants/messages";
+import { useForm } from "antd/lib/form/Form";
 
 type Props = {
   isOpen: boolean;
@@ -44,6 +45,14 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
     useState<boolean>(false);
 
   const router = useRouter();
+  const [form] = useForm();
+
+  useEffect(() => {
+    if (isOpen) {
+      setAffairSearchDisabled(false);
+      form.setFieldValue("num_affaire", "");
+    }
+  }, [isOpen]);
   const onSubmit = async (values: {
     affair?: number;
     num_affaire?: string;
@@ -139,7 +148,12 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
         onCancel={() => setIsOpen(false)}
         title={`Ajouter des données CERBE`}
       >
-        <Form onFinish={onSubmit} layout={"vertical"} style={{ marginTop: 20 }}>
+        <Form
+          onFinish={onSubmit}
+          layout={"vertical"}
+          style={{ marginTop: 20 }}
+          form={form as any}
+        >
           <Form.Item label="Sélectionnez une affaire" name={"affair"}>
             <Select
               showSearch
