@@ -12,7 +12,12 @@ import BiodiversityIcon from "../../public/Icon-biodiversity.svg";
 import DiagonalPict from "../../public/logo-diagobat.svg";
 import { getGdpCerbGeneralities } from "../../services/gestionDeProjets/CERBE/GdpCerbGeneralities";
 import { isRequestSuccessful } from "../../utils/isRequestSuccessful";
-import { average, ratio, sum } from "../../utils/CERBEutils";
+import {
+  average,
+  getRideOfNullValues,
+  ratio,
+  sum,
+} from "../../utils/CERBEutils";
 import { getGdpCerbEnergy } from "../../services/gestionDeProjets/CERBE/GdpCerbEnergy";
 import { getGdpCerbBiodiversity } from "../../services/gestionDeProjets/CERBE/GdbCerbBiodiversity";
 import { getGdpCerbRessources } from "../../services/gestionDeProjets/CERBE/GdpCerbRessources";
@@ -61,6 +66,7 @@ const Cerbe = () => {
     useState<number>();
   const [regulatoryEnergySaving, setRegulatoryEnergySaving] =
     useState<number>();
+  const [energySavingsEquivTownPopulation, setEnergySavingsEquivTownPopulation] = useState<number>();
   const [renewableEnergyAmount, setRenewableEnergyAmount] = useState<number>();
   getGdpCerbEnergy({
     fields: [
@@ -82,8 +88,9 @@ const Cerbe = () => {
       );
 
       setGainOnRegulatoryConsumption(ratio(totalProjectCep, totalCepRef));
-      setRegulatoryEnergySaving(
-        sum(allData.map((data) => data.energy_savings)),
+      setRegulatoryEnergySaving(totalCepRef-totalProjectCep);
+      setEnergySavingsEquivTownPopulation(
+          sum(allData.map((data)=> data.energy_savings))
       );
       setRenewableEnergyAmount(
         sum(allData.map((data) => data.renewable_energy_amount)),
@@ -187,6 +194,7 @@ const Cerbe = () => {
       setTotalProjectCarbonFootPrint(
         sum(allData.map((data) => data.project_carbon_footprint)),
       );
+      console.log(totalProjectCarbonFootPrint);
       setTotalBioBasedMaterialsAmount(
         sum(allData.map((data) => data.biobased_materials_amount)),
       );
@@ -323,7 +331,7 @@ const Cerbe = () => {
                     <Col span={12}>
                       <Statistic
                         title="Economies d'énergie équivalentes à la conso annuelle d'une ville de "
-                        value={regulatoryEnergySaving / 2223}
+                        value={energySavingsEquivTownPopulation / 2223}
                         precision={2}
                         formatter={formatter}
                       />{" "}
@@ -373,8 +381,8 @@ const Cerbe = () => {
                         value={ratioCBS}
                         precision={2}
                         formatter={formatter}
-                      />{" "}
-                      %{/*kWhep/m².an*/}
+                      />
+                      %
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -429,7 +437,7 @@ const Cerbe = () => {
                         value={averageRainwaterHarvestingTankCapacity}
                         formatter={formatter}
                       />
-                        m&sup3;
+                      m&sup3;
                     </Col>
                     <Col span={12}>
                       <Statistic
