@@ -66,7 +66,10 @@ const Cerbe = () => {
     useState<number>();
   const [regulatoryEnergySaving, setRegulatoryEnergySaving] =
     useState<number>();
-  const [energySavingsEquivTownPopulation, setEnergySavingsEquivTownPopulation] = useState<number>();
+  const [
+    energySavingsEquivTownPopulation,
+    setEnergySavingsEquivTownPopulation,
+  ] = useState<number>();
   const [renewableEnergyAmount, setRenewableEnergyAmount] = useState<number>();
   getGdpCerbEnergy({
     fields: [
@@ -88,9 +91,9 @@ const Cerbe = () => {
       );
 
       setGainOnRegulatoryConsumption(ratio(totalProjectCep, totalCepRef));
-      setRegulatoryEnergySaving(totalCepRef-totalProjectCep);
+      setRegulatoryEnergySaving(totalCepRef - totalProjectCep);
       setEnergySavingsEquivTownPopulation(
-          sum(allData.map((data)=> data.energy_savings))
+        sum(allData.map((data) => data.energy_savings)),
       );
       setRenewableEnergyAmount(
         sum(allData.map((data) => data.renewable_energy_amount)),
@@ -138,38 +141,37 @@ const Cerbe = () => {
   });
 
   const [
-    averageRainwaterHarvestingTankCapacity,
-    setAverageRainwaterHarvestingTankCapacity,
+    totalRainwaterHarvestingTankCapacity,
+    setTotalRainwaterHarvestingTankCapacity,
   ] = useState<number>();
   const [
-    averageProjectParcelPermeabilityCoefficient,
-    setAverageProjectParcelPermeabilityCoefficient,
-  ] = useState<number>();
-  const [
-    averageInitialParcelPermeabilityCoefficient,
-    setAverageInitialParcelPermeabilityCoefficient,
+    plotPermeabilityCoefficient,
+    setPlotPermeabilityCoefficient,
   ] = useState<number>();
   getGdpCerbRessources({
     fields: [
-      "averageRainwaterHarvestingTankCapacity",
-      "averageProjectParcelPermeabilityCoefficient",
+      "rainwater_harvesting_tank_capacity",
+      "project_plot_permeability_coefficient",
+      "initial_plot_permeability_coefficient",
     ].join(","),
   }).then((res) => {
     if (isRequestSuccessful(res.status)) {
       const allData = res.data;
-      setAverageRainwaterHarvestingTankCapacity(
-        average(allData.map((data) => data.rainwater_harvesting_tank_capacity)),
+      setTotalRainwaterHarvestingTankCapacity(
+        sum(allData.map((data) => data.rainwater_harvesting_tank_capacity)),
       );
-      setAverageProjectParcelPermeabilityCoefficient(
-        average(
-          allData.map((data) => data.project_plot_permeability_coefficient),
-        ),
+      const averageProjectPlotPermeabilityCoefficient = average(
+        allData.map((data) => data.project_plot_permeability_coefficient),
       );
-      setAverageInitialParcelPermeabilityCoefficient(
-        average(
-          allData.map((data) => data.initial_plot_permeability_coefficient),
-        ),
+      const averageInitialPlotPermeabilityCoefficient = average(
+        allData.map((data) => data.initial_plot_permeability_coefficient),
       );
+      setPlotPermeabilityCoefficient(
+          ratio(
+              averageProjectPlotPermeabilityCoefficient,
+              averageInitialPlotPermeabilityCoefficient
+          )
+      )
     }
   });
 
@@ -434,7 +436,7 @@ const Cerbe = () => {
                     <Col span={12}>
                       <Statistic
                         title="Volume cumulé de cuves de récupération des eaux de pluie"
-                        value={averageRainwaterHarvestingTankCapacity}
+                        value={totalRainwaterHarvestingTankCapacity}
                         formatter={formatter}
                       />
                       m&sup3;
@@ -442,7 +444,7 @@ const Cerbe = () => {
                     <Col span={12}>
                       <Statistic
                         title="Coefficient moyen de perméabilité de la parcelle Projet"
-                        value={averageProjectParcelPermeabilityCoefficient}
+                        value={plotPermeabilityCoefficient}
                         precision={2}
                         formatter={formatter}
                       />
@@ -451,8 +453,8 @@ const Cerbe = () => {
                       <Statistic
                         title="Amélioration de la perméabilité du sol"
                         value={ratio(
-                          averageProjectParcelPermeabilityCoefficient,
-                          averageInitialParcelPermeabilityCoefficient,
+                          plotPermeabilityCoefficient,
+                          1,
                         )}
                         precision={2}
                         formatter={formatter}
