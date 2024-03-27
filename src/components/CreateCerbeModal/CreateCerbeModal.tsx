@@ -87,7 +87,6 @@ const CreateCerbeModal = ({
     setResultSubject("affair");
 
     if (!error) {
-      console.log(created_affair);
       setResultSubjectName(created_affair?.name);
       setTargetAffairId(created_affair?.id);
     }
