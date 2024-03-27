@@ -12,7 +12,7 @@ import BiodiversityIcon from "../../public/Icon-biodiversity.svg";
 import DiagonalPict from "../../public/logo-diagobat.svg";
 import { getGdpCerbGeneralities } from "../../services/gestionDeProjets/CERBE/GdpCerbGeneralities";
 import { isRequestSuccessful } from "../../utils/isRequestSuccessful";
-import { average, ratio, sum } from "../../utils/CERBEutils";
+import { average, formatNumber, ratio, sum } from "../../utils/CERBEutils";
 import { getGdpCerbEnergy } from "../../services/gestionDeProjets/CERBE/GdpCerbEnergy";
 import { getGdpCerbBiodiversity } from "../../services/gestionDeProjets/CERBE/GdbCerbBiodiversity";
 import { getGdpCerbRessources } from "../../services/gestionDeProjets/CERBE/GdpCerbRessources";
@@ -20,7 +20,6 @@ import { getGdpCerbCarbon } from "../../services/gestionDeProjets/CERBE/GdpCerbC
 
 const Cerbe = () => {
   const loading = false;
-  const formatter = (value: number) => value.toFixed(2);
   const [opacity, setOpacity] = React.useState(0);
   const [isFullScreen, setIsFullScreen] = React.useState(false);
   const currentYear = new Date().getFullYear();
@@ -271,7 +270,7 @@ const Cerbe = () => {
                       <Statistic
                         title="Nombre de projets"
                         value={totalCerbeProjects}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />
                     </Col>
                     <Col span={12}>
@@ -279,7 +278,7 @@ const Cerbe = () => {
                         title="Surface plancher totale"
                         value={totalFloorArea}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />
                     </Col>
                     <Col span={12}>
@@ -287,7 +286,7 @@ const Cerbe = () => {
                         title="Surface parcelle totale"
                         value={totalPlotArea}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />
                     </Col>
                     <Col span={12}>
@@ -295,7 +294,7 @@ const Cerbe = () => {
                         title="Nombre de projets certifiés"
                         value={totalCerbeCertifiedProjects}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />
                     </Col>
                   </Row>
@@ -319,7 +318,7 @@ const Cerbe = () => {
                       <Statistic
                         title="Gain sur les consommations réglementaire (1-(Cep/Cepref))"
                         value={gainOnRegulatoryConsumption}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />{" "}
                       %
                     </Col>
@@ -328,7 +327,7 @@ const Cerbe = () => {
                         title="Economie d'Energie réglementaire (Cepref-Cep)"
                         value={regulatoryEnergySaving}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />{" "}
                       kWhep/m².an
                     </Col>
@@ -337,7 +336,7 @@ const Cerbe = () => {
                         title="Economies d'énergie équivalentes à la conso annuelle d'une ville de "
                         value={energySavingsEquivTownPopulation / 2223}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />{" "}
                       habitants
                     </Col>
@@ -346,7 +345,7 @@ const Cerbe = () => {
                         title="Quantité d'Energie Renouvelable produite"
                         value={renewableEnergyAmount}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />{" "}
                       kWhep/an
                     </Col>
@@ -376,7 +375,7 @@ const Cerbe = () => {
                         title="Coefficient moyen de Biotope par surface finale"
                         value={averageProjectCBS}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />{" "}
                     </Col>
                     <Col span={12}>
@@ -384,7 +383,7 @@ const Cerbe = () => {
                         title="Amélioration du CBS par rapport à l'état initial"
                         value={ratioCBS}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />
                       %
                     </Col>
@@ -393,7 +392,7 @@ const Cerbe = () => {
                         title="Coefficient moyen de Rafraichissement Thermo-Surfacique*"
                         value={averageProjectCRTS}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />{" "}
                     </Col>
                     <Col span={12}>
@@ -401,7 +400,7 @@ const Cerbe = () => {
                         title="Amélioration du RTS par rapport à l'état initial"
                         value={ratioCRTS}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />{" "}
                       %
                     </Col>
@@ -410,7 +409,7 @@ const Cerbe = () => {
                         title="Surface équivalente de plantations en pleine terre"
                         value={averageProjectCBS * totalPlotArea}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />{" "}
                       m²
                     </Col>
@@ -439,7 +438,7 @@ const Cerbe = () => {
                       <Statistic
                         title="Volume cumulé de cuves de récupération des eaux de pluie"
                         value={totalRainwaterHarvestingTankCapacity}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />
                       m&sup3;
                     </Col>
@@ -448,7 +447,7 @@ const Cerbe = () => {
                         title="Coefficient moyen de perméabilité de la parcelle Projet"
                         value={plotPermeabilityCoefficient}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />
                     </Col>
                     <Col span={12}>
@@ -456,7 +455,7 @@ const Cerbe = () => {
                         title="Amélioration de la perméabilité du sol"
                         value={ratio(plotPermeabilityCoefficient, 1)}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />
                       %
                     </Col>
@@ -485,7 +484,7 @@ const Cerbe = () => {
                       <Statistic
                         title="Empreinte carbone totale PROJET"
                         value={totalProjectCarbonFootPrint}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />
                       kgeqCO²/m²
                     </Col>
@@ -497,7 +496,7 @@ const Cerbe = () => {
                           totalBaseLineCarbonFootPrint,
                         )}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />
                       %
                     </Col>
@@ -506,7 +505,7 @@ const Cerbe = () => {
                         title="Quantité de matériaux biosourcés"
                         value={totalBioBasedMaterialsAmount}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />
                       kg
                     </Col>
@@ -515,7 +514,7 @@ const Cerbe = () => {
                         title="Quantité équivalente stockée de carbone *"
                         value={totalBioBasedMaterialsAmount * 0.47}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />
                       kg CO²
                     </Col>
@@ -524,7 +523,7 @@ const Cerbe = () => {
                         title="Soit une forêt agée de 35 ans comptant "
                         value={(totalBioBasedMaterialsAmount * 0.47) / 800}
                         precision={2}
-                        formatter={formatter}
+                        formatter={formatNumber}
                       />{" "}
                       arbres
                     </Col>
