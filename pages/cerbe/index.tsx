@@ -12,12 +12,7 @@ import BiodiversityIcon from "../../public/Icon-biodiversity.svg";
 import DiagonalPict from "../../public/logo-diagobat.svg";
 import { getGdpCerbGeneralities } from "../../services/gestionDeProjets/CERBE/GdpCerbGeneralities";
 import { isRequestSuccessful } from "../../utils/isRequestSuccessful";
-import {
-  average,
-  getRideOfNullValues,
-  ratio,
-  sum,
-} from "../../utils/CERBEutils";
+import { average, ratio, sum } from "../../utils/CERBEutils";
 import { getGdpCerbEnergy } from "../../services/gestionDeProjets/CERBE/GdpCerbEnergy";
 import { getGdpCerbBiodiversity } from "../../services/gestionDeProjets/CERBE/GdbCerbBiodiversity";
 import { getGdpCerbRessources } from "../../services/gestionDeProjets/CERBE/GdpCerbRessources";
@@ -144,10 +139,8 @@ const Cerbe = () => {
     totalRainwaterHarvestingTankCapacity,
     setTotalRainwaterHarvestingTankCapacity,
   ] = useState<number>();
-  const [
-    plotPermeabilityCoefficient,
-    setPlotPermeabilityCoefficient,
-  ] = useState<number>();
+  const [plotPermeabilityCoefficient, setPlotPermeabilityCoefficient] =
+    useState<number>();
   getGdpCerbRessources({
     fields: [
       "rainwater_harvesting_tank_capacity",
@@ -167,11 +160,11 @@ const Cerbe = () => {
         allData.map((data) => data.initial_plot_permeability_coefficient),
       );
       setPlotPermeabilityCoefficient(
-          ratio(
-              averageProjectPlotPermeabilityCoefficient,
-              averageInitialPlotPermeabilityCoefficient
-          )
-      )
+        ratio(
+          averageProjectPlotPermeabilityCoefficient,
+          averageInitialPlotPermeabilityCoefficient,
+        ),
+      );
     }
   });
 
@@ -452,10 +445,7 @@ const Cerbe = () => {
                     <Col span={12}>
                       <Statistic
                         title="Amélioration de la perméabilité du sol"
-                        value={ratio(
-                          plotPermeabilityCoefficient,
-                          1,
-                        )}
+                        value={ratio(plotPermeabilityCoefficient, 1)}
                         precision={2}
                         formatter={formatter}
                       />
