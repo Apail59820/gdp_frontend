@@ -189,7 +189,7 @@ export default function App({ Component, pageProps }: AppProps) {
                             </svg>
                           ),
                         },
-                        {
+                        /*{
                           label: "Facturation",
                           href: "/billing",
                           icon: (
@@ -206,7 +206,7 @@ export default function App({ Component, pageProps }: AppProps) {
                               />
                             </svg>
                           ),
-                        },
+                        },*/
                         {
                           label: "Fichiers",
                           href: "/files",
