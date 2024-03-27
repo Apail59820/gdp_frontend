@@ -27,8 +27,8 @@ import { UsCompanyEntityModel } from "../../../models/UserService/UsCompanyEntit
 import { useSelector } from "react-redux";
 import { selectCompanyEntities } from "../../../store/reducers/companyEntitiesReducer";
 import { createGdpAffair } from "../../../services/gestionDeProjets/GdpAffairs";
-import { messages } from "../../../constants/messages";
 import { useForm } from "antd/lib/form/Form";
+import { messages } from "../../../constants/messages";
 
 type Props = {
   isOpen: boolean;
@@ -60,6 +60,8 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCreateProjectForAffairLoading, setIsCreateProjectForAffairLoading] =
+    useState<boolean>(false);
+  const [createdProjectResultError, setCreatedProjectResultError] =
     useState<boolean>(false);
 
   const [createdAffairId, setCreatedAffairId] = useState<number>(null);
@@ -165,20 +167,24 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
             setCreatedAffairId(createAffairRes.data.id);
             setIsCreateProjectForAffairLoading(false);
             setIsCreateProjectForAffairModalOpen(false);
+            setCreatedProjectResultError(false);
             setIsResultModalOpen(true);
             return;
           } else {
             setIsCreateProjectForAffairLoading(false);
-            return message.error(messages.general.error());
+            setCreatedProjectResultError(true);
+            return setIsResultModalOpen(true);
           }
         });
       } else {
         setIsCreateProjectForAffairLoading(false);
-        return message.error(messages.general.error());
+        setCreatedProjectResultError(true);
+        return setIsResultModalOpen(true);
       }
     } else {
       setIsCreateProjectForAffairLoading(false);
-      return message.error(messages.general.error());
+      setCreatedProjectResultError(true);
+      return setIsResultModalOpen(true);
     }
   };
 
@@ -371,9 +377,9 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
         footer={null}
       >
         <Result
-          status={"success"}
-          title="Projet créé avec succès !"
-          subTitle={`L'affaire "${affairToCreate?.libelle_affaire}" a été créée avec succès.`}
+          status={createdProjectResultError ? "warning" : "success"}
+          title="Une erreur est survenue lors de la création du projet."
+          subTitle={messages.general.error()}
           extra={[
             <div
               style={{
@@ -381,13 +387,16 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
                 gap: 20,
               }}
             >
-              <Button
-                style={"primary"}
-                small
-                onClick={() => router.push(`/cerbe/${createdAffairId}`)}
-              >
-                Aller au formulaire CERBE
-              </Button>
+              {!createdProjectResultError && (
+                <Button
+                  style={"primary"}
+                  small
+                  onClick={() => router.push(`/cerbe/${createdAffairId}`)}
+                >
+                  Aller au formulaire CERBE
+                </Button>
+              )}
+
               <Button
                 key="cancel"
                 style={"secondary"}
