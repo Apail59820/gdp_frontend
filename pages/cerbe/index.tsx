@@ -49,11 +49,20 @@ const Cerbe = () => {
   const [totalCerbeCertifiedProjects, setTotalCerbeCertifiedProjects] =
     useState<number>();
   getGdpCerbGeneralities({
-    fields: ["certifications_labels", "plot_area", "floor_area"].join(","),
+    filter: {
+      affair_name: { _nempty: true },
+    },
+    fields: [
+      "certifications_labels",
+      "plot_area",
+      "floor_area",
+      "affair_name",
+    ].join(","),
   }).then((res) => {
     if (isRequestSuccessful(res.status)) {
       const allData = Array.from(res.data);
-      setTotalCerbeProjects(allData.length);
+      console.log(res);
+      setTotalCerbeProjects(allData.filter((data) => data.affair_name).length);
       setTotalFloorArea(sum(allData.map((data) => data.floor_area)));
       setTotalPlotArea(sum(allData.map((data) => data.plot_area)));
       setTotalCerbeCertifiedProjects(
@@ -144,10 +153,8 @@ const Cerbe = () => {
     totalRainwaterHarvestingTankCapacity,
     setTotalRainwaterHarvestingTankCapacity,
   ] = useState<number>();
-  const [
-    plotPermeabilityCoefficient,
-    setPlotPermeabilityCoefficient,
-  ] = useState<number>();
+  const [plotPermeabilityCoefficient, setPlotPermeabilityCoefficient] =
+    useState<number>();
   getGdpCerbRessources({
     fields: [
       "rainwater_harvesting_tank_capacity",
@@ -167,11 +174,11 @@ const Cerbe = () => {
         allData.map((data) => data.initial_plot_permeability_coefficient),
       );
       setPlotPermeabilityCoefficient(
-          ratio(
-              averageProjectPlotPermeabilityCoefficient,
-              averageInitialPlotPermeabilityCoefficient
-          )
-      )
+        ratio(
+          averageProjectPlotPermeabilityCoefficient,
+          averageInitialPlotPermeabilityCoefficient,
+        ),
+      );
     }
   });
 
@@ -452,10 +459,7 @@ const Cerbe = () => {
                     <Col span={12}>
                       <Statistic
                         title="Amélioration de la perméabilité du sol"
-                        value={ratio(
-                          plotPermeabilityCoefficient,
-                          1,
-                        )}
+                        value={ratio(plotPermeabilityCoefficient, 1)}
                         precision={2}
                         formatter={formatter}
                       />
