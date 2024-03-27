@@ -37,9 +37,10 @@ export default function CerbeBannerTimer() {
               icon={<RightOutlined rev={undefined} />}
               iconPosition={'right'}
               onClick={() => {
-                const div = document.getElementById('cerbe');
-                const divButton: HTMLElement= div.children[0].children[0].children[0] as HTMLElement;
-                divButton.click()
+                const button = document
+                    .getElementById('cerbe')
+                    .querySelector('button');
+                button.click()
               }}
           >
             Commencer
