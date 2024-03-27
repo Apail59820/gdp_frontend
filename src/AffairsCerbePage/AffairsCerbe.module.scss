@@ -5,25 +5,23 @@
   flex-wrap: nowrap;
 }
 
-.generalities_collapse {
-  background-color: rgba(130, 130, 252, 0.1) !important;
-}
+$styleListWithColors: ("generalities": rgb(235, 235, 255), "biodiversity": rgba(130, 252, 130, 1), "energy": rgba(255, 238, 204, 1), "carbon": rgb(176, 173, 173, 1), "resources": rgba(179, 240, 255, 1), "technical": rgba(#FAFAFAFA, 1));
 
-.biodiversity_collapse {
-  background-color: rgba(130, 252, 130, 0.6) !important;
-}
-
-.energy_collapse {
-  background-color: rgba(255, 238, 204, 0.8) !important;
-}
-
-.carbon_collapse {
-  background-color: rgba(128, 128, 128, 0.3) !important;
-}
-
-.resources_collapse {
-  background-color: rgba(130, 130, 252, 0.1) !important;
-}
-.technical_collapse {
-  background-color: rgba(179, 240, 255, 0.8) !important;
+@each $style, $color in $styleListWithColors {
+  .#{$style}_collapse {
+    $i: index($styleListWithColors, $style) + 1;
+    background-color: $color !important;
+    position: sticky;
+    top: 0;
+    z-index: $i;
+    @if $style == "generalities" {
+      > .ant-collapse-header-text {
+        color: #DDE3EB !important;
+      }
+    } @else if $style == "carbon" {
+      > .ant-collapse-header-text {
+        color: #DDE3EB !important;
+      }
+    }
+  }
 }

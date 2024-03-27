@@ -41,7 +41,7 @@ const ResourcesForm = ({ resources, onFormChange }: Props) => {
   return (
     <Form style={{ width: "75%" }}>
       <Form.Item
-        label={"Capacité de la cuve de récupération d'eau de pluie [en m³]"}
+        label={"Capacité récupération d'eau de pluie [en m³]"}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 18, offset: 2 }}
         initialValue={resources?.rainwater_harvesting_tank_capacity}

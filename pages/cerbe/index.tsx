@@ -9,7 +9,6 @@ import PowerIcon from "../../public/Icon-power.svg";
 import ResourcesIcon from "../../public/Icon-resources.svg";
 import CarbonIcon from "../../public/Icon-carbon.svg";
 import BiodiversityIcon from "../../public/Icon-biodiversity.svg";
-import DiagonalPict from "../../public/logo-diagobat.svg";
 import { getGdpCerbGeneralities } from "../../services/gestionDeProjets/CERBE/GdpCerbGeneralities";
 import { isRequestSuccessful } from "../../utils/isRequestSuccessful";
 import { average, formatNumber, ratio, sum } from "../../utils/CERBEutils";
