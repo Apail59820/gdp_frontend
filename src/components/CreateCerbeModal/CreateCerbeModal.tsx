@@ -1,4 +1,13 @@
-import { Divider, Empty, Form, Input, message, Modal, Select } from "antd";
+import {
+  Divider,
+  Empty,
+  Form,
+  Input,
+  message,
+  Modal,
+  Result,
+  Select,
+} from "antd";
 import { Button } from "projex-ui";
 import React, { useEffect, useState } from "react";
 import { GdpAffairModel } from "../../../models/GestionDeProjets/GdpAffairModel";
@@ -32,6 +41,7 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
     setIsCreateProjectForAffairModalOpen,
   ] = useState<boolean>(false);
 
+  const [isResultModalOpen, setIsResultModalOpen] = useState<boolean>(false);
   const companyEntities: Partial<UsCompanyEntityModel>[] = useSelector(
     selectCompanyEntities,
   );
@@ -51,6 +61,8 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCreateProjectForAffairLoading, setIsCreateProjectForAffairLoading] =
     useState<boolean>(false);
+
+  const [createdAffairId, setCreatedAffairId] = useState<number>(null);
 
   const router = useRouter();
   const [form] = useForm();
@@ -150,8 +162,11 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
           pythagore_affaires_id: affairToCreate.numero_affaire,
         }).then((res) => {
           if (isRequestSuccessful(res.status)) {
+            setCreatedAffairId(createAffairRes.data.id);
             setIsCreateProjectForAffairLoading(false);
-            return router.push(`/cerbe/${createAffairRes.data.id}`);
+            setIsCreateProjectForAffairModalOpen(false);
+            setIsResultModalOpen(true);
+            return;
           } else {
             setIsCreateProjectForAffairLoading(false);
             return message.error(messages.general.error());
@@ -345,6 +360,45 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
             </Button>
           </div>
         </Form>
+      </Modal>
+
+      <Modal
+        closable
+        destroyOnClose
+        open={isResultModalOpen}
+        onCancel={() => setIsResultModalOpen(false)}
+        width={"40%"}
+        footer={null}
+      >
+        <Result
+          status={"success"}
+          title="Projet créé avec succès !"
+          subTitle={`L'affaire "${affairToCreate?.libelle_affaire}" a été créée avec succès.`}
+          extra={[
+            <div
+              style={{
+                display: "inline-flex",
+                gap: 20,
+              }}
+            >
+              <Button
+                style={"primary"}
+                small
+                onClick={() => router.push(`/cerbe/${createdAffairId}`)}
+              >
+                Aller au formulaire CERBE
+              </Button>
+              <Button
+                key="cancel"
+                style={"secondary"}
+                small
+                onClick={() => setIsResultModalOpen(false)}
+              >
+                Retour
+              </Button>
+            </div>,
+          ]}
+        ></Result>
       </Modal>
     </>
   );
