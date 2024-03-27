@@ -23,12 +23,12 @@ import {
 } from "../../../services/gestionDeProjets/GdpPythagoreAffairs";
 import { GdpPythagoreAffaireModel } from "../../../models/GestionDeProjets/GdpPythagoreAffaireModel";
 import { createGdpProject } from "../../../services/gestionDeProjets/GdpProjects";
-import { UsCompanyEntityModel } from "../../../models/UserService/UsCompanyEntityModel";
-import { useSelector } from "react-redux";
-import { selectCompanyEntities } from "../../../store/reducers/companyEntitiesReducer";
 import { createGdpAffair } from "../../../services/gestionDeProjets/GdpAffairs";
 import { useForm } from "antd/lib/form/Form";
 import { messages } from "../../../constants/messages";
+import { useSelector } from "react-redux";
+import { selectUserProfile } from "../../../store/reducers/authReducer";
+import { UsCompanyEntitiesUsersModel } from "../../../models/UserService/UsCompanyEntitiesUsersModel";
 
 type Props = {
   isOpen: boolean;
@@ -42,9 +42,6 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
   ] = useState<boolean>(false);
 
   const [isResultModalOpen, setIsResultModalOpen] = useState<boolean>(false);
-  const companyEntities: Partial<UsCompanyEntityModel>[] = useSelector(
-    selectCompanyEntities,
-  );
 
   const [affairToCreate, setAffairToCreate] = useState<
     Partial<GdpPythagoreAffaireModel>
@@ -68,6 +65,8 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
 
   const router = useRouter();
   const [form] = useForm();
+
+  const userProfile = useSelector(selectUserProfile);
 
   useEffect(() => {
     if (isOpen) {
@@ -137,8 +136,6 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
 
   const onCreateProjectForAffairSubmitted = async (values: {
     project_name?: string;
-    project_company_entity: number;
-    affair_company_entity: number;
   }) => {
     setIsCreateProjectForAffairLoading(true);
 
@@ -148,13 +145,17 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
     const createProjectRes = await createGdpProject({
       name: newProjectName,
       client_company_name: affairToCreate?.nom_client,
-      company_entity: values.project_company_entity,
+      company_entity: (
+        userProfile.company_entities as UsCompanyEntitiesUsersModel[]
+      )[0].company_entities_id,
     });
 
     if (isRequestSuccessful(createProjectRes.status) && createProjectRes.data) {
       const createAffairRes = await createGdpAffair({
         name: affairToCreate.libelle_affaire,
-        company_entity: values.affair_company_entity,
+        company_entity: (
+          userProfile.company_entities as UsCompanyEntitiesUsersModel[]
+        )[0].company_entities_id,
         projects_id: createProjectRes.data.id,
       });
 
@@ -246,7 +247,7 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
                     .slice(0, 10),
                 );
               }}
-              onChange={(e) => {
+              onChange={() => {
                 form.setFieldValue("affair", null);
               }}
               notFoundContent={
@@ -301,52 +302,6 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
             <Input
               placeholder={`Projet - ${affairToCreate.libelle_affaire}`}
             ></Input>
-          </Form.Item>
-          <Form.Item
-            label={"Entité"}
-            name={"project_company_entity"}
-            id={"entity"}
-            rules={[
-              {
-                required: true,
-                message: "Veuillez sélectionner une entité.",
-              },
-            ]}
-          >
-            <Select
-              placeholder={"Sélectionnez l'entité liée à votre projet"}
-              options={companyEntities.map(
-                (entity: Partial<UsCompanyEntityModel>) => {
-                  return {
-                    label: entity.name?.toUpperCase(),
-                    value: entity.id,
-                  };
-                },
-              )}
-            />
-          </Form.Item>
-          <Form.Item
-            label={"Entité"}
-            name={"affair_company_entity"}
-            id={"entity"}
-            rules={[
-              {
-                required: true,
-                message: "Veuillez sélectionner une entité.",
-              },
-            ]}
-          >
-            <Select
-              placeholder={`Sélectionnez l'entité liée à l'affaire ${affairToCreate.libelle_affaire}`}
-              options={companyEntities.map(
-                (entity: Partial<UsCompanyEntityModel>) => {
-                  return {
-                    label: entity.name?.toUpperCase(),
-                    value: entity.id,
-                  };
-                },
-              )}
-            />
           </Form.Item>
           <div style={{ display: "flex", marginTop: 10 }}>
             <Button
