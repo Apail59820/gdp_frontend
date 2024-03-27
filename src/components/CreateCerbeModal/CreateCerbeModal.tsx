@@ -1,13 +1,4 @@
-import {
-  Divider,
-  Empty,
-  Form,
-  Input,
-  message,
-  Modal,
-  Result,
-  Select,
-} from "antd";
+import { Empty, Form, message, Modal, Select } from "antd";
 import { Button } from "projex-ui";
 import React, { useEffect, useState } from "react";
 import { GdpAffairModel } from "../../../models/GestionDeProjets/GdpAffairModel";
@@ -25,11 +16,13 @@ import { GdpPythagoreAffaireModel } from "../../../models/GestionDeProjets/GdpPy
 import { createGdpProject } from "../../../services/gestionDeProjets/GdpProjects";
 import { createGdpAffair } from "../../../services/gestionDeProjets/GdpAffairs";
 import { useForm } from "antd/lib/form/Form";
-import { messages } from "../../../constants/messages";
 import { useSelector } from "react-redux";
 import { selectUserProfile } from "../../../store/reducers/authReducer";
 import { UsCompanyEntitiesUsersModel } from "../../../models/UserService/UsCompanyEntitiesUsersModel";
 import { GdpProjectsModel } from "../../../models/GestionDeProjets/GdpProjectsModel";
+import CreateProjectForAffairModal from "./CreateProjectForAffairModal";
+import CreateAffairModal from "./CreateAffairModal";
+import ResultModal from "./ResultModal";
 
 type Props = {
   isOpen: boolean;
@@ -62,14 +55,15 @@ const CreateCerbeModal = ({
     Partial<GdpPythagoreAffaireModel>[]
   >([]);
 
-  const [userProjectsSearchList, setUserProjectsSearchList] = useState<
-    Partial<GdpProjectsModel>[]
-  >(userProjects || []);
+  const [createAffairModalOpen, setCreateAffairModalOpen] =
+    useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCreateProjectForAffairLoading, setIsCreateProjectForAffairLoading] =
     useState<boolean>(false);
   const [createdProjectResultError, setCreatedProjectResultError] =
+    useState<boolean>(false);
+  const [isCreateAffairLoading, setIsCreateAffairLoading] =
     useState<boolean>(false);
 
   const [createdAffairId, setCreatedAffairId] = useState<number>(null);
@@ -77,6 +71,7 @@ const CreateCerbeModal = ({
   const router = useRouter();
   const [form] = useForm();
   const [createProjectForm] = useForm();
+  const [createAffairForm] = useForm();
 
   const userProfile = useSelector(selectUserProfile);
 
@@ -145,6 +140,12 @@ const CreateCerbeModal = ({
       }
     }
   };
+
+  const onCreateAffair = async (values: {
+    project_name?: string;
+    project?: number;
+    affair_name: string;
+  }) => {};
 
   const onCreateProjectForAffairSubmitted = async (values: {
     project_name?: string;
@@ -226,7 +227,29 @@ const CreateCerbeModal = ({
           style={{ marginTop: 20 }}
           form={form as any}
         >
-          <Form.Item label="Sélectionnez une affaire" name={"affair"}>
+          <Form.Item
+            label={
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}
+              >
+                <span>Sélectionnez une affaire</span>
+                <a
+                  style={{
+                    marginLeft: "10rem",
+                    color: "blue",
+                  }}
+                >
+                  ⮐ Créer une affaire
+                </a>
+              </div>
+            }
+            name={"affair"}
+          >
             <Select
               showSearch
               filterOption={false}
@@ -296,143 +319,33 @@ const CreateCerbeModal = ({
         </Form>
       </Modal>
 
-      <Modal
-        closable
-        destroyOnClose
-        open={isCreateProjectForAffairModalOpen}
-        onCancel={() => setIsCreateProjectForAffairModalOpen(false)}
-        title={`Souhaitez vous créer un projet ?`}
-        width={"40%"}
-        footer={null}
-      >
-        <p>
-          L'affaire <strong>{affairToCreate.libelle_affaire}</strong> n'est
-          associée à aucun projet, souhaitez-vous créer un projet immédiatement
-          ? <br /> L'affaire sera liée automatiquement au projet créé.
-        </p>
-        <Divider />
-        <Form
-          onFinish={onCreateProjectForAffairSubmitted}
-          layout={"vertical"}
-          style={{ marginTop: 20 }}
-          form={createProjectForm}
-        >
-          <Form.Item
-            label={"Selectionnez un nom pour le projet."}
-            name={"project_name"}
-          >
-            <Input
-              placeholder={`Projet - ${affairToCreate.libelle_affaire}`}
-              onChange={(e) => {
-                if (e.target.value.length > 0) {
-                  createProjectForm.setFieldValue("project", null);
-                }
-              }}
-            ></Input>
-          </Form.Item>
-          <Form.Item
-            label={"Ou choisissez un projet existant."}
-            name={"project"}
-          >
-            <Select
-              showSearch
-              filterOption={false}
-              placeholder={"Selectionnez un project existant"}
-              options={userProjectsSearchList?.map((project) => ({
-                label: `${project?.name}`,
-                value: project?.id,
-              }))}
-              onSearch={(value) => {
-                setUserProjectsSearchList(
-                  userProjects
-                    .filter((userProject) =>
-                      userProject.name
-                        .toLowerCase()
-                        .includes(value.toLowerCase()),
-                    )
-                    .slice(0, 10),
-                );
-              }}
-              onChange={() => {
-                createProjectForm.setFieldValue("project_name", null);
-              }}
-              notFoundContent={
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description={"Aucun projet trouvé"}
-                />
-              }
-            />
-          </Form.Item>
-          <div style={{ display: "flex", marginTop: 10 }}>
-            <Button
-              small
-              htmlType={"submit"}
-              loading={isCreateProjectForAffairLoading}
-            >
-              Confirmer
-            </Button>
-            <Button
-              small
-              style={"text"}
-              onClick={() => setIsCreateProjectForAffairModalOpen(false)}
-              loading={isCreateProjectForAffairLoading}
-            >
-              Annuler
-            </Button>
-          </div>
-        </Form>
-      </Modal>
+      <CreateProjectForAffairModal
+        isOpen={isCreateProjectForAffairModalOpen}
+        setIsOpen={setIsCreateProjectForAffairModalOpen}
+        affairToCreate={affairToCreate}
+        onSubmit={onCreateProjectForAffairSubmitted}
+        userProjects={userProjects}
+        form={createProjectForm}
+        loading={isCreateProjectForAffairLoading}
+      />
 
-      <Modal
-        closable
-        destroyOnClose
-        open={isResultModalOpen}
-        onCancel={() => setIsResultModalOpen(false)}
-        width={"40%"}
-        footer={null}
-      >
-        <Result
-          status={createdProjectResultError ? "warning" : "success"}
-          title={
-            createdProjectResultError
-              ? "Une erreur est survenue lors de la création du projet."
-              : "Projet créé avec succès !"
-          }
-          subTitle={
-            createdProjectResultError
-              ? messages.general.error()
-              : `L'affaire ${affairToCreate?.libelle_affaire} a été créée avec succès.`
-          }
-          extra={[
-            <div
-              style={{
-                display: "inline-flex",
-                gap: 20,
-              }}
-            >
-              {!createdProjectResultError && (
-                <Button
-                  style={"primary"}
-                  small
-                  onClick={() => router.push(`/cerbe/${createdAffairId}`)}
-                >
-                  Aller au formulaire CERBE
-                </Button>
-              )}
+      <CreateAffairModal
+        isOpen={createAffairModalOpen}
+        setIsOpen={setCreateAffairModalOpen}
+        onSubmit={onCreateAffair}
+        userProjects={userProjects}
+        form={createAffairForm}
+        loading={isCreateAffairLoading}
+      />
 
-              <Button
-                key="cancel"
-                style={"secondary"}
-                small
-                onClick={() => setIsResultModalOpen(false)}
-              >
-                Retour
-              </Button>
-            </div>,
-          ]}
-        ></Result>
-      </Modal>
+      <ResultModal
+        isOpen={isResultModalOpen}
+        setIsOpen={setIsResultModalOpen}
+        error={createdProjectResultError}
+        subject={"project"}
+        subject_title={"project name"}
+        onClickConfirm={() => router.push("/mdr")}
+      />
     </>
   );
 };
