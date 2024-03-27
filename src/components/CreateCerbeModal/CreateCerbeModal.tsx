@@ -333,8 +333,16 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
       >
         <Result
           status={createdProjectResultError ? "warning" : "success"}
-          title="Une erreur est survenue lors de la création du projet."
-          subTitle={messages.general.error()}
+          title={
+            createdProjectResultError
+              ? "Une erreur est survenue lors de la création du projet."
+              : "Projet créé avec succès !"
+          }
+          subTitle={
+            createdProjectResultError
+              ? messages.general.error()
+              : `L'affaire ${affairToCreate?.libelle_affaire} a été créée avec succès.`
+          }
           extra={[
             <div
               style={{
