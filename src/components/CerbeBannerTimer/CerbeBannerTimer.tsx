@@ -1,8 +1,11 @@
 import styles from "./CerbeBannerTimer.module.scss";
+import DiagonalPict from "../../../public/logo-diagobat.svg";
 import HeaderIcon from "../../../public/icon-cerbe-head.svg";
 import React, { useEffect, useState } from "react";
 import Timer from "./Timer";
 import { Button } from "projex-ui";
+import Image from "next/image";
+import { useRouter } from "next/router";
 import { RightOutlined } from "@ant-design/icons";
 
 export default function CerbeBannerTimer() {
