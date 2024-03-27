@@ -56,7 +56,6 @@ const Cerbe = () => {
   }).then((res) => {
     if (isRequestSuccessful(res.status)) {
       const allData = Array.from(res.data);
-      console.log(res);
       setTotalCerbeProjects(allData.filter((data) => data.affair_name).length);
       setTotalFloorArea(sum(allData.map((data) => data.floor_area)));
       setTotalPlotArea(sum(allData.map((data) => data.plot_area)));
@@ -198,7 +197,6 @@ const Cerbe = () => {
       setTotalProjectCarbonFootPrint(
         sum(allData.map((data) => data.project_carbon_footprint)),
       );
-      console.log(totalProjectCarbonFootPrint);
       setTotalBioBasedMaterialsAmount(
         sum(allData.map((data) => data.biobased_materials_amount)),
       );
@@ -227,11 +225,9 @@ const Cerbe = () => {
               className={`${styles.headerIconContainer} multi`}
               style={{ opacity: opacity ? 1 : 0 }}
             >
-              <img
-                src={DiagonalPict.src}
-                className={styles.headerIcon}
-                alt="Diagobat Logo"
-              />
+              <h1 className={styles.headerIcon}>
+                <strong>CERBE 2024</strong>
+              </h1>
               <img
                 src={HeaderIcon.src}
                 className={styles.headerIcon}
