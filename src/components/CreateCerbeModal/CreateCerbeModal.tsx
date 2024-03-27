@@ -29,13 +29,20 @@ import { messages } from "../../../constants/messages";
 import { useSelector } from "react-redux";
 import { selectUserProfile } from "../../../store/reducers/authReducer";
 import { UsCompanyEntitiesUsersModel } from "../../../models/UserService/UsCompanyEntitiesUsersModel";
+import { GdpProjectsModel } from "../../../models/GestionDeProjets/GdpProjectsModel";
 
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   affairs: Partial<GdpAffairModel>[];
+  userProjects: Partial<GdpProjectsModel>[];
 };
-const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
+const CreateCerbeModal = ({
+  isOpen,
+  setIsOpen,
+  affairs,
+  userProjects,
+}: Props) => {
   const [
     isCreateProjectForAffairModalOpen,
     setIsCreateProjectForAffairModalOpen,
@@ -55,6 +62,10 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
     Partial<GdpPythagoreAffaireModel>[]
   >([]);
 
+  const [userProjectsSearchList, setUserProjectsSearchList] = useState<
+    Partial<GdpProjectsModel>[]
+  >(userProjects || []);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCreateProjectForAffairLoading, setIsCreateProjectForAffairLoading] =
     useState<boolean>(false);
@@ -65,6 +76,7 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
 
   const router = useRouter();
   const [form] = useForm();
+  const [createProjectForm] = useForm();
 
   const userProfile = useSelector(selectUserProfile);
 
@@ -136,27 +148,36 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
 
   const onCreateProjectForAffairSubmitted = async (values: {
     project_name?: string;
+    project?: number;
   }) => {
     setIsCreateProjectForAffairLoading(true);
 
     const newProjectName =
       values?.project_name || `Projet - ${affairToCreate.libelle_affaire}`;
 
-    const createProjectRes = await createGdpProject({
-      name: newProjectName,
-      client_company_name: affairToCreate?.nom_client,
-      company_entity: (
-        userProfile.company_entities as UsCompanyEntitiesUsersModel[]
-      )[0].company_entities_id,
-    });
+    let createProjectRes: { status: number; data?: Partial<GdpProjectsModel> } =
+      { status: 400 };
 
-    if (isRequestSuccessful(createProjectRes.status) && createProjectRes.data) {
+    if (!values.project) {
+      createProjectRes = await createGdpProject({
+        name: newProjectName,
+        client_company_name: affairToCreate?.nom_client,
+        company_entity: (
+          userProfile.company_entities as UsCompanyEntitiesUsersModel[]
+        )[0].company_entities_id,
+      });
+    }
+
+    if (
+      (isRequestSuccessful(createProjectRes.status) && createProjectRes.data) ||
+      values.project
+    ) {
       const createAffairRes = await createGdpAffair({
         name: affairToCreate.libelle_affaire,
         company_entity: (
           userProfile.company_entities as UsCompanyEntitiesUsersModel[]
         )[0].company_entities_id,
-        projects_id: createProjectRes.data.id,
+        projects_id: values.project ? values.project : createProjectRes.data.id,
       });
 
       if (isRequestSuccessful(createAffairRes.status)) {
@@ -294,6 +315,7 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
           onFinish={onCreateProjectForAffairSubmitted}
           layout={"vertical"}
           style={{ marginTop: 20 }}
+          form={createProjectForm}
         >
           <Form.Item
             label={"Selectionnez un nom pour le projet."}
@@ -301,7 +323,46 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
           >
             <Input
               placeholder={`Projet - ${affairToCreate.libelle_affaire}`}
+              onChange={(e) => {
+                if (e.target.value.length > 0) {
+                  createProjectForm.setFieldValue("project", null);
+                }
+              }}
             ></Input>
+          </Form.Item>
+          <Form.Item
+            label={"Ou choisissez un projet existant."}
+            name={"project"}
+          >
+            <Select
+              showSearch
+              filterOption={false}
+              placeholder={"Selectionnez un project existant"}
+              options={userProjectsSearchList?.map((project) => ({
+                label: `${project?.name}`,
+                value: project?.id,
+              }))}
+              onSearch={(value) => {
+                setUserProjectsSearchList(
+                  userProjects
+                    .filter((userProject) =>
+                      userProject.name
+                        .toLowerCase()
+                        .includes(value.toLowerCase()),
+                    )
+                    .slice(0, 10),
+                );
+              }}
+              onChange={() => {
+                createProjectForm.setFieldValue("project_name", null);
+              }}
+              notFoundContent={
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={"Aucun projet trouvé"}
+                />
+              }
+            />
           </Form.Item>
           <div style={{ display: "flex", marginTop: 10 }}>
             <Button
