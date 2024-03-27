@@ -39,7 +39,11 @@ export default function CerbeBannerTimer() {
               style={"text_gray"}
               icon={<RightOutlined rev={undefined} />}
               iconPosition={'right'}
-              onClick={() => router.push('#cerbe')}
+              onClick={() => {
+                const div = document.getElementById('cerbe');
+                const divButton: HTMLElement= div.children[0].children[0].children[0] as HTMLElement;
+                divButton.click()
+              }}
           >
             Commencer
           </Button>
