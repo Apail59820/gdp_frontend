@@ -3,28 +3,98 @@ import { Button } from "projex-ui";
 import React, { useState } from "react";
 import { GdpPythagoreAffaireModel } from "../../../models/GestionDeProjets/GdpPythagoreAffaireModel";
 import { GdpProjectsModel } from "../../../models/GestionDeProjets/GdpProjectsModel";
+import { createGdpProject } from "../../../services/gestionDeProjets/GdpProjects";
+import { UsCompanyEntitiesUsersModel } from "../../../models/UserService/UsCompanyEntitiesUsersModel";
+import { isRequestSuccessful } from "../../../utils/isRequestSuccessful";
+import { createGdpAffair } from "../../../services/gestionDeProjets/GdpAffairs";
+import { createGdpAffairPythagoreAffair } from "../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs";
+import { useSelector } from "react-redux";
+import { selectUserProfile } from "../../../store/reducers/authReducer";
+import { GdpAffairModel } from "../../../models/GestionDeProjets/GdpAffairModel";
 
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   affairToCreate: Partial<GdpPythagoreAffaireModel>;
-  onSubmit: (values: { project_name?: string; project?: number }) => void;
+  onSubmit: (error: boolean, created_affair: Partial<GdpAffairModel>) => void;
   userProjects: Partial<GdpProjectsModel>[];
   form: FormInstance<any>;
-  loading: boolean;
 };
 const CreateProjectForAffairModal = ({
   isOpen,
   setIsOpen,
   affairToCreate,
-  onSubmit,
   form,
   userProjects,
-  loading,
+  onSubmit,
 }: Props) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const userProfile = useSelector(selectUserProfile);
+
   const [userProjectsSearchList, setUserProjectsSearchList] = useState<
     Partial<GdpProjectsModel>[]
   >(userProjects || []);
+
+  const onFormSubmitted = async (values: {
+    project_name?: string;
+    project?: number;
+  }) => {
+    setIsLoading(true);
+
+    const newProjectName =
+      values?.project_name || `Projet - ${affairToCreate.libelle_affaire}`;
+
+    let createProjectRes: { status: number; data?: Partial<GdpProjectsModel> } =
+      { status: 400 };
+
+    if (!values.project) {
+      createProjectRes = await createGdpProject({
+        name: newProjectName,
+        client_company_name: affairToCreate?.nom_client,
+        company_entity: (
+          userProfile.company_entities as UsCompanyEntitiesUsersModel[]
+        )[0].company_entities_id,
+      });
+    }
+
+    if (
+      (isRequestSuccessful(createProjectRes.status) && createProjectRes.data) ||
+      values.project
+    ) {
+      const createAffairRes = await createGdpAffair({
+        name: affairToCreate.libelle_affaire,
+        company_entity: (
+          userProfile.company_entities as UsCompanyEntitiesUsersModel[]
+        )[0].company_entities_id,
+        projects_id: values.project ? values.project : createProjectRes.data.id,
+      });
+
+      if (isRequestSuccessful(createAffairRes.status)) {
+        await createGdpAffairPythagoreAffair({
+          affairs_id: createAffairRes.data.id,
+          pythagore_affaires_id: affairToCreate.numero_affaire,
+        }).then((res) => {
+          if (isRequestSuccessful(res.status)) {
+            setIsLoading(false);
+            setIsOpen(false);
+            return onSubmit(false, createAffairRes.data);
+          } else {
+            setIsLoading(false);
+            setIsOpen(false);
+            return onSubmit(true, null);
+          }
+        });
+      } else {
+        setIsLoading(false);
+        setIsOpen(false);
+        return onSubmit(true, null);
+      }
+    } else {
+      setIsLoading(false);
+      setIsOpen(false);
+      return onSubmit(true, null);
+    }
+  };
 
   return (
     <Modal
@@ -43,7 +113,7 @@ const CreateProjectForAffairModal = ({
       </p>
       <Divider />
       <Form
-        onFinish={onSubmit}
+        onFinish={onFormSubmitted}
         layout={"vertical"}
         style={{ marginTop: 20 }}
         form={form}
@@ -93,14 +163,14 @@ const CreateProjectForAffairModal = ({
           />
         </Form.Item>
         <div style={{ display: "flex", marginTop: 10 }}>
-          <Button small htmlType={"submit"} loading={loading}>
+          <Button small htmlType={"submit"} loading={isLoading}>
             Confirmer
           </Button>
           <Button
             small
             style={"text"}
             onClick={() => setIsOpen(false)}
-            loading={loading}
+            loading={isLoading}
           >
             Annuler
           </Button>

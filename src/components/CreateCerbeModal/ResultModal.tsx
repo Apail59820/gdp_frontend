@@ -33,12 +33,12 @@ const ResultModal = ({
         title={
           error
             ? `Une erreur est survenue lors de la création ${subject === "project" ? "du projet" : "de l'affaire"}.`
-            : `${subject === "project" ? "Projet" : "Affaire"} créé${subject === "affair" && "e"} avec succès !`
+            : `${subject === "project" ? "Projet" : "Affaire"} créé${subject === "affair" ? "e" : ""} avec succès !`
         }
         subTitle={
           error
             ? messages.general.error()
-            : `${subject === "project" ? "Le projet" : "L'affaire"} ${subject_title} a été créé${subject === "affair" && "e"} avec succès.`
+            : `${subject === "project" ? "Le projet" : "L'affaire"} ${subject_title} a été créé${subject === "affair" ? "e" : ""} avec succès.`
         }
         extra={[
           <div

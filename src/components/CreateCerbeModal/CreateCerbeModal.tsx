@@ -3,22 +3,14 @@ import { Button } from "projex-ui";
 import React, { useEffect, useState } from "react";
 import { GdpAffairModel } from "../../../models/GestionDeProjets/GdpAffairModel";
 import { useRouter } from "next/router";
-import {
-  createGdpAffairPythagoreAffair,
-  getGdpAffairsPythagoreAffairs,
-} from "../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs";
+import { getGdpAffairsPythagoreAffairs } from "../../../services/gestionDeProjets/GdpAffairsPythagoreAffairs";
 import { isRequestSuccessful } from "../../../utils/isRequestSuccessful";
 import {
   getGdpPythagoreAffaire,
   getGdpPythagoreAffaires,
 } from "../../../services/gestionDeProjets/GdpPythagoreAffairs";
 import { GdpPythagoreAffaireModel } from "../../../models/GestionDeProjets/GdpPythagoreAffaireModel";
-import { createGdpProject } from "../../../services/gestionDeProjets/GdpProjects";
-import { createGdpAffair } from "../../../services/gestionDeProjets/GdpAffairs";
 import { useForm } from "antd/lib/form/Form";
-import { useSelector } from "react-redux";
-import { selectUserProfile } from "../../../store/reducers/authReducer";
-import { UsCompanyEntitiesUsersModel } from "../../../models/UserService/UsCompanyEntitiesUsersModel";
 import { GdpProjectsModel } from "../../../models/GestionDeProjets/GdpProjectsModel";
 import CreateProjectForAffairModal from "./CreateProjectForAffairModal";
 import CreateAffairModal from "./CreateAffairModal";
@@ -42,6 +34,11 @@ const CreateCerbeModal = ({
   ] = useState<boolean>(false);
 
   const [isResultModalOpen, setIsResultModalOpen] = useState<boolean>(false);
+  const [formError, setFormError] = useState<boolean>(false);
+  const [resultSubject, setResultSubject] = useState<"project" | "affair">(
+    null,
+  );
+  const [resultSubjectName, setResultSubjectName] = useState<string>("");
 
   const [affairToCreate, setAffairToCreate] = useState<
     Partial<GdpPythagoreAffaireModel>
@@ -61,19 +58,16 @@ const CreateCerbeModal = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isCreateProjectForAffairLoading, setIsCreateProjectForAffairLoading] =
     useState<boolean>(false);
-  const [createdProjectResultError, setCreatedProjectResultError] =
-    useState<boolean>(false);
+
   const [isCreateAffairLoading, setIsCreateAffairLoading] =
     useState<boolean>(false);
 
-  const [createdAffairId, setCreatedAffairId] = useState<number>(null);
+  const [targetAffairId, setTargetAffairId] = useState<number>(null);
 
   const router = useRouter();
   const [form] = useForm();
   const [createProjectForm] = useForm();
   const [createAffairForm] = useForm();
-
-  const userProfile = useSelector(selectUserProfile);
 
   useEffect(() => {
     if (isOpen) {
@@ -89,6 +83,22 @@ const CreateCerbeModal = ({
       }
     });
   }, []);
+
+  const onCreateProjectForAffairSubmitted = (
+    error: boolean,
+    created_affair: Partial<GdpAffairModel>,
+  ) => {
+    setFormError(error);
+    setResultSubject("affair");
+
+    if (!error) {
+      console.log(created_affair);
+      setResultSubjectName(created_affair?.name);
+      setTargetAffairId(created_affair?.id);
+    }
+
+    setIsResultModalOpen(true);
+  };
 
   const onSubmit = async (values: {
     affair?: number;
@@ -146,70 +156,6 @@ const CreateCerbeModal = ({
     project?: number;
     affair_name: string;
   }) => {};
-
-  const onCreateProjectForAffairSubmitted = async (values: {
-    project_name?: string;
-    project?: number;
-  }) => {
-    setIsCreateProjectForAffairLoading(true);
-
-    const newProjectName =
-      values?.project_name || `Projet - ${affairToCreate.libelle_affaire}`;
-
-    let createProjectRes: { status: number; data?: Partial<GdpProjectsModel> } =
-      { status: 400 };
-
-    if (!values.project) {
-      createProjectRes = await createGdpProject({
-        name: newProjectName,
-        client_company_name: affairToCreate?.nom_client,
-        company_entity: (
-          userProfile.company_entities as UsCompanyEntitiesUsersModel[]
-        )[0].company_entities_id,
-      });
-    }
-
-    if (
-      (isRequestSuccessful(createProjectRes.status) && createProjectRes.data) ||
-      values.project
-    ) {
-      const createAffairRes = await createGdpAffair({
-        name: affairToCreate.libelle_affaire,
-        company_entity: (
-          userProfile.company_entities as UsCompanyEntitiesUsersModel[]
-        )[0].company_entities_id,
-        projects_id: values.project ? values.project : createProjectRes.data.id,
-      });
-
-      if (isRequestSuccessful(createAffairRes.status)) {
-        await createGdpAffairPythagoreAffair({
-          affairs_id: createAffairRes.data.id,
-          pythagore_affaires_id: affairToCreate.numero_affaire,
-        }).then((res) => {
-          if (isRequestSuccessful(res.status)) {
-            setCreatedAffairId(createAffairRes.data.id);
-            setIsCreateProjectForAffairLoading(false);
-            setIsCreateProjectForAffairModalOpen(false);
-            setCreatedProjectResultError(false);
-            setIsResultModalOpen(true);
-            return;
-          } else {
-            setIsCreateProjectForAffairLoading(false);
-            setCreatedProjectResultError(true);
-            return setIsResultModalOpen(true);
-          }
-        });
-      } else {
-        setIsCreateProjectForAffairLoading(false);
-        setCreatedProjectResultError(true);
-        return setIsResultModalOpen(true);
-      }
-    } else {
-      setIsCreateProjectForAffairLoading(false);
-      setCreatedProjectResultError(true);
-      return setIsResultModalOpen(true);
-    }
-  };
 
   return (
     <>
@@ -326,7 +272,6 @@ const CreateCerbeModal = ({
         onSubmit={onCreateProjectForAffairSubmitted}
         userProjects={userProjects}
         form={createProjectForm}
-        loading={isCreateProjectForAffairLoading}
       />
 
       <CreateAffairModal
@@ -341,10 +286,10 @@ const CreateCerbeModal = ({
       <ResultModal
         isOpen={isResultModalOpen}
         setIsOpen={setIsResultModalOpen}
-        error={createdProjectResultError}
-        subject={"project"}
-        subject_title={"project name"}
-        onClickConfirm={() => router.push("/mdr")}
+        error={formError}
+        subject={resultSubject}
+        subject_title={resultSubjectName}
+        onClickConfirm={() => router.push(`/cerbe/${targetAffairId}`)}
       />
     </>
   );
