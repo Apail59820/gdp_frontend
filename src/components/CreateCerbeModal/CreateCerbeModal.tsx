@@ -56,11 +56,6 @@ const CreateCerbeModal = ({
     useState<boolean>(false);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isCreateProjectForAffairLoading, setIsCreateProjectForAffairLoading] =
-    useState<boolean>(false);
-
-  const [isCreateAffairLoading, setIsCreateAffairLoading] =
-    useState<boolean>(false);
 
   const [targetAffairId, setTargetAffairId] = useState<number>(null);
 
@@ -99,6 +94,8 @@ const CreateCerbeModal = ({
 
     setIsResultModalOpen(true);
   };
+
+  const onCreateAffairSubmitted = () => {};
 
   const onSubmit = async (values: {
     affair?: number;
@@ -150,12 +147,6 @@ const CreateCerbeModal = ({
       }
     }
   };
-
-  const onCreateAffair = async (values: {
-    project_name?: string;
-    project?: number;
-    affair_name: string;
-  }) => {};
 
   return (
     <>
@@ -277,10 +268,9 @@ const CreateCerbeModal = ({
       <CreateAffairModal
         isOpen={createAffairModalOpen}
         setIsOpen={setCreateAffairModalOpen}
-        onSubmit={onCreateAffair}
+        onFormSubmitted={onCreateAffairSubmitted}
         userProjects={userProjects}
         form={createAffairForm}
-        loading={isCreateAffairLoading}
       />
 
       <ResultModal

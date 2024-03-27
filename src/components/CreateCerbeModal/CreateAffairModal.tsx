@@ -6,24 +6,30 @@ import { Button } from "projex-ui";
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onSubmit: (values: {
+  onFormSubmitted: (values: {
     /*TODO set values type parameters*/
   }) => void;
   userProjects: Partial<GdpProjectsModel>[];
   form: FormInstance<any>;
-  loading: boolean;
 };
 const CreateAffairModal = ({
   isOpen,
   setIsOpen,
-  onSubmit,
+  onFormSubmitted,
   form,
-  loading,
   userProjects,
 }: Props) => {
   const [userProjectsSearchList, setUserProjectsSearchList] = useState<
     Partial<GdpProjectsModel>[]
   >(userProjects || []);
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const onSubmit = async (values: {
+    project_name?: string;
+    project?: number;
+    affair_name: string;
+  }) => {};
 
   return (
     <Modal
@@ -79,14 +85,14 @@ const CreateAffairModal = ({
           />
         </Form.Item>
         <div style={{ display: "flex", marginTop: 10 }}>
-          <Button small htmlType={"submit"} loading={loading}>
+          <Button small htmlType={"submit"} loading={isLoading}>
             Confirmer
           </Button>
           <Button
             small
             style={"text"}
             onClick={() => setIsOpen(false)}
-            loading={loading}
+            loading={isLoading}
           >
             Annuler
           </Button>
