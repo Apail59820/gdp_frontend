@@ -179,6 +179,7 @@ const CreateCerbeModal = ({
                     marginLeft: "10rem",
                     color: "blue",
                   }}
+                  onClick={() => setCreateAffairModalOpen(true)}
                 >
                   ⮐ Créer une affaire
                 </a>

@@ -1,6 +1,6 @@
 import { Divider, Empty, Form, FormInstance, Input, Modal, Select } from "antd";
 import { Button } from "projex-ui";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GdpPythagoreAffaireModel } from "../../../models/GestionDeProjets/GdpPythagoreAffaireModel";
 import { GdpProjectsModel } from "../../../models/GestionDeProjets/GdpProjectsModel";
 import { createGdpProject } from "../../../services/gestionDeProjets/GdpProjects";
@@ -34,6 +34,10 @@ const CreateProjectForAffairModal = ({
   const [userProjectsSearchList, setUserProjectsSearchList] = useState<
     Partial<GdpProjectsModel>[]
   >(userProjects || []);
+
+  useEffect(() => {
+    setUserProjectsSearchList(userProjects.slice(0, 10));
+  }, [userProjects]);
 
   const onFormSubmitted = async (values: {
     project_name?: string;

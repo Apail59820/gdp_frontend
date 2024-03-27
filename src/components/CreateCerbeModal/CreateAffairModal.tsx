@@ -1,5 +1,5 @@
 import { Empty, Form, FormInstance, Input, Modal, Select } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GdpProjectsModel } from "../../../models/GestionDeProjets/GdpProjectsModel";
 import { Button } from "projex-ui";
 
@@ -22,6 +22,10 @@ const CreateAffairModal = ({
   const [userProjectsSearchList, setUserProjectsSearchList] = useState<
     Partial<GdpProjectsModel>[]
   >(userProjects || []);
+
+  useEffect(() => {
+    setUserProjectsSearchList(userProjects.slice(0, 10));
+  }, [userProjects]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
