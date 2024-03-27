@@ -53,7 +53,7 @@ const CreateAffairModal = ({
     new_project?: string;
     existing_project: number;
   }) => {
-    if (!values.new_project || !values.existing_project) {
+    if (!values.new_project && !values.existing_project) {
       return message.error(
         "Veuillez sélectionner ou créer un projet pour la nouvelle affaire.",
       );
