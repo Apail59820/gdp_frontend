@@ -44,11 +44,20 @@ const Cerbe = () => {
   const [totalCerbeCertifiedProjects, setTotalCerbeCertifiedProjects] =
     useState<number>();
   getGdpCerbGeneralities({
-    fields: ["certifications_labels", "plot_area", "floor_area"].join(","),
+    filter: {
+      affair_name: { _nempty: true },
+    },
+    fields: [
+      "certifications_labels",
+      "plot_area",
+      "floor_area",
+      "affair_name",
+    ].join(","),
   }).then((res) => {
     if (isRequestSuccessful(res.status)) {
       const allData = Array.from(res.data);
-      setTotalCerbeProjects(allData.length);
+      console.log(res);
+      setTotalCerbeProjects(allData.filter((data) => data.affair_name).length);
       setTotalFloorArea(sum(allData.map((data) => data.floor_area)));
       setTotalPlotArea(sum(allData.map((data) => data.plot_area)));
       setTotalCerbeCertifiedProjects(
