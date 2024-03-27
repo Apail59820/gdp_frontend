@@ -27,7 +27,7 @@ export default function CerbeBannerTimer() {
           <h5>
             CERBE 2024 dans <Timer deadline={deadline} />
           </h5>
-          <h5>Veuillez remplir vos données CERBE avant le 1er avril</h5>
+          <h5>Accedez au formulaire d’aide à la saisie des données cerbe</h5>
         </div>
         <img src={HeaderIcon.src} alt="Diagobat vectorial" />
         <div>
