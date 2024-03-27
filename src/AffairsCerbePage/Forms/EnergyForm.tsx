@@ -45,7 +45,7 @@ const EnergyForm = ({ energy, onFormChange }: Props) => {
     applicableThermalRegulation,
     conventionalEnergyConsumptionRef,
     projectConventionalEnergyConsumption,
-    energy,
+    energySavings,
     renewableCecEnergyAmount,
     renewableEnergyAmount,
   ]);
