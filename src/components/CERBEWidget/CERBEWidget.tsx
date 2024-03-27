@@ -17,7 +17,7 @@ export default function CERBEWidget({ handleNewCERBEClick }: Props) {
         <Grid>
           <div id="cerbe" >
             <ManageItemCard
-                label="Nouveau CERBE"
+                label="Saisir mes données CERBE"
                 onClick={handleNewCERBEClick}
             />
           </div>
