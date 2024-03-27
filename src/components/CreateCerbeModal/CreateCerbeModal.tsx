@@ -94,7 +94,10 @@ const CreateCerbeModal = ({
     setIsResultModalOpen(true);
   };
 
-  const onCreateAffairSubmitted = () => {};
+  const onCreateAffairSubmitted = (
+    error: boolean,
+    created_affair: Partial<GdpAffairModel>,
+  ) => {};
 
   const onSubmit = async (values: {
     affair?: number;
