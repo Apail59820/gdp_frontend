@@ -32,11 +32,16 @@ export default function CerbeBannerTimer() {
         <img src={HeaderIcon.src} alt="Diagobat vectorial" />
         <div>
           <Button
-            id={"beginButton"}
-            style={"text_gray"}
-            icon={<RightOutlined rev={undefined} />}
-            iconPosition={"right"}
-            onClick={() => router.push("#cerbe")}
+              id={'beginButton'}
+              style={"text_gray"}
+              icon={<RightOutlined rev={undefined} />}
+              iconPosition={'right'}
+              onClick={() => {
+                const button = document
+                    .getElementById('cerbe')
+                    .querySelector('button');
+                button.click()
+              }}
           >
             Commencer
           </Button>

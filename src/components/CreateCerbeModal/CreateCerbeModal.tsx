@@ -218,7 +218,7 @@ const CreateCerbeModal = ({
         footer={null}
         open={isOpen}
         onCancel={() => setIsOpen(false)}
-        title={`Ajouter des données CERBE`}
+        title={`Initialiser un projet CERBE`}
       >
         <Form
           onFinish={onSubmit}
