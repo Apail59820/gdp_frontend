@@ -61,7 +61,6 @@ const Cerbe = () => {
   }).then((res) => {
     if (isRequestSuccessful(res.status)) {
       const allData = Array.from(res.data);
-      console.log(res);
       setTotalCerbeProjects(allData.filter((data) => data.affair_name).length);
       setTotalFloorArea(sum(allData.map((data) => data.floor_area)));
       setTotalPlotArea(sum(allData.map((data) => data.plot_area)));
@@ -177,7 +176,7 @@ const Cerbe = () => {
         ratio(
           averageProjectPlotPermeabilityCoefficient,
           averageInitialPlotPermeabilityCoefficient,
-        ),
+        )/100,
       );
     }
   });
