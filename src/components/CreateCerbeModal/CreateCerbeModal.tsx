@@ -94,11 +94,6 @@ const CreateCerbeModal = ({
     setIsResultModalOpen(true);
   };
 
-  const onCreateAffairSubmitted = (
-    error: boolean,
-    created_affair: Partial<GdpAffairModel>,
-  ) => {};
-
   const onSubmit = async (values: {
     affair?: number;
     num_affaire?: string;
@@ -271,7 +266,7 @@ const CreateCerbeModal = ({
       <CreateAffairModal
         isOpen={createAffairModalOpen}
         setIsOpen={setCreateAffairModalOpen}
-        onFormSubmitted={onCreateAffairSubmitted}
+        onFormSubmitted={onCreateProjectForAffairSubmitted}
         userProjects={userProjects}
         form={createAffairForm}
       />
