@@ -29,6 +29,7 @@ const HomeDashboard = () => {
   const [currentUsersProjects, setCurrentUsersProjects] = useState<
     Partial<GdpProjectsModel>[]
   >([]);
+
   const [currentUsersAffairs, setCurrentUsersAffairs] = useState<
     Partial<GdpAffairModel>[]
   >([]);
