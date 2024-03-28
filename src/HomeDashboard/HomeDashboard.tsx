@@ -1,16 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./HomeDashboard.module.scss";
 import { PlusOutlined } from "@ant-design/icons";
-import { GdpProjectsModel } from "../../models/GdPModels";
+import { GdpProjectsModel, GdpAffairModel } from "../../models/GdPModels";
 import { QuickActionCard } from "projex-ui";
 import Grid from "../components/Grid/Grid";
 import QuickAccessWidget from "../components/QuickAccessWidget/QuickAccessWidget";
 import ProjectsWidget from "../components/ProjectsWidget/ProjectsWidget";
 import { useSelector } from "react-redux";
 import getConfig from "next/config";
+import { isRequestSuccessful } from "../../utils/isRequestSuccessful";
 import CreateProjectForm from "../components/CreateProjectForm/CreateProjectForm";
+import { selectProjects } from "../../store/reducers/projectsReducer";
 import { selectUserProfile } from "../../store/reducers/authReducer";
 import CERBEWidget from "../components/CERBEWidget/CERBEWidget";
+import { getGdpAffairs } from "../../services/gestionDeProjets/GdpAffairs";
+import getUsersProjects from "../../utils/getUsersProjects";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -37,6 +41,44 @@ const HomeDashboard = ({ setIsCreateNewCERBEModalOpen, projects, isLoading }: Pr
 
   const [isCreateNewProjectModalOpen, setIsCreateNewProjectModalOpen] =
     useState(false);
+
+  useEffect(() => {
+    if (!userProfile || !userProfile.role || !userProfile.id) return;
+
+    const isCurrentUsersRoleClient =
+      userProfile.role === publicRuntimeConfig.ROLE_CLIENT_ID;
+
+    setAreCurrentUsersProjectsLoading(true);
+
+    getUsersProjects(
+      userProfile.id,
+      globalProjects,
+      isCurrentUsersRoleClient,
+      6,
+    ).then((projects) => {
+      if (projects?.length) {
+        setCurrentUsersProjects(projects);
+      }
+    });
+
+    setAreCurrentUsersProjectsLoading(false);
+  }, [globalProjects, userProfile]);
+
+  useEffect(() => {
+    if (currentUsersProjects.length) {
+      getGdpAffairs({
+        filter: {
+          projects_id: {
+            _in: currentUsersProjects.map((project) => project?.id),
+          },
+        },
+      }).then((res) => {
+        if (isRequestSuccessful(res.status) && res.data?.length) {
+          setCurrentUsersAffairs(res.data);
+        }
+      });
+    }
+  }, [currentUsersProjects]);
 
   const getProfileCompletionPercentage = (): number => {
     if (!userProfile) return 0;

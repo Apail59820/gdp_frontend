@@ -16,30 +16,31 @@ import { GdpProjectsModel } from "../../../models/GestionDeProjets/GdpProjectsMo
 import CreateProjectForAffairModal from "./CreateProjectForAffairModal";
 import CreateAffairModal from "./CreateAffairModal";
 import ResultModal from "./ResultModal";
+import { useSelector } from "react-redux";
+import { selectUserProfile } from "../../../store/reducers/authReducer";
+import getConfig from "next/config";
+import getUsersProjects from "../../../utils/getUsersProjects";
+import { selectProjects } from "../../../store/reducers/projectsReducer";
+
+const publicRuntimeConfig = getConfig();
 
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   affairs: Partial<GdpAffairModel>[];
-  userProjects: Partial<GdpProjectsModel>[];
 };
 
 type UserUiChoiceType = {
-  level1: string;
-  level2: string;
+    level1: string;
+    level2: string;
 };
 
 const defaultUserUiChoice: UserUiChoiceType = {
-  level1: 'useAffairChoice',
-  level2: 'createAffairPythagoreChoice',
+    level1: 'useAffairChoice',
+    level2: 'createAffairPythagoreChoice',
 };
 
-const CreateCerbeModal = ({
-  isOpen,
-  setIsOpen,
-  affairs,
-  userProjects,
-}: Props) => {
+const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
   const [
     isCreateProjectForAffairModalOpen,
     setIsCreateProjectForAffairModalOpen,
@@ -71,26 +72,32 @@ const CreateCerbeModal = ({
 
   const [targetAffairId, setTargetAffairId] = useState<number>(null);
 
+  const [currentUsersProjects, setCurrentUsersProjects] = useState<
+    Partial<GdpProjectsModel>[]
+  >([]);
   const router = useRouter();
   const [form] = useForm();
   const [createProjectForm] = useForm();
   const [createAffairForm] = useForm();
 
-  const [userUiChoice, setUserUiChoice] = useState<UserUiChoiceType>(defaultUserUiChoice);
+  const userProfile = useSelector(selectUserProfile);
+  const globalProjects = useSelector(selectProjects);
 
-  const handleLevelChange = (level: any, value: string) => {
-    setUserUiChoice({
-      ...userUiChoice,
-      [level as string]: value,
-    });
-  };
+    const [userUiChoice, setUserUiChoice] = useState<UserUiChoiceType>(defaultUserUiChoice);
 
-  useEffect(() => {
-    if (userUiChoice.level1 === 'useAffairChoice') {
-      const updatedUserUiChoice = { ...userUiChoice, level2: 'createAffairPythagoreChoice' };
-      setUserUiChoice(updatedUserUiChoice);
-    }
-  }, [userUiChoice.level1, userUiChoice.level2, isOpen]);
+    const handleLevelChange = (level: any, value: string) => {
+        setUserUiChoice({
+            ...userUiChoice,
+            [level as string]: value,
+        });
+    };
+
+    useEffect(() => {
+        if (userUiChoice.level1 === 'useAffairChoice') {
+            const updatedUserUiChoice = { ...userUiChoice, level2: 'createAffairPythagoreChoice' };
+            setUserUiChoice(updatedUserUiChoice);
+        }
+    }, [userUiChoice.level1, userUiChoice.level2, isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -98,6 +105,23 @@ const CreateCerbeModal = ({
       setUserUiChoice(defaultUserUiChoice);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!userProfile || !userProfile.role || !userProfile.id) return;
+
+    const isCurrentUsersRoleClient =
+      userProfile.role === publicRuntimeConfig.ROLE_CLIENT_ID;
+
+    getUsersProjects(
+      userProfile.id,
+      globalProjects,
+      isCurrentUsersRoleClient,
+    ).then((projects) => {
+      if (projects?.length) {
+        setCurrentUsersProjects(projects);
+      }
+    });
+  }, [userProfile, globalProjects]);
 
   useEffect(() => {
     getGdpPythagoreAffaires().then((res) => {
@@ -351,21 +375,21 @@ const CreateCerbeModal = ({
       )}
       </Modal>
 
-  <CreateProjectForAffairModal
-      isOpen={isCreateProjectForAffairModalOpen}
-      setIsOpen={setIsCreateProjectForAffairModalOpen}
-      affairToCreate={affairToCreate}
-      onSubmit={onCreateProjectForAffairSubmitted}
-      userProjects={userProjects}
-      form={createProjectForm}
-  />
+      <CreateProjectForAffairModal
+        isOpen={isCreateProjectForAffairModalOpen}
+        setIsOpen={setIsCreateProjectForAffairModalOpen}
+        affairToCreate={affairToCreate}
+        onSubmit={onCreateProjectForAffairSubmitted}
+        userProjects={currentUsersProjects}
+        form={createProjectForm}
+      />
 
-  <CreateAffairModal
-      isOpen={createAffairModalOpen}
-      setIsOpen={setCreateAffairModalOpen}
-      onFormSubmitted={onCreateProjectForAffairSubmitted}
-      userProjects={userProjects}
-      form={createAffairForm}
+      <CreateAffairModal
+        isOpen={createAffairModalOpen}
+        setIsOpen={setCreateAffairModalOpen}
+        onFormSubmitted={onCreateProjectForAffairSubmitted}
+        userProjects={currentUsersProjects}
+        form={createAffairForm}
       />
 
       <ResultModal
