@@ -1,4 +1,5 @@
-import { Empty, Form, message, Modal, Select } from "antd";
+import {Empty, Form, message, Modal, Select, Radio, RadioChangeEvent} from "antd";
+import { ShopOutlined, InfoCircleOutlined, PlusCircleOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import { Button } from "projex-ui";
 import React, { useEffect, useState } from "react";
 import { GdpAffairModel } from "../../../models/GestionDeProjets/GdpAffairModel";
@@ -11,6 +12,7 @@ import {
 } from "../../../services/gestionDeProjets/GdpPythagoreAffairs";
 import { GdpPythagoreAffaireModel } from "../../../models/GestionDeProjets/GdpPythagoreAffaireModel";
 import { useForm } from "antd/lib/form/Form";
+import { GdpProjectsModel } from "../../../models/GestionDeProjets/GdpProjectsModel";
 import CreateProjectForAffairModal from "./CreateProjectForAffairModal";
 import CreateAffairModal from "./CreateAffairModal";
 import ResultModal from "./ResultModal";
@@ -18,7 +20,6 @@ import { useSelector } from "react-redux";
 import { selectUserProfile } from "../../../store/reducers/authReducer";
 import getConfig from "next/config";
 import getUsersProjects from "../../../utils/getUsersProjects";
-import { GdpProjectsModel } from "../../../models/GestionDeProjets/GdpProjectsModel";
 import { selectProjects } from "../../../store/reducers/projectsReducer";
 
 const publicRuntimeConfig = getConfig();
@@ -28,6 +29,17 @@ type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   affairs: Partial<GdpAffairModel>[];
 };
+
+type UserUiChoiceType = {
+    level1: string;
+    level2: string;
+};
+
+const defaultUserUiChoice: UserUiChoiceType = {
+    level1: 'useAffairChoice',
+    level2: 'createAffairPythagoreChoice',
+};
+
 const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
   const [
     isCreateProjectForAffairModalOpen,
@@ -71,9 +83,26 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
   const userProfile = useSelector(selectUserProfile);
   const globalProjects = useSelector(selectProjects);
 
+    const [userUiChoice, setUserUiChoice] = useState<UserUiChoiceType>(defaultUserUiChoice);
+
+    const handleLevelChange = (level: any, value: string) => {
+        setUserUiChoice({
+            ...userUiChoice,
+            [level as string]: value,
+        });
+    };
+
+    useEffect(() => {
+        if (userUiChoice.level1 === 'useAffairChoice') {
+            const updatedUserUiChoice = { ...userUiChoice, level2: 'createAffairPythagoreChoice' };
+            setUserUiChoice(updatedUserUiChoice);
+        }
+    }, [userUiChoice.level1, userUiChoice.level2, isOpen]);
+
   useEffect(() => {
     if (isOpen) {
       form.setFieldValue("num_affaire", "");
+      setUserUiChoice(defaultUserUiChoice);
     }
   }, [isOpen]);
 
@@ -170,112 +199,180 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
   };
 
   return (
-    <>
+      <>
       <Modal
-        closable
-        destroyOnClose
-        footer={null}
-        open={isOpen}
-        onCancel={() => setIsOpen(false)}
-        title={`Saisir mes données CERBE`}
+          closable
+          destroyOnClose
+          footer={null}
+          open={isOpen}
+          onCancel={() => setIsOpen(false)}
+          title={`Saisir mes données CERBE`}
       >
-        <Form
-          onFinish={onSubmit}
-          layout={"vertical"}
-          style={{ marginTop: 20 }}
-          form={form as any}
-        >
-          <Form.Item
-            label={
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  width: "100%",
-                }}
-              >
-                <span>Sélectionnez une affaire</span>
-                <a
-                  style={{
-                    marginLeft: "10rem",
-                    color: "blue",
-                  }}
-                  onClick={() => setCreateAffairModalOpen(true)}
-                >
-                  ⮐ Créer une affaire
-                </a>
-              </div>
-            }
-            name={"affair"}
-          >
-            <Select
-              showSearch
-              filterOption={false}
-              placeholder={"Affaire"}
-              style={{ width: "100%" }}
-              options={affairs.map((affair) => ({
-                label: affair?.name,
-                value: affair?.id,
-              }))}
-              onChange={() => {
-                form.setFieldValue("num_affaire", null);
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            label={"Ou sélectionnez un n° / nom d'affaire pythagore"}
-            name={"num_affaire"}
-          >
-            <Select
-              showSearch
-              filterOption={false}
-              placeholder={
-                "Selectionnez un n° ou un nom d'affaire pythagore pythagore"
-              }
-              options={pythagoreAffairsSearchList.map((pythagoreAffair) => ({
-                label: `${pythagoreAffair.numero_affaire} | ${pythagoreAffair.libelle_affaire}`,
-                value: pythagoreAffair.numero_affaire,
-              }))}
-              onSearch={(value) => {
-                setPythagoreAffairsSearchList(
-                  pythagoreAffairs
-                    .filter(
-                      (aff) =>
-                        aff.numero_affaire.includes(value) ||
-                        aff.libelle_affaire
-                          .toLowerCase()
-                          .includes(value.toLowerCase()),
-                    )
-                    .slice(0, 10),
-                );
-              }}
-              onChange={() => {
-                form.setFieldValue("affair", null);
-              }}
-              notFoundContent={
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description={"Aucune affaire pythagore trouvée"}
-                />
-              }
-            />
-          </Form.Item>
 
-          <div style={{ display: "flex", marginTop: 10 }}>
-            <Button small htmlType={"submit"} loading={isLoading}>
-              Confirmer
-            </Button>
-            <Button
-              small
-              style={"text"}
-              onClick={() => setIsOpen(false)}
-              loading={isLoading}
-            >
-              Annuler
-            </Button>
+        <>
+          <div style={{display: "flex"}}>
+            <Radio.Group defaultValue="useAffairChoice" buttonStyle="solid" size="large" onChange={(e: RadioChangeEvent) => { handleLevelChange('level1', e.target.value);}}>
+              <Radio.Button value="useAffairChoice">
+                <div>
+                  <ShopOutlined width={100} rev={undefined}/>{" "}
+                  <span>Affaire existante</span>
+                </div>
+              </Radio.Button>
+              <Radio.Button value="createAffairChoice">
+                <div>
+                  <PlusCircleOutlined width={100} rev={undefined}/>{" "}
+                  <span>Nouvelle Affaire</span>
+                </div>
+              </Radio.Button>
+            </Radio.Group>
           </div>
-        </Form>
+        </>
+
+        {userUiChoice?.level1 === "useAffairChoice" && (
+            <Form
+                onFinish={onSubmit}
+                layout={"vertical"}
+                style={{marginTop: 20}}
+                form={form as any}
+            >
+              <Form.Item
+                  label={"Sélectionnez une affaire"}
+                  name={"affair"}
+                  tooltip={{title: 'Vous avez déjà une affaire', icon: <InfoCircleOutlined rev={undefined}/>}}
+              >
+                <Select
+                    showSearch
+                    filterOption={false}
+                    placeholder={"Affaire"}
+                    style={{width: "100%"}}
+                    options={affairs.map((affair) => ({
+                      label: affair?.name,
+                      value: affair?.id,
+                    }))}
+                    onChange={() => {
+                      form.setFieldValue("num_affaire", null);
+                    }}
+                />
+              </Form.Item>
+              <div style={{display: "flex", marginTop: 10}}>
+                <>
+                  <br/>
+                  <Button small htmlType={"submit"} loading={isLoading}>
+                    Confirmer
+                  </Button>
+                  <Button
+                      small
+                      style={"text"}
+                      onClick={() => setIsOpen(false)}
+                      loading={isLoading}
+                  >
+                    Annuler
+                  </Button>
+                </>
+              </div>
+            </Form>
+      )}
+      {userUiChoice?.level1 === "createAffairChoice" && (
+          <div><br/><h4>Comment voulez-vous procéder ? </h4>
+            <>
+              <div style={{display: "flex"}}>
+                <Radio.Group defaultValue="createAffairPythagoreChoice" buttonStyle="solid" size="large" onChange={(e: RadioChangeEvent) => { handleLevelChange('level2', e.target.value);}}>
+                  <Radio.Button value="createAffairPythagoreChoice">
+                    <div>
+                      <CheckOutlined width={100} rev={undefined}/>{" "}
+                      <span>Avec numéro Pythagore</span>
+                    </div>
+                  </Radio.Button>
+                  <Radio.Button value="createAffairLevel2Choice">
+                    <div>
+                      <CloseOutlined width={100} rev={undefined}/>{" "}
+                      <span>Sans numéro Pythagore</span><br/>
+                    </div>
+                  </Radio.Button>
+                </Radio.Group>
+              </div>
+            </>
+
+            {userUiChoice?.level2 === "createAffairPythagoreChoice" && (
+                <Form
+                    onFinish={onSubmit}
+                    layout={"vertical"}
+                    style={{marginTop: 20}}
+                    form={form as any}
+                >
+                  <Form.Item
+                      label={"Numéro Pythagore :"}
+                      name={"num_affaire"}
+                      tooltip={{
+                        title: 'Pensez à demander au service comptabilité d\'activer votre numéro Pythagore (2 synchronisations sont effectuées / jour)',
+                        icon: <InfoCircleOutlined rev={undefined}/>
+                      }}
+                  >
+                    <Select
+                        showSearch
+                        filterOption={false}
+                        placeholder={
+                          "Selectionnez un n° ou un nom d'affaire pythagore"
+                        }
+                        options={pythagoreAffairsSearchList.map((pythagoreAffair) => ({
+                          label: `${pythagoreAffair.numero_affaire} | ${pythagoreAffair.libelle_affaire}`,
+                          value: pythagoreAffair.numero_affaire,
+                        }))}
+                        onSearch={(value) => {
+                          setPythagoreAffairsSearchList(
+                              pythagoreAffairs
+                                  .filter(
+                                      (aff) =>
+                                          aff.numero_affaire.includes(value) ||
+                                          aff.libelle_affaire
+                                              .toLowerCase()
+                                              .includes(value.toLowerCase()),
+                                  )
+                                  .slice(0, 10),
+                          );
+                        }}
+                        onChange={() => {
+                          form.setFieldValue("affair", null);
+                        }}
+                        notFoundContent={
+                          <Empty
+                              image={Empty.PRESENTED_IMAGE_SIMPLE}
+                              description={"Aucune affaire pythagore trouvée"}
+                          />
+                        }
+                    />
+                  </Form.Item>
+
+                  <div style={{display: "flex", marginTop: 10}}>
+                    <>
+                      <br/>
+                      <Button small htmlType={"submit"} loading={isLoading}>
+                        Confirmer
+                      </Button>
+                      <Button
+                          small
+                          style={"text"}
+                          onClick={() => setIsOpen(false)}
+                          loading={isLoading}
+                      >
+                        Annuler
+                      </Button>
+                    </>
+                  </div>
+                </Form>
+            )}
+            {userUiChoice?.level2 === "createAffairLevel2Choice" && (
+                <>
+                  <br/>
+                  <Button small
+                      onClick={() => setCreateAffairModalOpen(true)}>
+                    Créer une nouvelle affaire
+                  </Button>
+                </>
+            )
+            }
+          </div>
+      )}
       </Modal>
 
       <CreateProjectForAffairModal
