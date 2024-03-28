@@ -275,6 +275,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatNumber}
                       />
+                      m&sup2;
                     </Col>
                     <Col span={12}>
                       <Statistic
@@ -283,6 +284,7 @@ const Cerbe = () => {
                         precision={2}
                         formatter={formatNumber}
                       />
+                      m&sup2;
                     </Col>
                     <Col span={12}>
                       <Statistic
