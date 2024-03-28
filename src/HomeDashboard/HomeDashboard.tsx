@@ -148,7 +148,6 @@ const HomeDashboard = () => {
         isOpen={isCreateNewCERBEModalOpen}
         setIsOpen={setIsCreateNewCERBEModalOpen}
         affairs={currentUsersAffairs}
-        userProjects={currentUsersProjects}
       />
     </div>
   );

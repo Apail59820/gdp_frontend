@@ -11,23 +11,24 @@ import {
 } from "../../../services/gestionDeProjets/GdpPythagoreAffairs";
 import { GdpPythagoreAffaireModel } from "../../../models/GestionDeProjets/GdpPythagoreAffaireModel";
 import { useForm } from "antd/lib/form/Form";
-import { GdpProjectsModel } from "../../../models/GestionDeProjets/GdpProjectsModel";
 import CreateProjectForAffairModal from "./CreateProjectForAffairModal";
 import CreateAffairModal from "./CreateAffairModal";
 import ResultModal from "./ResultModal";
+import { useSelector } from "react-redux";
+import { selectUserProfile } from "../../../store/reducers/authReducer";
+import getConfig from "next/config";
+import getUsersProjects from "../../../utils/getUsersProjects";
+import { GdpProjectsModel } from "../../../models/GestionDeProjets/GdpProjectsModel";
+import { selectProjects } from "../../../store/reducers/projectsReducer";
+
+const publicRuntimeConfig = getConfig();
 
 type Props = {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   affairs: Partial<GdpAffairModel>[];
-  userProjects: Partial<GdpProjectsModel>[];
 };
-const CreateCerbeModal = ({
-  isOpen,
-  setIsOpen,
-  affairs,
-  userProjects,
-}: Props) => {
+const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
   const [
     isCreateProjectForAffairModalOpen,
     setIsCreateProjectForAffairModalOpen,
@@ -59,16 +60,39 @@ const CreateCerbeModal = ({
 
   const [targetAffairId, setTargetAffairId] = useState<number>(null);
 
+  const [currentUsersProjects, setCurrentUsersProjects] = useState<
+    Partial<GdpProjectsModel>[]
+  >([]);
   const router = useRouter();
   const [form] = useForm();
   const [createProjectForm] = useForm();
   const [createAffairForm] = useForm();
+
+  const userProfile = useSelector(selectUserProfile);
+  const globalProjects = useSelector(selectProjects);
 
   useEffect(() => {
     if (isOpen) {
       form.setFieldValue("num_affaire", "");
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!userProfile || !userProfile.role || !userProfile.id) return;
+
+    const isCurrentUsersRoleClient =
+      userProfile.role === publicRuntimeConfig.ROLE_CLIENT_ID;
+
+    getUsersProjects(
+      userProfile.id,
+      globalProjects,
+      isCurrentUsersRoleClient,
+    ).then((projects) => {
+      if (projects?.length) {
+        setCurrentUsersProjects(projects);
+      }
+    });
+  }, [userProfile, globalProjects]);
 
   useEffect(() => {
     getGdpPythagoreAffaires().then((res) => {
@@ -259,7 +283,7 @@ const CreateCerbeModal = ({
         setIsOpen={setIsCreateProjectForAffairModalOpen}
         affairToCreate={affairToCreate}
         onSubmit={onCreateProjectForAffairSubmitted}
-        userProjects={userProjects}
+        userProjects={currentUsersProjects}
         form={createProjectForm}
       />
 
@@ -267,7 +291,7 @@ const CreateCerbeModal = ({
         isOpen={createAffairModalOpen}
         setIsOpen={setCreateAffairModalOpen}
         onFormSubmitted={onCreateProjectForAffairSubmitted}
-        userProjects={userProjects}
+        userProjects={currentUsersProjects}
         form={createAffairForm}
       />
 
