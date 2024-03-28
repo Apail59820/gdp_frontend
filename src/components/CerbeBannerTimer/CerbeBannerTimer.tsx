@@ -1,19 +1,19 @@
 import styles from "./CerbeBannerTimer.module.scss";
-import DiagonalPict from "../../../public/logo-diagobat.svg";
 import HeaderIcon from "../../../public/icon-cerbe-head.svg";
 import React, { useEffect, useState } from "react";
 import Timer from "./Timer";
 import { Button } from "projex-ui";
-import Image from "next/image";
-import { useRouter } from "next/router";
 import { RightOutlined } from "@ant-design/icons";
 
-export default function CerbeBannerTimer() {
+type Props = {
+  setIsCreateNewCERBEModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+export default function CerbeBannerTimer( { setIsCreateNewCERBEModalOpen }:Props ) {
   const [button, setButton] = useState<HTMLButtonElement>(null);
   const deadline = "1 apr 2024 9:0:0";
 
   useEffect(() => {
-    setButton(document.getElementById("cerbe").querySelector("button"));
+    //setButton(document.getElementById("cerbe").querySelector("button"));
   }, []);
   useEffect(() => {
     const beginButton = document.getElementById("beginButton");
@@ -39,7 +39,7 @@ export default function CerbeBannerTimer() {
             style={"text_gray"}
             icon={<RightOutlined rev={undefined} />}
             iconPosition={"right"}
-            onClick={() => button.click()}
+            onClick={() => setIsCreateNewCERBEModalOpen(true)}
           >
             Commencer
           </Button>
