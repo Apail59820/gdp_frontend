@@ -22,6 +22,16 @@ type Props = {
 const HomeDashboard = ({ setIsCreateNewCERBEModalOpen, projects, isLoading }: Props) => {
   const userProfile = useSelector(selectUserProfile);
 
+  const globalProjects = useSelector(selectProjects);
+
+  const [currentUsersProjects, setCurrentUsersProjects] = useState<
+    Partial<GdpProjectsModel>[]
+  >([]);
+
+  const [currentUsersAffairs, setCurrentUsersAffairs] = useState<
+    Partial<GdpAffairModel>[]
+  >([]);
+
   const [areCurrentUsersProjectsLoading, setAreCurrentUsersProjectsLoading] =
     useState(true);
 
