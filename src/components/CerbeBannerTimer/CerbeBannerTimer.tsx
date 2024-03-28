@@ -9,12 +9,8 @@ type Props = {
   setIsCreateNewCERBEModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export default function CerbeBannerTimer( { setIsCreateNewCERBEModalOpen }:Props ) {
-  const [button, setButton] = useState<HTMLButtonElement>(null);
   const deadline = "1 apr 2024 9:0:0";
 
-  useEffect(() => {
-    //setButton(document.getElementById("cerbe").querySelector("button"));
-  }, []);
   useEffect(() => {
     const beginButton = document.getElementById("beginButton");
     beginButton.style.color = "#002559";
