@@ -18,6 +18,7 @@ import { selectProjects } from "../../store/reducers/projectsReducer";
 import CERBEWidget from "../components/CERBEWidget/CERBEWidget";
 import CreateCerbeModal from "../components/CreateCerbeModal/CreateCerbeModal";
 import { getGdpAffairs } from "../../services/gestionDeProjets/GdpAffairs";
+import getUsersProjects from "../../utils/getUsersProjects";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -44,44 +45,22 @@ const HomeDashboard = () => {
   useEffect(() => {
     if (!userProfile || !userProfile.role || !userProfile.id) return;
 
-    const queryParameters: QueryParameters = {
-      filter: {
-        directus_users_id: {
-          _eq: userProfile.id,
-        },
-      },
-      fields: ["id", "projects_id.*", "directus_users_id"].join(","),
-      limit: 6,
-    };
-
     const isCurrentUsersRoleClient =
       userProfile.role === publicRuntimeConfig.ROLE_CLIENT_ID;
 
     setAreCurrentUsersProjectsLoading(true);
-    if (isCurrentUsersRoleClient) {
-      getGdpProjectsUsersClients(queryParameters).then((result) => {
-        if (isRequestSuccessful(result.status) && result.data) {
-          const myProjects = result.data.map(
-            (projectCollaborators) =>
-              projectCollaborators.projects_id as Partial<GdpProjectsModel>,
-          );
-          const projects = globalProjects.filter((project) => {
-            return myProjects.some((myProject) => myProject.id === project.id);
-          });
-          setCurrentUsersProjects(projects);
-        }
-      });
-    } else {
-      getGdpProjectsUsersCollaborators(queryParameters).then((result) => {
-        if (isRequestSuccessful(result.status) && result.data) {
-          const myProjects = result.data.map(
-            (projectCollaborators) =>
-              projectCollaborators.projects_id as Partial<GdpProjectsModel>,
-          );
-          setCurrentUsersProjects(myProjects);
-        }
-      });
-    }
+
+    getUsersProjects(
+      userProfile.id,
+      globalProjects,
+      isCurrentUsersRoleClient,
+      6,
+    ).then((projects) => {
+      if (projects?.length) {
+        setCurrentUsersProjects(projects);
+      }
+    });
+
     setAreCurrentUsersProjectsLoading(false);
   }, [globalProjects, userProfile]);
 
