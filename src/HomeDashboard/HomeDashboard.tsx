@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./HomeDashboard.module.scss";
 import { PlusOutlined } from "@ant-design/icons";
-import { GdpAffairModel, GdpProjectsModel } from "../../models/GdPModels";
+import { GdpProjectsModel, GdpAffairModel } from "../../models/GdPModels";
 import { QuickActionCard } from "projex-ui";
 import Grid from "../components/Grid/Grid";
 import QuickAccessWidget from "../components/QuickAccessWidget/QuickAccessWidget";
@@ -10,16 +10,20 @@ import { useSelector } from "react-redux";
 import getConfig from "next/config";
 import { isRequestSuccessful } from "../../utils/isRequestSuccessful";
 import CreateProjectForm from "../components/CreateProjectForm/CreateProjectForm";
-import { selectUserProfile } from "../../store/reducers/authReducer";
 import { selectProjects } from "../../store/reducers/projectsReducer";
+import { selectUserProfile } from "../../store/reducers/authReducer";
 import CERBEWidget from "../components/CERBEWidget/CERBEWidget";
-import CreateCerbeModal from "../components/CreateCerbeModal/CreateCerbeModal";
 import { getGdpAffairs } from "../../services/gestionDeProjets/GdpAffairs";
 import getUsersProjects from "../../utils/getUsersProjects";
 
 const { publicRuntimeConfig } = getConfig();
 
-const HomeDashboard = () => {
+type Props = {
+  setIsCreateNewCERBEModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  projects: Partial<GdpProjectsModel>[];
+  isLoading: boolean;
+};
+const HomeDashboard = ({ setIsCreateNewCERBEModalOpen, projects, isLoading }: Props) => {
   const userProfile = useSelector(selectUserProfile);
 
   const globalProjects = useSelector(selectProjects);
@@ -36,8 +40,6 @@ const HomeDashboard = () => {
     useState(true);
 
   const [isCreateNewProjectModalOpen, setIsCreateNewProjectModalOpen] =
-    useState(false);
-  const [isCreateNewCERBEModalOpen, setIsCreateNewCERBEModalOpen] =
     useState(false);
 
   useEffect(() => {
@@ -137,18 +139,12 @@ const HomeDashboard = () => {
         </Grid>
       </QuickAccessWidget>
       <ProjectsWidget
-        projects={currentUsersProjects}
-        isLoading={areCurrentUsersProjectsLoading}
+        projects={projects}
+        isLoading={isLoading}
         handleNewProjectClick={() => setIsCreateNewProjectModalOpen(true)}
       />
       <CERBEWidget
         handleNewCERBEClick={() => setIsCreateNewCERBEModalOpen(true)}
-      />
-
-      <CreateCerbeModal
-        isOpen={isCreateNewCERBEModalOpen}
-        setIsOpen={setIsCreateNewCERBEModalOpen}
-        affairs={currentUsersAffairs}
       />
     </div>
   );
