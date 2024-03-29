@@ -5,7 +5,7 @@ import {
   FormInstance,
   Input,
   message,
-  Modal,
+  Modal, Radio, RadioChangeEvent,
   Select,
 } from "antd";
 import React, { useEffect, useState } from "react";
@@ -18,6 +18,7 @@ import { createGdpProject } from "../../../services/gestionDeProjets/GdpProjects
 import { UsCompanyEntitiesUsersModel } from "../../../models/UserService/UsCompanyEntitiesUsersModel";
 import { isRequestSuccessful } from "../../../utils/isRequestSuccessful";
 import { createGdpAffair } from "../../../services/gestionDeProjets/GdpAffairs";
+import {CheckOutlined, CloseOutlined, InfoCircleOutlined, PlusCircleOutlined, ShopOutlined} from "@ant-design/icons";
 
 type Props = {
   isOpen: boolean;
@@ -28,6 +29,16 @@ type Props = {
   ) => void;
   userProjects: Partial<GdpProjectsModel>[];
   form: FormInstance<any>;
+};
+
+type UserUiChoiceType = {
+  level1: string;
+  level2: string;
+};
+
+const defaultUserUiChoice = {
+  level1: "useAffairChoice",
+  level2: "createAffairChoice",
 };
 const CreateAffairModal = ({
   isOpen,
@@ -47,7 +58,28 @@ const CreateAffairModal = ({
   }, [userProjects]);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [userUiChoice, setUserUiChoice] = useState<UserUiChoiceType>(defaultUserUiChoice);
 
+  const handleLevelChange = (level: any, value: string) => {
+    setUserUiChoice({
+      ...userUiChoice,
+      [level as string]: value,
+    });
+  };
+
+  useEffect(() => {
+    if (userUiChoice.level1 === defaultUserUiChoice.level1) {
+      const updatedUserUiChoice = { ...userUiChoice, level2: defaultUserUiChoice.level2 };
+      setUserUiChoice(updatedUserUiChoice);
+      console.log(updatedUserUiChoice)
+    }
+  }, [userUiChoice.level1, userUiChoice.level2, isOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setUserUiChoice(defaultUserUiChoice);
+    }
+  }, [isOpen]);
   const onSubmit = async (values: {
     new_affair?: string;
     new_project?: string;
@@ -103,90 +135,149 @@ const CreateAffairModal = ({
   };
 
   return (
-    <Modal
-      closable
-      destroyOnClose
-      open={isOpen}
-      onCancel={() => setIsOpen(false)}
-      title={`Création d'une nouvelle affaire.`}
-      width={"40%"}
-      footer={null}
-    >
-      <Form
-        onFinish={onSubmit}
-        layout={"vertical"}
-        style={{ marginTop: 20 }}
-        form={form}
+      <Modal
+          closable
+          destroyOnClose
+          open={isOpen}
+          onCancel={() => setIsOpen(false)}
+          title={`Saisir mes données CERBE - Création d'une nouvelle affaire`}
+          width={"40%"}
+          footer={null}
       >
-        <Form.Item
-          label={"Selectionnez un nom pour la nouvelle affaire."}
-          name={"new_affair"}
+        <p style={{color: '#002559'}}>
+          <InfoCircleOutlined rev={undefined}/> Une affaire doit appartenir à un projet, créez&nbsp;ou&nbsp;sélectionnez <br/> un projet à associer à
+          votre affaire !
+        </p>
+        <Divider/>
+        <Form
+            onFinish={onSubmit}
+            layout={"vertical"}
+            style={{marginTop: 20}}
+            form={form}
         >
-          <Input placeholder={`Nouvelle affaire`}></Input>
-        </Form.Item>
-        <Divider />
-        <Form.Item
-          label={"Créez un projet pour la nouvelle affaire"}
-          name={"new_project"}
-        >
-          <Input
-            placeholder={`Nouveau projet`}
-            onChange={(e) => {
-              if (e.target.value.length > 0) {
-                form.setFieldValue("existing_project", "");
-              }
-            }}
-          ></Input>
-        </Form.Item>
-        <Form.Item
-          label={"Ou choisissez un projet existant."}
-          name={"existing_project"}
-        >
-          <Select
-            showSearch
-            filterOption={false}
-            placeholder={"Selectionnez un project existant"}
-            options={userProjectsSearchList?.map((project) => ({
-              label: `${project?.name}`,
-              value: project?.id,
-            }))}
-            onSearch={(value) => {
-              setUserProjectsSearchList(
-                userProjects
-                  .filter((userProject) =>
-                    userProject.name
-                      .toLowerCase()
-                      .includes(value.toLowerCase()),
-                  )
-                  .slice(0, 10),
-              );
-            }}
-            onChange={() => {
-              form.setFieldValue("new_project", null);
-            }}
-            notFoundContent={
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={"Aucun projet trouvé"}
-              />
-            }
-          />
-        </Form.Item>
-        <div style={{ display: "flex", marginTop: 10 }}>
-          <Button small htmlType={"submit"} loading={isLoading}>
-            Confirmer
-          </Button>
-          <Button
-            small
-            style={"text"}
-            onClick={() => setIsOpen(false)}
-            loading={isLoading}
+
+          <Form.Item
+              label={"Nom de la nouvelle Affaire :"}
+              name={"new_affair"}
           >
-            Annuler
-          </Button>
-        </div>
-      </Form>
-    </Modal>
+            <Input placeholder={`Nouvelle affaire`}></Input>
+          </Form.Item>
+          </Form>
+          <Divider/>
+        <>
+          <h4>Associez un Projet à votre affaire :</h4>
+          <div style={{display: "flex"}}>
+            <Radio.Group defaultValue={defaultUserUiChoice.level1} buttonStyle="solid" size="large"
+                         onChange={(e: RadioChangeEvent) => {
+                           handleLevelChange('level1', e.target.value);
+                         }}>
+              <Radio.Button value={defaultUserUiChoice.level1}>
+                <div>
+                  <ShopOutlined width={100} rev={undefined}/>{" "}
+                  <span>Projet existant</span>
+                </div>
+              </Radio.Button>
+              <Radio.Button value={defaultUserUiChoice.level2}>
+                <div>
+                  <PlusCircleOutlined width={100} rev={undefined}/>{" "}
+                  <span>Nouveau Projet</span>
+                </div>
+              </Radio.Button>
+            </Radio.Group>
+          </div>
+        </>
+        <Divider/>
+        {userUiChoice.level1 === "useAffairChoice" && (
+            <Form
+                onFinish={onSubmit}
+                layout={"vertical"}
+                style={{marginTop: 20}}
+                form={form}>
+              <Form.Item
+                  label={"Selectionnez un Projet existant :"}
+                  name={"existing_project"}
+              >
+                <Select
+                    showSearch
+                    filterOption={false}
+                    placeholder={"Selectionnez un project existant"}
+                    options={userProjectsSearchList?.map((project) => ({
+                      label: `${project?.name}`,
+                      value: project?.id,
+                    }))}
+                    onSearch={(value) => {
+                      setUserProjectsSearchList(
+                          userProjects
+                              .filter((userProject) =>
+                                  userProject.name
+                                      .toLowerCase()
+                                      .includes(value.toLowerCase()),
+                              )
+                              .slice(0, 10),
+                      );
+                    }}
+                    onChange={() => {
+                      form.setFieldValue("new_project", null);
+                    }}
+                    notFoundContent={
+                      <Empty
+                          image={Empty.PRESENTED_IMAGE_SIMPLE}
+                          description={"Aucun projet trouvé"}
+                      />
+                    }
+                />
+              </Form.Item>
+              <div style={{display: "flex", marginTop: 10}}>
+                <Button small htmlType={"submit"} loading={isLoading}>
+                  Confirmer
+                </Button>
+                <Button
+                    small
+                    style={"text"}
+                    onClick={() => setIsOpen(false)}
+                    loading={isLoading}
+                >
+                  Annuler
+                </Button>
+              </div>
+            </Form>
+        )}
+        {userUiChoice.level1 === "createAffairChoice" && (
+            <Form
+                onFinish={onSubmit}
+                layout={"vertical"}
+                style={{marginTop: 20}}
+                form={form}
+            >
+              <Form.Item
+                  label={"Nom du projet associé à l'affaire :"}
+                  name={"new_project"}
+              >
+                <Input
+                    placeholder={`Nouveau projet`}
+                    onChange={(e) => {
+                      if (e.target.value.length > 0) {
+                        form.setFieldValue("existing_project", "");
+                      }
+                    }}
+                ></Input>
+              </Form.Item>
+              <div style={{display: "flex", marginTop: 10}}>
+                <Button small htmlType={"submit"} loading={isLoading}>
+                  Confirmer
+                </Button>
+                <Button
+                    small
+                    style={"text"}
+                    onClick={() => setIsOpen(false)}
+                    loading={isLoading}
+                >
+                  Annuler
+                </Button>
+              </div>
+            </Form>
+        )}
+      </Modal>
   );
 };
 

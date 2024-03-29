@@ -158,7 +158,6 @@ const Home = () => {
         isOpen={isCreateNewCERBEModalOpen}
         setIsOpen={setIsCreateNewCERBEModalOpen}
         affairs={currentUsersAffairs}
-        userProjects={currentUsersProjects}
       />
     </div>
   );

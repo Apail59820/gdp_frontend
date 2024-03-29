@@ -3,7 +3,7 @@ import HeaderIcon from "../../../public/icon-cerbe-head.svg";
 import React, { useEffect, useState } from "react";
 import Timer from "./Timer";
 import { Button } from "projex-ui";
-import { RightOutlined } from "@ant-design/icons";
+import {InfoCircleOutlined, RightOutlined} from "@ant-design/icons";
 
 type Props = {
   setIsCreateNewCERBEModalOpen: React.Dispatch<React.SetStateAction<boolean>>;

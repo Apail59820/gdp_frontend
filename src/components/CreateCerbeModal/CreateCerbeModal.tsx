@@ -92,12 +92,12 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
         });
     };
 
-    useEffect(() => {
-        if (userUiChoice.level1 === 'useAffairChoice') {
-            const updatedUserUiChoice = { ...userUiChoice, level2: 'createAffairPythagoreChoice' };
-            setUserUiChoice(updatedUserUiChoice);
-        }
-    }, [userUiChoice.level1, userUiChoice.level2, isOpen]);
+  useEffect(() => {
+    if (userUiChoice.level1 === defaultUserUiChoice.level1) {
+      const updatedUserUiChoice = { ...userUiChoice, level2: defaultUserUiChoice.level2 };
+      setUserUiChoice(updatedUserUiChoice);
+    }
+  }, [userUiChoice.level1, userUiChoice.level2, isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -254,6 +254,9 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
                     }}
                 />
               </Form.Item>
+              <Button style={'text_gray'} color="green-dark" icon={<InfoCircleOutlined rev={undefined} />}>
+                Rejoindre l'affaire d'un autre collaborateur
+              </Button>
               <div style={{display: "flex", marginTop: 10}}>
                 <>
                   <br/>
