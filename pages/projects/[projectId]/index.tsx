@@ -480,7 +480,7 @@ const Project = () => {
                   title="Créez une nouvelle affaire"
                   button={{
                     label: 'Ajouter une affaire',
-                    icon: <PlusOutlined rev={undefined}/>,
+                    icon: <PlusOutlined rev={undefined} />,
                     onClick: () => setIsCreateAffairFormOpen(true),
                   }}
                 >

@@ -325,23 +325,23 @@ const AffairsCerbePage = ({affair}: Props) => {
                         )}
                     </Collapse.Panel>
                     <Collapse.Panel
-                        key={2}
-                        className={styles.biodiversity_collapse}
-                        header={"Biodiversité"}
-                        collapsible={biodiversity_query.isLoading ? "disabled" : "header"}
+                        key={4}
+                        className={styles.carbon_collapse}
+                        header={"Carbone"}
+                        collapsible={carbon_query.isLoading ? "disabled" : "header"}
                     >
-                        {!biodiversity_query.isLoading ? (
+                        {!carbon_query.isLoading ? (
                             <>
-                                <img src={BiodiversityIcon.src} width={50} alt="power icon"/>
-                                <BiodiversityForm
-                                    biodiversity={
-                                        biodiversity_query.cerb_biodiversity?.length
-                                            ? biodiversity_query.cerb_biodiversity[0]
+                                <img src={CarbonIcon.src} width={50} alt="power icon"/>
+                                <CarbonForm
+                                    carbon={
+                                        carbon_query.cerb_carbon?.length
+                                            ? carbon_query.cerb_carbon[0]
                                             : {}
                                     }
                                     onFormChange={(updatedData) => {
-                                        setBiodiversityFormData({
-                                            ...biodiversityFormData,
+                                        setCarbonFormData({
+                                            ...carbonFormData,
                                             ...updatedData,
                                         });
                                     }}
@@ -377,32 +377,6 @@ const AffairsCerbePage = ({affair}: Props) => {
                         )}
                     </Collapse.Panel>
                     <Collapse.Panel
-                        key={4}
-                        className={styles.carbon_collapse}
-                        header={"Carbone"}
-                        collapsible={carbon_query.isLoading ? "disabled" : "header"}
-                    >
-                        {!carbon_query.isLoading ? (
-                            <>
-                                <img src={CarbonIcon.src} width={50} alt="power icon"/>
-                                <CarbonForm
-                                    carbon={
-                                        carbon_query.cerb_carbon?.length
-                                            ? carbon_query.cerb_carbon[0]
-                                            : {}
-                                    }
-                                    onFormChange={(updatedData) => {
-                                        setCarbonFormData({
-                                            ...carbonFormData,
-                                            ...updatedData,
-                                        });
-                                    }}
-                                /></>
-                        ) : (
-                            <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin rev={undefined} />} />
-                        )}
-                    </Collapse.Panel>
-                    <Collapse.Panel
                         key={5}
                         className={styles.resources_collapse}
                         header={"Ressources"}
@@ -420,6 +394,32 @@ const AffairsCerbePage = ({affair}: Props) => {
                                     onFormChange={(updatedData) => {
                                         setResourcesFormData({
                                             ...resourcesFormData,
+                                            ...updatedData,
+                                        });
+                                    }}
+                                /></>
+                        ) : (
+                            <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin rev={undefined} />} />
+                        )}
+                    </Collapse.Panel>
+                    <Collapse.Panel
+                        key={2}
+                        className={styles.biodiversity_collapse}
+                        header={"Biodiversité"}
+                        collapsible={biodiversity_query.isLoading ? "disabled" : "header"}
+                    >
+                        {!biodiversity_query.isLoading ? (
+                            <>
+                                <img src={BiodiversityIcon.src} width={50} alt="power icon"/>
+                                <BiodiversityForm
+                                    biodiversity={
+                                        biodiversity_query.cerb_biodiversity?.length
+                                            ? biodiversity_query.cerb_biodiversity[0]
+                                            : {}
+                                    }
+                                    onFormChange={(updatedData) => {
+                                        setBiodiversityFormData({
+                                            ...biodiversityFormData,
                                             ...updatedData,
                                         });
                                     }}

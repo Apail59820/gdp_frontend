@@ -8,6 +8,7 @@ export const getRideOfNullValues = (arrayOfNumbers: number[]) => {
 
 export const sum = (arrayOfNumbers: number[]): number => {
     arrayOfNumbers = getRideOfNullValues(arrayOfNumbers);
+    console.log('arrayOfNumbers', arrayOfNumbers)
     return arrayOfNumbers.reduce(
         (partialSum, a) => partialSum+a,
         0

@@ -254,9 +254,6 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
                     }}
                 />
               </Form.Item>
-              <Button style={'text_gray'} color="green-dark" icon={<InfoCircleOutlined rev={undefined} />}>
-                Rejoindre l'affaire d'un autre collaborateur
-              </Button>
               <div style={{display: "flex", marginTop: 10}}>
                 <>
                   <br/>
