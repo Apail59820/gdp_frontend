@@ -22,6 +22,7 @@ import {
 import { message } from "antd";
 import { messages } from "../constants/messages";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { GdpActivitiesModel } from "../models/GestionDeProjets/GdpActivitiesModel";
 const { publicRuntimeConfig } = getConfig();
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -71,12 +72,18 @@ export default function App({ Component, pageProps }: AppProps) {
     }).then(async (res) => {
       if (isRequestSuccessful(res.status) && res?.data) {
         setNotifications(
-          res.data?.map((notification) => {
-            return /* @ts-ignore */ {
-              message: notification.activity_id?.content?.message,
-              id: notification.id,
-            };
-          }),
+          res.data
+            ?.filter(
+              (notif) =>
+                (notif?.activity_id as Partial<GdpActivitiesModel>)?.content
+                  ?.message,
+            )
+            .map((notification) => {
+              return /* @ts-ignore */ {
+                message: notification.activity_id?.content?.message,
+                id: notification.id,
+              };
+            }),
         );
       }
     });

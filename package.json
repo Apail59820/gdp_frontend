@@ -26,7 +26,6 @@
     "next": "13.4.19",
     "prettier": "^3.2.5",
     "projex-styles": "^1.0.1",
-    "projex-ui": "^1.4.0",
     "react": "18.2.0",
     "react-async": "^10.0.1",
     "react-dom": "18.2.0",
@@ -39,6 +38,7 @@
   "devDependencies": {
     "@redux-devtools/core": "^3.13.1",
     "@types/js-cookie": "^3.0.2",
-    "@types/uuid": "^9.0.6"
+    "@types/uuid": "^9.0.6",
+    "projex-ui": "^1.4.0"
   }
 }
