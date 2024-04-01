@@ -7,6 +7,7 @@ COPY package.json ./
 COPY .npmrc ./
 RUN cat .npmrc
 RUN npm install --production
+RUN npm i sharp # sharp needs to be installed before running build
 
 
 # Rebuild the source code only when needed
@@ -17,7 +18,6 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . ./
 # RUN export NODE_OPTIONS=--openssl-legacy-provider
 RUN export NODE_OPTIONS=--experimental-specifier-resolution=node
-RUN npm i sharp # sharp needs to be installed before running build
 RUN npm run build
 
 # Production image, copy all the files and run next

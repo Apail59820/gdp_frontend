@@ -51,10 +51,10 @@ import {isRequestSuccessful} from "../../utils/isRequestSuccessful";
 import {useQueryClient} from "@tanstack/react-query";
 import {GdpProjectsModel} from "../../models/GestionDeProjets/GdpProjectsModel";
 import {getGdpProjects} from "../../services/gestionDeProjets/GdpProjects";
-import PowerIcon from "../../public/Icon-power.svg";
-import ResourcesIcon from "../../public/Icon-resources.svg";
-import CarbonIcon from "../../public/Icon-carbon.svg";
-import BiodiversityIcon from "../../public/Icon-biodiversity.svg";
+import PowerIcon from "../../public/icon-power.svg";
+import ResourcesIcon from "../../public/icon-resources.svg";
+import CarbonIcon from "../../public/icon-carbon.svg";
+import BiodiversityIcon from "../../public/icon-biodiversity.svg";
 
 type Props = {
     affair: Partial<GdpAffairModel>;
