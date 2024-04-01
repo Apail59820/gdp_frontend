@@ -140,7 +140,7 @@ const AffairsPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState, 
                     <div className={styles.headItemContainer}>
                         <Button
                             style={'text_gray'}
-                            icon={<DeleteOutlined rev={undefined} />}
+                            icon={<DeleteOutlined  />}
                             onClick={() => setAffairsFilters(AffairsFiltersInitialState)}
                         >
                             Réinitialiser les filtres

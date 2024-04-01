@@ -143,7 +143,7 @@ const CreateProjectForAffairModal = ({
       footer={null}
     >
       <p style={{color: '#002559'}}>
-        <InfoCircleOutlined rev={undefined}/> L'affaire <strong>{affairToCreate?.libelle_affaire}</strong> sera créé !
+        <InfoCircleOutlined /> L'affaire <strong>{affairToCreate?.libelle_affaire}</strong> sera créé !
       </p>
       <Divider/>
       <>
@@ -155,13 +155,13 @@ const CreateProjectForAffairModal = ({
                        }}>
             <Radio.Button value={defaultUserUiChoice.level1}>
               <div>
-                <ShopOutlined width={100} rev={undefined}/>{" "}
+                <ShopOutlined width={100} />{" "}
                 <span>Nouveau Projet</span>
               </div>
             </Radio.Button>
             <Radio.Button value={defaultUserUiChoice.level2}>
               <div>
-                <PlusCircleOutlined width={100} rev={undefined}/>{" "}
+                <PlusCircleOutlined width={100} />{" "}
                 <span>Rattacher à un Projet</span>
               </div>
             </Radio.Button>
@@ -179,7 +179,7 @@ const CreateProjectForAffairModal = ({
             <Form.Item
                 label={"Selectionnez un nom:"}
                 name={"project_name"}
-                tooltip={{title: 'Selectionnez un nom pour le projet ou laissez vide pour utiliser le nom par défaut', icon: <InfoCircleOutlined rev={undefined}/>}}
+                tooltip={{title: 'Selectionnez un nom pour le projet ou laissez vide pour utiliser le nom par défaut', icon: <InfoCircleOutlined />}}
             >
               <Input
                   placeholder={`Projet - ${affairToCreate.libelle_affaire}`}

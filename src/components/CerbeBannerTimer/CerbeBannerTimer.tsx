@@ -38,7 +38,7 @@ export default function CerbeBannerTimer( { setIsCreateNewCERBEModalOpen }:Props
                 <Timer deadline={deadline}/>
               </h5>
               <h5>
-                { isLoading ? <Skeleton.Input active={isLoading} /> : <><InfoCircleOutlined rev={undefined}/> {`Formulaire d’aide à la saisie des données ${bannerName}`}</>}
+                { isLoading ? <Skeleton.Input active={isLoading} /> : <><InfoCircleOutlined /> {`Formulaire d’aide à la saisie des données ${bannerName}`}</>}
               </h5>
             </div>
           </>
@@ -48,7 +48,7 @@ export default function CerbeBannerTimer( { setIsCreateNewCERBEModalOpen }:Props
           <Button
               id={"beginButton"}
               style={"text_gray"}
-              icon={<RightOutlined rev={undefined} />}
+              icon={<RightOutlined  />}
             iconPosition={"right"}
             onClick={() => setIsCreateNewCERBEModalOpen(true)}
           >

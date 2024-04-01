@@ -491,7 +491,7 @@ const FilesOfProjectPage = ({
           <div className={styles.headItemContainer}>
             <Button
               style={'text_gray'}
-              icon={<DeleteOutlined rev={undefined} />}
+              icon={<DeleteOutlined  />}
               onClick={() => setFilesFilters(FilesFiltersInitialState)}
             >
               Réinitialiser les filtres

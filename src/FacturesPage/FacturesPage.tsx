@@ -242,7 +242,7 @@ const FacturesPage = ({ files, setSpecificFilters, filesCount, lazyLoadingState,
                 <div className={styles.headItemContainer}>
                   <Button
                       style={'text_gray'}
-                      icon={<DeleteOutlined rev={undefined} />}
+                      icon={<DeleteOutlined  />}
                       onClick={() => setFacturesFilters(FacturesFiltersInitialState)}
                   >
                     Réinitialiser les filtres

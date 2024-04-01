@@ -713,7 +713,7 @@ const Affair = () => {
           </h1>
           {isUserAffairManager && (
             <Button
-              icon={<EditOutlined rev={undefined} />}
+              icon={<EditOutlined  />}
               onClick={() => setIsCreateAffairFormVisible(true)}
             >
               Modifier l&apos;affaire
@@ -727,7 +727,7 @@ const Affair = () => {
                 title="Facturation"
                 button={{
                   label: "Configurer la facturation",
-                  icon: <EditOutlined rev={undefined} />,
+                  icon: <EditOutlined  />,
                   onClick: () => setIsConfigureFacturationFormVisible(true),
                 }}
               >
@@ -738,7 +738,7 @@ const Affair = () => {
                 title="Étapes du projet"
                 button={{
                   label: "Ajouter une étape",
-                  icon: <PlusOutlined rev={undefined} />,
+                  icon: <PlusOutlined  />,
                   onClick: () => setIsCreatePhaseFormVisible(true),
                 }}
               >

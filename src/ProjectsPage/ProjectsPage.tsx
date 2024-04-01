@@ -221,7 +221,7 @@ const ProjectsPage = ({
           <div className={styles.headItemContainer}>
             <Button
               style={'text_gray'}
-              icon={<DeleteOutlined rev={undefined} />}
+              icon={<DeleteOutlined  />}
               onClick={() => setProjectsFilters(projectsFiltersInitialState)}
             >
               Réinitialiser les filtres

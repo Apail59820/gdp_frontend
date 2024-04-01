@@ -56,7 +56,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
         okText: 'Oui',
         cancelText: 'Non',
         okType: 'danger',
-        icon: <WarningOutlined rev={undefined} />,
+        icon: <WarningOutlined  />,
         closable: true,
         maskClosable: true,
         footer: [
@@ -235,7 +235,7 @@ const CreatePhaseForm = ({ project, affair, isOpen, phase, setIsOpen, onUpdate }
                 onClick={() => {
                   showConfirmDelete();
                 }}
-                icon={<DeleteOutlined rev={undefined} />}
+                icon={<DeleteOutlined  />}
               >
                 Supprimer l&apos;étape
               </Button>

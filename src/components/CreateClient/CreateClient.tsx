@@ -83,7 +83,7 @@ export default function CreateClient({isOpen, setIsOpen}:props){
                                         />
                                     </Form.Item>
                                     </div>
-                                    {/*<MinusCircleOutlined rev={undefined}
+                                    {/*<MinusCircleOutlined 
                                                           onClick={() => remove(name)}
                                     />*/}
                                 </div>

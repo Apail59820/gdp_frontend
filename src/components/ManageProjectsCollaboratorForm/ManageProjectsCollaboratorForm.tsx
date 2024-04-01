@@ -245,7 +245,7 @@ const ManageProjectsCollaboratorForm = ({isOpen, setIsOpen, projectId}: Props) =
                     />
                   </Form.Item>
                   <MinusCircleOutlined
-                    rev={undefined}
+                    
                     onClick={() => {
                       remove(name);
                     }}

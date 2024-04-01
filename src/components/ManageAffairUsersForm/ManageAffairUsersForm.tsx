@@ -429,7 +429,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                               size={'large'}
                               showSearch
                               allowClear
-                              menuItemSelectedIcon={<CheckCircleTwoTone rev={undefined} twoToneColor={'#3FB1C9'}/>}
+                              menuItemSelectedIcon={<CheckCircleTwoTone  twoToneColor={'#3FB1C9'}/>}
                               filterOption={false}
                               placeholder={'Sélectionnez un ' + ((userType == 'collaborator') ? 'collaborateur' : 'client')}
                               options={users.map((user) => ({
@@ -479,7 +479,7 @@ const ManageAffairUsersForm = ({isOpen, setIsOpen, affair, userType}: ManageAffa
                         </Form.Item>
 
                         <MinusCircleOutlined
-                            rev={undefined} style={{color:'#B7011A'}}
+                             style={{color:'#B7011A'}}
                             onClick={() => {
                               const tmp = [...selectedUsers];
                               if (form.getFieldValue('users')[name]) {

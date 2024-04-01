@@ -214,13 +214,13 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
             <Radio.Group defaultValue="useAffairChoice" buttonStyle="solid" size="large" onChange={(e: RadioChangeEvent) => { handleLevelChange('level1', e.target.value);}}>
               <Radio.Button value="useAffairChoice">
                 <div>
-                  <ShopOutlined width={100} rev={undefined}/>{" "}
+                  <ShopOutlined width={100} />{" "}
                   <span>Affaire existante</span>
                 </div>
               </Radio.Button>
               <Radio.Button value="createAffairChoice">
                 <div>
-                  <PlusCircleOutlined width={100} rev={undefined}/>{" "}
+                  <PlusCircleOutlined width={100} />{" "}
                   <span>Nouvelle Affaire</span>
                 </div>
               </Radio.Button>
@@ -238,7 +238,7 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
               <Form.Item
                   label={"Sélectionnez une affaire"}
                   name={"affair"}
-                  tooltip={{title: 'Vous avez déjà une affaire', icon: <InfoCircleOutlined rev={undefined}/>}}
+                  tooltip={{title: 'Vous avez déjà une affaire', icon: <InfoCircleOutlined />}}
               >
                 <Select
                     showSearch
@@ -279,13 +279,13 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
                 <Radio.Group defaultValue="createAffairPythagoreChoice" buttonStyle="solid" size="large" onChange={(e: RadioChangeEvent) => { handleLevelChange('level2', e.target.value);}}>
                   <Radio.Button value="createAffairPythagoreChoice">
                     <div>
-                      <CheckOutlined width={100} rev={undefined}/>{" "}
+                      <CheckOutlined width={100} />{" "}
                       <span>Avec numéro Pythagore</span>
                     </div>
                   </Radio.Button>
                   <Radio.Button value="createAffairLevel2Choice">
                     <div>
-                      <CloseOutlined width={100} rev={undefined}/>{" "}
+                      <CloseOutlined width={100} />{" "}
                       <span>Sans numéro Pythagore</span><br/>
                     </div>
                   </Radio.Button>
@@ -305,7 +305,7 @@ const CreateCerbeModal = ({ isOpen, setIsOpen, affairs }: Props) => {
                       name={"num_affaire"}
                       tooltip={{
                         title: 'Pensez à demander au service comptabilité d\'activer votre numéro Pythagore (2 synchronisations sont effectuées / jour)',
-                        icon: <InfoCircleOutlined rev={undefined}/>
+                        icon: <InfoCircleOutlined />
                       }}
                   >
                     <Select

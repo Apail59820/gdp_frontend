@@ -321,7 +321,7 @@ const AffairsCerbePage = ({affair}: Props) => {
                                     affairContractingAuthorityProps={projectAffair?.client_company_name}/>
                             </>
                         ) : (
-                             <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin rev={undefined} />} />
+                             <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin  />} />
                         )}
                     </Collapse.Panel>
                     <Collapse.Panel
@@ -347,7 +347,7 @@ const AffairsCerbePage = ({affair}: Props) => {
                                     }}
                                 /></>
                         ) : (
-                            <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin rev={undefined} />} />
+                            <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin  />} />
                         )}
                     </Collapse.Panel>
                     <Collapse.Panel
@@ -373,7 +373,7 @@ const AffairsCerbePage = ({affair}: Props) => {
                                     }}
                                 /></>
                         ) : (
-                            <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin rev={undefined} />} />
+                            <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin  />} />
                         )}
                     </Collapse.Panel>
                     <Collapse.Panel
@@ -399,7 +399,7 @@ const AffairsCerbePage = ({affair}: Props) => {
                                     }}
                                 /></>
                         ) : (
-                            <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin rev={undefined} />} />
+                            <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin  />} />
                         )}
                     </Collapse.Panel>
                     <Collapse.Panel
@@ -425,7 +425,7 @@ const AffairsCerbePage = ({affair}: Props) => {
                                     }}
                                 /></>
                         ) : (
-                            <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin rev={undefined} />} />
+                            <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin  />} />
                         )}
                     </Collapse.Panel>
                     <Collapse.Panel
@@ -449,7 +449,7 @@ const AffairsCerbePage = ({affair}: Props) => {
                                 }}
                             />
                         ) : (
-                            <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin rev={undefined} />} />
+                            <Spin indicator={<LoadingOutlined style={{fontSize: 24}} spin  />} />
                         )}
                     </Collapse.Panel>
                 </Collapse>

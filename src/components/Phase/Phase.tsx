@@ -192,7 +192,7 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, fi
             <Button
               small
               style="secondary"
-              icon={<PlusOutlined rev={undefined} />}
+              icon={<PlusOutlined  />}
               onClick={() => {
                 setIsOpenFilesForm(true);
               }}
@@ -204,7 +204,7 @@ const Phase = ({ phase, affair, project, satisfactionDone, setIsPhaseUpdated, fi
             <div>
               <Button
                 style="secondary"
-                icon={<SmileOutlined rev={undefined} />}
+                icon={<SmileOutlined  />}
                 disabled={satisfactionDone}
                 onClick={() => {
                   setIsOpenSatisfactionForm(true);

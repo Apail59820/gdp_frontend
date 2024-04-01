@@ -245,7 +245,7 @@ const ManageProjectManagers = ({ open, onClose, project }: ManageProjectManagers
                     />
                   </Form.Item>
                   <MinusCircleOutlined
-                    rev={undefined}
+                    
                     onClick={() => {
                       const tmp = [...managers];
                       if (form.getFieldValue('managers')[name]) {

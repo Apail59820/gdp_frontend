@@ -134,7 +134,7 @@ const Advancement = () => {
               <h1>{capitalize(affair?.name ? affair.name : "Nom du projet")} - Avancement</h1>
               <Button
                 small
-                icon={<PlusOutlined rev={undefined} />}
+                icon={<PlusOutlined  />}
                 onClick={() => {
                   setIsOpen(true);
                 }}

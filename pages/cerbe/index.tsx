@@ -215,11 +215,11 @@ const Cerbe = () => {
         options={[
           {
             value: "minScreen",
-            icon: <FullscreenExitOutlined rev={undefined} />,
+            icon: <FullscreenExitOutlined  />,
           },
           {
             value: "maxScreen",
-            icon: <FullscreenOutlined rev={undefined} />,
+            icon: <FullscreenOutlined  />,
           },
         ]}
       />

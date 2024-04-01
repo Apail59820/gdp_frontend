@@ -25,7 +25,7 @@ const ProjectsWidget = ({ projects, isLoading = false, handleNewProjectClick }: 
     <Section title="Mes projets" button={{label: 'Voir tous les projets', onClick:onShowMyProjectsClick}}>
       <Grid>
         {isLoading ? (
-          <LoadingOutlined rev={undefined} />
+          <LoadingOutlined  />
         ) : (
           projects.map((project) => (
             <Link key={project.id} href={`/projects/${project.id}`}>

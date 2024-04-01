@@ -285,7 +285,7 @@ const ManageAffairManagerForm = ({ isOpen, setIsOpen, affair }: ManageAffairMana
                       }}
                     />
                   </Form.Item>
-                  <MinusCircleOutlined rev={undefined} onClick={() => {
+                  <MinusCircleOutlined  onClick={() => {
                     let managerToRemove = form.getFieldValue('managers')[name];
 
                     setAffairUsers(affairUsers.filter((user) => user.id !== managerToRemove?.responsable));

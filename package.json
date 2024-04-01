@@ -8,7 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.8.0",
+    "@ant-design/icons": "^5.3.6",
     "@googlemaps/js-api-loader": "^1.16.2",
     "@next/font": "13.0.7",
     "@reduxjs/toolkit": "^1.9.1",

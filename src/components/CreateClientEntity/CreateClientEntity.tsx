@@ -334,8 +334,8 @@ const CreateClientEntityForm = ({ isOpen, setIsOpen, setNewEntity, client = null
                 </Form.Item>
                 <Form.Item label={"L'entité est-il un prospect ?"} id={'is_prospect'} name={'is_prospect'}>
                     <Switch
-                        checkedChildren={<CheckOutlined rev={undefined} />}
-                        unCheckedChildren={<CloseOutlined rev={undefined} />}
+                        checkedChildren={<CheckOutlined  />}
+                        unCheckedChildren={<CloseOutlined  />}
                         defaultChecked={false}
                         className={styles.switch}
                     ></Switch>

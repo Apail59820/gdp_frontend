@@ -145,7 +145,7 @@ const CreateAffairModal = ({
           footer={null}
       >
         <p style={{color: '#002559'}}>
-          <InfoCircleOutlined rev={undefined}/> Une affaire doit appartenir à un projet, créez&nbsp;ou&nbsp;sélectionnez <br/> un projet à associer à
+          <InfoCircleOutlined /> Une affaire doit appartenir à un projet, créez&nbsp;ou&nbsp;sélectionnez <br/> un projet à associer à
           votre affaire !
         </p>
         <Divider/>
@@ -173,13 +173,13 @@ const CreateAffairModal = ({
                          }}>
               <Radio.Button value={defaultUserUiChoice.level1}>
                 <div>
-                  <ShopOutlined width={100} rev={undefined}/>{" "}
+                  <ShopOutlined width={100} />{" "}
                   <span>Projet existant</span>
                 </div>
               </Radio.Button>
               <Radio.Button value={defaultUserUiChoice.level2}>
                 <div>
-                  <PlusCircleOutlined width={100} rev={undefined}/>{" "}
+                  <PlusCircleOutlined width={100} />{" "}
                   <span>Nouveau Projet</span>
                 </div>
               </Radio.Button>

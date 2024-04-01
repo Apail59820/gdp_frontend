@@ -369,7 +369,7 @@ const FilesPage = ({
             </>
           )}
           <div className={styles.headItemContainer}>
-            <Button style={'text_gray'} icon={<DeleteOutlined rev={undefined} />} onClick={resetFilters}>
+            <Button style={'text_gray'} icon={<DeleteOutlined  />} onClick={resetFilters}>
               Réinitialiser les filtres
             </Button>
           </div>

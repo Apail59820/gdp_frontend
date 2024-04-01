@@ -229,9 +229,9 @@ const BillingTable = ({factures, displayAdditionnalInfo}: props) => {
         ),
         expandIcon: ({expanded, onExpand, record}) =>
           expanded ? (
-            <UpOutlined rev={undefined} onClick={(e) => onExpand(record, e)}/>
+            <UpOutlined  onClick={(e) => onExpand(record, e)}/>
           ) : (
-            <DownOutlined rev={undefined} onClick={(e) => onExpand(record, e)}/>
+            <DownOutlined  onClick={(e) => onExpand(record, e)}/>
           ),
       }}
     />

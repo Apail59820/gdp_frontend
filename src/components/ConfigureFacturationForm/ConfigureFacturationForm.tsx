@@ -425,7 +425,7 @@ const ConfigureFacturationForm = ({ isOpen, setIsOpen, initProject, initAffair }
                     />
                   </Form.Item>
                   <MinusCircleOutlined
-                    rev={undefined}
+                    
                     onClick={() => {
                       const tmp = [...selectedPythagoreAffairs];
                       if (form.getFieldValue('pythagoreAffaire')[name]) {

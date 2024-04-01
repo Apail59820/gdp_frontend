@@ -115,7 +115,7 @@ const HomeDashboard = ({ setIsCreateNewCERBEModalOpen, projects, isLoading }: Pr
             button={{
               label: "Ajouter un projet",
               onClick: () => setIsCreateNewProjectModalOpen(true),
-              icon: <PlusOutlined rev={undefined} />,
+              icon: <PlusOutlined  />,
             }}
           >
             Créer un nouveau projet dés maintenant
@@ -129,7 +129,7 @@ const HomeDashboard = ({ setIsCreateNewCERBEModalOpen, projects, isLoading }: Pr
                 href:
                   publicRuntimeConfig.USER_SERVICE_URL +
                   `/user/${userProfile.id}`,
-                icon: <PlusOutlined rev={undefined} />,
+                icon: <PlusOutlined  />,
               }}
             >
               Remplissez votre profil pour profiter pleinement de toutes les

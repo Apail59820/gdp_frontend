@@ -468,7 +468,7 @@ const Project = () => {
             {/* end ---------------- EVERY FORM GOES HERE ---------------- end */}
             <h1 className={styles.title}>Le projet</h1>
             {isUserProjectManager && (
-              <Button icon={<EditOutlined rev={undefined}/>} onClick={() => setIsCreateProjectFormOpen(true)}>
+              <Button icon={<EditOutlined />} onClick={() => setIsCreateProjectFormOpen(true)}>
                 Modifier le projet
               </Button>
             )}
@@ -480,7 +480,7 @@ const Project = () => {
                   title="Créez une nouvelle affaire"
                   button={{
                     label: 'Ajouter une affaire',
-                    icon: <PlusOutlined rev={undefined} />,
+                    icon: <PlusOutlined  />,
                     onClick: () => setIsCreateAffairFormOpen(true),
                   }}
                 >
@@ -491,7 +491,7 @@ const Project = () => {
                   title="Facturation"
                   button={{
                     label: 'Configurer la facturation',
-                    icon: <EditOutlined rev={undefined}/>,
+                    icon: <EditOutlined />,
                     onClick: () => setIsConfigureFacturationFormOpen(true),
                   }}
                 >
