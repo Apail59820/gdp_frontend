@@ -3,12 +3,12 @@ import React, { ReactNode, useState } from "react";
 import { Skeleton, Row, Col, Statistic, Segmented } from "antd";
 import { FullscreenOutlined, FullscreenExitOutlined } from "@ant-design/icons";
 
-import HeaderIcon from "../../public/Icon-cerbe-head.svg";
-import BodyIcon from "../../public/Icon-cerbe-body.svg";
-import PowerIcon from "../../public/Icon-power.svg";
-import ResourcesIcon from "../../public/Icon-resources.svg";
-import CarbonIcon from "../../public/Icon-carbon.svg";
-import BiodiversityIcon from "../../public/Icon-biodiversity.svg";
+import HeaderIcon from "../../public/icon-cerbe-head.svg";
+import BodyIcon from "../../public/icon-cerbe-body.svg";
+import PowerIcon from "../../public/icon-power.svg";
+import ResourcesIcon from "../../public/icon-resources.svg";
+import CarbonIcon from "../../public/icon-carbon.svg";
+import BiodiversityIcon from "../../public/icon-biodiversity.svg";
 import { getGdpCerbGeneralities } from "../../services/gestionDeProjets/CERBE/GdpCerbGeneralities";
 import { isRequestSuccessful } from "../../utils/isRequestSuccessful";
 import { average, formatNumber, ratio, sum } from "../../utils/CERBEutils";
