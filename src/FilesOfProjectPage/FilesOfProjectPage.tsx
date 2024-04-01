@@ -358,7 +358,8 @@ const FilesOfProjectPage = ({
     type: string | null | undefined;
     uploaded_on: Date | string | undefined;
   }
-  const columns: ColumnsType<any>  = [
+
+  const columns: ColumnsType<Partial<DataSourceItem>>  = [
     {
       title: 'Nom du fichier',
       dataIndex: 'name',
@@ -373,7 +374,7 @@ const FilesOfProjectPage = ({
       title: 'Date de mise en ligne',
       dataIndex: 'uploaded_on',
       key: 'uploaded_on',
-      sorter: (a: DataSourceItem, b: DataSourceItem) => {
+      sorter: (a: DataSourceItem, b: DataSourceItem): any => {
         if (!a.uploaded_on || !b.uploaded_on) return 0;
         return a.uploaded_on < b.uploaded_on ? 1 : -1;
       },
