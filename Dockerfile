@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package.json ./
 COPY .npmrc ./
 RUN cat .npmrc
-RUN npm install --production
+RUN npm install --production --verbose sharp
 
 
 # Rebuild the source code only when needed
