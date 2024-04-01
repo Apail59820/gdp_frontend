@@ -29,6 +29,7 @@ import FileIcon from '../../public/file.svg';
 import FileArrayLeftLong from '../../public/arrow-left-long.svg';
 import Link from 'next/link';
 import FilesInfo from "../components/FilesInfo/FilesInfo";
+import {ColumnsType} from "antd/lib/table";
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -357,8 +358,7 @@ const FilesOfProjectPage = ({
     type: string | null | undefined;
     uploaded_on: Date | string | undefined;
   }
-
-  const columns = [
+  const columns: ColumnsType<any>  = [
     {
       title: 'Nom du fichier',
       dataIndex: 'name',
