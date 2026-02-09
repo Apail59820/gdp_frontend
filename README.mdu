@@ -1,6 +1,6 @@
 # MAIA - Gestion de projets
 
-MAIA est une application web interne du Groupe Projex qui centralise la gestion des projets, des affaires et des livrables. Elle offre un espace partage entre equipes internes et clients pour suivre l'avancement, les documents, la facturation et les indicateurs CERBE.
+MAIA est une application web qui centralise la gestion des projets, des affaires et des livrables. Elle offre un espace partage entre equipes internes et clients pour suivre l'avancement, les documents, la facturation et les indicateurs CERBE.
 
 ## A quoi sert ce projet ?
 - Donner une vue unique des projets, affaires et phases.
